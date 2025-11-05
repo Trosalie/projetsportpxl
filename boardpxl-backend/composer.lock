@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7bf3e5ea30d81b1475965c100f956293",
+    "content-hash": "4f99a00ffa279843de6e329f63a0f315",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5439,63 +5439,6 @@
     ],
     "packages-dev": [
         {
-            "name": "bamarni/composer-bin-plugin",
-            "version": "1.8.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/bamarni/composer-bin-plugin.git",
-                "reference": "92fd7b1e6e9cdae19b0d57369d8ad31a37b6a880"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/bamarni/composer-bin-plugin/zipball/92fd7b1e6e9cdae19b0d57369d8ad31a37b6a880",
-                "reference": "92fd7b1e6e9cdae19b0d57369d8ad31a37b6a880",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^2.0",
-                "php": "^7.2.5 || ^8.0"
-            },
-            "require-dev": {
-                "composer/composer": "^2.0",
-                "ext-json": "*",
-                "phpstan/extension-installer": "^1.1",
-                "phpstan/phpstan": "^1.8",
-                "phpstan/phpstan-phpunit": "^1.1",
-                "phpunit/phpunit": "^8.5 || ^9.5",
-                "symfony/console": "^2.8.52 || ^3.4.35 || ^4.4 || ^5.0 || ^6.0",
-                "symfony/finder": "^2.8.52 || ^3.4.35 || ^4.4 || ^5.0 || ^6.0",
-                "symfony/process": "^2.8.52 || ^3.4.35 || ^4.4 || ^5.0 || ^6.0"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "Bamarni\\Composer\\Bin\\BamarniBinPlugin"
-            },
-            "autoload": {
-                "psr-4": {
-                    "Bamarni\\Composer\\Bin\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "No conflicts for your bin dependencies",
-            "keywords": [
-                "composer",
-                "conflict",
-                "dependency",
-                "executable",
-                "isolation",
-                "tool"
-            ],
-            "support": {
-                "issues": "https://github.com/bamarni/composer-bin-plugin/issues",
-                "source": "https://github.com/bamarni/composer-bin-plugin/tree/1.8.2"
-            },
-            "time": "2022-10-31T08:38:03+00:00"
-        },
-        {
             "name": "clue/ndjson-react",
             "version": "v1.3.0",
             "source": {
@@ -9148,30 +9091,41 @@
         },
         {
             "name": "tightenco/duster",
-            "version": "v0.1.0alpha1",
+            "version": "v2.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tighten/duster.git",
-                "reference": "e1bbc1bd42ceec50b3570ac05a27f4ecbb626e9d"
+                "reference": "7b138e56e752c6b0be7879f97c3204ac024d3f77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tighten/duster/zipball/e1bbc1bd42ceec50b3570ac05a27f4ecbb626e9d",
-                "reference": "e1bbc1bd42ceec50b3570ac05a27f4ecbb626e9d",
+                "url": "https://api.github.com/repos/tighten/duster/zipball/7b138e56e752c6b0be7879f97c3204ac024d3f77",
+                "reference": "7b138e56e752c6b0be7879f97c3204ac024d3f77",
                 "shasum": ""
             },
             "require": {
-                "bamarni/composer-bin-plugin": "^1.4",
-                "php": "^7.4"
+                "php": "^8.1.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^9.0"
+                "friendsofphp/php-cs-fixer": "^3.49",
+                "laravel-zero/framework": "^10.3",
+                "laravel/pint": "^1.13",
+                "nunomaduro/termwind": "^1.15",
+                "spatie/invade": "^1.1",
+                "squizlabs/php_codesniffer": "^3.8",
+                "tightenco/tlint": "^9.2"
             },
             "bin": [
-                "bin/duster-tlint-lint",
-                "bin/duster-tlint-fix"
+                "builds/duster"
             ],
-            "type": "library",
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "App\\": "app/",
+                    "Database\\Seeders\\": "database/seeders/",
+                    "Database\\Factories\\": "database/factories/"
+                }
+            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
@@ -9179,8 +9133,14 @@
             "authors": [
                 {
                     "name": "Matt Stauffer",
-                    "email": "matt@tighten.co",
-                    "homepage": "https://tighten.co",
+                    "email": "matt@tighten.com",
+                    "homepage": "https://tighten.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Anthony Clark",
+                    "email": "anthony@tighten.com",
+                    "homepage": "https://tighten.com",
                     "role": "Developer"
                 }
             ],
@@ -9189,21 +9149,20 @@
             "keywords": [
                 "Code style",
                 "duster",
+                "laravel",
                 "php",
                 "tightenco"
             ],
             "support": {
                 "issues": "https://github.com/tighten/duster/issues",
-                "source": "https://github.com/tighten/duster/tree/v0.1.0alpha1"
+                "source": "https://github.com/tighten/duster"
             },
-            "time": "2021-02-01T03:44:37+00:00"
+            "time": "2024-06-24T20:05:33+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "tightenco/duster": 15
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
