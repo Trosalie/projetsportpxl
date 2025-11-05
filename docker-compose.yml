@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: ./boardpxl-backend
+    container_name: backend
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./boardpxl-backend:/var/www/html
+      - /var/www/html/vendor
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./boardpxl-frontend
+    container_name: frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./boardpxl-frontend:/app
+      - /app/node_modules
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
