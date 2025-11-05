@@ -32,6 +32,10 @@ jobs:
         working-directory: boardpxl-backend
         run: composer install --no-interaction --prefer-dist --no-scripts
 
+      - name: Copie du .env.example
+        working-directory: boardpxl-backend
+        run: cp .env.example .env
+
       - name: Génération de la clé de l'application Laravel
         working-directory: boardpxl-backend
         run: php artisan key:generate
