@@ -1,0 +1,47 @@
+name: Laravel PHPUnit Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  php-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: [ '7.4.33', '7.4.11' ]
+
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, curl, dom, fileinfo, json, pdo_mysql, openssl, tokenizer, xml
+          ini-values: memory_limit=1G
+          coverage: none
+          tools: composer
+
+      - name: Installation des dépendances
+        working-directory: boardpxl-backend
+        run: composer install --no-interaction --prefer-dist --no-scripts
+
+      - name: Génération de la clé de l'application Laravel
+        working-directory: boardpxl-backend
+        run: php artisan key:generate
+
+      - name: Prepare SQLite database
+        working-directory: boardpxl-backend
+        run: |
+          touch database/database.sqlite
+          php artisan migrate --force
+
+      - name: Run PHPUnit Tests
+        working-directory: boardpxl-backend
+        run: vendor/bin/phpunit --testdox
