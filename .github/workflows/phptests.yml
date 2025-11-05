@@ -40,11 +40,11 @@ jobs:
         working-directory: boardpxl-backend
         run: php artisan key:generate
 
-      - name: Prepare SQLite database
-        working-directory: boardpxl-backend
-        run: |
-          touch database/database.sqlite
-          php artisan migrate --force
+#      - name: Prepare SQLite database
+#        working-directory: boardpxl-backend
+#        run: |
+#          touch database/database.sqlite
+#          php artisan migrate --force
 
       - name: Run PHPUnit Tests
         working-directory: boardpxl-backend
