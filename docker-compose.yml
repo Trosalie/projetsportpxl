@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      context: ./boardpxl-frontend
+    container_name: frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./boardpxl-frontend:/app      # code local monté
+      - /app/node_modules             # ne pas écraser les node_modules du conteneur
+
