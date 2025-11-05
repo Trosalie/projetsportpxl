@@ -6,10 +6,11 @@
 /out-tsc
 /bazel-out
 
-# Node
+# Node & Composer
 /node_modules
 npm-debug.log
 yarn-error.log
+/vendor
 
 # IDEs and editors
 .idea/
