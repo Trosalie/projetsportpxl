@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   backend:
     build:
@@ -8,9 +10,48 @@ services:
     volumes:
       - ./boardpxl-backend:/var/www/html
       - /var/www/html/vendor
+    networks:
+      - app-network
+    depends_on:
+      - mysql
     environment:
-      - APP_ENV=local
-      - APP_DEBUG=true
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: sportpxl
+      DB_USERNAME: root
+      DB_PASSWORD: root
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: sportpxl
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+    ports:
+      - "3307:3306" # Exposé sur l'hôte, interne reste 3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
     networks:
       - app-network
 
@@ -29,3 +70,6 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  mysql-data:
