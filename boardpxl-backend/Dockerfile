@@ -1,38 +1,41 @@
-FROM php:8.3.11-fpm
+FROM php:7.4.11-fpm
 
-# Installer dépendances système
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg-dev \
-    libwebp-dev \
-    libxpm-dev \
-    libfreetype6-dev \
-    libzip-dev \
-    zip unzip git bash libonig-dev libpq-dev \
+# ✅ Corriger les dépôts Debian archivés
+RUN sed -i 's|deb.debian.org|archive.debian.org|g' /etc/apt/sources.list && \
+    sed -i 's|security.debian.org|archive.debian.org|g' /etc/apt/sources.list && \
+    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid && \
+    apt-get update && apt-get install -y \
+        build-essential \
+        libpng-dev \
+        libjpeg-dev \
+        libwebp-dev \
+        libxpm-dev \
+        libfreetype6-dev \
+        libzip-dev \
+        zip unzip git bash libonig-dev libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Installer extensions PHP
+# ✅ Installer les extensions PHP requises par Laravel 8
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install gd pdo pdo_pgsql mbstring zip exif pcntl bcmath opcache
+    && docker-php-ext-install gd pdo_mysql pdo_pgsql mbstring zip exif pcntl bcmath opcache
 
-# Installer Composer
-COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
+# ✅ Installer Composer depuis l’image officielle
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Définir le répertoire de travail
+# ✅ Définir le dossier de travail
 WORKDIR /var/www/html
 
-# Copier tout le projet Laravel d'un coup (pour que 'artisan' soit déjà présent)
+# ✅ Copier le code Laravel
 COPY . .
 
-# Installer les dépendances Composer
+# ✅ Installer les dépendances Laravel
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Donner les bonnes permissions
-RUN chown -R www-data:www-data /var/www/html
+# ✅ Donner les bons droits
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Exposer le port de Laravel
+# ✅ Exposer le port du serveur Laravel
 EXPOSE 9000
 
-# Lancer le serveur Laravel
+# ✅ Lancer le serveur Laravel
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=9000"]
