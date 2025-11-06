@@ -16,8 +16,8 @@ class CreateCreditInvoicesTable extends Migration
         Schema::create('credit_invoices', function (Blueprint $table) {
             $table->id();
             $table->integer('credits');
-            $table->decimal('montant_ttc', 9, 2);
-            $table->decimal('taxe', 9, 2);
+            $table->decimal('amount_including_tax', 9, 2);
+            $table->decimal('tax', 9, 2);
             $table->timestamps();
         });
     }

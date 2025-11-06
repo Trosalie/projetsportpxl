@@ -10,10 +10,10 @@ class TurnoverInvoice extends Model
     use HasFactory;
 
     protected $fillable = [
-        'chiffre_affaires',
+        'turnover',
         'commission',
-        'valeur_brut',
-        'taxe'
+        'raw_value',
+        'tax'
     ];
 
     public function invoice()

@@ -15,10 +15,10 @@ class CreateTurnoverInvoicesTable extends Migration
     {
         Schema::create('turnover_invoices', function (Blueprint $table) {
             $table->id();
-            $table->decimal('chiffre_affaires', 9, 2);
+            $table->decimal('turnover', 9, 2);
             $table->decimal('commission', 9, 2);
-            $table->decimal('valeur_brut', 9, 2);
-            $table->decimal('taxe', 5, 2);
+            $table->decimal('raw_value', 9, 2);
+            $table->decimal('tax', 5, 2);
             $table->timestamps();
         });
     }

@@ -11,8 +11,8 @@ class CreditInvoice extends Model
 
     protected $fillable = [
         'credits',
-        'montant_ttc',
-        'taxe'
+        'amount_including_tax',
+        'tax'
     ];
 
     public function invoice()
