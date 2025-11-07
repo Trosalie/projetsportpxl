@@ -1,3 +1,12 @@
+@font-face {
+    font-family: 'FuturaLT'; /*a name to be used later*/
+    src: url("/assets/font/futura-lt-cufonfonts/FuturaLT.ttf"); /*URL to font*/
+}
+
+* {
+    font-family: "FuturaLT"
+}
+
 body {
     background-color: #E8EAF6;
     margin: 0;
@@ -6,6 +15,7 @@ body {
 nav {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     background-color: #FFFFFF;
     width: 100vw;
     height: 84px;
@@ -15,4 +25,8 @@ nav {
     height: 60px;
     margin-right: 20px;
     margin-left: 20px;
+}
+
+nav p {
+    margin-right: 20px;
 }
