@@ -1,0 +1,27 @@
+.title-container {
+    background-color: #F98524;
+    margin: 13px;
+    padding: 20px;
+    width: calc(100% - 26px);
+    box-sizing: border-box;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.title-container p {
+    margin: 0;
+    color: #FFFFFF;
+    text-align: center;
+    font-family: 'FuturaLT-Bold';
+    font-size: 34px;
+}
+
+.title-logo {
+    position: absolute;
+    right: 20px;
+    width: 61px;
+    height: 61px;
+}
