@@ -5,31 +5,34 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Invoice extends Model
+class InvoicePayment extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'description',
+        'number',
         'issue_date',
         'due_date',
-        'status',
-        'link_pdf',
-        'photographer_id',
+        'description',
+        'turnover',
+        'raw_value',
+        'commission',
+        'tax',
+        'vat',
+        'start_period',
+        'end_period',
+        'link_pdf'
     ];
 
     protected $casts = [
         'issue_date' => 'date',
         'due_date' => 'date',
+        'start_period' => 'date',
+        'end_period' => 'date',
     ];
 
     public function photographer()
     {
         return $this->belongsTo(\App\Models\Photographer::class);
-    }
-
-    public function invoiceable()
-    {
-        return $this->morphTo();
     }
 }

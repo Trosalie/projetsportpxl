@@ -23,6 +23,13 @@ class CreatePhotographersTable extends Migration
             $table->string('customer_stripe_id')->nullable();
             $table->integer('nb_imported_photos')->default(0);
             $table->integer('total_limit')->default(0);
+            $table->decimal('fee_in_percent', 5, 2);
+            $table->decimal('fix_fee', 5, 2);
+            $table->string('street_address')->nullable();
+            $table->string('postal_code')->nullable();
+            $table->string('locality')->nullable();
+            $table->string('country')->nullable();
+            $table->string('iban')->nullable();
             $table->timestamps();
         });
     }

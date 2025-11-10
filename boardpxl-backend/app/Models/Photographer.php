@@ -17,11 +17,22 @@ class Photographer extends Model
         'name',
         'customer_stripe_id',
         'nb_imported_photos',
-        'total_limit'
+        'total_limit',
+        'fee_in_percent',
+        'fix_fee',
+        'street_address',
+        'locality',
+        'country',
+        'iban'
     ];
 
-    public function invoices()
+    public function invoicesCredit()
     {
-        return $this->hasMany(\App\Models\Invoice::class);
+        return $this->hasMany(\App\Models\InvoiceCredit::class);
+    }
+
+    public function invoicesPayment()
+    {
+        return $this->hasMany(\App\Models\InvoicePayment::class);
     }
 }
