@@ -9,7 +9,10 @@
 }
 
 * {
-    font-family: "FuturaLT"
+    font-family: "FuturaLT";
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
 }
 
 body {
@@ -27,11 +30,33 @@ nav {
 }
 
 .logo {
-    height: 60px;
-    margin-right: 20px;
+    height: 53%;
     margin-left: 20px;
 }
 
 nav p {
     margin-right: 20px;
+}
+
+button {
+    cursor: pointer;
+    transition: filter 160ms ease, transform 120ms ease, box-shadow 120ms ease;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+
+    &:hover {
+        /* darken regardless of the original color */
+        filter: brightness(0.85);
+    }
+
+    &:active {
+        /* pressed depth */
+        transform: translateY(3px);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12), inset 0 2px 4px rgba(0,0,0,0.06);
+        filter: brightness(0.75);
+        transition-duration: 80ms;
+    }
+
+    &:focus {
+        outline: none;
+    }
 }

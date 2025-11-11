@@ -1,4 +1,4 @@
-.title-container {
+div {
     background-color: #F98524;
     margin: 13px;
     padding: 20px;
@@ -9,9 +9,10 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    height: 60px;
 }
 
-.title-container p {
+div p {
     margin: 0;
     color: #FFFFFF;
     text-align: center;
@@ -19,9 +20,8 @@
     font-size: 34px;
 }
 
-.title-logo {
+img {
     position: absolute;
     right: 20px;
-    width: 61px;
-    height: 61px;
+    height: 80%;
 }

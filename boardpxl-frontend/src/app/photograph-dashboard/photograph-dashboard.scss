@@ -1,0 +1,65 @@
+div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 41px;
+    margin-left: 13px;
+    margin-right: 13px;
+    height: 40px;
+}
+
+main {
+    margin: 13px;
+    height: 100%;
+}
+
+.credit-count{
+    margin: 0;
+    background-color: #F98524;
+    width: 50%;
+    border-radius: 10px;
+    color: white;
+    justify-content: left;
+    gap: 0;
+    p {
+        margin-left: 7.5px;
+    }
+}
+
+.action-buttons{
+    margin: 0;
+    height: -webkit-fill-available;
+    width: 50%;
+    button {
+        font-size: large;
+        width: 50%;
+        height: 100%;
+        border: none;
+        border-radius: 10px;
+    }
+}
+
+.payout{
+    background-color: #2C9FBB;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #217589;
+}
+
+.credits-request{
+    background-color: #40B155;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #328C43;
+}
+
+.remaining-credits {
+    background-color: #F98524;
+    color: #FFFFFF;
+    font-family: 'FuturaLT-Bold' !important;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+}
