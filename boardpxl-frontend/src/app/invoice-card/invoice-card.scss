@@ -1,0 +1,93 @@
+button {
+    height: 43px;
+    width: 43px;
+}
+
+.card {
+    border: 2px solid #eee;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    padding: 13px 16px 0px 16px;
+}
+
+.middle p {
+    padding: 0;
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.values {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    gap: 17px;
+    margin-bottom: 10px;
+
+    p {
+        border-radius: 7px;
+        padding: 7px;
+    }
+}
+
+.actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 13px;
+}
+
+.amount{
+    background-color: #2C9FBB;
+    border-color: #217589;
+    width: max-content;
+}
+
+.credits {
+    background-color: #40B155;
+    border-color: #328C43;
+    width: 100%;
+}
+
+button {
+    border-radius: 7px;
+    border: none;
+}
+
+.open {
+    background-color: #2C9FBB;
+    border-color: #217589;
+}
+
+.download {
+    background-color: #40B155;
+    border-color: #328C43;
+}
+
+.status {
+    border-radius: 7px;
+    width: 90px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+.non-payée {
+    background-color: rgba(255, 39, 23, 0.5);
+    border-color: #AA1010;
+}
+
+.payée {
+    background-color: rgba(17, 129, 38, 0.5);
+    border-color: #0A4515;
+}
+
+.en-retard {
+    background-color: rgba(249, 133, 36, 0.5);
+    border-color: #934D13;
+}

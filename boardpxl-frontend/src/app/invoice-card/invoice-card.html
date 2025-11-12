@@ -1,0 +1,34 @@
+<div class="card">
+    <div>
+        <p>Emission {{ invoice.issueDate | date: 'mediumDate' }}</p>
+        <p style="font-size: larger;">{{ invoice.number }}</p>
+    </div>
+    <div class="middle" *ngIf="invoiceType === 'Credit'">
+        <div>
+            <p style="font-size: larger;">Achat de crédits</p>
+        </div>
+        <div class="values">
+            <p class="amount">{{ invoiceCredit.amount | currency }}</p>
+            <p class="credits">+{{ invoiceCredit.credits }} cr</p>
+        </div>
+    </div>
+    <div class="middle" *ngIf="invoiceType === 'Payment'">
+        <div>
+            <p style="font-size: larger;">Versement de chiffre d'affaires</p>
+            <div class="values">
+                <p class="amount">{{ invoicePayment.turnover | currency }}</p>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="actions">
+            <p class="payée status" *ngIf="invoiceType === 'Payment'">Payée</p>
+            <p *ngIf="invoiceType === 'Credit'" class="{{ (invoiceCredit.status | lowercase).split(' ').join('-') }} status">{{ invoiceCredit.status }}</p>
+            <button class="open"><span class="material-symbols-outlined">open_in_new</span></button>
+            <button class="download"><span class="material-symbols-outlined">download</span></button>
+        </div>
+        <p>
+            Echéance {{ invoice.dueDate | date: 'mediumDate' }}
+        </p>
+    </div>
+</div>
