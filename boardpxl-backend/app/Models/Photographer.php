@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
 
-class Photographer extends Model
+class Photographer extends User
 {
     use HasFactory;
 
@@ -23,7 +23,18 @@ class Photographer extends Model
         'street_address',
         'locality',
         'country',
-        'iban'
+        'iban',
+        'password'
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'encrypted'
     ];
 
     public function invoicesCredit()

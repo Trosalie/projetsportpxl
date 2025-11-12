@@ -15,7 +15,7 @@ class CreateInvoiceCreditsTable extends Migration
     {
         Schema::create('invoice_credits', function (Blueprint $table) {
             $table->id();
-            $table->integer('number')->unique();
+            $table->string('number')->unique();
             $table->date('issue_date');
             $table->date('due_date');
             $table->string('description');
