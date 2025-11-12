@@ -21,6 +21,7 @@ class Photographer extends User
         'fee_in_percent',
         'fix_fee',
         'street_address',
+        'postal_code',
         'locality',
         'country',
         'iban',
