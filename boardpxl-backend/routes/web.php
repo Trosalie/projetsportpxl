@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Services\PennylaneService;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+
+Route::get('/test-pennylane', function (PennylaneService $service) {
+    $invoices = $service->getInvoices();
+    return response()->json($invoices);
+});
+
+Route::get('/invoices-client/{idClient}', function ($idClient, PennylaneService $service) {
+    $invoices = $service->getFacturesParIdClient($idClient);
+    return response()->json($invoices);
+});
+
