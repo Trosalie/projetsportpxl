@@ -21,6 +21,7 @@ class Photographer extends Model
         'fee_in_percent',
         'fix_fee',
         'street_address',
+        'postal_code',
         'locality',
         'country',
         'iban'
