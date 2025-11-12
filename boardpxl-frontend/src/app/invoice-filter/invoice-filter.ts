@@ -7,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrl: './invoice-filter.scss',
 })
 export class InvoiceFilter {
+  protected showFilterBox: boolean = false;
 
+  toggleFilterBox() {
+    this.showFilterBox = !this.showFilterBox;
+  }
 }

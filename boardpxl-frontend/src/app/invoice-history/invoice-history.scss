@@ -4,17 +4,26 @@
     padding-left: 13px;
     padding-right: 13px;
     padding-top: 1px;
-    height: 68vh;
-    display: flex;
+    padding-bottom: 13px;
+    overflow: hidden;
     flex-direction: column;
+    height: 100%;
+    display: flex;
+    position: relative;
 }
 
 .invoice-list {
     overflow-y: auto;
-    margin-bottom: 13px;
+    flex: 1;
+
+    .invoice-item:last-child {
+        margin-bottom: -16px;
+    }
 }
 
 p {
     font-family: 'FuturaLT-Bold';
     font-size: 24px;
+    display: flex;
+    align-items: center;
 }
