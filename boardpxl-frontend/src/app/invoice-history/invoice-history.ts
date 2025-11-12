@@ -19,4 +19,15 @@ export class InvoiceHistory {
                      new InvoiceCredit('573709670176', new Date('2024-04-01'), new Date('2024-04-30'), 'Credit for April', 600, 120, 24, 456, 60, 'En retard', 'link_to_pdf_4')
     ];
   }
+
+  ngOnInit() {
+    setTimeout(() => {
+      const el = document.querySelector('.invoice-list') as HTMLElement | null;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const y = rect.top + window.scrollY;
+      el.style.height = `calc(100vh - ${y}px - 10px)`;
+    }, 0);
+  }
+
 }
