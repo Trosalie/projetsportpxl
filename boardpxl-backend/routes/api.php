@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/pennylane/creation-facture', function (Request $request, PennylaneService $service) {
     try {
-        // ✅ Récupération des données envoyées
+        // Récupération des données envoyées
         $validated = $request->validate([
             'labelTVA' => 'required|string',
             'labelProduit' => 'required|string',
@@ -20,11 +20,11 @@ Route::post('/pennylane/creation-facture', function (Request $request, Pennylane
 
         $description = $validated['description'] ?? "";
 
-        // ✅ Appel du service
+        // Appel du service
         $facture = $service->creationFactureClient(
             $validated['labelTVA'],
             $validated['labelProduit'],
-            $description, // 👈 n'est pas utilisée si null
+            $description,
             $validated['montantEuro'],
             $validated['dateEmission'],
             $validated['dateLimite'],
@@ -32,7 +32,7 @@ Route::post('/pennylane/creation-facture', function (Request $request, Pennylane
             $validated['titreFacture']
         );
 
-        // ✅ Réponse JSON
+        // Réponse JSON
         return response()->json([
             'success' => true,
             'message' => 'Facture créée avec succès.',
