@@ -19,10 +19,25 @@ main {
     width: 50%;
     border-radius: 10px;
     color: white;
-    justify-content: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 0;
+    padding: 0 7.5px;
+
+    div{
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+    }
+
     p {
-        margin-left: 7.5px;
+        margin: 0;
+    }
+
+    img{
+        height: 90%;
+        display: block;
     }
 }
 

@@ -1,8 +1,11 @@
 <app-title [title]="'TABLEAU DE BORD'" [icon]="'assets/logo-tableau-de-bord.png'"></app-title>
 <div>
     <div class="credit-count">
-        <p>Crédits restants :</p>
-        <p class="remainingCredits">{{ remainingCredits }}</p>
+        <div>
+            <p>Crédits restants :</p>
+            <p class="remainingCredits">{{ remainingCredits }}</p>
+        </div>
+        <img src="assets/credits_icon.png" alt="logo credits">
     </div>
     <div class="action-buttons">
         <button class="payout">Demander un versement</button>
