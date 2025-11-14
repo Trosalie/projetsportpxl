@@ -50,8 +50,6 @@ export class InvoiceHistory {
               .replace(',', '.')
               .replace(/[^\d.-]/g, '')
             );
-            console.log('Fetching credit for invoice:', invoice.invoice_number);
-            console.log('Extracted credit amount:', creditAmount);
 
             this.invoices.push(new InvoiceCredit(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.tax, invoice.tax, invoice.remaining_amount_with_tax, creditAmount, invoice.status, invoice.public_file_url));
           }
