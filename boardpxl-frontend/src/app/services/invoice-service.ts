@@ -19,6 +19,6 @@ export class InvoiceService {
   }
 
   getProductFromInvoice(invoice: Invoice): Observable<string> {
-    return this.http.get<string>(`http://localhost:9000/api/invoice-product/${invoice.number}`);
+    return this.http.get<string>(`http://localhost:9000/api/invoice-product/${invoice.invoice_number}`);
   }
 }

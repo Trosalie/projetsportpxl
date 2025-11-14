@@ -1,4 +1,4 @@
-import { Invoice } from './invoicemodel';
+import { Invoice } from './invoice.model';
 
 describe('Invoice', () => {
   it('should create an instance', () => {

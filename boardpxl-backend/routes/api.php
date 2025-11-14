@@ -85,7 +85,7 @@ Route::get('/invoices-client/{idClient}', function ($idClient, PennylaneService 
 // Récupérer le produit d'une facture par son numéro
 Route::get('/invoice-product/{invoiceNumber}', function ($invoiceNumber, PennylaneService $service) {
     $product = $service->getProductFromInvoice($invoiceNumber);
-
+    
     if ($product) {
         return response()->json([
             'success' => true,

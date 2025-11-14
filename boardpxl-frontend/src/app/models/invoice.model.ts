@@ -1,5 +1,5 @@
 export class Invoice {
-    number!: string;
+    invoice_number!: string;
     issueDate!: Date;
     dueDate!: Date;
     description!: string;
@@ -8,8 +8,8 @@ export class Invoice {
     link_pdf!: string;
     invoice_lines!: string;
 
-    constructor(number: string, issueDate: Date, dueDate: Date, description: string, tax: number, vat: number, link_pdf: string, invoice_lines: string) {
-        this.number = number;
+    constructor(invoice_number: string, issueDate: Date, dueDate: Date, description: string, tax: number, vat: number, link_pdf: string, invoice_lines: string) {
+        this.invoice_number = invoice_number;
         this.issueDate = issueDate;
         this.dueDate = dueDate;
         this.description = description;

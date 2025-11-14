@@ -35,7 +35,7 @@ class PennylaneService
         $allInvoices = $this->getInvoices();
 
         foreach ($allInvoices as $invoice) {
-            if (isset($invoice['number']) && $invoice['number'] === $invoiceNumber) {
+            if (isset($invoice['invoice_number']) && $invoice['invoice_number'] === $invoiceNumber) {
                 return $invoice;
             }
         }
@@ -127,11 +127,36 @@ class PennylaneService
     {
         $invoice = $this->getInvoiceByNumber($invoiceNumber);
 
-        if ($invoice && isset($invoice['invoice_lines']['url'])) {
-            return $invoice['invoice_lines'];
+        try {
+            $url = null;
+
+            if (isset($invoice['invoice_lines']['url'])) {
+                $url = $invoice['invoice_lines']['url'];
+            } elseif (is_array($invoice['invoice_lines']) && isset($invoice['invoice_lines'][0]['url'])) {
+                $url = $invoice['invoice_lines']['url'];
+            }
+
+            if ($url) {
+                $http = new \GuzzleHttp\Client();
+                $response = $http->get($url, [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . $this->token,
+                    ],
+                ]);
+                
+                $responseBody = $response->getBody()->getContents();
+                $data = json_decode($responseBody, true);
+
+                if (!empty($data['items']) && isset($data['items'][0]['label'])) {
+                    return $data['items'][0]['label'];
+                }
+            }
+        } catch (\Throwable $e) {
+            // ignore or log the error as needed
         }
 
-        return "Not found"; // Produit non trouvé
+        return null; // Produit non trouvé
     }
 
 }
