@@ -30,6 +30,19 @@ class PennylaneService
         return $data['items'] ?? [];
     }
 
+    public function getInvoiceByNumber(string $invoiceNumber): ?array
+    {
+        $allInvoices = $this->getInvoices();
+
+        foreach ($allInvoices as $invoice) {
+            if (isset($invoice['number']) && $invoice['number'] === $invoiceNumber) {
+                return $invoice;
+            }
+        }
+
+        return null; // Facture non trouvée
+    }
+
 
     // Récupérer les factures d'un client par son ID
     public function getInvoicesByIdClient(int $idClient): array
@@ -108,6 +121,17 @@ class PennylaneService
         ]);
 
         return json_decode($response->getBody()->getContents(), true);
+    }
+
+    public function getProductFromInvoice(string $invoiceNumber): ?string
+    {
+        $invoice = $this->getInvoiceByNumber($invoiceNumber);
+
+        if ($invoice && isset($invoice['invoice_lines']['url'])) {
+            return $invoice['invoice_lines'];
+        }
+
+        return "Not found"; // Produit non trouvé
     }
 
 }
