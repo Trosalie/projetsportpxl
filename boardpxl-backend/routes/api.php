@@ -4,32 +4,33 @@ use App\Services\PennylaneService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// Création d'une facture pour un client
 Route::post('/pennylane/creation-facture', function (Request $request, PennylaneService $service) {
     try {
         // Récupération des données envoyées
         $validated = $request->validate([
             'labelTVA' => 'required|string',
-            'labelProduit' => 'required|string',
+            'labelProduct' => 'required|string',
             'description' => 'nullable|string',
-            'montantEuro' => 'required|numeric',
-            'dateEmission' => 'required|date',
-            'dateLimite' => 'required|date',
+            'amountEuro' => 'required|numeric',
+            'issueDate' => 'required|date',
+            'dueDate' => 'required|date',
             'idClient' => 'required|integer',
-            'titreFacture' => 'required|string',
+            'invoiceTitle' => 'required|string',
         ]);
 
         $description = $validated['description'] ?? "";
 
         // Appel du service
-        $facture = $service->creationFactureClient(
+        $facture = $service->createInvoiceClient(
             $validated['labelTVA'],
-            $validated['labelProduit'],
+            $validated['labelProduct'],
             $description,
-            $validated['montantEuro'],
-            $validated['dateEmission'],
-            $validated['dateLimite'],
+            $validated['amountEuro'],
+            $validated['issueDate'],
+            $validated['dueDate'],
             (int) $validated['idClient'],
-            $validated['titreFacture']
+            $validated['invoiceTitle']
         );
 
         // Réponse JSON
@@ -47,6 +48,7 @@ Route::post('/pennylane/creation-facture', function (Request $request, Pennylane
     }
 });
 
+// Récupérer l'ID client par nom et prénom
 Route::get('/pennylane/client-id', function (Request $request, PennylaneService $service) {
     $validated = $request->validate([
         'prenom' => 'required|string',
@@ -66,6 +68,18 @@ Route::get('/pennylane/client-id', function (Request $request, PennylaneService 
         'success' => false,
         'message' => 'Client non trouvé'
     ], 404);
+});
+
+// Test route to get all invoices
+Route::get('/test-pennylane', function (PennylaneService $service) {
+    $invoices = $service->getInvoices();
+    return response()->json($invoices);
+});
+
+// Récupérer les factures d'un client par son ID
+Route::get('/invoices-client/{idClient}', function ($idClient, PennylaneService $service) {
+    $invoices = $service->getInvoicesByIdClient($idClient);
+    return response()->json($invoices);
 });
 
 
