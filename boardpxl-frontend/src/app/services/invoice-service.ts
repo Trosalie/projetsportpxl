@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { InvoicePayment } from '../models/invoice-payment.model';
-import { InvoiceCredit } from '../models/invoice-credit.model';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Invoice } from '../models/invoice.model';
