@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { InvoiceCredit } from '../models/invoice-credit.model';
+import { InvoiceService } from '../services/invoice-service';
 
 @Component({
   selector: 'app-invoice-history',
@@ -10,24 +11,55 @@ import { InvoiceCredit } from '../models/invoice-credit.model';
 })
 export class InvoiceHistory {
   protected invoices: any[] = [];
+  @Input() user!: string;
 
-  constructor() {
-    // Sample data for demonstration purposes
-    this.invoices = [new InvoicePayment('573709670175', new Date('2024-01-01'), new Date('2024-01-31'), 'Payment for January', 1000, 900, 100, 200, 50, new Date('2024-01-01'), new Date('2024-01-31'), 'link_to_pdf_1'),
-                     new InvoicePayment('9Z-6465465432', new Date('2024-02-01'), new Date('2024-02-28'), 'Payment for February', 1200, 1100, 100, 240, 60, new Date('2024-02-01'), new Date('2024-02-28'), 'link_to_pdf_2'),
-                     new InvoiceCredit('646213265445', new Date('2024-03-01'), new Date('2024-03-31'), 'Credit for March', 500, 100, 20, 420, 50, 'Non payée', 'link_to_pdf_3'),
-                     new InvoiceCredit('573709670176', new Date('2024-04-01'), new Date('2024-04-30'), 'Credit for April', 600, 120, 24, 456, 60, 'En retard', 'link_to_pdf_4')
-    ];
+  constructor(private invoiceService: InvoiceService) {
   }
 
   ngOnInit() {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       const el = document.querySelector('.invoice-list') as HTMLElement | null;
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const y = rect.top + window.scrollY;
       el.style.height = `calc(100vh - ${y}px - 10px)`;
-    }, 0);
+    });
+
+    this.invoiceService.getInvoicesByClient(this.user).subscribe(invoices => {
+      this.invoices = invoices;
+      for (let invoice of this.invoices) {
+        switch (invoice.status.toLowerCase()) {
+          case 'paid':
+            invoice.status = 'Payée';
+            break;
+          case 'upcoming':
+            invoice.status = 'Non payée';
+            break;
+          case 'overdue':
+            invoice.status = 'En retard';
+            break;
+        }
+
+        this.invoiceService.getProductFromInvoice(invoice).subscribe(product => {
+          // service may return a string or an object like { product: string }
+          const productValue = typeof product === 'string' ? product : (product as any)?.product;
+          if (productValue && productValue.toLowerCase().includes('crédits')) {
+            let creditAmount = parseFloat(
+              productValue
+              .replace(/crédits/i, '')
+              .replace(/\s+/g, '')
+              .replace(',', '.')
+              .replace(/[^\d.-]/g, '')
+            );
+
+            this.invoices.push(new InvoiceCredit(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.tax, invoice.tax, invoice.remaining_amount_with_tax, creditAmount, invoice.status, invoice.public_file_url));
+          }
+          else {
+            this.invoices.push(new InvoicePayment(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.amount, invoice.amount, invoice.tax, invoice.tax, new Date(), new Date(), invoice.public_file_url));
+          }
+        });
+      }
+    });
   }
 
 }

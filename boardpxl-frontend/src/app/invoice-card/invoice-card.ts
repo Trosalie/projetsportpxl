@@ -15,12 +15,21 @@ export class InvoiceCard {
   protected invoiceType!: string;
 
   ngOnInit(): void {
+    if (!this.invoice) {
+      // No invoice provided — don't build/initialize the component
+      this.invoiceType = '';
+      return;
+    }
+
     if (this.invoice instanceof InvoicePayment) {
       this.invoicePayment = this.invoice;
       this.invoiceType = 'Payment';
     } else if (this.invoice instanceof InvoiceCredit) {
       this.invoiceCredit = this.invoice;
       this.invoiceType = 'Credit';
+    } else {
+      // Unknown invoice type — treat as empty
+      this.invoiceType = '';
     }
   }
 

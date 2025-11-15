@@ -30,6 +30,19 @@ class PennylaneService
         return $data['items'] ?? [];
     }
 
+    public function getInvoiceByNumber(string $invoiceNumber): ?array
+    {
+        $allInvoices = $this->getInvoices();
+
+        foreach ($allInvoices as $invoice) {
+            if (isset($invoice['invoice_number']) && $invoice['invoice_number'] === $invoiceNumber) {
+                return $invoice;
+            }
+        }
+
+        return null; // Facture non trouvée
+    }
+
 
     // Récupérer les factures d'un client par son ID
     public function getInvoicesByIdClient(int $idClient): array
@@ -108,6 +121,42 @@ class PennylaneService
         ]);
 
         return json_decode($response->getBody()->getContents(), true);
+    }
+
+    public function getProductFromInvoice(string $invoiceNumber): ?string
+    {
+        $invoice = $this->getInvoiceByNumber($invoiceNumber);
+
+        try {
+            $url = null;
+
+            if (isset($invoice['invoice_lines']['url'])) {
+                $url = $invoice['invoice_lines']['url'];
+            } elseif (is_array($invoice['invoice_lines']) && isset($invoice['invoice_lines'][0]['url'])) {
+                $url = $invoice['invoice_lines']['url'];
+            }
+
+            if ($url) {
+                $http = new \GuzzleHttp\Client();
+                $response = $http->get($url, [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . $this->token,
+                    ],
+                ]);
+                
+                $responseBody = $response->getBody()->getContents();
+                $data = json_decode($responseBody, true);
+
+                if (!empty($data['items']) && isset($data['items'][0]['label'])) {
+                    return $data['items'][0]['label'];
+                }
+            }
+        } catch (\Throwable $e) {
+            // ignore or log the error as needed
+        }
+
+        return null; // Produit non trouvé
     }
 
 }

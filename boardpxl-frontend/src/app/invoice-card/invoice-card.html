@@ -1,4 +1,4 @@
-<div class="card">
+<div *ngIf="invoiceType !== ''" class="card">
     <div>
         <p>Emission {{ invoice.issueDate | date: 'mediumDate' }}</p>
         <p style="font-size: larger;">{{ invoice.number }}</p>
