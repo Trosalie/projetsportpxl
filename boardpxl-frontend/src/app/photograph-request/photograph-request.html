@@ -4,6 +4,7 @@
     <hr>
     <div class="form">
         <div>
+            <p class="error-message"></p>
             <textarea id="message" name="message" placeholder="{{ requestType === 'versement' ? 'Veuillez indiquer les détails de votre demande de versement.' : 'Veuillez indiquer le nombre de crédits souhaités et les raisons de cette demande.' }}" required>{{ requestMessage }}</textarea>
             <label for="message" class="modify-label">
                 Modifier

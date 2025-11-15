@@ -68,6 +68,69 @@ Cordialement,
   }
 
   submitRequest() {
+    // Validate textarea is not empty
+    const ta = document.querySelector('textarea') as HTMLTextAreaElement | null;
+    const errorMessage = document.querySelector('.error-message') as HTMLElement | null;
+
+    const body = ta?.value || '';
+
+    // clear error visuals when user starts typing
+    if (ta) {
+      const clearError = () => {
+      ta.style.border = '';
+      if (errorMessage){
+        errorMessage.style.opacity = '0';
+        errorMessage.style.transform = '';
+        errorMessage.innerHTML = '';
+      }
+      };
+
+      ta.addEventListener('input', clearError);
+    }
+
+    if (!body.trim()) {
+      if (ta) {
+      ta.focus();
+      // simple visual feedback
+      ta.style.transition = 'border-color 0.2s ease';
+      ta.style.border = '1px solid #e74c3c';
+      if (errorMessage) {
+        errorMessage.innerHTML = 'Veuillez remplir le champ avant de soumettre la demande.';
+        errorMessage.style.opacity = '1';
+
+        // small "pop" bounce: start a bit down, go up, then settle down slightly
+        if (errorMessage.animate) {
+        errorMessage.animate(
+          [
+          { transform: 'translateY(8px)', opacity: '1' },
+          { transform: 'translateY(-8px)', opacity: '1' },
+          { transform: 'translateY(4px)', opacity: '1' },
+          { transform: 'translateY(0)', opacity: '1' }
+          ],
+          {
+          duration: 420,
+          easing: 'cubic-bezier(.2,.8,.2,1)',
+          iterations: 1,
+          fill: 'forwards'
+          }
+        );
+        } else {
+        // fallback for browsers without Web Animations API
+        errorMessage.style.transition = 'transform 0.14s cubic-bezier(.2,.8,.2,1)';
+        errorMessage.style.transform = 'translateY(8px)';
+        setTimeout(() => { errorMessage.style.transform = 'translateY(-8px)'; }, 140);
+        setTimeout(() => { errorMessage.style.transform = 'translateY(4px)'; }, 280);
+        setTimeout(() => { errorMessage.style.transform = 'translateY(0)'; }, 420);
+        }
+      }
+      }
+      return;
+    } else {
+      if (ta) {
+      ta.style.border = '';
+      }
+    }
+
     let to = 'boardpxl@placeholder.com'; // remplacer par l'email de SportPXL
     let from = 'photograph@gmail.com'; // remplacer par l'email du photographe connecté
     let subject = `[BoardPXL]`;
@@ -76,7 +139,6 @@ Cordialement,
     } else if (this.requestType === 'crédits') {
       subject += ' Demande d\'ajout de crédits';
     }
-    let body = document.querySelector('textarea')?.value || '';
 
     this.mailService.sendMail(to, from, subject, body).subscribe({
       next: (response) => {
