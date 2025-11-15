@@ -1,0 +1,25 @@
+.container {
+    margin-left: 80px;
+    margin-right: 80px;
+    margin-top: 70px;
+    background-color: white;
+    border-radius: 20px;
+    width: calc(100% - 170px);
+    padding-top: 5px;
+
+    h1 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-left: 20px;
+    }
+
+    p {
+        color: #217589;
+        font-weight: bolder;
+    }
+
+    hr{
+       opacity: 10%;
+       border: 1px solid #000000;
+    }
+}

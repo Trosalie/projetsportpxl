@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { InvoicePayment } from '../models/invoice-payment.model';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';

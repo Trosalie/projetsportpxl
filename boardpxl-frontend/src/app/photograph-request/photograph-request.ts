@@ -8,7 +8,7 @@ import { MailService } from '../services/mail-service';
   styleUrl: './photograph-request.scss',
 })
 export class PhotographRequest {
-  protected requestType: string = '';
+  @Input() requestType: 'versement' | 'crédits' = 'versement';
   protected requestMessage: string = '';
 
   constructor(private mailService: MailService) {}
@@ -21,9 +21,7 @@ export class PhotographRequest {
       let y = rect.top + window.scrollY;
       el.style.height = `calc(100vh - ${y}px - 120px)`;
 
-      const url = window.location.href;
-      if (url.includes('/request/payout')) {
-        this.requestType = 'versement';
+      if (this.requestType === 'versement') {
         this.requestMessage = `Bonjour,
 
 Je vous contacte pour vous demander de bien vouloir procéder au versement de mon chiffre d'affaires, qui s'élève à [insérer le montant].
@@ -31,9 +29,8 @@ Merci d’avance pour le traitement de ma demande.
 
 Cordialement,
 [Prénom Nom]`;
-      } else if (url.includes('/request/credits')) {
-        this.requestType = 'crédits';
-        this.requestMessage = `Bonjour,
+      } else if (this.requestType === 'crédits') {
+      this.requestMessage = `Bonjour,
 
 Je vous contacte afin de solliciter l'envoi d'un devis pour [insérer le montant] crédits.
 Merci de bien vouloir me transmettre le devis détaillé ainsi que les conditions et les délais.
@@ -68,13 +65,12 @@ Cordialement,
   }
 
   submitRequest() {
-    // Validate textarea is not empty
+    // Validate form
     const ta = document.querySelector('textarea') as HTMLTextAreaElement | null;
     const errorMessage = document.querySelector('.error-message') as HTMLElement | null;
 
     const body = ta?.value || '';
 
-    // clear error visuals when user starts typing
     if (ta) {
       const clearError = () => {
       ta.style.border = '';
@@ -91,14 +87,12 @@ Cordialement,
     if (!body.trim()) {
       if (ta) {
       ta.focus();
-      // simple visual feedback
-      ta.style.transition = 'border-color 0.2s ease';
       ta.style.border = '1px solid #e74c3c';
       if (errorMessage) {
         errorMessage.innerHTML = 'Veuillez remplir le champ avant de soumettre la demande.';
         errorMessage.style.opacity = '1';
 
-        // small "pop" bounce: start a bit down, go up, then settle down slightly
+        // animation
         if (errorMessage.animate) {
         errorMessage.animate(
           [
@@ -115,7 +109,6 @@ Cordialement,
           }
         );
         } else {
-        // fallback for browsers without Web Animations API
         errorMessage.style.transition = 'transform 0.14s cubic-bezier(.2,.8,.2,1)';
         errorMessage.style.transform = 'translateY(8px)';
         setTimeout(() => { errorMessage.style.transform = 'translateY(-8px)'; }, 140);
@@ -142,10 +135,10 @@ Cordialement,
 
     this.mailService.sendMail(to, from, subject, body).subscribe({
       next: (response) => {
-        console.log('Mail sent successfully', response);
+        window.location.assign('/request/success');
       },
       error: (error) => {
-        console.error('Error sending mail', error);
+        window.location.assign('/request/failure');
       }
     });
 

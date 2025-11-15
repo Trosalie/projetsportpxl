@@ -10,6 +10,8 @@ import { InvoiceHistory } from './invoice-history/invoice-history';
 import { InvoiceCard } from './invoice-card/invoice-card';
 import { InvoiceFilter } from './invoice-filter/invoice-filter';
 import { PhotographRequest } from './photograph-request/photograph-request';
+import { AutomaticResponse } from './automatic-response/automatic-response';
+import { MailRequestPage } from './mail-request-page/mail-request-page';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { PhotographRequest } from './photograph-request/photograph-request';
     InvoiceHistory,
     InvoiceCard,
     InvoiceFilter,
-    PhotographRequest
+    PhotographRequest,
+    AutomaticResponse,
+    MailRequestPage
   ],
   imports: [
     BrowserModule,
