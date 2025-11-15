@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 import { PhotographDashboard } from './photograph-dashboard/photograph-dashboard';
 import { PhotographRequest } from './photograph-request/photograph-request';
 
@@ -10,7 +11,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes), HttpClientModule],
+  exports: [RouterModule, HttpClientModule]
 })
 export class AppRoutingModule { }

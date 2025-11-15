@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { MailService } from '../services/mail-service';
 
 @Component({
   selector: 'app-photograph-request',
@@ -9,6 +10,8 @@ import { Component, Input } from '@angular/core';
 export class PhotographRequest {
   protected requestType: string = '';
   protected requestMessage: string = '';
+
+  constructor(private mailService: MailService) {}
 
   ngOnInit() {
     requestAnimationFrame(() => {
@@ -65,6 +68,24 @@ Cordialement,
   }
 
   submitRequest() {
-    alert(`Votre demande de ${this.requestType} a été soumise.`);
+    let to = 'boardpxl@placeholder.com'; // remplacer par l'email de SportPXL
+    let from = 'photograph@gmail.com'; // remplacer par l'email du photographe connecté
+    let subject = `[BoardPXL]`;
+    if (this.requestType === 'versement') {
+      subject += ' Demande de versement de chiffre d\'affaires';
+    } else if (this.requestType === 'crédits') {
+      subject += ' Demande d\'ajout de crédits';
+    }
+    let body = document.querySelector('textarea')?.value || '';
+
+    this.mailService.sendMail(to, from, subject, body).subscribe({
+      next: (response) => {
+        console.log('Mail sent successfully', response);
+      },
+      error: (error) => {
+        console.error('Error sending mail', error);
+      }
+    });
+
   }
 }

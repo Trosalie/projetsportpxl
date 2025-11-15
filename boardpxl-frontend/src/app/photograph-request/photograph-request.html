@@ -2,7 +2,7 @@
 <div class="container">
     <p>{{ requestType === 'versement' ? 'Versement de chiffre d\'affaires' : 'Ajout de crédits' }}</p>
     <hr>
-    <form (ngSubmit)="submitRequest()">
+    <div class="form">
         <div>
             <textarea id="message" name="message" placeholder="{{ requestType === 'versement' ? 'Veuillez indiquer les détails de votre demande de versement.' : 'Veuillez indiquer le nombre de crédits souhaités et les raisons de cette demande.' }}" required>{{ requestMessage }}</textarea>
             <label for="message" class="modify-label">
@@ -13,6 +13,6 @@
                 </svg>
             </label>
         </div>
-        <button type="submit">Envoyer</button>
-    </form>
+        <button type="button" (click)="submitRequest()">Envoyer</button>
+    </div>
 </div>
