@@ -9,7 +9,6 @@ import { environment } from '../../environments/environment.development';
   providedIn: 'root',
 })
 export class InvoiceService {
-  private invoices: InvoicePayment[] = [];
 
   constructor(private http: HttpClient) {
   }

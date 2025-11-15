@@ -37,12 +37,13 @@ export class InvoiceHistory {
             break;
           case 'overdue':
             invoice.status = 'En retard';
+            break;
         }
 
         this.invoiceService.getProductFromInvoice(invoice).subscribe(product => {
           // service may return a string or an object like { product: string }
           const productValue = typeof product === 'string' ? product : (product as any)?.product;
-          if (productValue.toLowerCase().includes('crédits')) {
+          if (productValue && productValue.toLowerCase().includes('crédits')) {
             let creditAmount = parseFloat(
               productValue
               .replace(/crédits/i, '')
@@ -54,7 +55,7 @@ export class InvoiceHistory {
             this.invoices.push(new InvoiceCredit(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.tax, invoice.tax, invoice.remaining_amount_with_tax, creditAmount, invoice.status, invoice.public_file_url));
           }
           else {
-            this.invoices.push(new InvoicePayment(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.amount, invoice.amount, invoice.tax, invoice.tax, new Date('now'), new Date('now'), invoice.public_file_url));
+            this.invoices.push(new InvoicePayment(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.amount, invoice.amount, invoice.tax, invoice.tax, new Date(), new Date(), invoice.public_file_url));
           }
         });
       }
