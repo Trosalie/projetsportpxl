@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\PennylaneService;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -81,7 +82,6 @@ Route::get('/invoices-client/{idClient}', function ($idClient, PennylaneService 
     $invoices = $service->getInvoicesByIdClient($idClient);
     return response()->json($invoices);
 });
-
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
