@@ -16,10 +16,48 @@
     p {
         color: #217589;
         font-weight: bolder;
+        text-align: center;
+        font-size: x-large;
+        margin-top: 80px;
     }
 
     hr{
        opacity: 10%;
        border: 1px solid #000000;
     }
+
+    img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 40px;
+        width: 100px;
+        height: 100px;
+    }
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 60px;
+    margin-bottom: 40px;
+}
+
+button {
+    font-size: large;
+    border: none;
+    border-radius: 10px;
+    padding: 15px 30px;
+    font-weight: 500;
+}
+
+.back-dashboard {
+    background-color: #F98524;
+    color: white;
+}
+
+.retry {
+    background-color: #2C9FBB;
+    color: white;
 }
