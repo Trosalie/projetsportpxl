@@ -6,6 +6,6 @@
     <img src="{{ requestStatus === 'success' ? 'assets/images/checkmark.png' : 'assets/images/failure.png' }}" alt="checkmark">
     <div class="buttons">
         <button class="back-dashboard" routerLink="/">Retour au tableau de bord</button>
-        <button class="retry" *ngIf="requestStatus === 'failure'" routerLink="/request/{{ requestType === 'versement' ? 'payout' : 'credits' }}">Ressayer</button>
+        <button class="retry" *ngIf="requestStatus === 'failure'" routerLink="/request/{{ requestType === 'versement' ? 'payout' : 'credits' }}">Réessayer</button>
     </div>
 </div>

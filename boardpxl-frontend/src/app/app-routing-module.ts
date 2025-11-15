@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { PhotographDashboard } from './photograph-dashboard/photograph-dashboard';
-import { PhotographRequest } from './photograph-request/photograph-request';
 import { MailRequestPage } from './mail-request-page/mail-request-page';
 import { AutomaticResponse } from './automatic-response/automatic-response';
 

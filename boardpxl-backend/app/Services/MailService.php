@@ -10,7 +10,8 @@ class MailService
     public function sendEmail($to, $from, $subject, $body){
         Mail::raw($body, function ($message) use ($to, $from, $subject) {
             $message->to($to)
-                    ->from($from)
+                    ->from('noreply@boardpxl.com', 'BoardPXL')
+                    ->replyTo($from)
                     ->subject($subject);
         });
     }

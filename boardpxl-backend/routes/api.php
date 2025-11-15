@@ -89,8 +89,8 @@ Route::post('/send-email', function (Request $request, MailService $mailService)
     $validated = $request->validate([
         'to' => 'required|email',
         'from' => 'required|email',
-        'subject' => 'required|string',
-        'body' => 'required|string',
+        'subject' => 'required|string|max:255',
+        'body' => 'required|string|max:10000',
     ]);
 
     try {
