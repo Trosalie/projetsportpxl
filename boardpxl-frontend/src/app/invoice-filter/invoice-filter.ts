@@ -65,13 +65,12 @@ export class InvoiceFilter {
     this.isFilterModalOpen = false;
     this.selectedFilterType = null;
     
-    // Focus on the date input after a short delay
+    // Focus on the specific date input that was just added
     setTimeout(() => {
-      const inputs = document.querySelectorAll('.date-input');
-      const lastInput = inputs[inputs.length - 1] as HTMLInputElement;
-      if (lastInput) {
-        lastInput.focus();
-        lastInput.showPicker?.();
+      const input = document.querySelector(`.date-input[data-filter="${filterValue}"]`) as HTMLInputElement;
+      if (input) {
+        input.focus();
+        input.showPicker?.();
       }
     }, 100);
   }
@@ -117,6 +116,22 @@ export class InvoiceFilter {
 
   hasAvailableTypeFilters(): boolean {
     return this.typeFilters.some(filter => !this.activeFilters.includes(filter));
+  }
+
+  getSortedFilters(): string[] {
+    // Define the order: Status filters first, then Type filters, then Period filters
+    const orderedFilters = [
+      ...this.statusFilters,
+      ...this.typeFilters,
+      ...this.periodFilters
+    ];
+
+    // Sort activeFilters based on the order defined above
+    return this.activeFilters.sort((a, b) => {
+      const indexA = orderedFilters.indexOf(a);
+      const indexB = orderedFilters.indexOf(b);
+      return indexA - indexB;
+    });
   }
 
   @HostListener('document:click', ['$event'])

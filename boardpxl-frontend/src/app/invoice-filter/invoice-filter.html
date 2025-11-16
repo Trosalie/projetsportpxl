@@ -3,7 +3,7 @@
     
     <!-- Active filters display -->
     <div class="active-filters" *ngIf="activeFilters.length > 0">
-        <div class="filter-tag" *ngFor="let filter of activeFilters">
+        <div class="filter-tag" *ngFor="let filter of getSortedFilters()">
             <button class="remove-filter" (click)="removeFilter(filter)">
                 <img src="assets/close_icon.png" alt="Retirer le filtre">
             </button>
@@ -13,6 +13,7 @@
                 <input 
                     type="date" 
                     class="date-input"
+                    [attr.data-filter]="filter"
                     [value]="getDateValue(filter)"
                     [max]="filter === 'Après le' ? getDateValue('Avant le') : null"
                     [min]="filter === 'Avant le' ? getDateValue('Après le') : null"
