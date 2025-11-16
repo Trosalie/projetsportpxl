@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { InvoiceCredit } from '../models/invoice-credit.model';
 
@@ -10,6 +10,12 @@ import { InvoiceCredit } from '../models/invoice-credit.model';
 })
 export class InvoiceHistory {
   protected invoices: any[] = [];
+  protected isFilterModalOpen: boolean = false;
+  protected selectedFilterType: string | null = null;
+  protected activeFilters: string[] = [];
+
+  private readonly statusFilters = ['Payée', 'Non payée', 'En retard'];
+  private readonly typeFilters = ['Achat de crédits', 'Versement'];
 
   constructor() {
     // Sample data for demonstration purposes
@@ -19,4 +25,65 @@ export class InvoiceHistory {
                      new InvoiceCredit('573709670176', new Date('2024-04-01'), new Date('2024-04-30'), 'Credit for April', 600, 120, 24, 456, 60, 'En retard', 'link_to_pdf_4')
     ];
   }
+
+  toggleFilterModal(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.isFilterModalOpen = !this.isFilterModalOpen;
+    if (!this.isFilterModalOpen) {
+      this.selectedFilterType = null;
+    }
+  }
+
+  openFilterType(filterType: string) {
+    this.selectedFilterType = filterType;
+  }
+
+  goBack() {
+    this.selectedFilterType = null;
+  }
+
+  addFilter(filterValue: string) {
+    if (!this.activeFilters.includes(filterValue)) {
+      this.activeFilters.push(filterValue);
+    }
+    this.isFilterModalOpen = false;
+    this.selectedFilterType = null;
+  }
+
+  removeFilter(filterValue: string) {
+    this.activeFilters = this.activeFilters.filter(f => f !== filterValue);
+  }
+
+  isFilterActive(filterValue: string): boolean {
+    return this.activeFilters.includes(filterValue);
+  }
+
+  hasAvailableStatusFilters(): boolean {
+    return this.statusFilters.some(filter => !this.activeFilters.includes(filter));
+  }
+
+  hasAvailableTypeFilters(): boolean {
+    return this.typeFilters.some(filter => !this.activeFilters.includes(filter));
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    if (this.isFilterModalOpen) {
+      this.isFilterModalOpen = false;
+      this.selectedFilterType = null;
+    }
+  }
+
+  ngOnInit() {
+    setTimeout(() => {
+      const el = document.querySelector('.invoice-list') as HTMLElement | null;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const y = rect.top + window.scrollY;
+      el.style.height = `calc(100vh - ${y}px - 10px)`;
+    }, 0);
+  }
+
 }

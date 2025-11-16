@@ -8,6 +8,16 @@
     src: url("/assets/font/futura-lt-cufonfonts/FuturaLT-Bold.ttf"); /*URL to font*/
 }
 
+@font-face {
+    font-family: 'FuturaLT-Book';
+    src: url("/assets/font/futura-lt-cufonfonts/FuturaLT-Book.ttf");
+}
+
+@font-face {
+    font-family: 'FuturaLT-LightOblique';
+    src: url("/assets/font/futura-lt-cufonfonts/FuturaLT-LightOblique.ttf");
+}
+
 * {
     font-family: "FuturaLT";
     -ms-overflow-style: none;
@@ -17,8 +27,9 @@
 
 body {
     background-color: #E8EAF6;
-    height: calc(100vh - 13px);
     margin: 0;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 nav {
