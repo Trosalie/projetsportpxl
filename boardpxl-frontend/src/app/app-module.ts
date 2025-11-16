@@ -8,6 +8,7 @@ import { Title } from './title/title';
 import { PhotographDashboard } from './photograph-dashboard/photograph-dashboard';
 import { InvoiceHistory } from './invoice-history/invoice-history';
 import { InvoiceCard } from './invoice-card/invoice-card';
+import { InvoiceFilter } from './invoice-filter/invoice-filter';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { InvoiceCard } from './invoice-card/invoice-card';
     Title,
     PhotographDashboard,
     InvoiceHistory,
-    InvoiceCard
+    InvoiceCard,
+    InvoiceFilter
   ],
   imports: [
     BrowserModule,
