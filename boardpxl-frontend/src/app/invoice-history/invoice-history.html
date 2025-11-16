@@ -10,7 +10,18 @@
                     <button class="remove-filter" (click)="removeFilter(filter)">
                         <img src="assets/close_icon.png" alt="Retirer le filtre">
                     </button>
-                    <span class="filter-tag-label">{{ filter }}</span>
+                    <span class="filter-tag-label" *ngIf="!isDateFilter(filter)">{{ filter }}</span>
+                    <ng-container *ngIf="isDateFilter(filter)">
+                        <span class="filter-tag-label">{{ filter }} :</span>
+                        <input 
+                            type="date" 
+                            class="date-input"
+                            [value]="getDateValue(filter)"
+                            [max]="filter === 'Après le' ? getDateValue('Avant le') : null"
+                            [min]="filter === 'Avant le' ? getDateValue('Après le') : null"
+                            (change)="updateDateFilter(filter, $event)"
+                            #dateInput>
+                    </ng-container>
                 </div>
             </div>
 
@@ -94,12 +105,18 @@
                 <div *ngIf="selectedFilterType === 'period'">
                     <button class="back-button" (click)="goBack()">← Retour</button>
                     <h3 class="modal-title">Période</h3>
-                    <button class="filter-option">
-                        <span class="option-text">Date de début</span>
+                    <button class="filter-option"
+                            [class.disabled]="isFilterActive('Après le')"
+                            [disabled]="isFilterActive('Après le')"
+                            (click)="addDateFilter('Après le')">
+                        <span class="option-text">Date de début : <span class="option-values">Après le</span></span>                        
                         <span class="plus-sign">+</span>
                     </button>
-                    <button class="filter-option">
-                        <span class="option-text">Date de fin</span>
+                    <button class="filter-option"
+                            [class.disabled]="isFilterActive('Avant le')"
+                            [disabled]="isFilterActive('Avant le')"
+                            (click)="addDateFilter('Avant le')">
+                        <span class="option-text">Date de fin : <span class="option-values">Avant le</span></span>                        
                         <span class="plus-sign">+</span>
                     </button>
                 </div>
