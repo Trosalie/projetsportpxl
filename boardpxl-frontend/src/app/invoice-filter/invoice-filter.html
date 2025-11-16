@@ -23,7 +23,10 @@
         </div>
     </div>
 
-    <button class="filter-button" (click)="toggleFilterModal($event)">
+    <button class="filter-button" 
+            [class.disabled]="!hasAvailableFilters()"
+            [disabled]="!hasAvailableFilters()"
+            (click)="toggleFilterModal($event)">
         <img src="assets/add_icon.png" alt="Ajouter un filtre">
     </button>
     
@@ -46,7 +49,10 @@
                 <span class="option-text">Type : <span class="option-values">Achat de crédits, Versement</span></span>
                 <span class="plus-sign">+</span>
             </button>
-            <button class="filter-option" (click)="openFilterType('period')">
+            <button class="filter-option" 
+                    [class.disabled]="!hasAvailablePeriodFilters()"
+                    [disabled]="!hasAvailablePeriodFilters()"
+                    (click)="openFilterType('period')">
                 <span class="option-text">Période : <span class="option-values">Après le, Avant le</span></span>
                 <span class="plus-sign">+</span>
             </button>

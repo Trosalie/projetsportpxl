@@ -118,6 +118,16 @@ export class InvoiceFilter {
     return this.typeFilters.some(filter => !this.activeFilters.includes(filter));
   }
 
+  hasAvailablePeriodFilters(): boolean {
+    return this.periodFilters.some(filter => !this.activeFilters.includes(filter));
+  }
+
+  hasAvailableFilters(): boolean {
+    return this.hasAvailableStatusFilters() || 
+           this.hasAvailableTypeFilters() || 
+           this.hasAvailablePeriodFilters();
+  }
+
   getSortedFilters(): string[] {
     // Define the order: Status filters first, then Type filters, then Period filters
     const orderedFilters = [
