@@ -1,4 +1,4 @@
-import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { DEFAULT_CURRENCY_CODE, NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -10,6 +10,12 @@ import { PhotographDashboard } from './photograph-dashboard/photograph-dashboard
 import { InvoiceHistory } from './invoice-history/invoice-history';
 import { InvoiceCard } from './invoice-card/invoice-card';
 import { InvoiceFilter } from './invoice-filter/invoice-filter';
+
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+
+import localeFr from '@angular/common/locales/fr';
+registerLocaleData(localeFr);
 
 @NgModule({
   declarations: [
@@ -27,7 +33,9 @@ import { InvoiceFilter } from './invoice-filter/invoice-filter';
     AppRoutingModule
   ],
   providers: [
-    provideBrowserGlobalErrorListeners()
+    provideBrowserGlobalErrorListeners(),
+    { provide: LOCALE_ID, useValue: 'fr-FR' },
+    { provide: DEFAULT_CURRENCY_CODE, useValue: 'EUR' }
   ],
   bootstrap: [App]
 })
