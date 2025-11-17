@@ -19,14 +19,3 @@ Route::get('/', function () {
 });
 
 
-
-Route::get('/test-pennylane', function (PennylaneService $service) {
-    $invoices = $service->getInvoices();
-    return response()->json($invoices);
-});
-
-Route::get('/invoices-client/{idClient}', function ($idClient, PennylaneService $service) {
-    $invoices = $service->getFacturesParIdClient($idClient);
-    return response()->json($invoices);
-});
-

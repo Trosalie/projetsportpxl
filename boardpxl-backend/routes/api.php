@@ -3,6 +3,7 @@
 use App\Services\PennylaneService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InvoiceController;
 
 // Création d'une facture pour un client
 Route::post('/pennylane/creation-facture', function (Request $request, PennylaneService $service) {
@@ -86,3 +87,6 @@ Route::get('/invoices-client/{idClient}', function ($idClient, PennylaneService 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Route téléchargement facture
+Route::post('/download-invoice', [InvoiceController::class, 'download']);

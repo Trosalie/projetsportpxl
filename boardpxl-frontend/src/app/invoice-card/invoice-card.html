@@ -24,8 +24,12 @@
         <div class="actions">
             <p class="payée status" *ngIf="invoiceType === 'Payment'">Payée</p>
             <p *ngIf="invoiceType === 'Credit'" class="{{ (invoiceCredit.status | lowercase).split(' ').join('-') }} status">{{ invoiceCredit.status }}</p>
-            <button class="open"><span class="material-symbols-outlined">open_in_new</span></button>
-            <button class="download"><span class="material-symbols-outlined">download</span></button>
+            <button class="open" (click)="openInvoice(invoice.link_pdf)">
+                <span class="material-symbols-outlined">open_in_new</span>
+            </button>
+            <button class="download" (click)="downloadInvoice(invoice.link_pdf)">
+                <span class="material-symbols-outlined">download</span>
+            </button>
         </div>
         <p>
             Echéance {{ invoice.dueDate | date: 'mediumDate' }}
