@@ -4,6 +4,7 @@ use App\Services\PennylaneService;
 use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InvoiceController;
 use Illuminate\Support\Facades\Mail;
 
 // Création d'une facture pour un client
@@ -138,3 +139,6 @@ Route::get('/invoice-product/{invoiceNumber}', function ($invoiceNumber, Pennyla
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Route téléchargement facture
+Route::post('/download-invoice', [InvoiceController::class, 'download']);
