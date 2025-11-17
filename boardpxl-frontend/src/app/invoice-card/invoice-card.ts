@@ -31,7 +31,7 @@ export class InvoiceCard {
     window.open(link_pdf);
   }
 
-  downloadInvoice(fileUrl: string) {
+  downloadInvoice(fileUrl: string, fileName: string) {
     const formData = new FormData();
     formData.append('file_url', fileUrl);
     //appel à l'API pour télécharger le fichier
@@ -40,7 +40,7 @@ export class InvoiceCard {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'facture.pdf';
+        a.download = fileName;
         a.click();
         window.URL.revokeObjectURL(url);
       }, error => {

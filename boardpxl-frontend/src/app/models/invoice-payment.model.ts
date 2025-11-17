@@ -11,8 +11,9 @@ export class InvoicePayment {
     start_period!: Date;
     end_period!: Date;
     link_pdf!: string;
+    name_pdf: any;
 
-    constructor(number: string, issueDate: Date, dueDate: Date, description: string, turnover: number, raw_value: number, commission: number, tax: number, vat: number, start_period: Date, end_period: Date, link_pdf: string) {
+    constructor(number: string, issueDate: Date, dueDate: Date, description: string, turnover: number, raw_value: number, commission: number, tax: number, vat: number, start_period: Date, end_period: Date, link_pdf: string, name_pdf: any) {
         this.number = number;
         this.issueDate = issueDate;
         this.dueDate = dueDate;
@@ -25,5 +26,6 @@ export class InvoicePayment {
         this.start_period = start_period;
         this.end_period = end_period;
         this.link_pdf = link_pdf;
+        this.name_pdf = name_pdf;
     }
 }
