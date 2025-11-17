@@ -1,5 +1,8 @@
 <div class="container">
-    <p>Historique des factures</p>
+    <div class="header">
+        <p>Historique des factures</p>
+        <app-invoice-filter></app-invoice-filter>
+    </div>
     <div class="invoice-list">
         <div class="invoice-item" *ngFor="let invoice of invoices">
             <app-invoice-card [invoice]="invoice"></app-invoice-card>

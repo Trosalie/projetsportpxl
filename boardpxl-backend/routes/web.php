@@ -17,5 +17,3 @@ use App\Services\PennylaneService;
 Route::get('/', function () {
     return view('welcome');
 });
-
-

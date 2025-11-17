@@ -1,4 +1,4 @@
-<div class="card">
+<div *ngIf="invoiceType !== ''" class="card">
     <div>
         <p>Emission {{ invoice.issueDate | date: 'mediumDate' }}</p>
         <p style="font-size: larger;">{{ invoice.number }}</p>
@@ -27,7 +27,7 @@
             <button class="open" (click)="openInvoice(invoice.link_pdf)">
                 <span class="material-symbols-outlined">open_in_new</span>
             </button>
-            <button class="download" (click)="downloadInvoice(invoice.link_pdf, invoice.name_pdf)">
+            <button class="download" (click)="downloadInvoice(invoice.link_pdf, invoice.pdf_invoice_subject)">
                 <span class="material-symbols-outlined">download</span>
             </button>
         </div>

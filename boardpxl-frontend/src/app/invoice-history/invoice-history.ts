@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { InvoiceCredit } from '../models/invoice-credit.model';
+import { InvoiceService } from '../services/invoice-service';
 
 @Component({
   selector: 'app-invoice-history',
@@ -10,24 +11,55 @@ import { InvoiceCredit } from '../models/invoice-credit.model';
 })
 export class InvoiceHistory {
   protected invoices: any[] = [];
+  @Input() user!: string;
 
-  constructor() {
-    // Sample data for demonstration purposes
-    this.invoices = [new InvoicePayment('573709670175', new Date('2024-01-01'), new Date('2024-01-31'), 'Payment for January', 1000, 900, 100, 200, 50, new Date('2024-01-01'), new Date('2024-01-31'), 'https://app.pennylane.com/public/invoice/pdf?encrypted_id=OGn5%2BvHgRGJi8vFn9swjRkVqkv%2F01zUtoWwpPq9wlpd3mWTFAVAM%2BcNskdcfbz1xpceas1tY6F98Iw1KnP%2FMhxFHskubJbabYUi4mfNBBZJskGpgsa8oO0Wh--7zMhh7jU24U2mVug--IyLUwzDtiF9Dyisw9HLhdw%3D%3D', "facture1.pdf"),
-                     new InvoicePayment('9Z-6465465432', new Date('2024-02-01'), new Date('2024-02-28'), 'Payment for February', 1200, 1100, 100, 240, 60, new Date('2024-02-01'), new Date('2024-02-28'), 'https://app.pennylane.com/public/invoice/pdf?encrypted_id=xyTY1AgKYlFAHtzu%2FdgvdncTnymcX1cYSAjbpiJ9lkQLa49GGhRVX7ZGw9jChRO2AF%2FTp%2BK8gzvzVxNOJ0JDZ1rMdds%2BTjKpMhRy8xbz5pzKBrjWY%2B2RCQcW--n7%2BO4ecj%2BBZfKf1%2B--wQqAoBul9QaFxiLRCt2aqA%3D%3D', "facture2.pdf"),
-                     new InvoiceCredit('646213265445', new Date('2024-03-01'), new Date('2024-03-31'), 'Credit for March', 500, 100, 20, 420, 50, 'Non payée', 'https://app.pennylane.com/public/invoice/pdf?encrypted_id=xyTY1AgKYlFAHtzu%2FdgvdncTnymcX1cYSAjbpiJ9lkQLa49GGhRVX7ZGw9jChRO2AF%2FTp%2BK8gzvzVxNOJ0JDZ1rMdds%2BTjKpMhRy8xbz5pzKBrjWY%2B2RCQcW--n7%2BO4ecj%2BBZfKf1%2B--wQqAoBul9QaFxiLRCt2aqA%3D%3D', "facture3.pdf"),
-                     new InvoiceCredit('573709670176', new Date('2024-04-01'), new Date('2024-04-30'), 'Credit for April', 600, 120, 24, 456, 60, 'En retard', 'https://app.pennylane.com/public/invoice/pdf?encrypted_id=xyTY1AgKYlFAHtzu%2FdgvdncTnymcX1cYSAjbpiJ9lkQLa49GGhRVX7ZGw9jChRO2AF%2FTp%2BK8gzvzVxNOJ0JDZ1rMdds%2BTjKpMhRy8xbz5pzKBrjWY%2B2RCQcW--n7%2BO4ecj%2BBZfKf1%2B--wQqAoBul9QaFxiLRCt2aqA%3D%3D', "facture4.pdf")
-    ];
+  constructor(private invoiceService: InvoiceService) {
   }
 
   ngOnInit() {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       const el = document.querySelector('.invoice-list') as HTMLElement | null;
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const y = rect.top + window.scrollY;
       el.style.height = `calc(100vh - ${y}px - 10px)`;
-    }, 0);
+    });
+
+    this.invoiceService.getInvoicesByClient(this.user).subscribe(invoices => {
+      this.invoices = invoices;
+      for (let invoice of this.invoices) {
+        switch (invoice.status.toLowerCase()) {
+          case 'paid':
+            invoice.status = 'Payée';
+            break;
+          case 'upcoming':
+            invoice.status = 'Non payée';
+            break;
+          case 'overdue':
+            invoice.status = 'En retard';
+            break;
+        }
+
+        this.invoiceService.getProductFromInvoice(invoice).subscribe(product => {
+          // service may return a string or an object like { product: string }
+          const productValue = typeof product === 'string' ? product : (product as any)?.product;
+          if (productValue && productValue.toLowerCase().includes('crédits')) {
+            let creditAmount = parseFloat(
+              productValue
+              .replace(/crédits/i, '')
+              .replace(/\s+/g, '')
+              .replace(',', '.')
+              .replace(/[^\d.-]/g, '')
+            );
+
+            this.invoices.push(new InvoiceCredit(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.tax, invoice.tax, invoice.remaining_amount_with_tax, creditAmount, invoice.status, invoice.public_file_url, invoice.pdf_invoice_subject));
+          }
+          else {
+            this.invoices.push(new InvoicePayment(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.amount, invoice.amount, invoice.tax, invoice.tax, new Date(), new Date(), invoice.public_file_url, invoice.pdf_invoice_subject));
+          }
+        });
+      }
+    });
   }
 
 }

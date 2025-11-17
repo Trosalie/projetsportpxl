@@ -18,12 +18,21 @@ export class InvoiceCard {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
+    if (!this.invoice) {
+      // No invoice provided — don't build/initialize the component
+      this.invoiceType = '';
+      return;
+    }
+
     if (this.invoice instanceof InvoicePayment) {
       this.invoicePayment = this.invoice;
       this.invoiceType = 'Payment';
     } else if (this.invoice instanceof InvoiceCredit) {
       this.invoiceCredit = this.invoice;
       this.invoiceType = 'Credit';
+    } else {
+      // Unknown invoice type — treat as empty
+      this.invoiceType = '';
     }
   }
 
@@ -31,7 +40,7 @@ export class InvoiceCard {
     window.open(link_pdf);
   }
 
-  downloadInvoice(fileUrl: string, fileName: string) {
+  downloadInvoice(fileUrl: string, pdf_invoice_subject: string) {
     const formData = new FormData();
     formData.append('file_url', fileUrl);
     //appel à l'API pour télécharger le fichier
@@ -40,7 +49,7 @@ export class InvoiceCard {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = fileName;
+        a.download = pdf_invoice_subject;
         a.click();
         window.URL.revokeObjectURL(url);
       }, error => {
