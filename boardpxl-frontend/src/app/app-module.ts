@@ -1,5 +1,6 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
@@ -10,6 +11,9 @@ import { InvoiceHistory } from './invoice-history/invoice-history';
 import { InvoiceCard } from './invoice-card/invoice-card';
 import { InvoiceFilter } from './invoice-filter/invoice-filter';
 import { HttpClientModule } from '@angular/common/http';
+import { PhotographRequest } from './photograph-request/photograph-request';
+import { AutomaticResponse } from './automatic-response/automatic-response';
+import { MailRequestPage } from './mail-request-page/mail-request-page';
 
 @NgModule({
   declarations: [
@@ -19,7 +23,10 @@ import { HttpClientModule } from '@angular/common/http';
     PhotographDashboard,
     InvoiceHistory,
     InvoiceCard,
-    InvoiceFilter
+    InvoiceFilter,
+    PhotographRequest,
+    AutomaticResponse,
+    MailRequestPage
   ],
   imports: [
     BrowserModule,
