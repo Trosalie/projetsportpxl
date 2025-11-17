@@ -10,6 +10,9 @@ import { PhotographDashboard } from './photograph-dashboard/photograph-dashboard
 import { InvoiceHistory } from './invoice-history/invoice-history';
 import { InvoiceCard } from './invoice-card/invoice-card';
 import { InvoiceFilter } from './invoice-filter/invoice-filter';
+import { PhotographRequest } from './photograph-request/photograph-request';
+import { AutomaticResponse } from './automatic-response/automatic-response';
+import { MailRequestPage } from './mail-request-page/mail-request-page';
 
 @NgModule({
   declarations: [
@@ -19,7 +22,10 @@ import { InvoiceFilter } from './invoice-filter/invoice-filter';
     PhotographDashboard,
     InvoiceHistory,
     InvoiceCard,
-    InvoiceFilter
+    InvoiceFilter,
+    PhotographRequest,
+    AutomaticResponse,
+    MailRequestPage
   ],
   imports: [
     BrowserModule,
