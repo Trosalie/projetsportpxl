@@ -6,6 +6,12 @@
     padding-top: 1px;
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .invoice-list {
     overflow-y: auto;
     margin-bottom: 13px;
