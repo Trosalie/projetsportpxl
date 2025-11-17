@@ -35,7 +35,7 @@ class Photographer extends User
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'encrypted'
+        'password' => 'hashed'
     ];
 
     public function invoicesCredit()

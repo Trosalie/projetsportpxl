@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\VerifiesEmails;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VerificationController extends Controller
 {
@@ -19,24 +20,57 @@ class VerificationController extends Controller
     |
     */
 
-    use VerifiesEmails;
-
     /**
-     * Where to redirect users after verification.
-     *
-     * @var string
-     */
-    protected $redirectTo = RouteServiceProvider::HOME;
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * Créer une nouvelle instance de VerificationController.
      */
     public function __construct()
     {
-        $this->middleware('auth');
-        $this->middleware('signed')->only('verify');
-        $this->middleware('throttle:6,1')->only('verify', 'resend');
+        $this->middleware('auth:sanctum'); // Utilisation de l'authentification sanctum
+    }
+
+    /**
+     * Vérifier l'email de l'utilisateur via l'API.
+     *
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     */
+    public function verify(Request $request, $id)
+    {
+        // Vérification de l'email
+        $user = \App\Models\User::findOrFail($id);
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'L\'email est déjà vérifié.']);
+        }
+
+        // Vérifier le token de l'utilisateur
+        if ($request->hasValidSignature()) {
+            $user->markEmailAsVerified();
+            return response()->json(['message' => 'Email vérifié avec succès.']);
+        }
+
+        return response()->json(['message' => 'Lien de vérification invalide.'], 400);
+    }
+
+    /**
+     * Renvoi du lien de vérification par email.
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
+    public function resend(Request $request)
+    {
+        $user = Auth::user();
+
+        // Vérifier si l'utilisateur a déjà vérifié son email
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'L\'email est déjà vérifié.']);
+        }
+
+        // Si l'utilisateur n'a pas vérifié son email, renvoyer l'email
+        $user->sendEmailVerificationNotification();
+
+        return response()->json(['message' => 'Email de vérification renvoyé avec succès.']);
     }
 }

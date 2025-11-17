@@ -15,19 +15,11 @@ class CreateInvoicePaymentsTable extends Migration
     {
         Schema::create('invoice_payments', function (Blueprint $table) {
             $table->id();
-            $table->string('number')->unique();
-            $table->date('issue_date');
-            $table->date('due_date');
-            $table->string('description');
             $table->decimal('turnover', 10, 2);
             $table->decimal('raw_value', 9, 2);
             $table->decimal('commission', 9, 2);
-            $table->decimal('tax', 5, 2);
-            $table->decimal('vat', 9, 2);
             $table->date('start_period');
             $table->date('end_period');
-            $table->string('link_pdf');
-            $table->foreignId('photographer_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

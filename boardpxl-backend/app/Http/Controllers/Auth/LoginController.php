@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
+
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -19,22 +22,46 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers;
-
     /**
-     * Where to redirect users after login.
+     * Crée un nouvel utilisateur après la connexion via l'API.
      *
-     * @var string
+     * @param Request $request
+     * @return JsonResponse
+     * @throws ValidationException
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function login(Request $request): JsonResponse
     {
-        $this->middleware('guest')->except('logout');
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:8',
+        ]);
+
+        if (Auth::attempt($validated)) {
+            $photographer = Auth::user();
+
+            $token = $photographer->createToken('API Token')->plainTextToken;
+
+            return response()->json([
+                'photographer' => $photographer,
+                'token' => $token,
+            ]);
+        }
+
+        throw ValidationException::withMessages([
+            'email' => ['Les informations d\'identification sont invalides.'],
+        ]);
+    }
+
+    /**
+     * Déconnecter l'utilisateur (effacer le token).
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Déconnexion réussie']);
     }
 }
