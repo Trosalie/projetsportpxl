@@ -14,10 +14,10 @@ export class InvoiceService {
   }
 
   getInvoicesByClient(clientId: string): Observable<Invoice[]> {
-    return this.http.get<Invoice[]>(`${environment.apiUrl}/invoices-client/${clientId}`);
+    return this.http.get<Invoice[]>(`${environment.apiUrl}/pennylane/invoices-client/${clientId}`);
   }
 
   getProductFromInvoice(invoice: Invoice): Observable<string> {
-    return this.http.get<string>(`${environment.apiUrl}/invoice-product/${invoice.invoice_number}`);
+    return this.http.get<string>(`${environment.apiUrl}/pennylane/invoice-product/${invoice.invoice_number}`);
   }
 }
