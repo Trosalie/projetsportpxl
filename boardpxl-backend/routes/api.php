@@ -117,6 +117,7 @@ Route::get('/test-mail', function () {
         return json_encode(['message' => 'Échec de l\'envoi du mail.']);
     }
     return json_encode(['message' => 'Mail envoyé (si tout va bien) !']);
+}
 // Récupérer le produit d'une facture par son numéro
 Route::get('/invoice-product/{invoiceNumber}', function ($invoiceNumber, PennylaneService $service) {
     $product = $service->getProductFromInvoice($invoiceNumber);
