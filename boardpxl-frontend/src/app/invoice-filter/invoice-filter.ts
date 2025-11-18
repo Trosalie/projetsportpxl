@@ -1,4 +1,13 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, EventEmitter, Output } from '@angular/core';
+
+export interface FilterOptions {
+  statusFilters: string[];
+  typeFilters: string[];
+  periodFilters: {
+    startDate: string;
+    endDate: string;
+  };
+}
 
 @Component({
   selector: 'app-invoice-filter',
@@ -7,6 +16,8 @@ import { Component, HostListener } from '@angular/core';
   styleUrl: './invoice-filter.scss',
 })
 export class InvoiceFilter {
+  @Output() filtersChanged = new EventEmitter<FilterOptions>();
+
   protected isFilterModalOpen: boolean = false;
   protected selectedFilterType: string | null = null;
   protected activeFilters: string[] = [];
@@ -40,6 +51,8 @@ export class InvoiceFilter {
     }
     this.isFilterModalOpen = false;
     this.selectedFilterType = null;
+
+    this.emitFilterChange();
   }
 
   removeFilter(filterValue: string) {
@@ -47,6 +60,8 @@ export class InvoiceFilter {
     if (this.isDateFilter(filterValue)) {
       this.dateFilters.delete(filterValue);
     }
+
+    this.emitFilterChange();
   }
 
   isDateFilter(filterValue: string): boolean {
@@ -92,6 +107,8 @@ export class InvoiceFilter {
       // Show error message
       alert('La date "Après le" doit être antérieure à la date "Avant le".');
     }
+
+    this.emitFilterChange();
   }
 
   private isDateRangeValid(filterValue: string, newValue: string): boolean {
@@ -142,6 +159,19 @@ export class InvoiceFilter {
       const indexB = orderedFilters.indexOf(b);
       return indexA - indexB;
     });
+  }
+
+  private emitFilterChange(): void {
+    const filterOptions: FilterOptions = {
+      statusFilters: this.activeFilters.filter(f => this.statusFilters.includes(f)),
+      typeFilters: this.activeFilters.filter(f => this.typeFilters.includes(f)),
+      periodFilters: {
+        startDate: this.dateFilters.get('Après le') || '',
+        endDate: this.dateFilters.get('Avant le') || ''
+      },
+    };
+
+    this.filtersChanged.emit(filterOptions);
   }
 
   @HostListener('document:click', ['$event'])
