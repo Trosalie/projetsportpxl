@@ -9,25 +9,25 @@ use App\Http\Controllers\MailController;
 use Illuminate\Support\Facades\Mail;
 
 
-Route::prefix('pennylane')->group(function () {
-    // Création d'une facture
-    Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
 
-    // Tester récupération globale
-    Route::get('/test', [PennylaneController::class, 'getInvoices']);
+// Création d'une facture
+Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
 
-    // Récupérer l'ID d’un client
-    Route::get('/client-id', [PennylaneController::class, 'getClientId']);
+// Tester récupération globale
+Route::get('/test', [PennylaneController::class, 'getInvoices']);
 
-    // Récupérer toutes les factures d’un client
-    Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);
+// Récupérer l'ID d’un client
+Route::get('/client-id', [PennylaneController::class, 'getClientId']);
 
-    // Récupérer un produit d’une facture
-    Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
+// Récupérer toutes les factures d’un client
+Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);
 
-    // Téléchargement contournement CORS
-    Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
-});
+// Récupérer un produit d’une facture
+Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
+
+// Téléchargement contournement CORS
+Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
+
 
 // Envoi de mail
 Route::post('/send-email', [MailController::class, 'sendEmail']);

@@ -44,7 +44,7 @@ export class InvoiceCard {
     const formData = new FormData();
     formData.append('file_url', fileUrl);
     //appel à l'API pour télécharger le fichier
-    this.http.post('http://localhost:9000/api/pennylane/download-invoice', formData, { responseType: 'blob' })
+    this.http.post('http://localhost:9000/api/download-invoice', formData, { responseType: 'blob' })
       .subscribe(blob => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
