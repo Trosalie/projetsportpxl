@@ -18,6 +18,7 @@ import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 
 import localeFr from '@angular/common/locales/fr';
+import { PhotographsList } from './photographs-list/photographs-list';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -31,7 +32,8 @@ registerLocaleData(localeFr);
     InvoiceFilter,
     PhotographRequest,
     AutomaticResponse,
-    MailRequestPage
+    MailRequestPage,
+    PhotographsList
   ],
   imports: [
     BrowserModule,

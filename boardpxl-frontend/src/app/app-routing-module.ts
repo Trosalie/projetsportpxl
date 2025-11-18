@@ -6,9 +6,11 @@ import { MailRequestPage } from './mail-request-page/mail-request-page';
 import { AutomaticResponse } from './automatic-response/automatic-response';
 import { photographGuard } from './guards/photograph.guard';
 import { adminGuard } from './guards/admin.guard';
+import { PhotographsList } from './photographs-list/photographs-list';
 
 const routes: Routes = [
   { path: '', component: PhotographDashboard, pathMatch: 'full', canMatch: [photographGuard] },
+  { path: '', component: PhotographsList, pathMatch: 'full', canMatch: [adminGuard] },
   { path: 'request/payout', component: MailRequestPage, canActivate: [photographGuard] },
   { path: 'request/credits', component: MailRequestPage, canMatch: [photographGuard]},
   { path: 'request/success', component: AutomaticResponse, canMatch: [photographGuard]},
