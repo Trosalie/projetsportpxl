@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { InvoiceCredit } from '../models/invoice-credit.model';
 import { InvoiceService } from '../services/invoice-service';
+import { FilterOptions } from '../invoice-filter/invoice-filter';
 
 @Component({
   selector: 'app-invoice-history',
@@ -11,6 +12,7 @@ import { InvoiceService } from '../services/invoice-service';
 })
 export class InvoiceHistory {
   protected invoices: any[] = [];
+  protected filteredInvoices: any[] = [];
   @Input() user!: string;
 
   constructor(private invoiceService: InvoiceService) {
@@ -28,6 +30,7 @@ export class InvoiceHistory {
     this.invoiceService.getInvoicesByClient(this.user).subscribe(invoices => {
       this.invoices = invoices;
       for (let invoice of this.invoices) {
+        let x = 0;
         switch (invoice.status.toLowerCase()) {
           case 'paid':
             invoice.status = 'Payée';
@@ -58,8 +61,73 @@ export class InvoiceHistory {
             this.invoices.push(new InvoicePayment(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.amount, invoice.amount, invoice.tax, invoice.tax, new Date(), new Date(), invoice.public_file_url, invoice.pdf_invoice_subject));
           }
         });
+        this.invoices = this.invoices.filter(invoice => invoice instanceof InvoiceCredit || invoice instanceof InvoicePayment );
+        this.filteredInvoices = this.invoices;
       }
     });
   }
 
+  onFilterChanged(filters: FilterOptions): void {
+    for (let invoice of this.invoices) {
+      console.log(invoice);
+    }
+
+    this.filteredInvoices = this.invoices.filter(invoice => {
+      const isCredit = invoice instanceof InvoiceCredit;
+      const isPayment = invoice instanceof InvoicePayment;
+
+      // Filter by status
+      if (filters.statusFilters.length > 0) {
+        if (filters.statusFilters.includes('Payée') && isPayment) {
+          return true;
+        }
+
+        if (!filters.statusFilters.includes(invoice.status)) {
+          console.log(invoice.status)
+          return false;
+        }
+      }
+
+      // Filter by type
+      if (filters.typeFilters.length > 0) {     
+        if (filters.typeFilters.includes('Versement') && filters.typeFilters.includes('Achat de crédits')) {
+          return true;
+        }
+        if (filters.typeFilters.includes('Achat de crédits') && !isCredit) {
+          return false;
+        }
+        if (filters.typeFilters.includes('Versement') && !isPayment) {
+          return false;
+        }
+        if (!filters.typeFilters.includes('Achat de crédits') && isCredit) {
+          return false;
+        }
+        if (!filters.typeFilters.includes('Versement') && isPayment) {
+          return false;
+        }
+      }
+
+      // Filter by date range
+      if (filters.periodFilters.startDate) {
+        const startDate = new Date(filters.periodFilters.startDate);
+        console.log(startDate);
+        const invoiceDate = new Date(invoice.issueDate);
+        if (invoiceDate < startDate) {
+          return false;
+        }
+      }
+
+      if (filters.periodFilters.endDate) {
+        const endDate = new Date(filters.periodFilters.endDate);
+        console.log(endDate);
+        const invoiceDate = new Date(invoice.issueDate);
+        console.log(invoice.issueDate);
+        if (invoiceDate > endDate) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }
 }
