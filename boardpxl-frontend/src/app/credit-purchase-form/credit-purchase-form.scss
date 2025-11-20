@@ -1,0 +1,61 @@
+.credit-purchase-form {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 32px 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  font-family: 'Segoe UI', Arial, sans-serif;
+
+  h2 {
+    text-align: center;
+    color: #2d3a4b;
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      margin-bottom: 6px;
+      color: #4a5a6a;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    input, select {
+      padding: 10px 12px;
+      border: 1px solid #eeeeee;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: #eeeeee;
+      transition: border-color 0.2s;
+      outline: none;
+      &:focus {
+        border-color: #4f8cff;
+        background: #fff;
+      }
+    }
+  }
+
+  button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #4f8cff 0%, #38c6fa 100%);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(79,140,255,0.08);
+    transition: background 0.2s;
+    margin-top: 10px;
+    &:hover {
+      background: linear-gradient(90deg, #38c6fa 0%, #4f8cff 100%);
+    }
+  }
+}
