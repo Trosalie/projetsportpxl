@@ -4,5 +4,5 @@ import { RoleService } from '../services/role.service';
 
 export const photographGuard: CanMatchFn = () => {
   const roleService = inject(RoleService);
-  return roleService.getRole() === 'photograph';
+  return roleService.getRole() === 'photographer';
 };
