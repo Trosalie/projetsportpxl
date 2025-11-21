@@ -1,22 +1,37 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Photographer } from '../models/photographer.model';
-import { environment } from '../../environments/environment.development';
+
+interface LoginResponse {
+  photographer: any;
+  token: string;
+}
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(private http: HttpClient) {
+  private apiUrl = `${environment.apiUrl}`;
+
+  constructor(private http: HttpClient) {}
+
+  login(email: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, {
+      email,
+      password
+    });
   }
 
-  login(clientId: string): Observable<Photographer[]> {
-    return this.http.get<Photographer[]>(`${environment.apiUrl}/login`);
+  saveToken(token: string) {
+    localStorage.setItem('api_token', token);
   }
 
-  logout(clientId: string): Observable<Photographer[]> {
-    return this.http.get<Photographer[]>(`${environment.apiUrl}/logout`);
+  getToken(): string | null {
+    return localStorage.getItem('api_token');
+  }
+
+  logout() {
+    localStorage.removeItem('api_token');
   }
 }

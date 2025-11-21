@@ -1,0 +1,56 @@
+.card
+{
+  background-color: #fff;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 13px 16px 0px 16px;
+}
+
+form
+{
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+
+.test
+{
+  display: flex;
+  flex-direction: column;
+}
+
+.sky-blue
+{
+  background-color: #90cbe5;
+}
+
+.btn_login
+{
+  background-color: #f98524;
+  border-radius: 10px;
+  color: #fff;
+}
+
+input
+{
+  background-color: #ddd;
+  border-radius: 10px;
+}
+
+h1
+{
+  color: #f98524;
+}
+
+label
+{
+  color: #999;
+}
