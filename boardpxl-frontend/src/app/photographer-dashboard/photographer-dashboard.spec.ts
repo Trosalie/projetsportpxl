@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PhotographDashboard } from './photograph-dashboard';
+import { PhotographerDashboard } from './photographer-dashboard';
 
-describe('PhotographDashboard', () => {
-  let component: PhotographDashboard;
-  let fixture: ComponentFixture<PhotographDashboard>;
+describe('PhotographerDashboard', () => {
+  let component: PhotographerDashboard;
+  let fixture: ComponentFixture<PhotographerDashboard>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PhotographDashboard]
+      declarations: [PhotographerDashboard]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PhotographDashboard);
+    fixture = TestBed.createComponent(PhotographerDashboard);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-photographs-list',
+  selector: 'app-photographers-list',
   standalone: false,
-  templateUrl: './photographs-list.html',
-  styleUrl: './photographs-list.scss',
+  templateUrl: './photographers-list.html',
+  styleUrls: ['./photographers-list.scss'],
 })
-export class PhotographsList {
+export class PhotographersList {
 
 }

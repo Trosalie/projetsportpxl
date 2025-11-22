@@ -35,6 +35,9 @@ Route::post('/send-email', [MailController::class, 'sendEmail']);
 // Test d’envoi mail simple
 Route::get('/test-mail', [MailController::class, 'testMail']);
 
+// Récupérer tous les clients
+Route::get('/photographers', [PennylaneController::class, 'getPhotographers']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

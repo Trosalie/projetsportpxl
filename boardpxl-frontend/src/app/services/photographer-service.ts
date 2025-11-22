@@ -7,12 +7,12 @@ import { Photographer } from '../models/photographer.model';
 @Injectable({
   providedIn: 'root',
 })
-export class PhotographService {
+export class PhotographerService {
   constructor(private http: HttpClient) {
   }
 
-  getPhotographs(): Observable<Photographer> {
-    return this.http.get<Photographer>(`${environment.apiUrl}/photographs`);
+  getPhotographers(): Observable<Photographer> {
+    return this.http.get<Photographer>(`${environment.apiUrl}/photographers`);
   }
   
 }

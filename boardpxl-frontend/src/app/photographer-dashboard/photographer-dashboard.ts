@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-photograph-dashboard',
+  selector: 'app-photographer-dashboard',
   standalone: false,
-  templateUrl: './photograph-dashboard.html',
-  styleUrl: './photograph-dashboard.scss',
+  templateUrl: './photographer-dashboard.html',
+  styleUrl: './photographer-dashboard.scss',
 })
-export class PhotographDashboard {
+export class PhotographerDashboard {
   protected remainingCredits = 50;
 }
