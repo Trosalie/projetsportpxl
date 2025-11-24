@@ -1,6 +1,15 @@
 <nav>
    <img src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" alt="App Logo" class="logo">
-   <a routerLink="/login-page/">
-     <p>{{userName}}</p>
-   </a>
+  @if (userRole === 'nothing')
+  {
+    <a routerLink="/login-page/">
+      <p>Login</p>
+    </a>
+  }
+  @else
+  {
+    <a>
+      <p>{{userName}}</p>
+    </a>
+  }
 </nav>
