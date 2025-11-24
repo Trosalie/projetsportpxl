@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "c:/Users/thiba/OneDrive - IUT de Bayonne/Documents/iutbay/Cours IUT Informatique/BUT 3/SAE BUT 3 INFO/Developpement/projetsportpxl/boardpxl-frontend/src/app/invoice-history",
+      "program": "c:/Users/thiba/OneDrive - IUT de Bayonne/Documents/iutbay/Cours IUT Informatique/BUT 3/SAE BUT 3 INFO/Developpement/projetsportpxl/boardpxl-frontend/src/app/invoice-history/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}

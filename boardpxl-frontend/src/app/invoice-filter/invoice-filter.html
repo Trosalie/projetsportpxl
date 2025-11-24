@@ -1,128 +1,78 @@
 <div class="filter-section">
-    <span class="filter-label">Filtres</span>
-    
-    <!-- Active filters display -->
-    <div class="active-filters" *ngIf="activeFilters.length > 0">
-        <div class="filter-tag" *ngFor="let filter of getSortedFilters()">
-            <button class="remove-filter" (click)="removeFilter(filter)">
-                <img src="assets/close_icon.png" alt="Retirer le filtre">
-            </button>
-            <span class="filter-tag-label" *ngIf="!isDateFilter(filter)">{{ filter }}</span>
-            <ng-container *ngIf="isDateFilter(filter)">
-                <span class="filter-tag-label">{{ filter }} :</span>
-                <input 
-                    type="date" 
-                    class="date-input"
-                    [attr.data-filter]="filter"
-                    [value]="getDateValue(filter)"
-                    [max]="filter === 'Après le' ? getDateValue('Avant le') : null"
-                    [min]="filter === 'Avant le' ? getDateValue('Après le') : null"
-                    (change)="updateDateFilter(filter, $event)"
-                    #dateInput>
-            </ng-container>
-        </div>
+  <div class="filter-label">Filtres</div>
+
+  <!-- Filter Buttons -->
+  <div class="filter-buttons">
+    <!-- Statut Button -->
+    <div class="filter-dropdown-container">
+      <button class="filter-button" [class.active]="hasActiveStatusFilters()" (click)="toggleDropdown('status', $event)">
+        <img src="assets/price-tag_icon.png" alt="Statut" class="filter-icon">
+        <span>Statut</span>
+        <button *ngIf="hasActiveStatusFilters()" class="clear-category-btn" (click)="clearCategoryFilters('status', $event)">
+          <img src="assets/close_icon.png" alt="Clear">
+        </button>
+      </button>
+      <div class="dropdown-menu" *ngIf="openDropdown === 'status'" (click)="$event.stopPropagation()">
+        <label class="checkbox-item" *ngFor="let status of statusFilters">
+          <input 
+            type="checkbox" 
+            [checked]="isFilterActive(status)"
+            (change)="toggleFilter(status)">
+          <span>{{ status }}</span>
+        </label>
+      </div>
     </div>
 
-    <button class="filter-button" 
-            [class.disabled]="!hasAvailableFilters()"
-            [disabled]="!hasAvailableFilters()"
-            (click)="toggleFilterModal($event)">
-        <img src="assets/add_icon.png" alt="Ajouter un filtre">
-    </button>
-    
-    <!-- Filter Modal -->
-    <div class="filter-modal" *ngIf="isFilterModalOpen" (click)="$event.stopPropagation()">
-        <!-- Main filter menu -->
-        <div *ngIf="!selectedFilterType">
-            <h3 class="modal-title">Options de recherche</h3>
-            <button class="filter-option" 
-                    [class.disabled]="!hasAvailableStatusFilters()"
-                    [disabled]="!hasAvailableStatusFilters()"
-                    (click)="openFilterType('status')">
-                <span class="option-text">Statut : <span class="option-values">Payée, Non payée, En retard</span></span>
-                <span class="plus-sign">+</span>
-            </button>
-            <button class="filter-option" 
-                    [class.disabled]="!hasAvailableTypeFilters()"
-                    [disabled]="!hasAvailableTypeFilters()"
-                    (click)="openFilterType('type')">
-                <span class="option-text">Type : <span class="option-values">Achat de crédits, Versement</span></span>
-                <span class="plus-sign">+</span>
-            </button>
-            <button class="filter-option" 
-                    [class.disabled]="!hasAvailablePeriodFilters()"
-                    [disabled]="!hasAvailablePeriodFilters()"
-                    (click)="openFilterType('period')">
-                <span class="option-text">Période : <span class="option-values">Après le, Avant le</span></span>
-                <span class="plus-sign">+</span>
-            </button>
-        </div>
-
-        <!-- Status filter submenu -->
-        <div *ngIf="selectedFilterType === 'status'">
-            <button class="back-button" (click)="goBack()">← Retour</button>
-            <h3 class="modal-title">Statut</h3>
-            <button class="filter-option" 
-                    [class.disabled]="isFilterActive('Payée')"
-                    [disabled]="isFilterActive('Payée')"
-                    (click)="addFilter('Payée')">
-                <span class="option-text">Payée</span>
-                <span class="plus-sign">+</span>
-            </button>
-            <button class="filter-option" 
-                    [class.disabled]="isFilterActive('Non payée')"
-                    [disabled]="isFilterActive('Non payée')"
-                    (click)="addFilter('Non payée')">
-                <span class="option-text">Non payée</span>
-                <span class="plus-sign">+</span>
-            </button>
-            <button class="filter-option" 
-                    [class.disabled]="isFilterActive('En retard')"
-                    [disabled]="isFilterActive('En retard')"
-                    (click)="addFilter('En retard')">
-                <span class="option-text">En retard</span>
-                <span class="plus-sign">+</span>
-            </button>
-        </div>
-
-        <!-- Type filter submenu -->
-        <div *ngIf="selectedFilterType === 'type'">
-            <button class="back-button" (click)="goBack()">← Retour</button>
-            <h3 class="modal-title">Type</h3>
-            <button class="filter-option" 
-                    [class.disabled]="isFilterActive('Achat de crédits')"
-                    [disabled]="isFilterActive('Achat de crédits')"
-                    (click)="addFilter('Achat de crédits')">
-                <span class="option-text">Achat de crédits</span>
-                <span class="plus-sign">+</span>
-            </button>
-            <button class="filter-option" 
-                    [class.disabled]="isFilterActive('Versement')"
-                    [disabled]="isFilterActive('Versement')"
-                    (click)="addFilter('Versement')">
-                <span class="option-text">Versement</span>
-                <span class="plus-sign">+</span>
-            </button>
-        </div>
-
-        <!-- Period filter submenu -->
-        <div *ngIf="selectedFilterType === 'period'">
-            <button class="back-button" (click)="goBack()">← Retour</button>
-            <h3 class="modal-title">Période</h3>
-            <button class="filter-option"
-                    [class.disabled]="isFilterActive('Après le')"
-                    [disabled]="isFilterActive('Après le')"
-                    (click)="addDateFilter('Après le')">
-                <span class="option-text">Après le</span>
-                <span class="plus-sign">+</span>
-            </button>
-            <button class="filter-option"
-                    [class.disabled]="isFilterActive('Avant le')"
-                    [disabled]="isFilterActive('Avant le')"
-                    (click)="addDateFilter('Avant le')">
-                <span class="option-text">Avant le</span>
-                <span class="plus-sign">+</span>
-            </button>
-        </div>
+    <!-- Type Button -->
+    <div class="filter-dropdown-container">
+      <button class="filter-button" [class.active]="hasActiveTypeFilters()" (click)="toggleDropdown('type', $event)">
+        <img src="assets/category_icon.png" alt="Type" class="filter-icon">
+        <span>Type</span>
+        <button *ngIf="hasActiveTypeFilters()" class="clear-category-btn" (click)="clearCategoryFilters('type', $event)">
+          <img src="assets/close_icon.png" alt="Clear">
+        </button>
+      </button>
+      <div class="dropdown-menu" *ngIf="openDropdown === 'type'" (click)="$event.stopPropagation()">
+        <label class="checkbox-item" *ngFor="let type of typeFilters">
+          <input 
+            type="checkbox" 
+            [checked]="isFilterActive(type)"
+            (change)="toggleFilter(type)">
+          <span>{{ type }}</span>
+        </label>
+      </div>
     </div>
+
+    <!-- Période Button -->
+    <div class="filter-dropdown-container">
+      <button class="filter-button" [class.active]="hasActivePeriodFilters()" (click)="toggleDropdown('period', $event)">
+        <img src="assets/calendar_icon.png" alt="Période" class="filter-icon">
+        <span>Période</span>
+        <button *ngIf="hasActivePeriodFilters()" class="clear-category-btn" (click)="clearCategoryFilters('period', $event)">
+          <img src="assets/close_icon.png" alt="Clear">
+        </button>
+      </button>
+      <div class="dropdown-menu period-dropdown" *ngIf="openDropdown === 'period'" (click)="$event.stopPropagation()">
+        <div class="date-filter-item" *ngFor="let period of periodFilters">
+          <label class="checkbox-item">
+            <input 
+              type="checkbox" 
+              [checked]="isFilterActive(period)"
+              (change)="toggleFilter(period); isFilterActive(period) && addDateFilter(period)">
+            <span>{{ period }}</span>
+          </label>
+          <input 
+            *ngIf="isFilterActive(period)"
+            type="date" 
+            class="date-input" 
+            [attr.data-filter]="period"
+            [value]="getDateValue(period)" 
+            (change)="updateDateFilter(period, $event)"
+            [min]="period === 'Avant le' ? getDateValue('Après le') : ''"
+            [max]="period === 'Après le' ? getDateValue('Avant le') : ''"
+            (click)="$event.stopPropagation()">
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
