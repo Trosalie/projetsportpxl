@@ -38,7 +38,7 @@ export class InvoiceHistory {
           case 'upcoming':
             invoice.status = 'Non payée';
             break;
-          case 'overdue':
+          case 'late':
             invoice.status = 'En retard';
             break;
         }
