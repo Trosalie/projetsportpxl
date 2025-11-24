@@ -11,8 +11,8 @@ export class PhotographerService {
   constructor(private http: HttpClient) {
   }
 
-  getPhotographers(): Observable<Photographer> {
-    return this.http.get<Photographer>(`${environment.apiUrl}/photographers`);
+  getPhotographers(): Observable<Photographer[]> {
+    return this.http.get<Photographer[]>(`${environment.apiUrl}/photographers`);
   }
   
 }

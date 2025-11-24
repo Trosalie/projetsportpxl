@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PhotographerService } from '../services/photographer-service';
 
 @Component({
   selector: 'app-photographers-list',
@@ -7,5 +8,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./photographers-list.scss'],
 })
 export class PhotographersList {
+  protected photographers: any[] = [];
 
+  constructor(private photographerService: PhotographerService) {
+  }
+
+  ngOnInit() {
+    this.photographerService.getPhotographers().subscribe(photographers => {
+      this.photographers = photographers;
+      console.log(this.photographers);
+    });
+  }
 }

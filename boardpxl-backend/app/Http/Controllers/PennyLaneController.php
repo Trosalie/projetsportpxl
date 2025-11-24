@@ -176,7 +176,7 @@ class PennyLaneController extends Controller
         $photographers = $service->getPhotgraphers();
 
         return response()->json([
-            'photographers' => $photographers
+            $photographers
         ]);
     }
 }
