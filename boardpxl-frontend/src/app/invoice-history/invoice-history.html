@@ -1,10 +1,10 @@
 <div class="container">
     <div class="header">
         <p>Historique des factures</p>
-        <app-invoice-filter></app-invoice-filter>
+        <app-invoice-filter (filtersChanged)="onFilterChanged($event)"></app-invoice-filter>
     </div>
     <div class="invoice-list">
-        <div class="invoice-item" *ngFor="let invoice of invoices">
+        <div class="invoice-item" *ngFor="let invoice of filteredInvoices">
             <app-invoice-card [invoice]="invoice"></app-invoice-card>
         </div>
     </div>

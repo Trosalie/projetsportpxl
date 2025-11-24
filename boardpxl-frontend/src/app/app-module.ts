@@ -11,6 +11,15 @@ import { InvoiceHistory } from './invoice-history/invoice-history';
 import { InvoiceCard } from './invoice-card/invoice-card';
 import { InvoiceFilter } from './invoice-filter/invoice-filter';
 import { LoginPage } from './login-page/login-page';
+import { PhotographRequest } from './photograph-request/photograph-request';
+import { AutomaticResponse } from './automatic-response/automatic-response';
+import { MailRequestPage } from './mail-request-page/mail-request-page';
+
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+
+import localeFr from '@angular/common/locales/fr';
+registerLocaleData(localeFr);
 
 @NgModule({
   declarations: [
@@ -21,15 +30,21 @@ import { LoginPage } from './login-page/login-page';
     InvoiceHistory,
     InvoiceCard,
     InvoiceFilter,
+    PhotographRequest,
+    AutomaticResponse,
+    MailRequestPage,
+    InvoiceFilter,
     LoginPage
   ],
   imports: [
     BrowserModule,
-    HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
   providers: [
-    provideBrowserGlobalErrorListeners()
+    provideBrowserGlobalErrorListeners(),
+    { provide: LOCALE_ID, useValue: 'fr-FR' },
+    { provide: DEFAULT_CURRENCY_CODE, useValue: 'EUR' }
   ],
   bootstrap: [App]
 })
