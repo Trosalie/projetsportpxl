@@ -2,16 +2,5 @@
    <a routerLink="/" class="logo-link" aria-label="Home">
       <img src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" alt="App Logo" class="logo">
    </a>
-   @if (userRole === 'nothing')
-  {
-    <a routerLink="/login-page/">
-      <p>Login</p>
-    </a>
-  }
-  @else
-  {
-    <a>
-      <p>{{userName}}</p>
-    </a>
-  }
+  <p>{{userName}}</p>
 </nav>

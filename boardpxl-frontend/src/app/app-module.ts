@@ -1,4 +1,4 @@
-import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
+import {DEFAULT_CURRENCY_CODE, NgModule, provideBrowserGlobalErrorListeners} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -19,6 +19,7 @@ import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 
 import localeFr from '@angular/common/locales/fr';
+import {FormsModule} from "@angular/forms";
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -36,11 +37,12 @@ registerLocaleData(localeFr);
     InvoiceFilter,
     LoginPage
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        FormsModule
+    ],
   providers: [
     provideBrowserGlobalErrorListeners(),
     { provide: LOCALE_ID, useValue: 'fr-FR' },

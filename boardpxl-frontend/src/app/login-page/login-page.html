@@ -2,16 +2,18 @@
   <div class="card">
     <img src="../../../public/assets/logo_couleurs.jpg" alt="logo_sportpxl_en_couleur" />
     <h1>Log In</h1>
-    <form>
+    <form (ngSubmit)="onSubmit()">
       <div class="bloc_input">
         <label for="email">Email</label>
-        <input id="email" type="text" />
+        <input id="email" type="text" [(ngModel)]="email" name="email" />
       </div>
+
       <div class="bloc_input">
         <label for="password">Password</label>
-        <input id="password" type="password" />
+        <input id="password" type="password" [(ngModel)]="password" name="password" />
       </div>
-      <button class="btn_forget">Forget Password?</button>
+
+      <button class="btn_forget" type="button">Forget Password?</button>
       <button class="btn_login" type="submit">LOG IN</button>
     </form>
   </div>

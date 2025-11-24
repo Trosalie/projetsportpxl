@@ -10,6 +10,7 @@ import { FilterOptions } from '../invoice-filter/invoice-filter';
   templateUrl: './invoice-history.html',
   styleUrl: './invoice-history.scss',
 })
+
 export class InvoiceHistory {
   protected invoices: any[] = [];
   protected filteredInvoices: any[] = [];
@@ -89,7 +90,7 @@ export class InvoiceHistory {
       }
 
       // Filter by type
-      if (filters.typeFilters.length > 0) {     
+      if (filters.typeFilters.length > 0) {
         if (filters.typeFilters.includes('Versement') && filters.typeFilters.includes('Achat de crédits')) {
           return true;
         }

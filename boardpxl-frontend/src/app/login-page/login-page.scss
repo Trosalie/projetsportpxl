@@ -28,11 +28,19 @@ form
   background-color: #90cbe5;
 }
 
-.btn_login
-{
-  background-color: #f98524;
-  border-radius: 10px;
-  color: #fff;
+button {
+  background-color: #F98524;
+  border-radius: 15px;
+  border: none;
+  color: white;
+  padding: 10px 35px;
+  font-size: 18px;
+  margin-top: 4px;
+  margin-bottom: 30px;
+  align-self: flex-end;
+  margin-right: 25px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 input
