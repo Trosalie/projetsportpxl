@@ -103,10 +103,7 @@ class PennyLaneController extends Controller
         $product = $service->getProductFromInvoice($invoiceNumber);
 
         if ($product) {
-            return response()->json([
-                'success' => true,
-                'product' => $product
-            ]);
+            return response()->json($product);
         }
 
         return response()->json([
