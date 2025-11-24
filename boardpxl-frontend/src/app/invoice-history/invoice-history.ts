@@ -43,9 +43,11 @@ export class InvoiceHistory {
             break;
         }
 
-        this.invoiceService.getProductFromInvoice(invoice).subscribe(product => {
-          // service may return a string or an object like { product: string }
-          const productValue = typeof product === 'string' ? product : (product as any)?.product;
+        this.invoiceService.getProductFromInvoice(invoice).subscribe((product: any) => {
+          console.log(product);
+          // service may return a string, an object like { label: string } or an array where product[1] is the label
+          let productValue= (product as any).label;
+
           if (productValue && productValue.toLowerCase().includes('crédits')) {
             let creditAmount = parseFloat(
               productValue
@@ -54,6 +56,11 @@ export class InvoiceHistory {
               .replace(',', '.')
               .replace(/[^\d.-]/g, '')
             );
+
+            if (isNaN(creditAmount)) {
+              // product may be an array; try common positions or an object-like .quantity, cast to any to avoid TS error
+              creditAmount = parseFloat((product as any).quantity);
+            }
 
             this.invoices.push(new InvoiceCredit(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.tax, invoice.tax, invoice.remaining_amount_with_tax, creditAmount, invoice.status, invoice.public_file_url, invoice.pdf_invoice_subject));
           }

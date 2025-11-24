@@ -17,7 +17,7 @@ export class InvoiceService {
     return this.http.get<Invoice[]>(`${environment.apiUrl}/invoices-client/${clientId}`);
   }
 
-  getProductFromInvoice(invoice: Invoice): Observable<string> {
-    return this.http.get<string>(`${environment.apiUrl}/invoice-product/${invoice.invoice_number}`);
+  getProductFromInvoice(invoice: Invoice): Observable<string[]> {
+    return this.http.get<string[]>(`${environment.apiUrl}/invoice-product/${invoice.invoice_number}`);
   }
 }

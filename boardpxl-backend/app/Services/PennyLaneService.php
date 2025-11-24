@@ -123,7 +123,7 @@ class PennylaneService
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function getProductFromInvoice(string $invoiceNumber): ?string
+    public function getProductFromInvoice(string $invoiceNumber): ?array
     {
         $invoice = $this->getInvoiceByNumber($invoiceNumber);
 
@@ -133,7 +133,7 @@ class PennylaneService
             if (isset($invoice['invoice_lines']['url'])) {
                 $url = $invoice['invoice_lines']['url'];
             } elseif (is_array($invoice['invoice_lines']) && isset($invoice['invoice_lines'][0]['url'])) {
-                $url = $invoice['invoice_lines']['url'];
+                $url = $invoice['invoice_lines'][0]['url'];
             }
 
             if ($url) {
@@ -149,7 +149,10 @@ class PennylaneService
                 $data = json_decode($responseBody, true);
 
                 if (!empty($data['items']) && isset($data['items'][0]['label'])) {
-                    return $data['items'][0]['label'];
+                    return [
+                        'label' => $data['items'][0]['label'],
+                        'quantity' => $data['items'][0]['quantity'] ?? null,
+                    ];
                 }
             }
         } catch (\Throwable $e) {
