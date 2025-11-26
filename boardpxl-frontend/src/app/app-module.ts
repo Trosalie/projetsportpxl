@@ -20,6 +20,7 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { PhotographersList } from './photographers-list/photographers-list';
 import { PhotographerCard } from './photographer-card/photographer-card';
+import { SearchBar } from './search-bar/search-bar';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -35,7 +36,8 @@ registerLocaleData(localeFr);
     AutomaticResponse,
     MailRequestPage,
     PhotographersList,
-    PhotographerCard
+    PhotographerCard,
+    SearchBar
   ],
   imports: [
     BrowserModule,
