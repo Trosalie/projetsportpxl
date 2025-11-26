@@ -7,7 +7,6 @@ import { MailRequestPage } from './mail-request-page/mail-request-page';
 import { AutomaticResponse } from './automatic-response/automatic-response';
 import { photographGuard } from './guards/photograph.guard';
 import { adminGuard } from './guards/admin.guard';
-import {ForgottenPassword} from './forgotten-password/forgotten-password';
 
 const routes: Routes = [
   { path: '', component: PhotographDashboard, pathMatch: 'full', canMatch: [photographGuard] },
