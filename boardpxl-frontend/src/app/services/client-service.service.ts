@@ -7,8 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ClientService {
-  private apiUrl = 'http://localhost:9000/api/client-id';
-
+  private apiUrl = 'http://localhost:9000/api';
   constructor(private http: HttpClient) {}
 
   getClientId(prenom: string, nom: string): Observable<any> {
@@ -16,6 +15,10 @@ export class ClientService {
       .set('prenom', prenom)
       .set('nom', nom);
 
-    return this.http.get(this.apiUrl, { params });
+    return this.http.get(this.apiUrl + "/client-id" , { params });
+  }
+
+  getClients(): Observable<any> {
+    return this.http.get(this.apiUrl + "/list-clients");
   }
 }

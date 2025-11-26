@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { InvoiceService } from '../services/invoice-service';
 import { ClientService } from '../services/client-service.service';
+import { find } from 'rxjs';
 
 @Component({
   selector: 'app-credit-purchase-form',
@@ -11,20 +12,32 @@ import { ClientService } from '../services/client-service.service';
 export class CreditPurchaseForm {
   today: string = new Date().toISOString().slice(0, 10);
   clientId: any;
+  findClient: boolean = false;
+  clientNames: string[] = [];
 
   constructor(private invoiceService: InvoiceService, private clientService: ClientService) {}
 
   ngOnInit() {
-    this.clientService.getClientId('Thibault', 'Rosalie').subscribe({
+    this.clientService.getClientId('Thibaultt', 'Rosalie').subscribe({
       next: (data) => {
         this.clientId = data.client_id;
         console.log('Client ID:', this.clientId);
         console.log('Data :', data);
+        this.findClient = true;
       },
       error: (err) => {
         console.error('Error fetching client ID:', err);
       }
     });
+    if (this.findClient != true) {
+      this.clientService.getClients().subscribe({
+      next: (res) => {
+        this.clientNames = res.clients.map((c: any) => c.name);
+        console.log(this.clientNames);
+      }
+    });
+      console.log('Clients récupérés :', this.clientNames);
+    }
     console.log(this.clientId);
   }
 

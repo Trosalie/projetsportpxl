@@ -25,6 +25,9 @@ Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoi
 // Récupérer un produit d’une facture
 Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
 
+// Récupérer la liste des clients
+Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
+
 // Téléchargement contournement CORS
 Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
 
@@ -38,3 +41,5 @@ Route::get('/test-mail', [MailController::class, 'testMail']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+

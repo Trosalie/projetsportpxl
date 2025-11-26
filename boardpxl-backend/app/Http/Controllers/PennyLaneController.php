@@ -170,4 +170,17 @@ class PennyLaneController extends Controller
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
     }
+
+    /**
+     * Récupère la liste des clients
+     */
+    public function getListClients(PennylaneService $service)
+    {
+        $clients = $service->getListClients();
+
+        return response()->json([
+            'success' => true,
+            'clients' => $clients
+        ]);
+    }
 }

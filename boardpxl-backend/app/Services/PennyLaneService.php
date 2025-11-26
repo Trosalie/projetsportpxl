@@ -159,5 +159,12 @@ class PennylaneService
         return null; // Produit non trouvé
     }
 
+    public function getListClients(): array
+    {
+        $response = $this->client->get('customers');
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        return $data['items'] ?? [];
+    }
 }
 
