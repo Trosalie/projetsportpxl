@@ -28,6 +28,10 @@ export class AuthService {
     localStorage.setItem('api_token', token);
   }
 
+  forgot(email: string){
+    return 
+  }
+
   getToken(): string | null {
     return localStorage.getItem('api_token');
   }

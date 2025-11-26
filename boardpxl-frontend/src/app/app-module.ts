@@ -20,6 +20,7 @@ import { registerLocaleData } from '@angular/common';
 
 import localeFr from '@angular/common/locales/fr';
 import {FormsModule} from "@angular/forms";
+import {ForgottenPassword} from './forgotten-password/forgotten-password';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -35,7 +36,8 @@ registerLocaleData(localeFr);
     AutomaticResponse,
     MailRequestPage,
     InvoiceFilter,
-    LoginPage
+    LoginPage,
+    ForgottenPassword
   ],
     imports: [
         BrowserModule,
