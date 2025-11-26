@@ -8,6 +8,8 @@ interface LoginResponse {
   token: string;
 }
 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -26,10 +28,6 @@ export class AuthService {
 
   saveToken(token: string) {
     localStorage.setItem('api_token', token);
-  }
-
-  forgot(email: string){
-    return 
   }
 
   getToken(): string | null {

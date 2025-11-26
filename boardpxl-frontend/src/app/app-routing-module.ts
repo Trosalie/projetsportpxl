@@ -15,7 +15,6 @@ const routes: Routes = [
   { path: 'request/credits', component: MailRequestPage, canMatch: [photographGuard] },
   { path: 'request/success', component: AutomaticResponse, canMatch: [photographGuard] },
   { path: 'request/failure', component: AutomaticResponse, canMatch: [photographGuard] },
-  { path: 'forgotten-password', component: ForgottenPassword },
   { path: 'login-page', component: LoginPage }
 ];
 
