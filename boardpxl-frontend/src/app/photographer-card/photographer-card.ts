@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { InvoiceService } from '../services/invoice-service';
 
 @Component({
   selector: 'app-photographer-card',
@@ -8,5 +9,38 @@ import { Component, Input } from '@angular/core';
 })
 export class PhotographerCard {
   @Input() photographer!: any;
-  
+  invoices: any[] = [];
+
+  constructor(private invoiceService: InvoiceService) {}
+
+  ngOnInit() {
+    this.invoiceService.getInvoicesByClient(this.photographer.id).subscribe((invoices) => {
+      this.invoices = invoices;
+    });
+  }
+
+  getChiffreAffaires(): number {
+    let total = 0;
+    return total;
+  }
+
+  getTotalCredits(): number {
+    let totalCredits = 0;
+    return totalCredits;
+  }
+
+  getLateInvoicesCount(): number {
+    let lateCount = 0;
+    return lateCount;
+  }
+
+  getPaidInvoicesCount(): number {
+    let paidCount = 0;
+    return paidCount;
+  }
+
+  getUnpaidInvoicesCount(): number {
+    let unpaidCount = 0;
+    return unpaidCount;
+  }
 }

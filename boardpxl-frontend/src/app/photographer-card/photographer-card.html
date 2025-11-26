@@ -8,7 +8,7 @@
     <div>
         <p>Chiffre d'affaires</p>
         <div class="value-button-pair chiffre-affaires">
-            <p></p>
+            <p class="tag">{{ getChiffreAffaires() | currency:'EUR'}}</p>
             <!-- routerLink à changer quand on aura la page formulaire -->
             <button routerLink="/"><span class="material-symbols-outlined">note_add</span></button>
         </div>
@@ -16,7 +16,7 @@
     <div>
         <p>Nombre de crédits</p>
         <div class="value-button-pair credits">
-            <p></p>
+            <p class="tag">{{ getTotalCredits() }} cr</p>
             <!-- routerLink à changer quand on aura la page formulaire -->
             <button routerLink="/"><span class="material-symbols-outlined">note_add</span></button>
         </div>
@@ -24,9 +24,9 @@
     <div>
         <p>Statut des factures</p>
         <div class="statuts">
-            <p>Payées</p><p class="payees"></p>
-            <p>Non payées</p><p class="non-payees"></p>
-            <p>En retard</p><p class="en-retard"></p>
+            <p>Payées</p><p class="payees status-count">{{ getPaidInvoicesCount() }}</p>
+            <p>En retard</p><p class="en-retard status-count">{{ getLateInvoicesCount() }}</p>
+            <p>Non payées</p><p class="non-payees status-count">{{ getUnpaidInvoicesCount() }}</p>
         </div>
     </div>
 </div>

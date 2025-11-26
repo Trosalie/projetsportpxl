@@ -9,6 +9,7 @@ div {
     border-radius: 8px;
     padding: 16px;
     margin: 8px;
+    gap: 5px;
     justify-content: space-between;
     flex-direction: row;
 
@@ -20,6 +21,30 @@ div {
 .statuts{
     flex-direction: row;
     gap: 8px;
+
+    .status-count{
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.payees {
+    background-color: rgba($color: #118126, $alpha: 0.5);
+    border: 2px solid rgba($color: #0A4515, $alpha: 0.5);
+}
+
+.non-payees {
+    background-color: rgba($color: #FF2717, $alpha: 0.5);
+    border: 2px solid rgba($color: #AA1010, $alpha: 0.5);
+}
+
+.en-retard {
+    background-color: rgba($color: #F98524, $alpha: 0.5);
+    border: 2px solid rgba($color: #934D13, $alpha: 0.5);
 }
 
 .value-button-pair {
@@ -29,10 +54,16 @@ div {
 }
 
 button {
-        border: 1px solid;
-        border-radius: 7px;
-        padding: 4px 8px;
-        padding-top: 8px;
+    border: 1px solid;
+    border-radius: 7px;
+    padding: 4px 8px;
+    padding-top: 8px;
+}
+
+.tag{
+    padding: 8px 12px;
+    border: 1px solid;
+    border-radius: 7px;
 }
 
 .chiffre-affaires{
@@ -40,11 +71,21 @@ button {
         background-color: #2C9FBB;
         border-color: #217589;
     }
+
+    .tag {
+        background-color: rgba(44, 159, 187, .4);
+        border-color: #217589;
+    }
 }
 
 .credits{
     button {
         background-color: #40B155;
+        border-color: #2E9040;
+    }
+
+    .tag {
+        background-color: rgba(64, 177, 85, .4);
         border-color: #2E9040;
     }
 }
