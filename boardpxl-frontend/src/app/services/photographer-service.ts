@@ -21,17 +21,20 @@ export class PhotographerService {
       return of(this.photographers);
     } else {
       console.log('Fetching photographers from API');
-      return this.http.get<Photographer[]>(`${environment.apiUrl}/photographers`)
-        .pipe(
-          tap(data => this.photographers = data)
-        );
+      this.http.get<Photographer[]>(`${environment.apiUrl}/photographers`).subscribe(data => {
+        this.photographers = data;
+      });
+
+      return of(this.photographers);
     }
   }
 
   forceGetPhotographers(): Observable<Photographer[]> {
-    return this.http.get<Photographer[]>(`${environment.apiUrl}/photographers`)
-    .pipe(
-      tap(data => this.photographers = data)
-    );
+      console.log('Fetching photographers from API');
+      this.http.get<Photographer[]>(`${environment.apiUrl}/photographers`).subscribe(data => {
+        this.photographers = data;
+      });
+
+      return of(this.photographers);
   }
 }

@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use GuzzleHttp\Client;
+use App\Services\PennylaneService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -97,6 +99,8 @@ class PhotographerSeeder extends Seeder
             }
             
             $photographes[] = $this->creerPhotographe($donnees, $mappingColonnes);
+            // Attendre 100ms pour éviter les problèmes de taux de requêtes avec Pennylane
+            usleep(100000);
         }
         
         return $photographes;
@@ -125,6 +129,62 @@ class PhotographerSeeder extends Seeder
         return true;
     }
 
+    private function getPennylaneIdFromEmail(array $donnees, array $mappingColonnes): ?int
+    {
+        $client = new Client([
+            'base_uri' => 'https://app.pennylane.com/api/external/v2/',
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer eed8y6tW50z94_tiKQp7yFK-mIfnNXTNJkp1y_gRmjw',
+            ],
+            'verify' => false,
+        ]);
+        $response = $client->get('customers?sort=-id');
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        $photographer = $data['items'] ?? [];
+
+        $photographer = collect($photographer)->where('email', $donnees[$mappingColonnes['email']])->first();
+
+        if(! $photographer) {
+            $endpoint = 'individual_customers';
+
+            if(empty($donnees[$mappingColonnes['given name']]) && empty($donnees[$mappingColonnes['family name']])) {
+                $endpoint = 'company_customers';
+            }
+
+            $json = [
+                'emails' => [$donnees[$mappingColonnes['email']]],
+                'billing_address' => [
+                    'address' => $donnees[$mappingColonnes['street address']] ?? '',
+                    'postal_code' => $donnees[$mappingColonnes['postal code']] ?? '',
+                    'city' => $donnees[$mappingColonnes['locality']] ?? '',
+                    'country_alpha2' => $donnees[$mappingColonnes['country']] ?? '',
+                ],
+                'delivery_address' => [
+                    'address' => $donnees[$mappingColonnes['street address']] ?? '',
+                    'postal_code' => $donnees[$mappingColonnes['postal code']] ?? '',
+                    'city' => $donnees[$mappingColonnes['locality']] ?? '',
+                    'country_alpha2' => $donnees[$mappingColonnes['country']] ?? '',
+                ],
+                'billing_iban' => 'FR1010096000307323346714U91',
+
+            ];
+
+            if($endpoint === 'individual_customers') {
+                $json['first_name'] = $donnees[$mappingColonnes['given name']] ?? '';
+                $json['last_name'] = $donnees[$mappingColonnes['family name']] ?? '';
+            } else {
+                $json['name'] = $donnees[$mappingColonnes['name']] ?? '';
+            }
+
+            $client->post($endpoint, [
+                'json' => $json,
+            ]);
+        }
+        return $photographer ? $photographer['id'] : null;
+    }
+
     /**
      * Créer un tableau de photographe à partir d'une ligne CSV
      * 
@@ -150,6 +210,7 @@ class PhotographerSeeder extends Seeder
             'locality' => !empty($donnees[$mappingColonnes['locality']]) ? $donnees[$mappingColonnes['locality']] : null,
             'country' => !empty($donnees[$mappingColonnes['country']]) ? $donnees[$mappingColonnes['country']] : null,
             'iban' => !empty($donnees[$mappingColonnes['iban']]) ? $donnees[$mappingColonnes['iban']] : null,
+            'pennylane_id' => $this->getPennylaneIdFromEmail($donnees, $mappingColonnes),
             'created_at' => now(),
             'updated_at' => now(),
         ];

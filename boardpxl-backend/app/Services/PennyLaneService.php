@@ -123,7 +123,7 @@ class PennylaneService
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function getPhotgraphers()
+    public function getPhotographers()
     {
         $response = $this->client->get('customers?sort=-id');
         $data = json_decode($response->getBody()->getContents(), true);

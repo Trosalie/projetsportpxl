@@ -1,12 +1,13 @@
 <app-title [title]="'TABLEAU DE BORD'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
 <main>
+    <button routerLink="/test-caching">Test caching</button>
     <div class="container">
     <div class="header">
         <p>Liste des photographes</p>
         <app-search-bar></app-search-bar>
     </div>
     <div class="photographers-list">
-        <div class="photographer-item" *ngFor="let photographer of photographers[0]">
+        <div class="photographer-item" *ngFor="let photographer of photographers">
             <app-photographer-card [photographer]="photographer"></app-photographer-card>
         </div>
     </div>
