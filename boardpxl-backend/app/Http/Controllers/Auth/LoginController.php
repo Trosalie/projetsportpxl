@@ -31,25 +31,31 @@ class LoginController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:8',
-        ]);
+        try {
+            $validated = $request->validate([
+                'email' => 'required|email',
+                'password' => 'required|min:8',
+            ]);
 
-        if (Auth::attempt($validated)) {
-            $photographer = Auth::user();
+            if (Auth::attempt($validated)) {
+                $photographer = Auth::user();
 
-            $token = $photographer->createToken('API Token')->plainTextToken;
+                $token = $photographer->createToken('API Token')->plainTextToken;
 
-            return response()->json([
-                'photographer' => $photographer,
-                'token' => $token,
+                return response()->json([
+                    'photographer' => $photographer,
+                    'token' => $token,
+                ]);
+            }
+
+            throw ValidationException::withMessages([
+                'email' => ['Les informations d\'identification sont invalides.'],
             ]);
         }
-
-        throw ValidationException::withMessages([
-            'email' => ['Les informations d\'identification sont invalides.'],
-        ]);
+        catch (\Exception $e) {
+            \Log::error('Erreur lors de la tentative de connexion : ' . $e->getMessage());
+            return response()->json(['message' => 'Erreur serveur'], 500);
+        }
     }
 
     /**
