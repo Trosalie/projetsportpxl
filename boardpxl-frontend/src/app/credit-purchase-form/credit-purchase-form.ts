@@ -3,6 +3,7 @@ import { InvoiceService } from '../services/invoice-service';
 import { ClientService } from '../services/client-service.service';
 import { find } from 'rxjs';
 
+
 @Component({
   selector: 'app-credit-purchase-form',
   standalone: false,
@@ -12,33 +13,70 @@ import { find } from 'rxjs';
 export class CreditPurchaseForm {
   today: string = new Date().toISOString().slice(0, 10);
   clientId: any;
+  clientFirstName: string = 'Thibault';
+  clientLastName: string = 'Rosalie';
   findClient: boolean = false;
-  clientNames: string[] = [];
+  clientsNames: string[] = [];
+  filteredClients: string[] = [];
+  photographerInput: string = '';
+  notificationVisible: boolean = false;
 
   constructor(private invoiceService: InvoiceService, private clientService: ClientService) {}
 
   ngOnInit() {
-    this.clientService.getClientId('Thibaultt', 'Rosalie').subscribe({
+    // Cherche le client par nom/prénom
+    this.clientService.getClientId(this.clientFirstName, this.clientLastName).subscribe({
       next: (data) => {
-        this.clientId = data.client_id;
-        console.log('Client ID:', this.clientId);
-        console.log('Data :', data);
-        this.findClient = true;
+        if (data && data.client_id) {
+          this.clientId = data.client_id;
+          this.findClient = true;
+          this.photographerInput = '';
+          console.log('Client ID:', this.clientId);
+        } else {
+          // Client non trouvé : récupérer la liste complète pour suggestions
+          this.findClient = false;
+          this.loadClients();
+        }
       },
       error: (err) => {
-        console.error('Error fetching client ID:', err);
+        console.error('Erreur fetch client ID :', err);
+        this.findClient = false;
+        this.showNotification();
+        this.loadClients();
       }
     });
-    if (this.findClient != true) {
-      this.clientService.getClients().subscribe({
+  }
+
+  // Récupère tous les clients pour suggestions
+  loadClients() {
+    this.clientService.getClients().subscribe({
       next: (res) => {
-        this.clientNames = res.clients.map((c: any) => c.name);
-        console.log(this.clientNames);
-      }
+        this.clientsNames = res.clients.map((c: any) => c.name);
+        console.log('Clients récupérés :', this.clientsNames);
+      },
+      error: (err) => console.error('Erreur fetch clients :', err)
     });
-      console.log('Clients récupérés :', this.clientNames);
-    }
-    console.log(this.clientId);
+  }
+
+
+  // Actualise les suggestions de photographes en fonction de la saisie
+  onPhotographerChange(value: string) {
+    this.photographerInput = value;
+
+    // Vérifie si le photographe existe
+    this.findClient = this.clientsNames.includes(value);
+
+    // Filtrer les suggestions en fonction du texte saisi
+    this.filteredClients = this.clientsNames.filter(name =>
+      name.toLowerCase().includes(value.toLowerCase())
+    );
+  }
+
+  // Sélectionne un photographe dans la liste des suggestions
+  selectPhotographer(name: string) {
+    this.photographerInput = name;
+    this.findClient = true;
+    this.filteredClients = [];
   }
 
   onSubmit(event: Event) {
@@ -56,12 +94,20 @@ export class CreditPurchaseForm {
       issueDate: issueDate,
       dueDate: dueDate,
       idClient: 208474147,
-      invoiceTitle: `Facture Decembre 2025 - Achat de crédits`
+      invoiceTitle: `Achat de crédits`
     };
     this.invoiceService.createCreditsInvoice(body).subscribe({
       next: () => alert('Achat enregistré !'),
       error: () => alert('Erreur lors de l’enregistrement.'),
     });
     console.log(body);
+  }
+
+  // Afficher la notification quelques secondes
+  showNotification() {
+    this.notificationVisible = true;
+    setTimeout(() => {
+      this.notificationVisible = false;
+    }, 5000); // 5 secondes
   }
 }
