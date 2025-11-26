@@ -20,4 +20,10 @@ export class InvoiceService {
   getProductFromInvoice(invoice: Invoice): Observable<string> {
     return this.http.get<string>(`${environment.apiUrl}/invoice-product/${invoice.invoice_number}`);
   }
+  
+  createCreditsInvoice(body: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/creation-facture`, body);
+  }
+
+  
 }
