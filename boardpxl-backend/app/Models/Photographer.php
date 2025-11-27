@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Photographer extends User
+class Photographer extends Authenticatable
 {
     use HasFactory;
 
@@ -25,7 +25,8 @@ class Photographer extends User
         'locality',
         'country',
         'iban',
-        'password'
+        'password',
+        'admin'
     ];
 
     protected $hidden = [

@@ -150,6 +150,7 @@ class PhotographerSeeder extends Seeder
             'locality' => !empty($donnees[$mappingColonnes['locality']]) ? $donnees[$mappingColonnes['locality']] : null,
             'country' => !empty($donnees[$mappingColonnes['country']]) ? $donnees[$mappingColonnes['country']] : null,
             'iban' => !empty($donnees[$mappingColonnes['iban']]) ? $donnees[$mappingColonnes['iban']] : null,
+            'admin' => false,
             'created_at' => now(),
             'updated_at' => now(),
         ];
