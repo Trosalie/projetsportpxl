@@ -130,3 +130,23 @@
   from { transform: translate(-50%, -50px); opacity: 0; }
   to { transform: translateX(-50%); opacity: 1; }
 }
+
+.subject-wrapper {
+  position: relative;
+  display: flex;
+}
+
+.locked {
+  background: #f3f3f3;
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-right: none;
+  color: #555;
+  width: 180px;
+}
+
+.user-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+}

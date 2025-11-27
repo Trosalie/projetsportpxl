@@ -17,7 +17,7 @@ Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
 Route::get('/test', [PennylaneController::class, 'getInvoices']);
 
 // Récupérer l'ID d’un client
-Route::get('/client-id', [PennylaneController::class, 'getClientId']);
+Route::post('/client-id', [PennylaneController::class, 'getClientId']);
 
 // Récupérer toutes les factures d’un client
 Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);

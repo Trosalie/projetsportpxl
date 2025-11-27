@@ -57,20 +57,16 @@ class PennylaneService
     }
 
     // Récupérer l'ID client par nom et prénom
-    public function getClientIdByName(string $prenom, string $nom): ?int
+    public function getClientIdByName(string $name): ?int
     {
         // Récupérer tous les clients
-        $response = $this->client->get('customers');
-        $data = json_decode($response->getBody()->getContents(), true);
-
-        $clients = $data['items'] ?? [];
+        $clients = $this->getListClients();
 
         // Filtrer le client par nom et prénom (insensible à la casse)
         foreach ($clients as $client) {
-            $clientPrenom = $client['first_name'] ?? '';
-            $clientNom    = $client['last_name'] ?? '';
+            $clientName = $client['name'] ?? '';
 
-            if (strcasecmp($clientPrenom, $prenom) === 0 && strcasecmp($clientNom, $nom) === 0) {
+            if (strcasecmp($clientName, $name) === 0) {
                 return $client['id'];
             }
         }
@@ -161,10 +157,34 @@ class PennylaneService
 
     public function getListClients(): array
     {
-        $response = $this->client->get('customers');
-        $data = json_decode($response->getBody()->getContents(), true);
+        $allClients = [];
+        $cursor = null;
 
-        return $data['items'] ?? [];
+        do {
+            $response = $this->client->get('customers', [
+                'query' => array_filter([
+                    'limit' => 100,           // max PennyLane
+                    'cursor' => $cursor,      // null pour la 1ère page
+                    'sort' => '-id',
+                ])
+            ]);
+
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            if (!isset($data['items'])) {
+                break; // sécurité
+            }
+
+            $allClients = array_merge($allClients, $data['items']);
+
+            // valeurs de pagination
+            $cursor = $data['next_cursor'] ?? null;
+            $hasMore = $data['has_more'] ?? false;
+
+        } while ($hasMore);
+
+        return $allClients;
     }
+
 }
 

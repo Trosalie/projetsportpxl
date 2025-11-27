@@ -13,8 +13,7 @@ import { find } from 'rxjs';
 export class CreditPurchaseForm {
   today: string = new Date().toISOString().slice(0, 10);
   clientId: any;
-  clientFirstName: string = 'Thibault';
-  clientLastName: string = 'Rosalie';
+  clientName: string = 'Thibault Rosalie';
   findClient: boolean = false;
   clientsNames: string[] = [];
   filteredClients: string[] = [];
@@ -25,15 +24,17 @@ export class CreditPurchaseForm {
 
   ngOnInit() {
     // Cherche le client par nom/prénom
-    this.clientService.getClientId(this.clientFirstName, this.clientLastName).subscribe({
+    const body = { name: this.clientName };
+    this.clientService.getClientIdByName(body).subscribe({
       next: (data) => {
         if (data && data.client_id) {
           this.clientId = data.client_id;
           this.findClient = true;
-          this.photographerInput = '';
+          this.photographerInput = this.clientName; 
+          this.loadClients();
           console.log('Client ID:', this.clientId);
         } else {
-          // Client non trouvé : récupérer la liste complète pour suggestions
+          // Client non trouvé
           this.findClient = false;
           this.loadClients();
         }
@@ -77,12 +78,30 @@ export class CreditPurchaseForm {
     this.photographerInput = name;
     this.findClient = true;
     this.filteredClients = [];
+    this.clientName = name;
+    console.log('Client sélectionné :', this.clientName);
+    const body = { name: this.clientName };
+    this.clientId = this.clientService.getClientIdByName(body).subscribe({
+      next: (data) => {
+        if (data && data.client_id) {
+          this.clientId = data.client_id;
+          console.log('Client ID après sélection :', this.clientId);
+        } else {
+          console.error('Client non trouvé après sélection');
+        }      }, 
+      error: (err) => {
+        console.error('Erreur fetch client ID après sélection :', err);
+      }
+    });
+    
+    console.log('Client ID après sélection :', this.clientId);
   }
 
   onSubmit(event: Event) {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const issueDate = form['date'].value;
+    const subject = form['Subject'].value;
     const issue = new Date(issueDate);
     const due = new Date(issue);
     due.setMonth(due.getMonth() + 1);
@@ -90,11 +109,11 @@ export class CreditPurchaseForm {
     const body = {
       labelTVA: (form['tva'] as HTMLSelectElement).value,
       labelProduct: `${form['credits'].value} crédits`,
-      amountEuro: form['priceTTC'].value,
+      amountEuro: form['priceHT'].value,
       issueDate: issueDate,
       dueDate: dueDate,
-      idClient: 208474147,
-      invoiceTitle: `Achat de crédits`
+      idClient: this.clientId,
+      invoiceTitle: subject
     };
     this.invoiceService.createCreditsInvoice(body).subscribe({
       next: () => alert('Achat enregistré !'),
