@@ -62,3 +62,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/send-email', [MailController::class, 'sendEmail']);
     Route::get('/test-mail', [MailController::class, 'testMail']);
 });
+<<<<<<< HEAD
+=======
+
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('logout', [LoginController::class, 'logout']);
+
+//Route::post('register', [RegisterController::class, 'register']);
+
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+
+Route::post('password/reset', [ResetPasswordController::class, 'reset']);
+
+//Route::get('email/verify', [VerificationController::class, 'show'])->name('verification.notice');
+Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
+Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
+
+Route::post('password/confirm', [ConfirmPasswordController::class, 'confirm']);
+
+Route::post('password/reset', [ResetPasswordController::class, 'reset']);
+>>>>>>> d821f808e7f40f3fd89fb0a828ead85f1defba1a
