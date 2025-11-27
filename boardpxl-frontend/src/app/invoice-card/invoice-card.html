@@ -9,7 +9,7 @@
         </div>
         <div class="values">
             <p class="amount">{{ invoiceCredit.amount | currency }}</p>
-            <p class="credits">+{{ invoiceCredit.credits }} cr</p>
+            <p class="credits">+{{ invoiceCredit.credits | number:'':'fr-FR'}} cr</p>
         </div>
     </div>
     <div class="middle" *ngIf="invoiceType === 'Payment'">
