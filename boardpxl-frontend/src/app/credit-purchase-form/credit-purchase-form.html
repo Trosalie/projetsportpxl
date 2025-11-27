@@ -54,6 +54,8 @@
     <input type="date" id="date" name="date" required [value]="today">
   </div>
   <div class="form-actions">
-    <button type="submit">Valider</button>
+    <button  type="submit" [disabled]="creationFacture" [ngClass]="{'no-animation': creationFacture}">
+      Valider
+    </button>
   </div>
 </form>

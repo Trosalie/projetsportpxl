@@ -15,6 +15,7 @@ export class CreditPurchaseForm {
   clientId: any;
   clientName: string = 'Thibaultt Rosalie';
   findClient: boolean = false;
+  creationFacture: boolean = false;
   clientsNames: string[] = [];
   filteredClients: string[] = [];
   photographerInput: string = '';
@@ -116,9 +117,16 @@ export class CreditPurchaseForm {
       idClient: this.clientId,
       invoiceTitle: subject
     };
+    this.creationFacture = true;
     this.invoiceService.createCreditsInvoice(body).subscribe({
-      next: () => this.showNotification('Facture créée avec succès !'),
-      error: () => this.showNotification("Erreur lors de la création de la facture."),
+      next: () => {
+        this.showNotification('Facture créée avec succès !');
+        this.creationFacture = false;
+      },
+      error: () => {
+        this.showNotification("Erreur lors de la création de la facture."),
+        this.creationFacture = false;
+      }
     });
     console.log(body);
   }
