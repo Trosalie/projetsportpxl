@@ -16,50 +16,49 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 
+/*
+|--------------------------------------------------------------------------
+| Routes publiques (sans authentification)
+|--------------------------------------------------------------------------
+*/
 
+// Routes d'authentification publiques
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 
-// Création d'une facture
-Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
+// Routes de vérification d'email
+Route::get('/email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
+Route::get('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
-// Tester récupération globale
-Route::get('/test', [PennylaneController::class, 'getInvoices']);
+/*
+|--------------------------------------------------------------------------
+| Routes protégées par Sanctum (nécessitent un token)
+|--------------------------------------------------------------------------
+*/
 
-// Récupérer l'ID d’un client
-Route::get('/client-id', [PennylaneController::class, 'getClientId']);
-
-// Récupérer toutes les factures d’un client
-Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);
-
-// Récupérer un produit d’une facture
-Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
-
-// Téléchargement contournement CORS
-Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
-
-
-// Envoi de mail
-Route::post('/send-email', [MailController::class, 'sendEmail']);
-
-// Test d’envoi mail simple
-Route::get('/test-mail', [MailController::class, 'testMail']);
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    
+    // Utilisateur connecté
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    
+    // Déconnexion
+    Route::post('/logout', [LoginController::class, 'logout']);
+    
+    // Confirmation de mot de passe
+    Route::post('/password/confirm', [ConfirmPasswordController::class, 'confirm']);
+    
+    // Routes PennyLane (factures)
+    Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
+    Route::get('/test', [PennylaneController::class, 'getInvoices']);
+    Route::get('/client-id', [PennylaneController::class, 'getClientId']);
+    Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);
+    Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
+    Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
+    
+    // Routes Mail
+    Route::post('/send-email', [MailController::class, 'sendEmail']);
+    Route::get('/test-mail', [MailController::class, 'testMail']);
 });
-
-Route::post('login', [LoginController::class, 'login']);
-Route::post('logout', [LoginController::class, 'logout']);
-
-//Route::post('register', [RegisterController::class, 'register']);
-
-Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
-
-Route::post('password/reset', [ResetPasswordController::class, 'reset']);
-
-//Route::get('email/verify', [VerificationController::class, 'show'])->name('verification.notice');
-Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
-Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
-
-Route::post('password/confirm', [ConfirmPasswordController::class, 'confirm']);
-
-Route::post('password/reset', [ResetPasswordController::class, 'reset']);

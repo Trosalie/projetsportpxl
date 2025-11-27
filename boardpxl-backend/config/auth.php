@@ -62,7 +62,7 @@ return [
     'providers' => [
         'photographers' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Photographer::class,
         ],
 
         // 'users' => [

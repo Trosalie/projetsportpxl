@@ -21,7 +21,7 @@ export class LoginPage {
 
         this.auth.saveToken(response.token);
 
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         console.error('Erreur de login', err);

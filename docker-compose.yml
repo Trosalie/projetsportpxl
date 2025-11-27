@@ -33,7 +33,7 @@ services:
       MYSQL_USER: laravel
       MYSQL_PASSWORD: laravel
     ports:
-      - "3307:3306" # Exposé sur l'hôte, interne reste 3306
+      - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
     networks:

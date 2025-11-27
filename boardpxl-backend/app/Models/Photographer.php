@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
 
-class Photographer extends User
+class Photographer extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     protected $fillable = [
         'aws_sub',
@@ -35,8 +37,13 @@ class Photographer extends User
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed'
+        // 'password' => 'hashed'
     ];
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::needsRehash($value) ? Hash::make($value) : $value;
+    }
 
     public function invoicesCredit()
     {
