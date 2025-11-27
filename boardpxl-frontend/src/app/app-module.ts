@@ -13,11 +13,14 @@ import { InvoiceFilter } from './invoice-filter/invoice-filter';
 import { PhotographRequest } from './photograph-request/photograph-request';
 import { AutomaticResponse } from './automatic-response/automatic-response';
 import { MailRequestPage } from './mail-request-page/mail-request-page';
+import { FormsModule } from '@angular/forms';
+
 
 import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 
 import localeFr from '@angular/common/locales/fr';
+import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -31,12 +34,14 @@ registerLocaleData(localeFr);
     InvoiceFilter,
     PhotographRequest,
     AutomaticResponse,
-    MailRequestPage
+    MailRequestPage,
+    CreditPurchaseForm
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
