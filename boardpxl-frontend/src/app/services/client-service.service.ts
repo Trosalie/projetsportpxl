@@ -1,20 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClientService {
-  private apiUrl = 'http://localhost:9000/api';
   constructor(private http: HttpClient) {}
 
   getClientIdByName(body: any): Observable<any> {
-    return this.http.post(this.apiUrl + "/client-id" , body);
+    return this.http.post(`${environment.apiUrl}/client-id` , body);
   }
 
   getClients(): Observable<any> {
-    return this.http.get(this.apiUrl + "/list-clients");
+    return this.http.get(`${environment.apiUrl}/list-clients`);
   }
 }

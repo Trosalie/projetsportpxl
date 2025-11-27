@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { InvoiceService } from '../services/invoice-service';
 import { ClientService } from '../services/client-service.service';
-import { find } from 'rxjs';
 
 
 @Component({
@@ -13,7 +12,7 @@ import { find } from 'rxjs';
 export class CreditPurchaseForm {
   today: string = new Date().toISOString().slice(0, 10);
   clientId: any;
-  clientName: string = 'Thibaultt Rosalie';
+  clientName: string = 'Thibault Rosalie';
   findClient: boolean = false;
   creationFacture: boolean = false;
   clientsNames: string[] = [];
@@ -83,7 +82,7 @@ export class CreditPurchaseForm {
     this.clientName = name;
     console.log('Client sélectionné :', this.clientName);
     const body = { name: this.clientName };
-    this.clientId = this.clientService.getClientIdByName(body).subscribe({
+    this.clientService.getClientIdByName(body).subscribe({
       next: (data) => {
         if (data && data.client_id) {
           this.clientId = data.client_id;
