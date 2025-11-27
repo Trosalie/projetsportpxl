@@ -4,16 +4,9 @@
   <div class="form-separator"></div>
   <div class="form-group">
     <label for="photographer">Photographe :</label>
-    <input
-      type="text"
-      id="photographer"
-      name="photographer"
-      required
-      [value]="photographerInput"
-      (input)="onPhotographerChange($event.target.value)"
-    />
-    <div class="notification" *ngIf="!findClient && notificationVisible">
-      Le photographe n'a pas été trouvé !
+    <input type="text" id="photographer" name="photographer" required [value]="photographerInput" (input)="onPhotographerChange($event.target.value)"/>
+    <div class="notification" *ngIf="notificationVisible">
+      {{ notificationMessage }}
     </div>
     <ul *ngIf="filteredClients.length > 0" class="suggestions">
       <li *ngFor="let name of filteredClients" (click)="selectPhotographer(name)">

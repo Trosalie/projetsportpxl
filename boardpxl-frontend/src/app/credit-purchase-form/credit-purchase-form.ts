@@ -13,12 +13,13 @@ import { find } from 'rxjs';
 export class CreditPurchaseForm {
   today: string = new Date().toISOString().slice(0, 10);
   clientId: any;
-  clientName: string = 'Thibault Rosalie';
+  clientName: string = 'Thibaultt Rosalie';
   findClient: boolean = false;
   clientsNames: string[] = [];
   filteredClients: string[] = [];
   photographerInput: string = '';
   notificationVisible: boolean = false;
+  notificationMessage: string = "";
 
   constructor(private invoiceService: InvoiceService, private clientService: ClientService) {}
 
@@ -42,7 +43,7 @@ export class CreditPurchaseForm {
       error: (err) => {
         console.error('Erreur fetch client ID :', err);
         this.findClient = false;
-        this.showNotification();
+        this.showNotification("Le photographe n'a pas été trouvé !");
         this.loadClients();
       }
     });
@@ -116,14 +117,16 @@ export class CreditPurchaseForm {
       invoiceTitle: subject
     };
     this.invoiceService.createCreditsInvoice(body).subscribe({
-      next: () => alert('Achat enregistré !'),
-      error: () => alert('Erreur lors de l’enregistrement.'),
+      next: () => this.showNotification('Facture créée avec succès !'),
+      error: () => this.showNotification("Erreur lors de la création de la facture."),
     });
     console.log(body);
   }
 
   // Afficher la notification quelques secondes
-  showNotification() {
+  showNotification(message: string) {
+    console.log("Afficher notification:", message);
+    this.notificationMessage = message;
     this.notificationVisible = true;
     setTimeout(() => {
       this.notificationVisible = false;
