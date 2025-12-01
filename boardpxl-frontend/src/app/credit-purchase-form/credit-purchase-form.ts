@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, viewChild } from '@angular/core';
 import { InvoiceService } from '../services/invoice-service';
 import { ClientService } from '../services/client-service.service';
+import { Popup } from '../popup/popup';
 
 
 @Component({
@@ -22,6 +23,7 @@ export class CreditPurchaseForm {
   notificationMessage: string = "";
 
   constructor(private invoiceService: InvoiceService, private clientService: ClientService) {}
+  @ViewChild('popup') popup!: Popup;
 
   ngOnInit() {
     // Cherche le client par nom/prénom
@@ -43,7 +45,7 @@ export class CreditPurchaseForm {
       error: (err) => {
         console.error('Erreur fetch client ID :', err);
         this.findClient = false;
-        this.showNotification("Le photographe n'a pas été trouvé !");
+        this.popup.showNotification("Le photographe n'a pas été trouvé !");
         this.loadClients();
       }
     });
@@ -119,24 +121,18 @@ export class CreditPurchaseForm {
     this.creationFacture = true;
     this.invoiceService.createCreditsInvoice(body).subscribe({
       next: () => {
-        this.showNotification('Facture créée avec succès !');
+        this.popup.showNotification('Facture créée avec succès !');
         this.creationFacture = false;
+        console.log('Facture créée avec succès');
       },
       error: () => {
-        this.showNotification("Erreur lors de la création de la facture."),
+        this.popup.showNotification("Erreur lors de la création de la facture."),
         this.creationFacture = false;
+        console.error('Erreur lors de la création de la facture');
       }
     });
     console.log(body);
   }
 
-  // Afficher la notification quelques secondes
-  showNotification(message: string) {
-    console.log("Afficher notification:", message);
-    this.notificationMessage = message;
-    this.notificationVisible = true;
-    setTimeout(() => {
-      this.notificationVisible = false;
-    }, 5000); // 5 secondes
-  }
+  
 }
