@@ -109,6 +109,10 @@ export class CreditPurchaseForm {
     const due = new Date(issue);
     due.setMonth(due.getMonth() + 1);
     const dueDate = due.toISOString().slice(0, 10);
+    if (!subject || !dueDate || !form['priceHT'].value || !(form['tva'] as HTMLSelectElement).value || !this.findClient) {
+      this.popup.showNotification("Merci de remplir tous les champs du formulaire.");
+      return;
+    }
     const body = {
       labelTVA: (form['tva'] as HTMLSelectElement).value,
       labelProduct: `${form['credits'].value} crédits`,
