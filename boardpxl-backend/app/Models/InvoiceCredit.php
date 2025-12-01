@@ -10,21 +10,26 @@ class InvoiceCredit extends Model
     use HasFactory;
 
     protected $fillable = [
+        'number',
+        'issue_date',
+        'due_date',
+        'description',
         'amount',
-        'reduction_in_percent',
-        'fix_reduction',
-        'total_due',
+        'tax',
+        'vat',
+        'total-due',
         'credits',
-        'status'
+        'status',
+        'link_pdf'
     ];
 
-    public function invoices()
-    {
-        return $this->morphMany(Invoice::class, 'invoiceable');
-    }
+    protected $casts = [
+        'issue_date' => 'date',
+        'due_date' => 'date',
+    ];
 
-    public function invoice()
+    public function photographer()
     {
-        return $this->morphOne(Invoice::class, 'invoiceable');
+        return $this->belongsTo(Photographer::class);
     }
 }

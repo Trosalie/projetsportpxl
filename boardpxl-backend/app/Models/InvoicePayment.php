@@ -10,25 +10,29 @@ class InvoicePayment extends Model
     use HasFactory;
 
     protected $fillable = [
+        'number',
+        'issue_date',
+        'due_date',
+        'description',
         'turnover',
         'raw_value',
         'commission',
+        'tax',
+        'vat',
         'start_period',
         'end_period',
+        'link_pdf'
     ];
 
     protected $casts = [
+        'issue_date' => 'date',
+        'due_date' => 'date',
         'start_period' => 'date',
         'end_period' => 'date',
     ];
 
-    public function invoices()
+    public function photographer()
     {
-        return $this->morphMany(Invoice::class, 'invoiceable');
-    }
-
-    public function invoice()
-    {
-        return $this->morphOne(Invoice::class, 'invoiceable');
+        return $this->belongsTo(Photographer::class);
     }
 }

@@ -38,7 +38,6 @@ class Photographer extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        // 'password' => 'hashed'
     ];
 
     public function setPasswordAttribute($value)
@@ -48,11 +47,11 @@ class Photographer extends Authenticatable
 
     public function invoicesCredit()
     {
-        return $this->hasMany(\App\Models\InvoiceCredit::class);
+        return $this->hasMany(InvoiceCredit::class);
     }
 
     public function invoicesPayment()
     {
-        return $this->hasMany(\App\Models\InvoicePayment::class);
+        return $this->hasMany(InvoicePayment::class);
     }
 }

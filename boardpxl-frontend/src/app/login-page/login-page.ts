@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../services/auth-service';
 import { Router } from '@angular/router';
+import { RoleService } from '../services/role.service';
 
 @Component({
   selector: 'app-login-page',
@@ -8,24 +9,38 @@ import { Router } from '@angular/router';
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',
 })
-export class LoginPage {
+
+export class LoginPage
+{
   email = "";
   password = "";
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router, private role: RoleService) { }
 
-  onSubmit() {
-    this.auth.login(this.email, this.password).subscribe({
-      next: (response) => {
+  onSubmit()
+  {
+    this.auth.login(this.email, this.password).subscribe(
+    {
+      next: (response) =>
+      {
         console.log('Login OK', response);
 
         this.auth.saveToken(response.token);
 
+        if (response.photographer.admin)
+        {
+          this.role.setRole("admin");
+          this.router.navigate(['/']);
+        }
+
+        this.role.setRole("photograph");
         this.router.navigate(['/']);
       },
-      error: (err) => {
+      
+      error: (err) =>
+      {
         console.error('Erreur de login', err);
-        
+
         alert("Email ou mot de passe incorrect");
       }
     });

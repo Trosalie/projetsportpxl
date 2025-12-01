@@ -32,7 +32,6 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-<<<<<<< HEAD
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -40,42 +39,16 @@ class LoginController extends Controller
 
         if (Auth::guard('web')->attempt($credentials)) {
         $photographer = Auth::guard('web')->user();
-        
+
         // Créer un token API pour l'authentification
         $token = $photographer->createToken('API Token')->plainTextToken;
-        
+
         return response()->json([
             'message' => 'Login successful',
             'user' => $photographer,
             'token' => $token
         ], 200);
-=======
-        try {
-            $validated = $request->validate([
-                'email' => 'required|email',
-                'password' => 'required|min:8',
-            ]);
 
-            if (Auth::attempt($validated)) {
-                $photographer = Auth::user();
-
-                $token = $photographer->createToken('API Token')->plainTextToken;
-
-                return response()->json([
-                    'photographer' => $photographer,
-                    'token' => $token,
-                ]);
-            }
-
-            throw ValidationException::withMessages([
-                'email' => ['Les informations d\'identification sont invalides.'],
-            ]);
-        }
-        catch (\Exception $e) {
-            \Log::error('Erreur lors de la tentative de connexion : ' . $e->getMessage());
-            return response()->json(['message' => 'Erreur serveur'], 500);
-        }
->>>>>>> d821f808e7f40f3fd89fb0a828ead85f1defba1a
     }
 
         return response()->json([
@@ -86,10 +59,10 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Auth::guard('web')->logout();
-        
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
+
         return response()->json([
             'message' => 'Logged out successfully'
         ], 200);

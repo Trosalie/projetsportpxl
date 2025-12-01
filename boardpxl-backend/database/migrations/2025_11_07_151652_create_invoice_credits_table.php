@@ -15,12 +15,18 @@ class CreateInvoiceCreditsTable extends Migration
     {
         Schema::create('invoice_credits', function (Blueprint $table) {
             $table->id();
+            $table->integer('number')->unique();
+            $table->date('issue_date');
+            $table->date('due_date');
+            $table->string('description');
             $table->decimal('amount', 9, 2);
-            $table->decimal('reduction_in_percent', 5, 2);
-            $table->decimal('fix_reduction', 9, 2);
+            $table->decimal('tax', 5, 2);
+            $table->decimal('vat', 9, 2);
             $table->decimal('total_due', 10, 2);
             $table->integer('credits');
             $table->string('status');
+            $table->string('link_pdf');
+            $table->foreignId('photographer_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -38,18 +38,18 @@ Route::get('/email/resend', [VerificationController::class, 'resend'])->name('ve
 */
 
 Route::middleware('auth:sanctum')->group(function () {
-    
+
     // Utilisateur connecté
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    
+
     // Déconnexion
     Route::post('/logout', [LoginController::class, 'logout']);
-    
+
     // Confirmation de mot de passe
     Route::post('/password/confirm', [ConfirmPasswordController::class, 'confirm']);
-    
+
     // Routes PennyLane (factures)
     Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
     Route::get('/test', [PennylaneController::class, 'getInvoices']);
@@ -57,28 +57,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);
     Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
     Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
-    
+
     // Routes Mail
     Route::post('/send-email', [MailController::class, 'sendEmail']);
     Route::get('/test-mail', [MailController::class, 'testMail']);
 });
-<<<<<<< HEAD
-=======
-
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('logout', [LoginController::class, 'logout']);
-
-//Route::post('register', [RegisterController::class, 'register']);
-
-Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
-
-Route::post('password/reset', [ResetPasswordController::class, 'reset']);
-
-//Route::get('email/verify', [VerificationController::class, 'show'])->name('verification.notice');
-Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
-Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
-
-Route::post('password/confirm', [ConfirmPasswordController::class, 'confirm']);
-
-Route::post('password/reset', [ResetPasswordController::class, 'reset']);
->>>>>>> d821f808e7f40f3fd89fb0a828ead85f1defba1a
