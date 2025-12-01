@@ -1,4 +1,4 @@
-import { Component, ViewChild, viewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { InvoiceService } from '../services/invoice-service';
 import { ClientService } from '../services/client-service.service';
 import { Popup } from '../popup/popup';
@@ -109,7 +109,7 @@ export class CreditPurchaseForm {
     const due = new Date(issue);
     due.setMonth(due.getMonth() + 1);
     const dueDate = due.toISOString().slice(0, 10);
-    if (!subject || !dueDate || !form['priceHT'].value || !(form['tva'] as HTMLSelectElement).value || !this.findClient) {
+    if (!subject || !dueDate || !form['priceHT'].value || !form['credits'].value || !(form['tva'] as HTMLSelectElement).value || !this.findClient) {
       this.popup.showNotification("Merci de remplir tous les champs du formulaire.");
       return;
     }
