@@ -2,7 +2,6 @@ import { Photographer } from './photographer.model';
 
 describe('Photographer', () => {
   it('should create an instance', () => {
-    // Provide 8 mock parameters for the Invoice constructor
     const photographer = new Photographer(
       'AWS-001',
       'hello@gmail.com',
