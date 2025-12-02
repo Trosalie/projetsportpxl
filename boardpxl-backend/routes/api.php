@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\Mail;
 
 
 // Création d'une facture
-Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
+Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
+
+// Création d'une facture de versement de CA
+Route::post('/create-turnover-invoice-client', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
 
 // Tester récupération globale
 Route::get('/test', [PennylaneController::class, 'getInvoices']);

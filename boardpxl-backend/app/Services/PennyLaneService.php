@@ -119,6 +119,52 @@ class PennylaneService
         return json_decode($response->getBody()->getContents(), true);
     }
 
+    // Création d'une facture d'achat de crédit pour un client
+    public function createTurnoverInvoiceClient(string $labelTVA, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle, string $invoiceDescription)
+    {
+        $client = new \GuzzleHttp\Client();
+        $this->token = 'eed8y6tW50z94_tiKQp7yFK-mIfnNXTNJkp1y_gRmjw';
+
+        $response = $client->request('POST', 'https://app.pennylane.com/api/external/v2/customer_invoices', [
+            'json' => [
+                "currency" => "EUR",
+                "language" => "fr_FR",
+                "discount" => [
+                    "type" => "absolute",
+                    "value" => "0"
+                ],
+                "draft" => false,
+                "invoice_lines" => [
+                    [
+                        "discount" => [
+                            "type" => "absolute",
+                            "value" => "0"
+                        ],
+                        "vat_rate" => $labelTVA,
+                        "label" => "Commission SportPxl",
+                        "description" => "Le CA & la commission sont estimés. Ils seront ajustés en fin d'exercice.",
+                        "quantity" => 1,
+                        "raw_currency_unit_price" => $amountEuro,
+                        "unit" => "piece"
+                    ]
+                ],
+                "date" => $issueDate,
+                "deadline" => $dueDate,
+                "customer_id" => $idClient,
+                "customer_invoice_template_id" => 207554338,
+                "pdf_invoice_subject" => $invoiceTitle,
+                "pdf_description" => $invoiceDescription,
+            ],
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $this->token,
+            ],
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    
     public function getProductFromInvoice(string $invoiceNumber): ?array
     {
         $invoice = $this->getInvoiceByNumber($invoiceNumber);

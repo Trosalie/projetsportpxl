@@ -13,7 +13,7 @@ class PennyLaneController extends Controller
     /**
      * Création d'une facture d'achat de crédit Pennylane
      */
-    public function createCreditsInvoice(Request $request, PennylaneService $service)
+    public function createCreditsInvoiceClient(Request $request, PennylaneService $service)
     {
         try {
             $validated = $request->validate([
@@ -38,6 +38,46 @@ class PennyLaneController extends Controller
                 $validated['dueDate'],
                 (int) $validated['idClient'],
                 $validated['invoiceTitle']
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Facture créée avec succès.',
+                'data' => $facture
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Création d'une facture de versement de CA
+     */
+    public function createTurnoverPaymentInvoice(Request $request, PennylaneService $service)
+    {
+        try {
+            $validated = $request->validate([
+                'labelTVA' => 'required|string',
+                'amountEuro' => 'required|string',
+                'issueDate' => 'required|string',
+                'dueDate' => 'required|string',
+                'idClient' => 'required|integer',
+                'invoiceTitle' => 'required|string',
+                'invoiceDescription' => 'string',
+            ]);
+
+            $facture = $service->createTurnoverInvoiceClient(
+                $validated['labelTVA'],
+                $validated['amountEuro'],
+                $validated['issueDate'],
+                $validated['dueDate'],
+                (int) $validated['idClient'],
+                $validated['invoiceTitle'],
+                $validated['invoiceDescription']
             );
 
             return response()->json([

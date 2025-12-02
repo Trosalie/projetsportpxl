@@ -22,7 +22,11 @@ export class InvoiceService {
   }
   
   createCreditsInvoice(body: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/creation-facture`, body);
+    return this.http.post(`${environment.apiUrl}/create-credits-invoice-client`, body);
+  }
+
+  createTurnoverPaymentInvoice(body: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/create-turnover-invoice-client`, body);
   }
 
   

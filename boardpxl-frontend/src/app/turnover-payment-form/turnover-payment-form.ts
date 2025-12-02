@@ -10,7 +10,7 @@ import { Popup } from '../popup/popup';
   styleUrl: './turnover-payment-form.scss',
 })
 export class TurnoverPaymentForm {
-  today: string = new Date().toISOString().slice(0, 10);
+    today: string = new Date().toISOString().slice(0, 10);
     clientId: any;
     clientName: string = 'Thibault Rosalie';
     findClient: boolean = false;
@@ -107,14 +107,41 @@ export class TurnoverPaymentForm {
       const subject = form['Subject'].value;
       const commission = form['commission'].value;
       const chiffreAffaire = form['CA'].value
-      const TVA = !(form['tva'] as HTMLSelectElement).value;
+      const TVA = (form['tva'] as HTMLSelectElement).value;
+      const issue = new Date(this.today);
+      const due = new Date(issue);
+      due.setMonth(due.getMonth() + 1);
+      const dueDate = due.toISOString().slice(0, 10);
       if (!subject || !startDate || !endDate || !commission || !chiffreAffaire || !TVA || !this.findClient) {
         this.popup.showNotification("Merci de remplir tous les champs du formulaire.");
+        console.log("Formulaire incomplet :", {subject, startDate, endDate, commission, chiffreAffaire, TVA, findClient: this.findClient});
         return;
       }
-    }
+      const body = {
+        labelTVA: TVA,
+        amountEuro: commission,
+        issueDate: this.today,
+        dueDate: dueDate,
+        idClient: this.clientId,
+        invoiceTitle: subject,
+        invoiceDescription: `Versement du chiffre d'affaire de ${chiffreAffaire}€ pour la période du ${startDate} au ${endDate}.`
+      }
+      this.creationFacture = true;
+      this.invoiceService.createTurnoverPaymentInvoice(body).subscribe({
+        next: () => {
+          this.popup.showNotification('Facture créée avec succès !');
+          this.creationFacture = false;
+          console.log('Facture créée avec succès');
+        },
+        error: () => {
+          this.popup.showNotification("Erreur lors de la création de la facture."),
+          this.creationFacture = false;
+          console.error('Erreur lors de la création de la facture');
+        }
+      });
+      console.log(body);
 
-
+  }
   
   
 }
