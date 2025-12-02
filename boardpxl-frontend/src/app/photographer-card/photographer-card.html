@@ -2,8 +2,8 @@
     <div>
         <!-- routerLink a changer quand on aura la page profil -->
         <a routerLink="/" ><p>Photographer : {{ photographer.name }}</p></a> 
-        <p *ngIf="photographer.emails.length > 0">Email : {{ photographer.emails[0] }}</p>
-        <p *ngIf="photographer.emails.length == 0">Pas d'email</p>
+        <p *ngIf="photographer.email">Email : {{ photographer.email }}</p>
+        <p *ngIf="!photographer.email">Pas d'email</p>
     </div>
     <div>
         <p>Chiffre d'affaires</p>

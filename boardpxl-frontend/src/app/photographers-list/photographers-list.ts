@@ -16,7 +16,6 @@ export class PhotographersList {
   ngOnInit() {
     this.photographerService.getPhotographers().subscribe(photographers => {
       this.photographers = photographers;
-      console.log('Photographers loaded:', this.photographers);
     });
   }
 }

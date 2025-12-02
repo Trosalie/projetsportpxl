@@ -1,4 +1,5 @@
 export class Photographer {
+    id: number;
     aws_sub: string;
     email: string;
     family_name: string;
@@ -14,10 +15,12 @@ export class Photographer {
     locality: string;
     country: string;
     iban: string;
+    pennylane_id: string;
 
-    constructor(aws_sub: string, email: string, family_name: string, given_name: string, name: string, customer_stripe_id: string,
+    constructor(id: number, aws_sub: string, email: string, family_name: string, given_name: string, name: string, customer_stripe_id: string,
         nb_imported_photos: number, total_limit: number, fee_in_percent: number, fix_fee: number,
-        street_address: string, postal_code: string, locality: string, country: string, iban: string) {
+        street_address: string, postal_code: string, locality: string, country: string, iban: string, pennylane_id: string) {
+        this.id = id;
         this.aws_sub = aws_sub;
         this.email = email;
         this.family_name = family_name;
@@ -33,4 +36,5 @@ export class Photographer {
         this.locality = locality;
         this.country = country;
         this.iban = iban;
+        this.pennylane_id = pennylane_id;
     }}

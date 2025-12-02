@@ -18,7 +18,13 @@ class PennylaneService
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->token,
             ],
+            'verify' => false,
         ]);
+    }
+
+    public function getHttpClient(): Client
+    {
+        return $this->client;
     }
 
     // Récupérer toutes les factures

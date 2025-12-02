@@ -99,8 +99,6 @@ class PhotographerSeeder extends Seeder
             }
             
             $photographes[] = $this->creerPhotographe($donnees, $mappingColonnes);
-            // Attendre 100ms pour éviter les problèmes de taux de requêtes avec Pennylane
-            usleep(100000);
         }
         
         return $photographes;
@@ -129,60 +127,102 @@ class PhotographerSeeder extends Seeder
         return true;
     }
 
-    private function getPennylaneIdFromEmail(array $donnees, array $mappingColonnes): ?int
+    /**
+     * Récupérer ou créer un client Pennylane à partir de l'email
+     * 
+     * @param array $donnees
+     * @return int|null
+     */
+    private function getOrCreatePennylaneIdFromEmail(array $donnees): ?int
     {
-        $client = new Client([
-            'base_uri' => 'https://app.pennylane.com/api/external/v2/',
-            'headers' => [
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer eed8y6tW50z94_tiKQp7yFK-mIfnNXTNJkp1y_gRmjw',
-            ],
-            'verify' => false,
-        ]);
+        $service = new PennylaneService();
+        $client = $service->getHttpClient();
         $response = $client->get('customers?sort=-id');
         $data = json_decode($response->getBody()->getContents(), true);
 
         $photographer = $data['items'] ?? [];
+        $email = strtolower(trim($donnees['email']));
 
-        $photographer = collect($photographer)->where('email', $donnees[$mappingColonnes['email']])->first();
+        $photographer = collect($data['items'] ?? [])
+            ->first(function ($item) use ($email) {
+                $emails = array_map(
+                    fn ($e) => strtolower(trim($e)),
+                    $item['emails'] ?? []
+                );
+
+                return in_array($email, $emails, true);
+            });
+
 
         if(! $photographer) {
             $endpoint = 'individual_customers';
 
-            if(empty($donnees[$mappingColonnes['given name']]) && empty($donnees[$mappingColonnes['family name']])) {
+            if(empty($donnees['given_name']) && empty($donnees['family_name'])) {
                 $endpoint = 'company_customers';
             }
 
+            // Nettoyer les données avant l'envoi -> remplacer les ';' par des ''
+            $donnees = array_map(function ($value) {
+                if (is_string($value)) {
+                    return str_replace(';', '', $value);
+                }
+                return $value;
+            }, $donnees);
+
+            if(empty($donnees['family_name'])) {
+                $donnees['family_name'] = '_';
+            }
+            if(empty($donnees['given_name'])) {
+                $donnees['given_name'] = '_';
+            }
+
+            // Parser le champ country pour ne garder que le code pays (par défaut fr_FR, sinon en_GB ou de_DE)
+            if (strtolower($donnees['country']) == 'france' || strtolower($donnees['country']) == 'fr_fr' || strtolower($donnees['country']) == 'fr'){
+                $donnees['country'] = 'FR';
+            }
+            elseif (strtolower($donnees['country']) == 'royaume-uni' || strtolower($donnees['country']) == 'england' || strtolower($donnees['country']) == 'uk' || strtolower($donnees['country']) == 'gb' || strtolower($donnees['country']) == 'en_gb'){
+                $donnees['country'] = 'GB';
+            }
+            elseif (strtolower($donnees['country']) == 'allemagne' || strtolower($donnees['country']) == 'germany' || strtolower($donnees['country']) == 'de' || strtolower($donnees['country']) == 'de_de'){
+                $donnees['country'] = 'DE';
+            }
+            else {
+                $donnees['country'] = 'FR';
+            }
+
+            // afficher le photographe dans la console
+            echo "Photographer: " . json_encode($donnees) . "\n";
+
             $json = [
-                'emails' => [$donnees[$mappingColonnes['email']]],
+                'emails' => [$donnees['email']],
                 'billing_address' => [
-                    'address' => $donnees[$mappingColonnes['street address']] ?? '',
-                    'postal_code' => $donnees[$mappingColonnes['postal code']] ?? '',
-                    'city' => $donnees[$mappingColonnes['locality']] ?? '',
-                    'country_alpha2' => $donnees[$mappingColonnes['country']] ?? '',
+                    'address' => $donnees['street_address'] ?? '',
+                    'postal_code' => $donnees['postal_code'] ?? '',
+                    'city' => $donnees['locality'] ?? '',
+                    'country_alpha2' => $donnees['country'] ?? 'FR',
                 ],
                 'delivery_address' => [
-                    'address' => $donnees[$mappingColonnes['street address']] ?? '',
-                    'postal_code' => $donnees[$mappingColonnes['postal code']] ?? '',
-                    'city' => $donnees[$mappingColonnes['locality']] ?? '',
-                    'country_alpha2' => $donnees[$mappingColonnes['country']] ?? '',
+                    'address' => $donnees['street_address'] ?? '',
+                    'postal_code' => $donnees['postal_code'] ?? '',
+                    'city' => $donnees['locality'] ?? '',
+                    'country_alpha2' => $donnees['country'] ?? 'FR',
                 ],
                 'billing_iban' => 'FR1010096000307323346714U91',
 
             ];
 
             if($endpoint === 'individual_customers') {
-                $json['first_name'] = $donnees[$mappingColonnes['given name']] ?? '';
-                $json['last_name'] = $donnees[$mappingColonnes['family name']] ?? '';
+                $json['first_name'] = $donnees['given_name'] ?? '';
+                $json['last_name'] = $donnees['family_name'] ?? '';
             } else {
-                $json['name'] = $donnees[$mappingColonnes['name']] ?? '';
+                $json['name'] = $donnees['name'] ?? '';
             }
 
-            $client->post($endpoint, [
-                'json' => $json,
-            ]);
+            $response = $client->post($endpoint, ['json' => $json]);
+            $created = json_decode($response->getBody()->getContents(), true);
+  
         }
-        return $photographer ? $photographer['id'] : null;
+        return $created['id'] ?? $photographer['id'] ?? null;
     }
 
     /**
@@ -210,7 +250,6 @@ class PhotographerSeeder extends Seeder
             'locality' => !empty($donnees[$mappingColonnes['locality']]) ? $donnees[$mappingColonnes['locality']] : null,
             'country' => !empty($donnees[$mappingColonnes['country']]) ? $donnees[$mappingColonnes['country']] : null,
             'iban' => !empty($donnees[$mappingColonnes['iban']]) ? $donnees[$mappingColonnes['iban']] : null,
-            'pennylane_id' => $this->getPennylaneIdFromEmail($donnees, $mappingColonnes),
             'created_at' => now(),
             'updated_at' => now(),
         ];
@@ -236,10 +275,25 @@ class PhotographerSeeder extends Seeder
                 continue;
             }
             
+            $photographe['pennylane_id'] = $this->getOrCreatePennylaneIdFromEmail(
+            [
+                'email' => $photographe['email'],
+                'street_address' => $photographe['street_address'],
+                'postal_code' => $photographe['postal_code'],
+                'locality' => $photographe['locality'],
+                'country' => $photographe['country'],
+                'given_name' => $photographe['given_name'],
+                'family_name' => $photographe['family_name'],
+                'name' => $photographe['name'],
+            ]
+        );
+
             $emailsVus[$photographe['email']] = true;
             $awsSubsVus[$photographe['aws_sub']] = true;
             
             DB::table('photographers')->insert($photographe);
+            // Faire 2 appels par seconde pour éviter de saturer l'API Pennylane
+            usleep(500000);
         }
     }
 }

@@ -9,14 +9,13 @@ import { InvoiceService } from '../services/invoice-service';
 })
 export class PhotographerCard {
   @Input() photographer!: any;
+  @Input() index!: number;
   invoices: any[] = [];
 
   constructor(private invoiceService: InvoiceService) {}
 
-  ngOnInit() {
-    this.invoiceService.getInvoicesByClient(this.photographer.id).subscribe((invoices) => {
-      this.invoices = invoices;
-    });
+  ngOnInit(): void {
+    //
   }
 
   getChiffreAffaires(): number {

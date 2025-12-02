@@ -16,17 +16,7 @@ export class PhotographerService {
 
   // Retourne la liste des photographes, utilise le cache si disponible
   getPhotographers(): Observable<Photographer[]> {
-    if (this.photographers.length > 0) {
-      console.log('Returning photographers from cache');
-      return of(this.photographers);
-    } else {
-      console.log('Fetching photographers from API');
-      this.http.get<Photographer[]>(`${environment.apiUrl}/photographers`).subscribe(data => {
-        this.photographers = data;
-      });
-
-      return of(this.photographers);
-    }
+    return this.http.get<Photographer[]>(`${environment.apiUrl}/photographers`);
   }
 
   forceGetPhotographers(): Observable<Photographer[]> {
