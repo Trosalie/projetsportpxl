@@ -34,7 +34,6 @@ export class TurnoverPaymentForm {
             this.findClient = true;
             this.photographerInput = this.clientName; 
             this.loadClients();
-            console.log('Client ID:', this.clientId);
           } else {
             // Client non trouvé
             this.findClient = false;
@@ -55,7 +54,6 @@ export class TurnoverPaymentForm {
       this.clientService.getClients().subscribe({
         next: (res) => {
           this.clientsNames = res.clients.map((c: any) => c.name);
-          console.log('Clients récupérés :', this.clientsNames);
         },
         error: (err) => console.error('Erreur fetch clients :', err)
       });
@@ -81,22 +79,18 @@ export class TurnoverPaymentForm {
       this.findClient = true;
       this.filteredClients = [];
       this.clientName = name;
-      console.log('Client sélectionné :', this.clientName);
       const body = { name: this.clientName };
       this.clientService.getClientIdByName(body).subscribe({
         next: (data) => {
           if (data && data.client_id) {
             this.clientId = data.client_id;
-            console.log('Client ID après sélection :', this.clientId);
           } else {
-            console.error('Client non trouvé après sélection');
+            this.popup.showNotification('Client non trouvé !');
           }      }, 
         error: (err) => {
           console.error('Erreur fetch client ID après sélection :', err);
         }
       });
-      
-      console.log('Client ID après sélection :', this.clientId);
     }
   
     onSubmit(event: Event) {
@@ -131,16 +125,12 @@ export class TurnoverPaymentForm {
         next: () => {
           this.popup.showNotification('Facture créée avec succès !');
           this.creationFacture = false;
-          console.log('Facture créée avec succès');
         },
         error: () => {
           this.popup.showNotification("Erreur lors de la création de la facture."),
           this.creationFacture = false;
-          console.error('Erreur lors de la création de la facture');
         }
       });
-      console.log(body);
-
   }
   
   

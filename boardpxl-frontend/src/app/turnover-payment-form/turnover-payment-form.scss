@@ -140,4 +140,12 @@
 
 }
 
+.date-row {
+  display: flex;
+  gap: 20px;             
+  width: 100%;
+}
 
+.date-row .form-group {
+  flex: 1;           
+}
