@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Mail;
 class PennyLaneController extends Controller
 {
     /**
-     * Création d'une facture Pennylane
+     * Création d'une facture d'achat de crédit Pennylane
      */
-    public function createInvoice(Request $request, PennylaneService $service)
+    public function createCreditsInvoice(Request $request, PennylaneService $service)
     {
         try {
             $validated = $request->validate([
@@ -29,7 +29,7 @@ class PennyLaneController extends Controller
 
             $description = $validated['description'] ?? "";
 
-            $facture = $service->createInvoiceClient(
+            $facture = $service->createCreditsInvoiceClient(
                 $validated['labelTVA'],
                 $validated['labelProduct'],
                 $description,

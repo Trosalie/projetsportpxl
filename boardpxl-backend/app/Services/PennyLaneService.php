@@ -75,8 +75,8 @@ class PennylaneService
     }
 
     
-    // Création d'une facture pour un client
-    public function createInvoiceClient(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle)
+    // Création d'une facture d'achat de crédit pour un client
+    public function createCreditsInvoiceClient(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle)
     {
         $client = new \GuzzleHttp\Client();
         $this->token = 'eed8y6tW50z94_tiKQp7yFK-mIfnNXTNJkp1y_gRmjw';
