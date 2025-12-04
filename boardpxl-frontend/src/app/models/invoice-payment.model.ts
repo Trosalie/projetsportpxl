@@ -3,7 +3,6 @@ export class InvoicePayment {
     issueDate!: Date;
     dueDate!: Date;
     description!: string;
-    turnover!: number;
     raw_value!: number;
     commission!: number;
     tax!: number;
@@ -13,12 +12,11 @@ export class InvoicePayment {
     link_pdf!: string;
     pdf_invoice_subject: any;
 
-    constructor(number: string, issueDate: Date, dueDate: Date, description: string, turnover: number, raw_value: number, commission: number, tax: number, vat: number, start_period: Date, end_period: Date, link_pdf: string, pdf_invoice_subject: any) {
+    constructor(number: string, issueDate: Date, dueDate: Date, description: string, raw_value: number, commission: number, tax: number, vat: number, start_period: Date, end_period: Date, link_pdf: string, pdf_invoice_subject: any) {
         this.number = number;
         this.issueDate = issueDate;
         this.dueDate = dueDate;
         this.description = description;
-        this.turnover = turnover;
         this.raw_value = raw_value;
         this.commission = commission;
         this.tax = tax;

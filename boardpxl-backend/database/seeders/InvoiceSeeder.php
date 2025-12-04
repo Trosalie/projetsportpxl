@@ -104,7 +104,6 @@ class InvoiceSeeder extends Seeder
                 'issue_date' => $invoice['date'],
                 'due_date' => $invoice['deadline'],
                 'description' => $invoice['pdf_description'] ?? 'N/A',
-                'turnover' => $invoice['amount'],
                 'raw_value' => $invoice['currency_amount_before_tax'],
                 'commission' => $invoice['amount'],
                 'tax' => $invoice['tax'],
