@@ -1,0 +1,108 @@
+div{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 41px;
+  margin-left: 13px;
+  margin-right: 13px;
+  height: 40px;
+}
+
+.body{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.nameTitle{
+  background-color: #F98524;
+  border-radius: 10px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.credit-count{
+  margin: 0;
+  background-color: #F98524;
+  width: 50%;
+  border-radius: 10px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  padding: 0 7.5px;
+
+  div{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+  }
+
+  p{
+    margin: 0;
+  }
+
+  img{
+    height: 90%;
+    display: block;
+  }
+}
+
+.remaining-credits{
+  background-color: #F98524;
+  color: #FFFFFF;
+  font-family: 'FuturaLT-Bold' !important;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.card{
+  background-color: #fff;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 13px 16px 0px 16px;
+  margin: auto;
+}
+
+.card2{
+  background-color: #fff;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  padding: 13px 16px 0px 16px;
+  margin: auto;
+}
+
+.card3{
+  background-color: #fff;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: flex-start;
+  position: relative;
+  padding: 13px 16px 0px 16px;
+  margin: auto;
+}
+
+.card > div{
+  flex-basis: calc(45% - 40px);
+}
+
+h3{
+  padding-left: 20px;
+}

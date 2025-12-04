@@ -21,6 +21,7 @@ import { registerLocaleData } from '@angular/common';
 
 import localeFr from '@angular/common/locales/fr';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
+import {ProfileInformation} from './profile-information/profile-information';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -35,7 +36,8 @@ registerLocaleData(localeFr);
     PhotographRequest,
     AutomaticResponse,
     MailRequestPage,
-    CreditPurchaseForm
+    CreditPurchaseForm,
+    ProfileInformation
   ],
   imports: [
     BrowserModule,

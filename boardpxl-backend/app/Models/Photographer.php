@@ -36,4 +36,6 @@ class Photographer extends Model
     {
         return $this->hasMany(\App\Models\InvoicePayment::class);
     }
+
+
 }
