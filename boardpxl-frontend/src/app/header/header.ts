@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -8,4 +8,10 @@ import { Component } from '@angular/core';
 })
 export class Header {
   userName: string = 'Test User';
+  @Output() navBarToggled = new EventEmitter<void>();
+
+  toggleNavBar() {
+    this.navBarToggled.emit();
+  }
+
 }

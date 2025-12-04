@@ -44,7 +44,6 @@ export class InvoiceHistory {
         }
 
         this.invoiceService.getProductFromInvoice(invoice).subscribe((product: any) => {
-          console.log(product);
           // service may return a string, an object like { label: string } or an array where product[1] is the label
           let productValue= (product as any).label;
 
@@ -75,9 +74,6 @@ export class InvoiceHistory {
   }
 
   onFilterChanged(filters: FilterOptions): void {
-    for (let invoice of this.invoices) {
-      console.log(invoice);
-    }
 
     this.filteredInvoices = this.invoices.filter(invoice => {
       const isCredit = invoice instanceof InvoiceCredit;
@@ -90,7 +86,6 @@ export class InvoiceHistory {
         }
 
         if (!filters.statusFilters.includes(invoice.status)) {
-          console.log(invoice.status)
           return false;
         }
       }
@@ -117,7 +112,6 @@ export class InvoiceHistory {
       // Filter by date range
       if (filters.periodFilters.startDate) {
         const startDate = new Date(filters.periodFilters.startDate);
-        console.log(startDate);
         const invoiceDate = new Date(invoice.issueDate);
         if (invoiceDate < startDate) {
           return false;
@@ -126,9 +120,7 @@ export class InvoiceHistory {
 
       if (filters.periodFilters.endDate) {
         const endDate = new Date(filters.periodFilters.endDate);
-        console.log(endDate);
         const invoiceDate = new Date(invoice.issueDate);
-        console.log(invoice.issueDate);
         if (invoiceDate > endDate) {
           return false;
         }
