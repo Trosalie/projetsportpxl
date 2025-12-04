@@ -87,7 +87,6 @@ class InvoiceSeeder extends Seeder
             'amount' => $invoice['amount'],
             'tax' => $invoice['tax'],
             'vat' => $vat,
-            'status' => $invoice['status'],
             'total_due' => $invoice['remaining_amount_with_tax'],
             'credits' => $creditAmount,
             'status' => $invoice['status'],
