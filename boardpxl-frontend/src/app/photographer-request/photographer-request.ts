@@ -2,12 +2,12 @@ import { Component, Input } from '@angular/core';
 import { MailService } from '../services/mail-service';
 
 @Component({
-  selector: 'app-photograph-request',
+  selector: 'app-photographer-request',
   standalone: false,
-  templateUrl: './photograph-request.html',
-  styleUrl: './photograph-request.scss',
+  templateUrl: './photographer-request.html',
+  styleUrl: './photographer-request.scss',
 })
-export class PhotographRequest {
+export class PhotographerRequest {
   @Input() requestType: 'versement' | 'crédits' = 'versement';
   protected requestMessage: string = '';
 

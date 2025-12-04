@@ -1,0 +1,42 @@
+<!-- /c:/Users/Kevin/OneDrive - IUT de Bayonne/Documents/dev/IUT/sae/projetsportpxl/boardpxl-frontend/src/app/pagination/pagination.html -->
+<nav class="pagination" aria-label="Pagination">
+    <button
+        type="button"
+        class="pagination__btn"
+        aria-label="First page"
+        (click)="goToFirst()"
+        [disabled]="currentPage === 1">
+        <span class="material-symbols-outlined">first_page</span>
+    </button>
+
+    <button
+        type="button"
+        class="pagination__btn"
+        aria-label="Previous page"
+        (click)="previousPage()"
+        [disabled]="currentPage === 1">
+        <span class="material-symbols-outlined">chevron_left</span>
+    </button>
+
+    <span class="pagination__info" aria-live="polite">
+        Page {{ currentPage }} / {{ totalPages }}
+    </span>
+
+    <button
+        type="button"
+        class="pagination__btn"
+        aria-label="Next page"
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages">
+        <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+
+    <button
+        type="button"
+        class="pagination__btn"
+        aria-label="Last page"
+        (click)="goToLast()"
+        [disabled]="currentPage === totalPages">
+        <span class="material-symbols-outlined">last_page</span>
+    </button>
+</nav>

@@ -4,9 +4,9 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root'
 })
 export class RoleService {
-  role = signal<'photograph' | 'admin'>("admin");
+  role = signal<'photographer' | 'admin' >("admin");
 
-  setRole(role: 'photograph' | 'admin') {
+  setRole(role: 'photographer' | 'admin') {
     this.role.set(role);
   }
 

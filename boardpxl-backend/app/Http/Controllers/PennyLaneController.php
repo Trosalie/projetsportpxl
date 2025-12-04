@@ -167,6 +167,14 @@ class PennyLaneController extends Controller
             ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
     }
 
+    public function getPhotographers(PennylaneService $service)
+    {
+        $photographers = $service->getPhotographers();
+
+        return response()->json([
+            $photographers
+          ]);
+    }
     /**
      * Récupère la liste des clients
      */
