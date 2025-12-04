@@ -13,6 +13,9 @@ export class Pagination {
   protected currentPageNumber: number = 1;
 
   get totalPages(): number {
+    if (this.numberOfItems <= 0) {
+      return 0;
+    }
     return Math.ceil(this.fullList.length / this.numberOfItems);
   }
 
