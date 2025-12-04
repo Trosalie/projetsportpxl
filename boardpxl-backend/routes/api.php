@@ -20,7 +20,7 @@ Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
 Route::get('/test', [PennylaneController::class, 'getInvoices']);
 
 // Récupérer l'ID d’un client
-Route::get('/client-id', [PennylaneController::class, 'getClientId']);
+Route::post('/client-id', [PennylaneController::class, 'getClientId']);
 
 // Récupérer toutes les factures d’un client
 Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);
@@ -33,6 +33,8 @@ Route::get('/invoices-payment/{photographer_id}', [InvoiceController::class, 'ge
 
 // Récupérer les factures de crédit d’un photographe
 Route::get('/invoices-credit/{photographer_id}', [InvoiceController::class, 'getInvoicesCreditByPhotographer']);
+// Récupérer la liste des clients
+Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
 
 // Téléchargement contournement CORS
 Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
@@ -50,3 +52,5 @@ Route::get('/photographers', [PhotographerController::class, 'getPhotographers']
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+

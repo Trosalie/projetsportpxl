@@ -13,6 +13,8 @@ import { InvoiceFilter } from './invoice-filter/invoice-filter';
 import { PhotographerRequest } from './photographer-request/photographer-request';
 import { AutomaticResponse } from './automatic-response/automatic-response';
 import { MailRequestPage } from './mail-request-page/mail-request-page';
+import { FormsModule } from '@angular/forms';
+
 
 import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
@@ -22,6 +24,8 @@ import { PhotographersList } from './photographers-list/photographers-list';
 import { PhotographerCard } from './photographer-card/photographer-card';
 import { SearchBar } from './search-bar/search-bar';
 import { Pagination } from './pagination/pagination';
+import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
+import { Popup } from './popup/popup';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -39,12 +43,15 @@ registerLocaleData(localeFr);
     PhotographersList,
     PhotographerCard,
     SearchBar,
-    Pagination
+    Pagination,
+    CreditPurchaseForm,
+    Popup
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

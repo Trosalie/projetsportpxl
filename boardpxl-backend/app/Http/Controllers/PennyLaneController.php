@@ -55,16 +55,15 @@ class PennyLaneController extends Controller
     }
 
     /**
-     * Récupère ID client via prénom + nom
+     * Récupère ID client via name
      */
     public function getClientId(Request $request, PennylaneService $service)
     {
         $validated = $request->validate([
-            'prenom' => 'required|string',
-            'nom' => 'required|string',
+            'name' => 'required|string',
         ]);
 
-        $clientId = $service->getClientIdByName($validated['prenom'], $validated['nom']);
+        $clientId = $service->getClientIdByName($validated['name']);
 
         if ($clientId) {
             return response()->json([
@@ -103,10 +102,7 @@ class PennyLaneController extends Controller
         $product = $service->getProductFromInvoice($invoiceNumber);
 
         if ($product) {
-            return response()->json([
-                'success' => true,
-                'product' => $product
-            ]);
+            return response()->json($product);
         }
 
         return response()->json([
@@ -177,6 +173,18 @@ class PennyLaneController extends Controller
 
         return response()->json([
             $photographers
+          ]);
+    }
+    /**
+     * Récupère la liste des clients
+     */
+    public function getListClients(PennylaneService $service)
+    {
+        $clients = $service->getListClients();
+
+        return response()->json([
+            'success' => true,
+            'clients' => $clients
         ]);
     }
 }
