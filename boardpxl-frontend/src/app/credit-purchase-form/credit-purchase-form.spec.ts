@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PhotographRequest } from './photograph-request';
+import { CreditPurchaseForm } from './credit-purchase-form';
 
-describe('PhotographRequest', () => {
-  let component: PhotographRequest;
-  let fixture: ComponentFixture<PhotographRequest>;
+describe('CreditPurchaseForm', () => {
+  let component: CreditPurchaseForm;
+  let fixture: ComponentFixture<CreditPurchaseForm>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PhotographRequest]
+      declarations: [CreditPurchaseForm]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PhotographRequest);
+    fixture = TestBed.createComponent(CreditPurchaseForm);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

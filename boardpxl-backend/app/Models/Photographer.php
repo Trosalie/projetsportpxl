@@ -24,7 +24,8 @@ class Photographer extends Model
         'postal_code',
         'locality',
         'country',
-        'iban'
+        'iban',
+        'pennylane_id',
     ];
 
     public function invoicesCredit()

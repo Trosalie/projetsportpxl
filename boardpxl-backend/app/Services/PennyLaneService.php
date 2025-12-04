@@ -18,7 +18,13 @@ class PennylaneService
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->token,
             ],
+            'verify' => false,
         ]);
+    }
+
+    public function getHttpClient(): Client
+    {
+        return $this->client;
     }
 
     // Récupérer toutes les factures
@@ -57,20 +63,16 @@ class PennylaneService
     }
 
     // Récupérer l'ID client par nom et prénom
-    public function getClientIdByName(string $prenom, string $nom): ?int
+    public function getClientIdByName(string $name): ?int
     {
         // Récupérer tous les clients
-        $response = $this->client->get('customers');
-        $data = json_decode($response->getBody()->getContents(), true);
-
-        $clients = $data['items'] ?? [];
+        $clients = $this->getListClients();
 
         // Filtrer le client par nom et prénom (insensible à la casse)
         foreach ($clients as $client) {
-            $clientPrenom = $client['first_name'] ?? '';
-            $clientNom    = $client['last_name'] ?? '';
+            $clientName = $client['name'] ?? '';
 
-            if (strcasecmp($clientPrenom, $prenom) === 0 && strcasecmp($clientNom, $nom) === 0) {
+            if (strcasecmp($clientName, $name) === 0) {
                 return $client['id'];
             }
         }
@@ -123,7 +125,15 @@ class PennylaneService
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function getProductFromInvoice(string $invoiceNumber): ?array
+    public function getPhotographers()
+    {
+        $response = $this->client->get('customers?sort=-id');
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        return $data['items'] ?? [];
+    }
+
+    public function getProductFromInvoice(string $invoiceNumber): ?string
     {
         $invoice = $this->getInvoiceByNumber($invoiceNumber);
 
@@ -160,6 +170,37 @@ class PennylaneService
         }
 
         return null; // Produit non trouvé
+    }
+
+    public function getListClients(): array
+    {
+        $allClients = [];
+        $cursor = null;
+
+        do {
+            $response = $this->client->get('customers', [
+                'query' => array_filter([
+                    'limit' => 100,           // max PennyLane
+                    'cursor' => $cursor,      // null pour la 1ère page
+                    'sort' => '-id',
+                ])
+            ]);
+
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            if (!isset($data['items'])) {
+                break; // sécurité
+            }
+
+            $allClients = array_merge($allClients, $data['items']);
+
+            // valeurs de pagination
+            $cursor = $data['next_cursor'] ?? null;
+            $hasMore = $data['has_more'] ?? false;
+
+        } while ($hasMore);
+
+        return $allClients;
     }
 
 }

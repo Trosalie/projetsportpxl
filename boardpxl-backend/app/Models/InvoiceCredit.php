@@ -20,7 +20,9 @@ class InvoiceCredit extends Model
         'total-due',
         'credits',
         'status',
-        'link_pdf'
+        'link_pdf',
+        'pdf_invoice_subject'
+
     ];
 
     protected $casts = [
