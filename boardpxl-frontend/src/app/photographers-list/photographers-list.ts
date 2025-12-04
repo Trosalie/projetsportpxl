@@ -11,6 +11,8 @@ export class PhotographersList {
   protected photographers: any[] = [];
   protected renderedList: any[] = [];
   protected itemsToShow: number = 20;
+  protected bufferedList: any[] = [];
+  protected filterActive: boolean = false;
 
   constructor(private photographerService: PhotographerService) {
   }
@@ -23,12 +25,18 @@ export class PhotographersList {
   }
 
   onFilterChange(query: string) {
+    let fieldsToFilter = ['name', 'email'];
     if (query.trim() === '') {
       this.renderedList = this.photographers.slice(0, this.itemsToShow);
+      this.filterActive = false;
     } else {
-      this.renderedList = this.photographers.filter(photographer =>
-        photographer.name.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, this.itemsToShow);
+      this.bufferedList = this.photographers.filter(photographer =>
+        fieldsToFilter.some(field =>
+          photographer[field]?.toString().toLowerCase().includes(query.toLowerCase())
+        )
+      );
+      this.renderedList = this.bufferedList.slice(0, this.itemsToShow);
+      this.filterActive = true;
     }
   }
 }

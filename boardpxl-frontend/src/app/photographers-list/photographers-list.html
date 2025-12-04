@@ -3,12 +3,13 @@
     <div class="container">
     <div class="header">
         <p>Liste des photographes</p>
-        <app-search-bar [list]="photographers" [fieldsToFilter]="['name', 'email']" (filter)="onFilterChange($event)"></app-search-bar>
+        <app-search-bar (filter)="onFilterChange($event)"></app-search-bar>
     </div>
     <div class="photographers-list">
         <div class="photographer-item" *ngFor="let photographer of renderedList">
                 <app-photographer-card [photographer]="photographer"></app-photographer-card>
         </div>
     </div>
+    <app-pagination [numberOfItems]="itemsToShow" [fullList]="filterActive ? bufferedList : photographers" [renderedList]="renderedList"></app-pagination>
 </div>
 </main>
