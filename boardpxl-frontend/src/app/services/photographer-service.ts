@@ -10,6 +10,7 @@ import { Photographer } from '../models/photographer.model';
 })
 export class PhotographerService {
   private photographers: Photographer[] = [];
+  private filteredPhotographers: Photographer[] = [];
 
   constructor(private http: HttpClient) {
   }
@@ -26,5 +27,13 @@ export class PhotographerService {
       });
 
       return of(this.photographers);
+  }
+
+  setFilteredPhotographers(filtered: Photographer[]) {
+    this.filteredPhotographers = filtered;
+  }
+
+  getFilteredPhotographers(): Photographer[] {
+    return this.filteredPhotographers;
   }
 }

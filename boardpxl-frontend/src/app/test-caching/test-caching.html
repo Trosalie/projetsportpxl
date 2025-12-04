@@ -1,7 +1,0 @@
-<p>Test caching</p>
-<button (click)="loadPhotographers()">Load Photographers</button>
-<ul>
-  <li *ngFor="let photographer of photographers">
-    {{ photographer.name }} - {{ photographer.emails[0] || 'No email' }}
-  </li>
-</ul>

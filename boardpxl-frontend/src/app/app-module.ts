@@ -21,7 +21,6 @@ import localeFr from '@angular/common/locales/fr';
 import { PhotographersList } from './photographers-list/photographers-list';
 import { PhotographerCard } from './photographer-card/photographer-card';
 import { SearchBar } from './search-bar/search-bar';
-import { TestCaching } from './test-caching/test-caching';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -38,8 +37,7 @@ registerLocaleData(localeFr);
     MailRequestPage,
     PhotographersList,
     PhotographerCard,
-    SearchBar,
-    TestCaching
+    SearchBar
   ],
   imports: [
     BrowserModule,

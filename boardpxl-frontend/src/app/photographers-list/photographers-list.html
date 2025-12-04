@@ -1,26 +1,13 @@
 <app-title [title]="'TABLEAU DE BORD'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
 <main>
-    <button routerLink="/test-caching">Test caching</button>
     <div class="container">
     <div class="header">
         <p>Liste des photographes</p>
-        <app-search-bar></app-search-bar>
+        <app-search-bar [list]="photographers" [fieldsToFilter]="['name', 'email']" (filter)="onFilterChange($event)"></app-search-bar>
     </div>
     <div class="photographers-list">
-        <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .photographer-item {
-            opacity: 0;
-            animation: fadeIn 400ms ease forwards;
-        }
-        </style>
-
-        <div class="photographer-item" *ngFor="let photographer of photographers; let i = index"
-                [style.animationDelay]="i + 's'">
-                <app-photographer-card [photographer]="photographer" [index]="i"></app-photographer-card>
+        <div class="photographer-item" *ngFor="let photographer of renderedList">
+                <app-photographer-card [photographer]="photographer"></app-photographer-card>
         </div>
     </div>
 </div>

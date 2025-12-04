@@ -1,4 +1,4 @@
 <div>
-    <input type="text" placeholder="Rechercher un photographe...">
-    <button><span class="material-symbols-outlined">search</span></button>
+    <input type="text" placeholder="Rechercher un photographe..." [value]="query" (input)="query = $event.target.value" (keydown.enter)="onQueryChange(query)">
+    <button (click)="onQueryChange(query)"><span class="material-symbols-outlined">search</span></button>
 </div>
