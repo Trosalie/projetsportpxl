@@ -34,6 +34,10 @@ Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
 // Téléchargement contournement CORS
 Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
 
+// Afficher une facture spécifique
+Route::get('/invoices/{id}', [PennylaneController::class, 'getInvoiceById']);
+
+
 
 // Envoi de mail
 Route::post('/send-email', [MailController::class, 'sendEmail']);

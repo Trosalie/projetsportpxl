@@ -122,9 +122,11 @@ export class TurnoverPaymentForm {
       }
       this.creationFacture = true;
       this.invoiceService.createTurnoverPaymentInvoice(body).subscribe({
-        next: () => {
+        next: (response) => {
           this.popup.showNotification('Facture créée avec succès !');
           this.creationFacture = false;
+          this.insertTurnoverInvoice(response, startDate, endDate, chiffreAffaire, commission, TVA, this.today, dueDate, this.clientId);
+
         },
         error: () => {
           this.popup.showNotification("Erreur lors de la création de la facture."),
@@ -133,5 +135,35 @@ export class TurnoverPaymentForm {
       });
   }
   
+
+  insertTurnoverInvoice(reponse: any, startDate: string, endDate: string, chiffreAffaire: number, commission: number, tva: string, issueDate: string, dueDate: string, clientId: number) {
+
+    const body = {  
+      id_invoice: reponse.id_invoice,
+      number_invoice: reponse.number_invoice,
+      issueDate: issueDate,
+      dueDate: dueDate,
+      description: reponse.pdf_invoice_subject,
+      chiffreAffaire: chiffreAffaire,
+      commission: commission,
+      tax: reponse.tax,
+      tva: tva,
+      startDate: startDate,
+      endDate: endDate,
+      photographer_id: clientId,
+      created_at: reponse.created_at,
+      updated_at: reponse.updated_at,
+    };
+
+    this.invoiceService.insertTurnoverInvoice(body).subscribe({
+      next: () => {
+        console.log('Insertion de la facture de chiffre d\'affaire réussie.');
+      },
+      error: (err) => {
+        console.error('Erreur lors de l\'insertion de la facture de chiffre d\'affaire :', err);
+      }
+    });
+  
+  }
   
 }

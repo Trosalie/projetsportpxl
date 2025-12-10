@@ -235,5 +235,16 @@ class PennylaneService
         return $allClients;
     }
 
+    public function getInvoiceById(int $id): ?array
+    {
+        $response = $this->client->get("customer_invoices/{$id}");
+
+        if ($response->getStatusCode() === 200) {
+            return json_decode($response->getBody()->getContents(), true);
+        }
+
+        return null; // Facture non trouvée
+    }
+
 }
 

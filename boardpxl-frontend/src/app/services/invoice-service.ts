@@ -29,5 +29,9 @@ export class InvoiceService {
     return this.http.post(`${environment.apiUrl}/create-turnover-invoice-client`, body);
   }
 
+  insertTurnoverInvoice(body: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/insert-turnover-invoice`, body);
+  }
+
   
 }
