@@ -6,3 +6,15 @@
     margin-left: 270px;
   }
 }
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0 !important;
+    padding-left: 27px !important;
+    
+    &.nav-open {
+      margin-left: 0 !important;
+    }
+  }
+
+}

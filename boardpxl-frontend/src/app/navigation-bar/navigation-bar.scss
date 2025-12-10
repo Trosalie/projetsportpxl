@@ -1,15 +1,21 @@
 nav {
     width: 270px;
-    height: calc(100vh - 84px);
+    height: 100%;
     background-color: #ffffff;
     position: fixed;
-    top: 84px;
+    top: 0px;
     left: -250px;
     transition: left 0.3s ease;
-    z-index: 1000;
+    z-index: 999;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    padding-top: 84px;
+    
+    /* Force fixed positioning on mobile - prevents content push */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     
     &.open {
         left: 0;
@@ -75,4 +81,32 @@ nav {
             border-radius: 0;
         }
     }
+}
+
+.navbar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    nav {
+        &.open {
+            left: 0; /* Slide in without pushing content */
+        }
+    }
+
+    .navbar-overlay {    
+    &.open {
+        opacity: 1;
+        visibility: visible;
+    }
+}
 }

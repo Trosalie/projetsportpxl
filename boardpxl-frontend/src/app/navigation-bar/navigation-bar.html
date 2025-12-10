@@ -1,7 +1,8 @@
+<div class="navbar-overlay" [class.open]="isOpen" (click)="onNavbarToggled()"></div>
 <nav [class.open]="isOpen">
    <ul>
       <li *ngFor="let page of pages">
-         <a [routerLink]="page.route">
+         <a [routerLink]="page.route" (click)="onNavbarToggled()">
             <img [src]="page.icon" class="navbar-icon" [alt]="page.label">
             {{ page.label }}
          </a>
