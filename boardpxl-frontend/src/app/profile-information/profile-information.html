@@ -14,23 +14,34 @@
       <div class="credit-count">
         <div>
           <p>Chiffre d'affaires : </p>
-          <p class="remainingCredits">{{ turnover }}</p>
+          <p class="remaining">{{ turnover }}</p>
         </div>
         <img src="assets/images/logo-tableau-de-bord.png" alt="logo chiffre d'affaire">
       </div>
       <div class="credit-count">
         <div>
           <p>Crédits restants : </p>
-          <p class="remainingCredits">{{ remainingCredits }}</p>
+          <p class="remaining">{{ remainingCredits }}</p>
         </div>
         <img src="assets/images/credits_icon.png" alt="logo credits">
       </div>
     </div>
     <div class="card2">
-      <p>Nom</p>
-      <p>{{ family_name }}</p>
-      <p>Prenom</p>
-      <p>{{ given_name }}</p>
+      <div *ngIf="!family_name && !given_name; then thenBlock else elseBlock"></div>
+      <ng-template #thenBlock>
+        <p>Nom</p>
+        <p>{{ name }}</p>
+      </ng-template>
+      <ng-template #elseBlock>
+        <div *ngIf="family_name">
+          <p>Nom</p>
+          <p>{{ family_name }}</p>
+        </div>
+        <div *ngIf="given_name">
+          <p>Prenom</p>
+          <p>{{ given_name }}</p>
+        </div>
+      </ng-template>
       <p>email</p>
       <p>{{ email }}</p>
       <p>Nombre de ventes totales</p>

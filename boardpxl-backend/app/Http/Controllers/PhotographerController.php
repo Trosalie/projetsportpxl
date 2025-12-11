@@ -7,9 +7,9 @@ use App\Models\Photographer;
 
 class PhotographerController extends Controller
 {
-    public function getPhotographerById($idClient)
+    public function getPhotographerByEmail($email)
     {
-        $photographer = Photographer::find($idClient);
+        $photographer = Photographer::findProfilData($email);
 
         if (!$photographer)
         {

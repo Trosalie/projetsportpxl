@@ -43,4 +43,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('photographer/{idClient}', [PhotographerController::class, 'getPhotographerById']);
+Route::get('photographer/{email}', [PhotographerController::class, 'getPhotographerByEmail']);

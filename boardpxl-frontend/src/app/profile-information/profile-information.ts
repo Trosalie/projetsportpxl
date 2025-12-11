@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ClientService } from '../services/client-service.service';
+import {InvoiceService} from '../services/invoice-service';
+import {InvoicePayment} from '../models/invoice-payment.model';
 
 @Component({
   selector: 'app-profile-information',
@@ -10,17 +12,73 @@ import { ClientService } from '../services/client-service.service';
 
 export class ProfileInformation
 {
-  constructor(private clientService: ClientService) {}
+  protected remainingCredits: number = 0
+  protected turnover: number = 0
+  protected name: string = ''
+  protected family_name: string = ''
+  protected given_name: string = ''
+  protected email: string = ''
+  protected street_address: string = ''
+  protected locality: string = ''
+  protected postal_code: string = ''
+  protected country: string = ''
+  protected numberSell: number = 0 // comment que je le trouve
+  photographerEmail: string = '';
+  findPhotographer: boolean = false
+
+  constructor(private clientService: ClientService, private invoiceService: InvoiceService) {}
 
   ngOnInit()
   {
-    this.clientService.getPhotographerById('208474147')
-  }
+    this.clientService.getPhotographerByEmail(this.photographerEmail).subscribe(
+      {
+        next: (data) => {
+          if (data && data.email)
+          {
+            this.findPhotographer = true
+            this.email = data.email
+            this.family_name = data.family_name
+            this.given_name = data.given_name
+            this.name = data.name
+            this.remainingCredits = data.total_limit - data.nb_imported_photos
+            this.street_address = data.street_address
+            this.postal_code = data.postal_code
+            this.locality = data.locality
+            this.country = data.country
+          }
+          else
+          {
+            this.findPhotographer = false
+          }
+        },
+        error: (err) => {
+          console.error('Error fetch photographer :', err);
+          this.findPhotographer = false;
+        }
+      }
+    )
 
-  protected remainingCredits = 50;  // change to actual number
-  protected turnover = 50;          // change to actual number
-  protected name = 'Test User';        // change to actual name
-  protected firstName = 'Test User';   // change to actual name
-  protected email = 'test@test';      // change to actual email
-  protected numberSell = 50;        // change to actual number
+    if (this.findPhotographer && this.name)
+    {
+      const body = { name: this.name };
+      this.clientService.getClientIdByName(body).subscribe({
+        next: (data) =>
+        {
+          if (data && data.client_id)
+          {
+            this.invoiceService.getInvoicesByClient(data.client_id).subscribe(invoices => {
+              let invoicesTemp = invoices
+              this.turnover = 0
+              for (let invoice of invoicesTemp) {
+                if (invoice instanceof InvoicePayment)
+                {
+                  this.turnover += invoice.turnover
+                }
+              }
+            })
+          }
+        }
+      })
+    }
+  }
 }
