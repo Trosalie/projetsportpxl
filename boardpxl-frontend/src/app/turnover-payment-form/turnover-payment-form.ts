@@ -138,32 +138,46 @@ export class TurnoverPaymentForm {
 
   insertTurnoverInvoice(reponse: any, startDate: string, endDate: string, chiffreAffaire: number, commission: number, tva: string, issueDate: string, dueDate: string, clientId: number) {
 
-    const body = {  
-      id_invoice: reponse.id_invoice,
-      number_invoice: reponse.number_invoice,
-      issueDate: issueDate,
-      dueDate: dueDate,
-      description: reponse.pdf_invoice_subject,
-      chiffreAffaire: chiffreAffaire,
+    const invoice = reponse.data;
+    const vatValue = this.convertTvaCodeToPercent(tva);
+
+    const body = {
+      id: invoice.id,
+      number: invoice.invoice_number,
+      issue_date: invoice.date,
+      due_date: invoice.deadline,
+      description: invoice.pdf_description,
+      turnover: chiffreAffaire,
+      raw_value: invoice.currency_amount_before_tax, // montant HT
       commission: commission,
-      tax: reponse.tax,
-      tva: tva,
-      startDate: startDate,
-      endDate: endDate,
+      tax: invoice.tax,
+      vat: vatValue,
+      start_period: startDate,
+      end_period: endDate,
+      link_pdf: invoice.public_file_url,
       photographer_id: clientId,
-      created_at: reponse.created_at,
-      updated_at: reponse.updated_at,
+      pdf_invoice_subject: invoice.pdf_invoice_subject
     };
+
+    console.log("Insertion de la facture avec le corps :", body);
 
     this.invoiceService.insertTurnoverInvoice(body).subscribe({
       next: () => {
-        console.log('Insertion de la facture de chiffre d\'affaire réussie.');
+        console.log("Insertion de la facture réussie.");
       },
       error: (err) => {
-        console.error('Erreur lors de l\'insertion de la facture de chiffre d\'affaire :', err);
+        console.error("Erreur lors de l'insertion :", err);
       }
     });
   
   }
   
+
+  private convertTvaCodeToPercent(tva: string): number {
+    const value = tva.replace("FR_", "");
+
+    const numeric = value.replace("_", ".");
+
+    return parseFloat(numeric);
+}
 }

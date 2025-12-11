@@ -21,7 +21,8 @@ class InvoicePayment extends Model
         'vat',
         'start_period',
         'end_period',
-        'link_pdf'
+        'link_pdf',
+        'pdf_invoice_subject'
     ];
 
     protected $casts = [

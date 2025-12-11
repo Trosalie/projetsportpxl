@@ -15,7 +15,7 @@ class CreateInvoicePaymentsTable extends Migration
     {
         Schema::create('invoice_payments', function (Blueprint $table) {
             $table->id();
-            $table->integer('number')->unique();
+            $table->string('number')->unique();
             $table->date('issue_date');
             $table->date('due_date');
             $table->string('description');
@@ -28,6 +28,7 @@ class CreateInvoicePaymentsTable extends Migration
             $table->date('end_period');
             $table->string('link_pdf');
             $table->foreignId('photographer_id')->constrained()->onDelete('cascade');
+            $table->string('pdf_invoice_subject');
             $table->timestamps();
         });
     }

@@ -5,6 +5,7 @@ use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PennyLaneController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MailController;
 use Illuminate\Support\Facades\Mail;
 
@@ -15,6 +16,9 @@ Route::post('/create-credits-invoice-client', [PennylaneController::class, 'crea
 
 // Création d'une facture de versement de CA
 Route::post('/create-turnover-invoice-client', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
+
+// Insertion d'une facture de versement de CA
+Route::post('/insert-turnover-invoice', [InvoiceController::class, 'insertTurnoverInvoice']);
 
 // Tester récupération globale
 Route::get('/test', [PennylaneController::class, 'getInvoices']);
