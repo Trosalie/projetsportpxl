@@ -6,7 +6,6 @@ use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PennyLaneController;
-use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MailController;
 use App\Models\Photographer;
 use Illuminate\Support\Facades\Mail;
