@@ -1,4 +1,5 @@
 <div class="nameTitle">
+  <div></div>
   <div>{{ name }}</div>
   <div><img src="assets/images/logo-tableau-de-bord.png" alt="logo chiffre d'affaire"></div>
 </div>
@@ -47,20 +48,25 @@
       </div>
     </div>
   </div>
-  <div>
-    <div class="credit-count">
-      <div>
-        <p>Chiffre d'affaires : </p>
-        <p class="remaining">{{ turnover }}</p>
+  <div class="card">
+    <div>
+      <div class="credit-count">
+        <div>
+          <p>Chiffre d'affaires : </p>
+          <p>{{ turnover }}</p>
+        </div>
+        <img src="assets/images/logo-tableau-de-bord.png" alt="logo chiffre d'affaires">
       </div>
-      <img src="assets/images/logo-tableau-de-bord.png" alt="logo chiffre d'affaire">
+      <div class="credit-count">
+        <div>
+          <p>Crédits restants : </p>
+          <p>{{ remainingCredits }}</p>
+        </div>
+        <img src="assets/images/credits_icon.png" alt="logo credits">
+      </div>
     </div>
-    <div class="credit-count">
-      <div>
-        <p>Crédits restants : </p>
-        <p class="remaining">{{ remainingCredits }}</p>
-      </div>
-      <img src="assets/images/credits_icon.png" alt="logo credits">
+    <div class="graph">
+      <h1>Soon</h1>
     </div>
   </div>
 </div>

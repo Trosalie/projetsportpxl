@@ -51,17 +51,6 @@ div{
   }
 }
 
-.remaining{
-  background-color: #F98524;
-  color: #FFFFFF;
-  font-family: 'FuturaLT-Bold' !important;
-  padding: 10px 20px;
-  border-radius: 10px;
-  font-size: 20px;
-  font-weight: bold;
-  margin: 0;
-}
-
 .card{
   background-color: #fff;
   border: 2px solid #eee;
@@ -105,4 +94,10 @@ div{
 
 h3{
   padding-left: 20px;
+}
+
+.graph{
+  background-color: #888;
+  text-align: center;
+
 }
