@@ -80,7 +80,7 @@ export class ProfileInformation
               for (let invoice of invoicesTemp) {
                 if (invoice instanceof InvoicePayment)
                 {
-                  this.turnover += invoice.turnover
+                  this.turnover += invoice.commission + invoice.raw_value
                 }
               }
             })
