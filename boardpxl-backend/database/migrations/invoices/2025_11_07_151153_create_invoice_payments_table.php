@@ -22,11 +22,12 @@ class CreateInvoicePaymentsTable extends Migration
             $table->decimal('turnover', 10, 2);
             $table->decimal('raw_value', 9, 2);
             $table->decimal('commission', 9, 2);
-            $table->decimal('tax', 5, 2);
-            $table->decimal('vat', 9, 2);
+            $table->decimal('tax', 9, 2);
+            $table->decimal('vat', 5, 2);
             $table->date('start_period');
             $table->date('end_period');
             $table->string('link_pdf');
+            $table->string('pdf_invoice_subject')->nullable();
             $table->foreignId('photographer_id')->constrained()->onDelete('cascade');
             $table->string('pdf_invoice_subject');
             $table->timestamps();

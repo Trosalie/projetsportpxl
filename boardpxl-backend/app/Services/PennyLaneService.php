@@ -19,7 +19,13 @@ class PennylaneService
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->token,
             ],
+            'verify' => false,
         ]);
+    }
+
+    public function getHttpClient(): Client
+    {
+        return $this->client;
     }
 
     // Récupérer toutes les factures
@@ -162,8 +168,15 @@ class PennylaneService
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    
-    public function getProductFromInvoice(string $invoiceNumber): ?array
+    public function getPhotographers()
+    {
+        $response = $this->client->get('customers?sort=-id');
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        return $data['items'] ?? [];
+    }
+
+    public function getProductFromInvoice(string $invoiceNumber): ?string
     {
         $invoice = $this->getInvoiceByNumber($invoiceNumber);
 

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\InvoicePayment;
 use Illuminate\Support\Facades\DB;
+use App\Services\PennylaneService;
 
 
 class InvoiceController extends Controller
@@ -104,6 +105,48 @@ class InvoiceController extends Controller
         ], 201);
     }
 
+    
+    public function getInvoicesPaymentByPhotographer($photographer_id)
+    {
+        try {
+        if (!is_numeric($photographer_id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid photographer id',
+            ], 422);
+        }
+
+            $invoices = DB::table('invoice_payments')
+                ->where('photographer_id', $photographer_id)
+                ->get();
+            return response()->json($invoices);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getInvoicesCreditByPhotographer($photographer_id)
+    {
+        try {
+        if (!is_numeric($photographer_id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid photographer id',
+            ], 422);
+        }
+
+        $invoices = DB::table('invoice_credits')
+            ->where('photographer_id', $photographer_id)
+            ->get();
+        return response()->json($invoices);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }
-
-

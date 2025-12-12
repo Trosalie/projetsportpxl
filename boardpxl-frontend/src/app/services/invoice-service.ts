@@ -20,6 +20,15 @@ export class InvoiceService {
   getProductFromInvoice(invoice: Invoice): Observable<string[]> {
     return this.http.get<string[]>(`${environment.apiUrl}/invoice-product/${invoice.invoice_number}`);
   }
+
+  getInvoicesPaymentByPhotographer(photographerId: number): Observable<InvoicePayment[]> {
+    return this.http.get<InvoicePayment[]>(`${environment.apiUrl}/invoices-payment/${photographerId}`);
+  }
+
+  getInvoicesCreditByPhotographer(photographerId: number): Observable<InvoicePayment[]> {
+    return this.http.get<InvoicePayment[]>(`${environment.apiUrl}/invoices-credit/${photographerId}`);
+  }
+
   
   createCreditsInvoice(body: any): Observable<any> {
     return this.http.post(`${environment.apiUrl}/create-credits-invoice-client`, body);

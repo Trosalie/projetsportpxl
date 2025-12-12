@@ -16,7 +16,7 @@ class CreatePhotographersTable extends Migration
         Schema::create('photographers', function (Blueprint $table) {
             $table->id();
             $table->string('aws_sub')->unique();
-            $table->string('email')->unique();
+            $table->string('email')->nullable();
             $table->string('family_name')->nullable();
             $table->string('given_name')->nullable();
             $table->string('name');
@@ -30,6 +30,7 @@ class CreatePhotographersTable extends Migration
             $table->string('locality')->nullable();
             $table->string('country')->nullable();
             $table->string('iban')->nullable();
+            $table->integer('pennylane_id')->nullable();
             $table->timestamps();
         });
     }
