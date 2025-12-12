@@ -6,7 +6,9 @@ import { Component, signal } from '@angular/core';
   standalone: false,
   styleUrl: './app.scss'
 })
+
 export class App {
   protected readonly title = signal('boardpxl-frontend');
   protected readonly userRole = signal<'photograph' | 'admin'>('photograph');
+  photographerName: string|null = localStorage.getItem('currentPhotographerName')
 }

@@ -7,6 +7,7 @@ import { AutomaticResponse } from './automatic-response/automatic-response';
 import { photographGuard } from './guards/photograph.guard';
 import { adminGuard } from './guards/admin.guard';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
+import {ProfileInformation} from './profile-information/profile-information';
 
 const routes: Routes = [
   { path: '', component: PhotographDashboard, pathMatch: 'full', canMatch: [photographGuard] },
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'request/success', component: AutomaticResponse, canMatch: [photographGuard]},
   { path: 'request/failure', component: AutomaticResponse, canMatch: [photographGuard]},
   { path: 'form/credits', component: CreditPurchaseForm, canMatch: [adminGuard]},
+  { path: 'redirect/profile', component: ProfileInformation, canMatch: [photographGuard]}
 ];
 
 @NgModule({

@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { ClientService } from '../services/client-service.service';
 import {InvoiceService} from '../services/invoice-service';
 import {InvoicePayment} from '../models/invoice-payment.model';
+import { App } from '../app';
 
+const app = new App();
 @Component({
   selector: 'app-profile-information',
   standalone: false,
@@ -23,13 +25,19 @@ export class ProfileInformation
   protected postal_code: string = ''
   protected country: string = ''
   protected numberSell: number = 0 // comment que je le trouve
-  photographerEmail: string = '';
+  photographerEmail: string|null = null
   findPhotographer: boolean = false
 
   constructor(private clientService: ClientService, private invoiceService: InvoiceService) {}
 
   ngOnInit()
   {
+    this.photographerEmail = localStorage.getItem('currentPhotographerEmail');
+    if (!this.photographerEmail)
+    {
+      return
+    }
+
     this.clientService.getPhotographerByEmail(this.photographerEmail).subscribe(
       {
         next: (data) => {
