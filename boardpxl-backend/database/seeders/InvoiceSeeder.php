@@ -28,7 +28,7 @@ class InvoiceSeeder extends Seeder
 
     /**
      * Créer une liste de photographes à partir d'un fichier CSV
-     * 
+     *
      * @param string $cheminCSV
      * @return array
      * @throws \RuntimeException
@@ -48,14 +48,14 @@ class InvoiceSeeder extends Seeder
         }
 
         $invoices = $returned ?? [];
-        
+
         return $invoices;
     }
 
 
     /**
      * Insérer une facture dans la base de données
-     * 
+     *
      * @param array $invoice
      * @return void
      */
@@ -64,7 +64,7 @@ class InvoiceSeeder extends Seeder
         $service = new PennylaneService();
         $product = $service->getProductFromInvoice($invoice['invoice_number']);
         $photographerId = DB::table('photographers')->where('pennylane_id', $invoice['customer']['id'])->value('id');
-        
+
         $vat = $invoice['tax'] / $invoice['currency_amount_before_tax'] * 100;
 
         echo json_encode($invoice) . PHP_EOL;
@@ -104,7 +104,6 @@ class InvoiceSeeder extends Seeder
                 'issue_date' => $invoice['date'],
                 'due_date' => $invoice['deadline'],
                 'description' => $invoice['pdf_description'] ?? 'N/A',
-                'turnover' => $invoice['amount'],
                 'raw_value' => $invoice['currency_amount_before_tax'],
                 'commission' => $invoice['amount'],
                 'tax' => $invoice['tax'],
@@ -117,6 +116,6 @@ class InvoiceSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-        }    
+        }
     }
 }
