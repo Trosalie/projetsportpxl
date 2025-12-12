@@ -11,7 +11,8 @@ class PennylaneService
 
     public function __construct()
     {
-        $this->token = 'eed8y6tW50z94_tiKQp7yFK-mIfnNXTNJkp1y_gRmjw';
+        $this->token = config('services.pennylane.token');
+
         $this->client = new Client([
             'base_uri' => 'https://app.pennylane.com/api/external/v2/',
             'headers' => [
@@ -79,7 +80,6 @@ class PennylaneService
     public function createCreditsInvoiceClient(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle)
     {
         $client = new \GuzzleHttp\Client();
-        $this->token = 'eed8y6tW50z94_tiKQp7yFK-mIfnNXTNJkp1y_gRmjw';
 
         $response = $client->request('POST', 'https://app.pennylane.com/api/external/v2/customer_invoices', [
             'json' => [
@@ -107,12 +107,11 @@ class PennylaneService
                 "date" => $issueDate,
                 "deadline" => $dueDate,
                 "customer_id" => $idClient,
-                "customer_invoice_template_id" => 207554338,
                 "pdf_invoice_subject" => $invoiceTitle
             ],
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $this->token,
+                'Authorization' => 'Bearer ' . config('services.pennylane.token'),
             ],
         ]);
 
@@ -123,7 +122,6 @@ class PennylaneService
     public function createTurnoverInvoiceClient(string $labelTVA, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle, string $invoiceDescription)
     {
         $client = new \GuzzleHttp\Client();
-        $this->token = 'eed8y6tW50z94_tiKQp7yFK-mIfnNXTNJkp1y_gRmjw';
 
         $response = $client->request('POST', 'https://app.pennylane.com/api/external/v2/customer_invoices', [
             'json' => [
@@ -157,7 +155,7 @@ class PennylaneService
             ],
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $this->token,
+                'Authorization' => 'Bearer ' . config('services.pennylane.token'),
             ],
         ]);
 

@@ -14,6 +14,11 @@ return [
     |
     */
 
+    'pennylane' => [
+        'token' => env('PENNYLANE_API_TOKEN'),
+    ],
+
+
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),
