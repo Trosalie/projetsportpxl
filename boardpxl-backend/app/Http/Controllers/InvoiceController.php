@@ -57,6 +57,53 @@ class InvoiceController extends Controller
             'message' => 'Invoice stored successfully.',
         ], 201);
     }
+
+    public function insertCreditsInvoice(Request $request)
+    {
+        // Validation des données
+        $validated = $request->validate([
+            'id' => 'required|numeric',
+            'number' => 'required|string',
+            'issue_date' => 'required|date',
+            'due_date' => 'required|date',
+            'description' => 'nullable|string',
+            'amount' => 'required|numeric',
+            'tax' => 'required|numeric',
+            'vat' => 'required|numeric',
+            'total_due' => 'required|numeric',
+            'credits' => 'required|numeric',
+            'status' => 'required|string',
+            'link_pdf' => 'required|string',
+            'photographer_id' => 'required|numeric',
+            'pdf_invoice_subject' => 'required|string',
+        ]);
+
+        // Insert SQL direct
+        DB::table('invoice_credits')->insert([
+            'id' => $validated['id'],
+            'number' => $validated['number'],
+            'issue_date' => $validated['issue_date'],
+            'due_date' => $validated['due_date'],
+            'description' => $validated['description']  ?? 'N/A',
+            'amount' => $validated['amount'],
+            'tax' => $validated['tax'],
+            'vat' => $validated['vat'],
+            'total_due' => $validated['total_due'], 
+            'credits' => $validated['credits'],
+            'status' => $validated['status'],
+            'link_pdf' => $validated['link_pdf'],
+            'photographer_id' => $validated['photographer_id'],
+            'pdf_invoice_subject' => $validated['pdf_invoice_subject'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Credit invoice stored successfully.',
+        ], 201);
+    }
+
 }
 
 

@@ -33,5 +33,9 @@ export class InvoiceService {
     return this.http.post(`${environment.apiUrl}/insert-turnover-invoice`, body);
   }
 
+  insertCreditsInvoice(body: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/insert-credits-invoice`, body);
+  }
+
   
 }

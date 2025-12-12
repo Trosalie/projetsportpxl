@@ -118,16 +118,55 @@ export class CreditPurchaseForm {
     };
     this.creationFacture = true;
     this.invoiceService.createCreditsInvoice(body).subscribe({
-      next: () => {
+      next: (response) => {
         this.popup.showNotification('Facture créée avec succès !');
         this.creationFacture = false;
+        this.insertCreditsInvoice( response, form['priceHT'].value, form['credits'].value, (form['tva'] as HTMLSelectElement).value, "À venir",this.today, dueDate, this.clientId);
       },
       error: () => {
-        this.popup.showNotification("Erreur lors de la création de la facture."),
+        this.popup.showNotification("Erreur lors de la création de la facture");
         this.creationFacture = false;
       }
     });
   }
 
-  
+  insertCreditsInvoice( reponse: any, amount: number, credits: number, tva: string, status: string, issueDate: string, dueDate: string, clientId: number) 
+  {
+    const invoice = reponse.data;
+    const vatValue = this.convertTvaCodeToPercent(tva);
+
+    const body = {
+      id: invoice.id,
+      number: invoice.invoice_number,
+      issue_date: issueDate,
+      due_date: dueDate,
+      description: invoice.pdf_description,
+      amount: amount,
+      tax: invoice.tax,
+      vat: vatValue,
+      total_due: amount + invoice.tax, 
+      credits: credits,
+      status: status,
+      link_pdf: invoice.public_file_url,
+      photographer_id: clientId,
+      pdf_invoice_subject: invoice.pdf_invoice_subject
+    };
+
+    console.log("Insertion de la facture crédit avec :", body);
+
+    this.invoiceService.insertCreditsInvoice(body).subscribe({
+      next: () => console.log("Facture crédit enregistrée."),
+      error: err => console.error("Erreur insertion facture crédit :", err)
+    });
+  }
+
+
+
+  private convertTvaCodeToPercent(tva: string): number {
+    const value = tva.replace("FR_", "");
+
+    const numeric = value.replace("_", ".");
+
+    return parseFloat(numeric);
+  }
 }

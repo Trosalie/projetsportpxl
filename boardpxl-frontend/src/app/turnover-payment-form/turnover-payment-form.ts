@@ -179,5 +179,5 @@ export class TurnoverPaymentForm {
     const numeric = value.replace("_", ".");
 
     return parseFloat(numeric);
-}
+  }
 }

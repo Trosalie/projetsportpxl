@@ -20,6 +20,9 @@ Route::post('/create-turnover-invoice-client', [PennylaneController::class, 'cre
 // Insertion d'une facture de versement de CA
 Route::post('/insert-turnover-invoice', [InvoiceController::class, 'insertTurnoverInvoice']);
 
+// Insertion d'une facture de crédits
+Route::post('/insert-credits-invoice', [InvoiceController::class, 'insertCreditsInvoice']);
+
 // Tester récupération globale
 Route::get('/test', [PennylaneController::class, 'getInvoices']);
 
