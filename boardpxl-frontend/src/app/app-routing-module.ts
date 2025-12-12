@@ -8,6 +8,7 @@ import { photographerGuard } from './guards/photographer.guard';
 import { adminGuard } from './guards/admin.guard';
 import { PhotographersList } from './photographers-list/photographers-list';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
+import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 
 const routes: Routes = [
   { path: '', component: PhotographerDashboard, pathMatch: 'full', canMatch: [photographerGuard] },
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'request/success', component: AutomaticResponse, canMatch: [photographerGuard]},
   { path: 'request/failure', component: AutomaticResponse, canMatch: [photographerGuard]},
   { path: 'form/credits', component: CreditPurchaseForm, canMatch: [adminGuard]},
+  { path: 'form/versementCA', component: TurnoverPaymentForm, canMatch: [adminGuard]},
 ];
 
 @NgModule({

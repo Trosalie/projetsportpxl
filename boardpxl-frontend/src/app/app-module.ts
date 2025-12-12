@@ -27,6 +27,7 @@ import { SearchBar } from './search-bar/search-bar';
 import { Pagination } from './pagination/pagination';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
 import { Popup } from './popup/popup';
+import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -47,7 +48,8 @@ registerLocaleData(localeFr);
     SearchBar,
     Pagination,
     CreditPurchaseForm,
-    Popup
+    Popup,
+    TurnoverPaymentForm
   ],
   imports: [
     BrowserModule,

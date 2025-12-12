@@ -14,7 +14,16 @@ use App\Http\Controllers\PhotographerController;
 
 
 // Création d'une facture
-Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
+Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
+
+// Création d'une facture de versement de CA
+Route::post('/create-turnover-invoice-client', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
+
+// Insertion d'une facture de versement de CA
+Route::post('/insert-turnover-invoice', [InvoiceController::class, 'insertTurnoverInvoice']);
+
+// Insertion d'une facture de crédits
+Route::post('/insert-credits-invoice', [InvoiceController::class, 'insertCreditsInvoice']);
 
 // Tester récupération globale
 Route::get('/test', [PennylaneController::class, 'getInvoices']);
@@ -38,6 +47,10 @@ Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
 
 // Téléchargement contournement CORS
 Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
+
+// Afficher une facture spécifique
+Route::get('/invoices/{id}', [PennylaneController::class, 'getInvoiceById']);
+
 
 
 // Envoi de mail

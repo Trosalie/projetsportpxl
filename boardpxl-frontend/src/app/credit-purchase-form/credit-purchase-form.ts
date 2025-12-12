@@ -35,7 +35,6 @@ export class CreditPurchaseForm {
           this.findClient = true;
           this.photographerInput = this.clientName; 
           this.loadClients();
-          console.log('Client ID:', this.clientId);
         } else {
           // Client non trouvé
           this.findClient = false;
@@ -56,7 +55,6 @@ export class CreditPurchaseForm {
     this.clientService.getClients().subscribe({
       next: (res) => {
         this.clientsNames = res.clients.map((c: any) => c.name);
-        console.log('Clients récupérés :', this.clientsNames);
       },
       error: (err) => console.error('Erreur fetch clients :', err)
     });
@@ -82,22 +80,18 @@ export class CreditPurchaseForm {
     this.findClient = true;
     this.filteredClients = [];
     this.clientName = name;
-    console.log('Client sélectionné :', this.clientName);
     const body = { name: this.clientName };
     this.clientService.getClientIdByName(body).subscribe({
       next: (data) => {
         if (data && data.client_id) {
           this.clientId = data.client_id;
-          console.log('Client ID après sélection :', this.clientId);
         } else {
-          console.error('Client non trouvé après sélection');
+          this.popup.showNotification('Client non trouvé !');
         }      }, 
       error: (err) => {
         console.error('Erreur fetch client ID après sélection :', err);
       }
     });
-    
-    console.log('Client ID après sélection :', this.clientId);
   }
 
   onSubmit(event: Event) {
@@ -124,19 +118,55 @@ export class CreditPurchaseForm {
     };
     this.creationFacture = true;
     this.invoiceService.createCreditsInvoice(body).subscribe({
-      next: () => {
+      next: (response) => {
         this.popup.showNotification('Facture créée avec succès !');
         this.creationFacture = false;
-        console.log('Facture créée avec succès');
+        this.insertCreditsInvoice( response, form['priceHT'].value, form['credits'].value, (form['tva'] as HTMLSelectElement).value, "À venir",this.today, dueDate, this.clientId);
       },
       error: () => {
-        this.popup.showNotification("Erreur lors de la création de la facture."),
+        this.popup.showNotification("Erreur lors de la création de la facture");
         this.creationFacture = false;
-        console.error('Erreur lors de la création de la facture');
       }
     });
-    console.log(body);
   }
 
-  
+  insertCreditsInvoice( reponse: any, amount: number, credits: number, tva: string, status: string, issueDate: string, dueDate: string, clientId: number) 
+  {
+    const invoice = reponse.data;
+    const vatValue = this.convertTvaCodeToPercent(tva);
+
+    const body = {
+      id: invoice.id,
+      number: invoice.invoice_number,
+      issue_date: issueDate,
+      due_date: dueDate,
+      description: invoice.pdf_description,
+      amount: amount,
+      tax: invoice.tax,
+      vat: vatValue,
+      total_due: amount + invoice.tax, 
+      credits: credits,
+      status: status,
+      link_pdf: invoice.public_file_url,
+      photographer_id: clientId,
+      pdf_invoice_subject: invoice.pdf_invoice_subject
+    };
+
+    console.log("Insertion de la facture crédit avec :", body);
+
+    this.invoiceService.insertCreditsInvoice(body).subscribe({
+      next: () => console.log("Facture crédit enregistrée."),
+      error: err => console.error("Erreur insertion facture crédit :", err)
+    });
+  }
+
+
+
+  private convertTvaCodeToPercent(tva: string): number {
+    const value = tva.replace("FR_", "");
+
+    const numeric = value.replace("_", ".");
+
+    return parseFloat(numeric);
+  }
 }

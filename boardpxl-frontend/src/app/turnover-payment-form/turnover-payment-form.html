@@ -1,0 +1,65 @@
+<app-title [title]="'TABLEAU DE BORD'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
+<app-popup #popup></app-popup>
+<form class="credit-purchase-form" (submit)="onSubmit($event)">
+  <h2 class="form-title">Versement de chiffre d'affaire</h2>
+  <div class="form-separator"></div>
+  <div class="form-group">
+    <label for="photographer">Photographe :</label>
+    <input type="text" id="photographer" name="photographer" required [value]="photographerInput" (input)="onPhotographerChange($event.target.value)"/>
+    <ul *ngIf="filteredClients.length > 0" class="suggestions">
+      <li *ngFor="let name of filteredClients" (click)="selectPhotographer(name)">
+        {{ name }}
+      </li>
+    </ul>
+  </div>
+  <div class="form-group">
+     <label for="CA">Chiffre d'affaire sur la période :</label>
+    <input type="text" id="CA" name="CA" required/>
+  </div>
+  <div class="form-group">
+    <label for="commission">Commission SportPxl :</label>
+    <input type="number" id="commission" name="commission" min="1" required>
+  </div>
+  <div class="form-group">
+     <label for="Subject">Sujet de la facture :</label>
+    <input type="text" id="Subject" name="Subject" required/>
+  </div>
+  <div class="form-group">
+    <label for="tva">TVA :</label>
+    <select id="tva" name="tva" required>
+      <option value="FR_1_05">FR_1_05</option>
+      <option value="FR_1_75">FR_1_75</option>
+      <option value="FR_09">FR_09</option>
+      <option value="FR_21">FR_21</option>
+      <option value="FR_40">FR_40</option>
+      <option value="FR_50">FR_50</option>
+      <option value="FR_55">FR_55</option>
+      <option value="FR_60">FR_60</option>
+      <option value="FR_65">FR_65</option>
+      <option value="FR_85">FR_85</option>
+      <option value="FR_92">FR_92</option>
+      <option value="FR_100">FR_100</option>
+      <option value="FR_130">FR_130</option>
+      <option value="FR_15_385">FR_15_385</option>
+      <option value="FR_160">FR_160</option>
+      <option value="FR_196">FR_196</option>
+      <option value="FR_200">FR_200</option>
+    </select>
+  </div>
+  <div class="date-row">
+    <div class="form-group">
+      <label for="startDate">Début :</label>
+      <input type="date" id="startDate" name="startDate" required>
+    </div>
+
+    <div class="form-group">
+      <label for="endDate">Fin :</label>
+      <input type="date" id="endDate" name="endDate" required [value]="today">
+    </div>
+  </div>
+  <div class="form-actions">
+    <button  type="submit" [disabled]="creationFacture" [ngClass]="{'no-animation': creationFacture}">
+      Valider
+    </button>
+  </div>
+</form>

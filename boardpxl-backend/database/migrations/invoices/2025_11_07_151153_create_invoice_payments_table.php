@@ -29,6 +29,7 @@ class CreateInvoicePaymentsTable extends Migration
             $table->string('link_pdf');
             $table->string('pdf_invoice_subject')->nullable();
             $table->foreignId('photographer_id')->constrained()->onDelete('cascade');
+            $table->string('pdf_invoice_subject');
             $table->timestamps();
         });
     }

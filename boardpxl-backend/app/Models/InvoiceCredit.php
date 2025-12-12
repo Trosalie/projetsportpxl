@@ -17,12 +17,11 @@ class InvoiceCredit extends Model
         'amount',
         'tax',
         'vat',
-        'total-due',
+        'total_due',
         'credits',
         'status',
         'link_pdf',
         'pdf_invoice_subject'
-
     ];
 
     protected $casts = [
