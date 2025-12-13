@@ -14,6 +14,7 @@ class InvoicePayment extends Model
         'issue_date',
         'due_date',
         'description',
+        'turnover',
         'raw_value',
         'commission',
         'tax',
