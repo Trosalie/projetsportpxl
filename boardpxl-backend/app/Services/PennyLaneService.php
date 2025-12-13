@@ -176,7 +176,7 @@ class PennylaneService
         return $data['items'] ?? [];
     }
 
-    public function getProductFromInvoice(string $invoiceNumber): ?string
+    public function getProductFromInvoice(string $invoiceNumber): ?array
     {
         $invoice = $this->getInvoiceByNumber($invoiceNumber);
 
