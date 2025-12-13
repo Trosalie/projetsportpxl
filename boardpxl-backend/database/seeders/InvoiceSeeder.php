@@ -69,7 +69,7 @@ class InvoiceSeeder extends Seeder
 
         echo json_encode($invoice) . PHP_EOL;
 
-        if(str_contains(strtolower($product), 'crédits')) {
+        if(str_contains(strtolower($product['label']), 'crédits')) {
             $raw = $product['product'] ?? '';
             $clean = preg_replace('/crédits/i', '', $raw);
             $clean = preg_replace('/\s+/', '', $clean);

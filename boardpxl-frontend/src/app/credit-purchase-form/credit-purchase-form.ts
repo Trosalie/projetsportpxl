@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { InvoiceService } from '../services/invoice-service';
 import { ClientService } from '../services/client-service.service';
 import { Popup } from '../popup/popup';
@@ -13,7 +14,7 @@ import { Popup } from '../popup/popup';
 export class CreditPurchaseForm {
   today: string = new Date().toISOString().slice(0, 10);
   clientId: any;
-  clientName: string = 'Thibault Rosalie';
+  clientName: string = '';
   findClient: boolean = false;
   creationFacture: boolean = false;
   clientsNames: string[] = [];
@@ -22,29 +23,38 @@ export class CreditPurchaseForm {
   notificationVisible: boolean = false;
   notificationMessage: string = "";
 
-  constructor(private invoiceService: InvoiceService, private clientService: ClientService) {}
+  constructor(private invoiceService: InvoiceService, private clientService: ClientService, private router: Router, private route: ActivatedRoute) {}
   @ViewChild('popup') popup!: Popup;
 
   ngOnInit() {
-    // Cherche le client par nom/prénom
-    const body = { name: this.clientName };
-    this.clientService.getClientIdByName(body).subscribe({
-      next: (data) => {
-        if (data && data.client_id) {
-          this.clientId = data.client_id;
-          this.findClient = true;
-          this.photographerInput = this.clientName; 
-          this.loadClients();
-        } else {
-          // Client non trouvé
-          this.findClient = false;
-          this.loadClients();
-        }
-      },
-      error: (err) => {
-        console.error('Erreur fetch client ID :', err);
-        this.findClient = false;
-        this.popup.showNotification("Le photographe n'a pas été trouvé !");
+    // Récupère le nom du client depuis les query params
+    this.route.queryParams.subscribe(params => {
+      this.clientName = params['clientName'] || '';
+      
+      // Cherche le client par nom/prénom
+      if (this.clientName) {
+        const body = { name: this.clientName };
+        this.clientService.getClientIdByName(body).subscribe({
+          next: (data) => {
+            if (data && data.client_id) {
+              this.clientId = data.client_id;
+              this.findClient = true;
+              this.photographerInput = this.clientName;
+            } else {
+              // Client non trouvé
+              this.findClient = false;
+              this.photographerInput = this.clientName;
+            }
+            this.loadClients();
+          },
+          error: (err) => {
+            console.error('Erreur fetch client ID :', err);
+            this.findClient = false;
+            this.popup.showNotification("Le photographe n'a pas été trouvé !");
+            this.loadClients();
+          }
+        });
+      } else {
         this.loadClients();
       }
     });
@@ -122,6 +132,9 @@ export class CreditPurchaseForm {
         this.popup.showNotification('Facture créée avec succès !');
         this.creationFacture = false;
         this.insertCreditsInvoice( response, form['priceHT'].value, form['credits'].value, (form['tva'] as HTMLSelectElement).value, "À venir",this.today, dueDate, this.clientId);
+        setTimeout(() => {
+          this.router.navigate(['/']);
+        }, 2000);
       },
       error: () => {
         this.popup.showNotification("Erreur lors de la création de la facture");
