@@ -169,7 +169,7 @@ class PhotographerSeeder extends Seeder
 
             echo $donnees['email'] . PHP_EOL;
 
-        if(!$photographer['id']) {
+        if(!$photographer || empty($photographer['id'])) {
             $endpoint = 'individual_customers';
 
             if(empty($donnees['given_name']) && empty($donnees['family_name'])) {
