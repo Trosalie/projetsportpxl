@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -8,4 +9,10 @@ import { Component } from '@angular/core';
 })
 export class Header {
   userName: string = 'Test User';
+
+  constructor(private router: Router) {}
+
+  isLoginPage(): boolean {
+    return this.router.url === '/login';
+  }
 }

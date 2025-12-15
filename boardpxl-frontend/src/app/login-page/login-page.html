@@ -1,16 +1,17 @@
 <div class="all">
   <div class="card">
-    <img src="../../../public/assets/images/logo_couleurs.jpg" alt="logo_sportpxl_en_couleur" />
+    <img class="logo-sportpxl" src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" alt="logo_sportpxl">
+    <img class="login-icon" src="assets/images/login_icon.png" alt="login_icon" />
     <h1>Log In</h1>
     <form (ngSubmit)="onSubmit()">
       <div class="bloc_input">
         <label for="email">Email</label>
-        <input id="email" type="text" [(ngModel)]="email" name="email" />
+        <input id="email" type="text" placeholder="Email" [(ngModel)]="email" name="email" />
       </div>
 
       <div class="bloc_input">
         <label for="password">Password</label>
-        <input id="password" type="password" [(ngModel)]="password" name="password" />
+        <input id="password" type="password" placeholder="Password" [(ngModel)]="password" name="password" />
       </div>
 
       <a href="https://www.app.sportpxl.com/forgot">Forget Password?</a>
