@@ -12,7 +12,7 @@ import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form'
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 
 const routes: Routes = [
-  { path: 'login', component: LoginPage }
+  { path: 'login', component: LoginPage },
   { path: '', component: PhotographerDashboard, pathMatch: 'full', canMatch: [photographerGuard] },
   { path: '', component: PhotographersList, pathMatch: 'full', canMatch: [adminGuard] },
   { path: 'request/payout', component: MailRequestPage, canActivate: [photographerGuard] },
