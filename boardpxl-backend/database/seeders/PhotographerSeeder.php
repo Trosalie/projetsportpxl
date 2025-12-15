@@ -152,7 +152,6 @@ class PhotographerSeeder extends Seeder
             'country' => !empty($donnees[$mappingColonnes['country']]) ? $donnees[$mappingColonnes['country']] : null,
             'iban' => !empty($donnees[$mappingColonnes['iban']]) ? $donnees[$mappingColonnes['iban']] : null,
             'password' => Hash::make('Google@123?'),
-            'admin' => false,
             'created_at' => now(),
             'updated_at' => now(),
         ];

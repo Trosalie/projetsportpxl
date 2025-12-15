@@ -27,8 +27,7 @@ class Photographer extends Authenticatable
         'locality',
         'country',
         'iban',
-        'password',
-        'admin'
+        'password'
     ];
 
     protected $hidden = [

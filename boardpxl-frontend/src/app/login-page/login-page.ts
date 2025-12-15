@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { AuthService } from '../services/auth-service';
 import { Router } from '@angular/router';
 import { RoleService } from '../services/role.service';
+import { environment } from '../../environments/environment.development';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login-page',
@@ -19,28 +21,29 @@ export class LoginPage
 
   onSubmit()
   {
-    this.auth.login(this.email, this.password).subscribe(
+    this.auth.login(this.email, this.password).pipe(
+      switchMap((response) => this.auth.saveToken(response.token))
+    ).subscribe(
     {
-      next: (response) =>
+      next: (user) =>
       {
-        console.log('Login OK', response);
+        console.log('Utilisateur connecté :', user);
 
-        this.auth.saveToken(response.token);
-
-        if (response.photographer.admin)
+        if (environment.adminEmail.includes(user.email))
         {
           this.role.setRole("admin");
           this.router.navigate(['/']);
         }
-
-        this.role.setRole("photograph");
-        this.router.navigate(['/']);
+        else
+        {
+          this.role.setRole("photograph");
+          this.router.navigate(['/']);
+        }
       },
-      
+
       error: (err) =>
       {
         console.error('Erreur de login', err);
-
         alert("Email ou mot de passe incorrect");
       }
     });

@@ -31,7 +31,6 @@ class CreatePhotographersTable extends Migration
             $table->string('country')->nullable();
             $table->string('iban')->nullable();
             $table->string('password');
-            $table->boolean('admin');
             $table->rememberToken();
             $table->timestamps();
         });

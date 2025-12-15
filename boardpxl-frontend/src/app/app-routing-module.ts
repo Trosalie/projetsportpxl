@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: 'request/credits', component: MailRequestPage, canMatch: [photographGuard] },
   { path: 'request/success', component: AutomaticResponse, canMatch: [photographGuard] },
   { path: 'request/failure', component: AutomaticResponse, canMatch: [photographGuard] },
-  { path: 'login-page', component: LoginPage }
+  { path: 'login', component: LoginPage }
 ];
 
 @NgModule({
