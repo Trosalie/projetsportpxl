@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment.development';
 import { Photographer } from '../models/photographer.model';
+import { AuthService } from './auth-service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,17 +13,29 @@ export class PhotographerService {
   private photographers: Photographer[] = [];
   private filteredPhotographers: Photographer[] = [];
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private authService: AuthService) {
   }
 
   // Retourne la liste des photographes, utilise le cache si disponible
   getPhotographers(): Observable<Photographer[]> {
-    return this.http.get<Photographer[]>(`${environment.apiUrl}/photographers`);
+    const token = this.authService.getToken();
+    return this.http.get<Photographer[]>(`${environment.apiUrl}/photographers`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    });
   }
 
   forceGetPhotographers(): Observable<Photographer[]> {
       console.log('Fetching photographers from API');
-      this.http.get<Photographer[]>(`${environment.apiUrl}/photographers`).subscribe(data => {
+      const token = this.authService.getToken();
+      this.http.get<Photographer[]>(`${environment.apiUrl}/photographers`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      }).subscribe(data => {
         this.photographers = data;
       });
 
