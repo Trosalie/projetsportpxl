@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
 
-class Photographer extends Model
+class Photographer extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     protected $fillable = [
         'aws_sub',
@@ -25,16 +27,31 @@ class Photographer extends Model
         'locality',
         'country',
         'iban',
-        'pennylane_id',
+        'password',
+        'pennylane_id'
     ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::needsRehash($value) ? Hash::make($value) : $value;
+    }
 
     public function invoicesCredit()
     {
-        return $this->hasMany(\App\Models\InvoiceCredit::class);
+        return $this->hasMany(InvoiceCredit::class);
     }
 
     public function invoicesPayment()
     {
-        return $this->hasMany(\App\Models\InvoicePayment::class);
+        return $this->hasMany(InvoicePayment::class);
     }
 }

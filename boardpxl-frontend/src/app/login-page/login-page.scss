@@ -1,0 +1,116 @@
+/* Page background */
+.all {
+  min-height: 100vh;
+  background-color: #9fd3e8; /* light blue */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Card */
+.card {
+  background-color: #ffffff;
+  width: 420px;
+  padding: 40px 40px 50px;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+/* Logo top left of card */
+.logo-sportpxl {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  width: 100px;
+}
+
+/* Login icon */
+.login-icon {
+  width: 65px;
+  margin-bottom: 25px;
+}
+
+/* Title */
+.card h1 {
+  color: #ff8a26;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+/* Form */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Input block */
+.bloc_input {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+/* Hide labels (placeholders are used visually) */
+.bloc_input label {
+  display: none;
+}
+
+/* Inputs */
+.bloc_input input {
+  height: 52px;
+  border-radius: 26px;
+  border: none;
+  padding: 0 22px;
+  background-color: #e0e0e0;
+  font-size: 16px;
+  outline: none;
+}
+
+.bloc_input input::placeholder {
+  color: #9b9b9b;
+}
+
+/* Focus effect */
+.bloc_input input:focus {
+  background-color: #d6d6d6;
+}
+
+/* Forgot password */
+form a {
+  align-self: flex-start;
+  margin-left: 12px;
+  font-size: 14px;
+  color: #1aa3d9;
+  text-decoration: none;
+}
+
+form a:hover {
+  text-decoration: underline;
+}
+
+/* Login button */
+.btn_login {
+  margin-top: 25px;
+  height: 50px;
+  border-radius: 25px;
+  border: none;
+  background-color: #ff8a26;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn_login:hover {
+  background-color: #ff7a0a;
+}
+
+.btn_login:active {
+  transform: scale(0.98);
+}

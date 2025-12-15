@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import {LoginPage} from './login-page/login-page';
 import { PhotographerDashboard } from './photographer-dashboard/photographer-dashboard';
 import { MailRequestPage } from './mail-request-page/mail-request-page';
 import { AutomaticResponse } from './automatic-response/automatic-response';
@@ -11,6 +12,7 @@ import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form'
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 
 const routes: Routes = [
+  { path: 'login', component: LoginPage },
   { path: '', component: PhotographerDashboard, pathMatch: 'full', canMatch: [photographerGuard] },
   { path: '', component: PhotographersList, pathMatch: 'full', canMatch: [adminGuard] },
   { path: 'request/payout', component: MailRequestPage, canActivate: [photographerGuard] },

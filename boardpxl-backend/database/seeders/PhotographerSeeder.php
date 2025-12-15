@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use App\Services\PennylaneService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use SebastianBergmann\CodeCoverage\Report\PHP;
 
 class PhotographerSeeder extends Seeder
@@ -14,7 +15,7 @@ class PhotographerSeeder extends Seeder
     private const ENCLOSURE_CSV = '"';
     private const ESCAPE_CSV = "\0";
     private const CHEMIN_FICHIER_CSV = 'seeders/Photographes.csv';
-    
+
     private const CHAMPS_OBLIGATOIRES = ['aws sub', 'email', 'name'];
     
     private Client $client;
@@ -48,7 +49,7 @@ class PhotographerSeeder extends Seeder
 
     /**
      * Créer une liste de photographes à partir d'un fichier CSV
-     * 
+     *
      * @param string $cheminCSV
      * @return array
      * @throws \RuntimeException
@@ -58,15 +59,15 @@ class PhotographerSeeder extends Seeder
         $handle = $this->ouvrirFichierCSV($cheminCSV);
         $mappingColonnes = $this->creerMappingColonnes($handle);
         $photographes = $this->lireDonneesCSV($handle, $mappingColonnes);
-        
+
         fclose($handle);
-        
+
         return $photographes;
     }
 
     /**
      * Ouvrir le fichier CSV
-     * 
+     *
      * @param string $cheminCSV
      * @return resource
      * @throws \RuntimeException
@@ -74,35 +75,35 @@ class PhotographerSeeder extends Seeder
     private function ouvrirFichierCSV(string $cheminCSV)
     {
         $handle = fopen($cheminCSV, 'r');
-        
+
         if ($handle === false) {
             throw new \RuntimeException("Impossible d'ouvrir le fichier CSV : {$cheminCSV}");
         }
-        
+
         return $handle;
     }
 
     /**
      * Créer un mapping des colonnes à partir des en-têtes
-     * 
+     *
      * @param resource $handle
      * @return array
      */
     private function creerMappingColonnes($handle): array
     {
         $entetes = fgetcsv($handle, 0, self::DELIMITEUR_CSV, self::ENCLOSURE_CSV, self::ESCAPE_CSV);
-        
+
         $mappingColonnes = [];
         foreach ($entetes as $index => $entete) {
             $mappingColonnes[$entete] = $index;
         }
-        
+
         return $mappingColonnes;
     }
 
     /**
      * Lire les données du CSV et créer les tableaux de photographes
-     * 
+     *
      * @param resource $handle
      * @param array $mappingColonnes
      * @return array
@@ -111,21 +112,21 @@ class PhotographerSeeder extends Seeder
     {
         $photographes = [];
         $nombreColonnes = count($mappingColonnes);
-        
+
         while (($donnees = fgetcsv($handle, 0, self::DELIMITEUR_CSV, self::ENCLOSURE_CSV, self::ESCAPE_CSV)) !== false) {
             if (!$this->estLigneValide($donnees, $mappingColonnes, $nombreColonnes)) {
                 continue;
             }
-            
+
             $photographes[] = $this->creerPhotographe($donnees, $mappingColonnes);
         }
-        
+
         return $photographes;
     }
 
     /**
      * Vérifier si la ligne CSV est valide
-     * 
+     *
      * @param array $donnees
      * @param array $mappingColonnes
      * @param int $nombreColonnes
@@ -136,13 +137,13 @@ class PhotographerSeeder extends Seeder
         if (count($donnees) < $nombreColonnes) {
             return false;
         }
-        
+
         foreach (self::CHAMPS_OBLIGATOIRES as $champ) {
             if (!isset($donnees[$mappingColonnes[$champ]]) || empty($donnees[$mappingColonnes[$champ]])) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -245,7 +246,7 @@ class PhotographerSeeder extends Seeder
 
     /**
      * Créer un tableau de photographe à partir d'une ligne CSV
-     * 
+     *
      * @param array $donnees
      * @param array $mappingColonnes
      * @return array
@@ -268,6 +269,7 @@ class PhotographerSeeder extends Seeder
             'locality' => !empty($donnees[$mappingColonnes['locality']]) ? $donnees[$mappingColonnes['locality']] : null,
             'country' => !empty($donnees[$mappingColonnes['country']]) ? $donnees[$mappingColonnes['country']] : null,
             'iban' => !empty($donnees[$mappingColonnes['iban']]) ? $donnees[$mappingColonnes['iban']] : null,
+            'password' => Hash::make('Google@123?'),
             'created_at' => now(),
             'updated_at' => now(),
         ];
@@ -275,7 +277,7 @@ class PhotographerSeeder extends Seeder
 
     /**
      * Insérer les photographes uniques (sans doublons)
-     * 
+     *
      * @param array $photographes
      * @return void
      */
@@ -288,7 +290,7 @@ class PhotographerSeeder extends Seeder
             if (isset($emailsVus[$photographe['email']])) {
                 continue;
             }
-            
+
             if (isset($awsSubsVus[$photographe['aws_sub']])) {
                 continue;
             }
@@ -308,7 +310,7 @@ class PhotographerSeeder extends Seeder
 
             $emailsVus[$photographe['email']] = true;
             $awsSubsVus[$photographe['aws_sub']] = true;
-            
+
             DB::table('photographers')->insert($photographe);
             // Faire 2 appels par seconde pour éviter de saturer l'API Pennylane
             usleep(500000);
