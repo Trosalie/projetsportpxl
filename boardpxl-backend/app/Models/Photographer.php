@@ -43,7 +43,7 @@ class Photographer extends Model
     {
         return DB::table('photographers')
             ->select('email', 'family_name', 'given_name', 'name', 'nb_imported_photos', 'total_limit', 'street_address', 'postal_code', 'locality', 'country')
-            ->where('email', '==', $email)
-            ->get();
+            ->where('email', $email)
+            ->first();
     }
 }
