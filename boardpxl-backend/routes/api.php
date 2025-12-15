@@ -13,10 +13,10 @@ use App\Http\Controllers\PhotographerController;
 
 
 
-// Création d'une facture
+// Création d'une facture de crédits pour un client
 Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
 
-// Création d'une facture de versement de CA
+// Création d'une facture de versement de CA pour un client
 Route::post('/create-turnover-invoice-client', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
 
 // Insertion d'une facture de versement de CA
@@ -42,6 +42,7 @@ Route::get('/invoices-payment/{photographer_id}', [InvoiceController::class, 'ge
 
 // Récupérer les factures de crédit d’un photographe
 Route::get('/invoices-credit/{photographer_id}', [InvoiceController::class, 'getInvoicesCreditByPhotographer']);
+
 // Récupérer la liste des clients
 Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
 
