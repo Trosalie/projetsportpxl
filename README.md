@@ -51,3 +51,8 @@ Proposer une **application web** offrant une interface **tableau de bord** pour 
 
 ---
 ## 📂 Hiérarchisation du projet
+Le projet est organisé autour de :
+Une séparation claire entre logique métier et interface utilisateur
+Une gestion centralisée des données financières
+Une distinction des fonctionnalités selon les rôles utilisateurs
+Cette structuration vise à garantir la lisibilité, la maintenabilité et l’évolutivité de l’application.
