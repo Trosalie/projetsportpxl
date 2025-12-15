@@ -7,6 +7,7 @@ use App\Services\PennylaneService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use SebastianBergmann\CodeCoverage\Report\PHP;
 
 class PhotographerSeeder extends Seeder
 {
@@ -16,6 +17,9 @@ class PhotographerSeeder extends Seeder
     private const CHEMIN_FICHIER_CSV = 'seeders/Photographes.csv';
 
     private const CHAMPS_OBLIGATOIRES = ['aws sub', 'email', 'name'];
+    
+    private Client $client;
+    private array $data = [];
 
     /**
      * Exécuter le seeder
@@ -24,6 +28,21 @@ class PhotographerSeeder extends Seeder
      */
     public function run(): void
     {
+        $service = new PennylaneService();
+        $this->client = $service->getHttpClient();
+        $response = $this->client->get('customers?sort=-id');
+        $data = json_decode($response->getBody()->getContents(), true);
+        $this->data = $data["items"] ?? [];
+
+        while($data["has_more"] ?? false) {
+            $response = $this->client->get('customers?sort=-id&cursor=' . $data["next_cursor"]);
+            $data = json_decode($response->getBody()->getContents(), true);
+            $this->data = array_merge($this->data, $data["items"] ?? []);
+            usleep(500000); // Faire 2 appels par seconde pour éviter de saturer l'API Pennylane
+        }
+
+        echo "Fetched " . count($this->data) . " customers from Pennylane API." . PHP_EOL;
+
         $photographes = $this->creerListePhotographes(database_path(self::CHEMIN_FICHIER_CSV));
         $this->insererPhotographesUniques($photographes);
     }
@@ -136,26 +155,22 @@ class PhotographerSeeder extends Seeder
      */
     private function getOrCreatePennylaneIdFromEmail(array $donnees): ?int
     {
-        $service = new PennylaneService();
-        $client = $service->getHttpClient();
-        $response = $client->get('customers?sort=-id');
-        $data = json_decode($response->getBody()->getContents(), true);
-
-        $photographer = $data['items'] ?? [];
         $email = strtolower(trim($donnees['email']));
 
-        $photographer = collect($data['items'] ?? [])
+        $photographer = collect($this->data)
             ->first(function ($item) use ($email) {
                 $emails = array_map(
                     fn ($e) => strtolower(trim($e)),
                     $item['emails'] ?? []
                 );
-
+                // echo "Checking emails: " . implode(", ", $emails) . PHP_EOL;
+                // echo "Against email: " . $email . PHP_EOL;
                 return in_array($email, $emails, true);
             });
 
+            echo $donnees['email'] . PHP_EOL;
 
-        if(! $photographer) {
+        if(!$photographer || empty($photographer['id'])) {
             $endpoint = 'individual_customers';
 
             if(empty($donnees['given_name']) && empty($donnees['family_name'])) {
@@ -175,6 +190,9 @@ class PhotographerSeeder extends Seeder
             }
             if(empty($donnees['given_name'])) {
                 $donnees['given_name'] = '_';
+            }
+            if(empty($donnees['name'])) {
+                $donnees['name'] = $donnees['given_name'] . ' ' . $donnees['family_name'];
             }
 
             // Parser le champ country pour ne garder que le code pays (par défaut fr_FR, sinon en_GB ou de_DE)
@@ -219,7 +237,7 @@ class PhotographerSeeder extends Seeder
                 $json['name'] = $donnees['name'] ?? '';
             }
 
-            $response = $client->post($endpoint, ['json' => $json]);
+            $response = $this->client->post($endpoint, ['json' => $json]);
             $created = json_decode($response->getBody()->getContents(), true);
   
         }
