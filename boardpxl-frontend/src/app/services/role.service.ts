@@ -4,9 +4,9 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root'
 })
 export class RoleService {
-  role = signal<'photograph' | 'admin' | 'none'>("none"); // to put to none later
+  role = signal<'photographer' | 'admin' | 'none'>("none"); // to put to none later
 
-  setRole(role: 'photograph' | 'admin' | 'none') {
+  setRole(role: 'photographer' | 'admin' | 'none') {
     this.role.set(role);
   }
 

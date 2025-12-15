@@ -45,3 +45,7 @@ Thumbs.db
 
 # Importation files
 Photographes.csv
+
+/src/environments/environment.ts
+/src/environments/environment.developpement.ts
+/src/environments/environment.production.ts

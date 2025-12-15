@@ -36,7 +36,7 @@ export class LoginPage
         }
         else
         {
-          this.role.setRole("photograph");
+          this.role.setRole("photographer");
           this.router.navigate(['/']);
         }
       },
