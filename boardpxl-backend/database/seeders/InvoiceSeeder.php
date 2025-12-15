@@ -98,13 +98,14 @@ class InvoiceSeeder extends Seeder
         ]);
         }
         else {
+            preg_match('/(\d+(?:[.,]\d{1,2})?)\s*€/', $invoice['description'], $rawvalue);
             DB::table('invoice_payments')->insert([
                 'id' => $invoice['id'],
                 'number' => $invoice['invoice_number'],
                 'issue_date' => $invoice['date'],
                 'due_date' => $invoice['deadline'],
                 'description' => $invoice['pdf_description'] ?? 'N/A',
-                'raw_value' => $invoice['currency_amount_before_tax'],
+                'raw_value' => floatval($rawvalue[1]),
                 'commission' => $invoice['amount'],
                 'tax' => $invoice['tax'],
                 'vat' => $vat,

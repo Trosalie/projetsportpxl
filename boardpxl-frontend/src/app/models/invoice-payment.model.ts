@@ -18,7 +18,7 @@ export class InvoicePayment {
         this.issueDate = issueDate;
         this.dueDate = dueDate;
         this.description = description;
-        this.turnover = raw_value + commission;
+        this.turnover = raw_value - commission;
         this.raw_value = raw_value;
         this.commission = commission;
         this.tax = tax;
