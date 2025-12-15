@@ -43,7 +43,6 @@ export class AuthService {
     return this.getApiUser().pipe(
       tap(fetched_user => {
         this.setUser(fetched_user);
-        console.log('Utilisateur sauvegardé :', fetched_user);
       })
     );
   }

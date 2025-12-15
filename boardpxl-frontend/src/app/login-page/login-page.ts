@@ -27,8 +27,6 @@ export class LoginPage
     {
       next: (user) =>
       {
-        console.log('Utilisateur connecté :', user);
-
         if (environment.adminEmail.includes(user.email))
         {
           this.role.setRole("admin");
