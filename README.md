@@ -1,58 +1,82 @@
-# 💻 BoardPxl
+## BoardPxl
+BoardPxl est une application web interne conçue pour centraliser, structurer et simplifier la gestion des flux financiers liés à l’activité des photographes utilisant la plateforme SportPXL.
+BoardPxl est le nom donné au tableau de bord financier de SportPXL.
 
-**BoardPxl (1)** est une application web destinée à centraliser et simplifier la gestion des flux financiers pour les photographes.
-##### *(1) BoardPxl est un surnom donné à l'application pour signifier Tableau de bord SportPxl*
----
+## Contexte
+SportPXL est une plateforme permettant aux photographes et aux organisateurs d’évènements sportifs de :
+Stocker leurs photos en ligne
+Les proposer à la vente
+Identifier automatiquement les sportifs sur les clichés (reconnaissance faciale, numéro de dossard ou identification du véhicule : voiture, moto, vélo, bateau, etc.)
+La publication d’une photo nécessite des crédits : Chaque publication consomme un crédit.
+Les crédits peuvent être rechargés via :
+Un abonnement Stripe
+Un achat direct de crédits, géré manuellement par les administrateurs via ForestAdmin
+À la fin de chaque mois, ou sur demande d’un photographe, un versement de chiffre d’affaires est effectué par SportPXL vers le photographe concerné.
+Ces différentes opérations (abonnements, achats de crédits, versements) génèrent chacune des factures, prises en charge par l’outil de gestion comptable Pennylane.
 
-## 🌍 Contexte
 
-**SportPXL** est une plateforme permettant aux photographes et aux organisateurs d’évènements sportifs de :
-- Stocker leurs photos en ligne
-- Les proposer à la vente
-- Identifier automatiquement les sportifs sur les clichés (via reconnaissance faciale, numéro de dossard, ou identification du véhicule : voiture, moto, vélo, bateau, etc.)
+## Problématique
+La multiplication des outils (Stripe, ForestAdmin, Pennylane) et des types de facturation rend le suivi financier complexe :
+Les photographes ne disposent pas d’une vision claire et centralisée de leurs factures et revenus
+Les administrateurs doivent gérer manuellement certaines factures, sans outil de suivi global
+Aucun tableau de bord unique ne permet de visualiser l’ensemble des flux financiers
 
-La publication d’une photo nécessite des **crédits** :
-- Chaque publication consomme un crédit.
-- Les utilisateurs peuvent recharger leurs crédits via :
-  - Un **abonnement Stripe (1)**
-  - Un **achat direct de crédits** (géré manuellement via l'outil **ForestAdmin (2)** de la part des administrateurs)
+## Objectif du projet
+L’objectif de BoardPxl est de proposer une application web de type tableau de bord permettant de centraliser, visualiser et suivre l’ensemble des flux financiers de SportPXL.
+L’application vise à améliorer :
+-La lisibilité des informations financières
+-Le suivi des factures
+-L’expérience utilisateur des photographes et des administrateurs
 
-A la fin de chaque mois ou sur demande de photographe, un versement de chiffre d'affaires est effectué de la part de SportPxl vers les photographes individuellement.
+## Fonctionnalités principale
+Administrateurs:
+Visualisation de la liste des utilisateurs
+Consultation des flux financiers globaux
+Génération des factures d’ajout de crédits
+Génération des factures de versement de chiffre d’affaires
+Consultation de l’historique des factures par photographe
 
- Ces trois opérations engendrent chacune une génération de facture (de façon automatique pour Stripe, et manuellement pour l'achat direct de crédits et le versement de chiffre d'affaires) pris en charge via l'outil **Pennylane (3)**
+Photographes:
+Consultation de l’historique des factures
+Visualisation du solde de crédits
+Demande de versement de chiffre d’affaires
 
-##### *(1) Stripe est une plateforme de paiement en ligne qui permet aux entreprises d'accepter et de gérer des transactions sur Internet*
-##### *(2) ForestAdmin est une plateforme d'administration low-code qui permet de créer rapidement des interfaces internes pour gérer les données et opérations d'une application*
-##### *(3) Pennylane est une plateforme de gestion financière et comptable qui centralise comptabilité, facturation et pilotage pour les entreprises et leurs experts-comptables*
----
 
-## ⚙️ Problématique
+## Rôles utilisateurs
+BoardPxl repose sur deux rôles distincts :
+Administrateur SportPXL : gestion des utilisateurs, des factures et des flux financiers
+Photographe : consultation de ses données financières et demandes de versement
 
-La multiplicité des outils et des générations de factures rend complexe l'expérience utilisateur :
+## Flux financiers gérés
+BoardPxl permet de suivre et centraliser :
+Les abonnements Stripe
+Les achats directs de crédits
+Les versements de chiffre d’affaires
+Les factures associées à chaque opération
 
-- Pour les photographes qui n'ont pas de trace de leurs factures.
-- Pour les administrateurs qui doivent générer manuellement des factures sur Pennylane lors de l’ajout de crédits et de versement de chiffre d'affaires.
-- Aucun suivi clair n’existe sur les flux financiers internes pour les administrateurs et les photographes.
+## Périmètre et limites
+BoardPxl ne gère pas :
+Les paiements directs
+La vente de photos
+Le stockage ou la gestion des images
+L’application se concentre exclusivement sur le suivi et la visualisation des données financières.
 
----
+## Architecture & technologies
+Frontend : Application web (React, Next.js ou équivalent)
+Backend : API applicative (Node.js, NestJS, Laravel ou équivalent)
+Base de données : PostgreSQL / MySQL / MongoDB
+Outils externes : Stripe, Pennylane, ForestAdmin
 
-## 🎯 Objectif du projet
-
-Proposer une **application web** offrant une interface **tableau de bord** pour centraliser et visualiser tous les flux financiers de SportPXL et permettre :
-- Aux administrateurs de :
-	- Générer les factures de versement de chiffre d'affaires
-	- Générer les factures d'ajout de crédits
-	- Visualiser la liste des utilisateurs
-	- Visualiser par photographe l'historique des factures
-- Aux photographes de :
-	- Visualiser l'historique des factures
-	- Visualiser leur solde de crédits
-	- Demander un versement de chiffre d'affaires
-
----
-## 📂 Hiérarchisation du projet
+## Hiérarchisation du projet
 Le projet est organisé autour de :
 Une séparation claire entre logique métier et interface utilisateur
 Une gestion centralisée des données financières
 Une distinction des fonctionnalités selon les rôles utilisateurs
 Cette structuration vise à garantir la lisibilité, la maintenabilité et l’évolutivité de l’application.
+
+## Conclusion
+BoardPxl s’inscrit comme un outil interne stratégique pour SportPXL, permettant de fiabiliser et simplifier la gestion financière tout en offrant une meilleure transparence aux photographes.
+Le projet répond à un besoin concret de centralisation et de clarté des données financières dans un environnement multi-outils.
+
+
+
