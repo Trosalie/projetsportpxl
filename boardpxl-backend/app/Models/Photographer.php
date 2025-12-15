@@ -28,6 +28,7 @@ class Photographer extends Authenticatable
         'country',
         'iban',
         'password'
+        'pennylane_id',
     ];
 
     protected $hidden = [

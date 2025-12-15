@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use GuzzleHttp\Client;
+use App\Services\PennylaneService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -127,6 +129,104 @@ class PhotographerSeeder extends Seeder
     }
 
     /**
+     * Récupérer ou créer un client Pennylane à partir de l'email
+     * 
+     * @param array $donnees
+     * @return int|null
+     */
+    private function getOrCreatePennylaneIdFromEmail(array $donnees): ?int
+    {
+        $service = new PennylaneService();
+        $client = $service->getHttpClient();
+        $response = $client->get('customers?sort=-id');
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        $photographer = $data['items'] ?? [];
+        $email = strtolower(trim($donnees['email']));
+
+        $photographer = collect($data['items'] ?? [])
+            ->first(function ($item) use ($email) {
+                $emails = array_map(
+                    fn ($e) => strtolower(trim($e)),
+                    $item['emails'] ?? []
+                );
+
+                return in_array($email, $emails, true);
+            });
+
+
+        if(! $photographer) {
+            $endpoint = 'individual_customers';
+
+            if(empty($donnees['given_name']) && empty($donnees['family_name'])) {
+                $endpoint = 'company_customers';
+            }
+
+            // Nettoyer les données avant l'envoi -> remplacer les ';' par des ''
+            $donnees = array_map(function ($value) {
+                if (is_string($value)) {
+                    return str_replace(';', '', $value);
+                }
+                return $value;
+            }, $donnees);
+
+            if(empty($donnees['family_name'])) {
+                $donnees['family_name'] = '_';
+            }
+            if(empty($donnees['given_name'])) {
+                $donnees['given_name'] = '_';
+            }
+
+            // Parser le champ country pour ne garder que le code pays (par défaut fr_FR, sinon en_GB ou de_DE)
+            if (strtolower($donnees['country']) == 'france' || strtolower($donnees['country']) == 'fr_fr' || strtolower($donnees['country']) == 'fr'){
+                $donnees['country'] = 'FR';
+            }
+            elseif (strtolower($donnees['country']) == 'royaume-uni' || strtolower($donnees['country']) == 'england' || strtolower($donnees['country']) == 'uk' || strtolower($donnees['country']) == 'gb' || strtolower($donnees['country']) == 'en_gb'){
+                $donnees['country'] = 'GB';
+            }
+            elseif (strtolower($donnees['country']) == 'allemagne' || strtolower($donnees['country']) == 'germany' || strtolower($donnees['country']) == 'de' || strtolower($donnees['country']) == 'de_de'){
+                $donnees['country'] = 'DE';
+            }
+            else {
+                $donnees['country'] = 'FR';
+            }
+
+            // afficher le photographe dans la console
+            echo "Photographer: " . json_encode($donnees) . "\n";
+
+            $json = [
+                'emails' => [$donnees['email']],
+                'billing_address' => [
+                    'address' => $donnees['street_address'] ?? '',
+                    'postal_code' => $donnees['postal_code'] ?? '',
+                    'city' => $donnees['locality'] ?? '',
+                    'country_alpha2' => $donnees['country'] ?? 'FR',
+                ],
+                'delivery_address' => [
+                    'address' => $donnees['street_address'] ?? '',
+                    'postal_code' => $donnees['postal_code'] ?? '',
+                    'city' => $donnees['locality'] ?? '',
+                    'country_alpha2' => $donnees['country'] ?? 'FR',
+                ],
+                'billing_iban' => 'FR1010096000307323346714U91',
+
+            ];
+
+            if($endpoint === 'individual_customers') {
+                $json['first_name'] = $donnees['given_name'] ?? '';
+                $json['last_name'] = $donnees['family_name'] ?? '';
+            } else {
+                $json['name'] = $donnees['name'] ?? '';
+            }
+
+            $response = $client->post($endpoint, ['json' => $json]);
+            $created = json_decode($response->getBody()->getContents(), true);
+  
+        }
+        return $created['id'] ?? $photographer['id'] ?? null;
+    }
+
+    /**
      * Créer un tableau de photographe à partir d'une ligne CSV
      *
      * @param array $donnees
@@ -176,11 +276,26 @@ class PhotographerSeeder extends Seeder
             if (isset($awsSubsVus[$photographe['aws_sub']])) {
                 continue;
             }
+            
+            $photographe['pennylane_id'] = $this->getOrCreatePennylaneIdFromEmail(
+            [
+                'email' => $photographe['email'],
+                'street_address' => $photographe['street_address'],
+                'postal_code' => $photographe['postal_code'],
+                'locality' => $photographe['locality'],
+                'country' => $photographe['country'],
+                'given_name' => $photographe['given_name'],
+                'family_name' => $photographe['family_name'],
+                'name' => $photographe['name'],
+            ]
+        );
 
             $emailsVus[$photographe['email']] = true;
             $awsSubsVus[$photographe['aws_sub']] = true;
 
             DB::table('photographers')->insert($photographe);
+            // Faire 2 appels par seconde pour éviter de saturer l'API Pennylane
+            usleep(500000);
         }
     }
 }

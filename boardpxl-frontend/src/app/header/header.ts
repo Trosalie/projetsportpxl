@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -15,4 +15,10 @@ export class Header {
   isLoginPage(): boolean {
     return this.router.url === '/login';
   }
+  @Output() navBarToggled = new EventEmitter<void>();
+
+  toggleNavBar() {
+    this.navBarToggled.emit();
+  }
+
 }

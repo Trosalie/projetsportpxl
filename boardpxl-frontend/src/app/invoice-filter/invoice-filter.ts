@@ -18,40 +18,33 @@ export interface FilterOptions {
 export class InvoiceFilter {
   @Output() filtersChanged = new EventEmitter<FilterOptions>();
 
-  protected isFilterModalOpen: boolean = false;
-  protected selectedFilterType: string | null = null;
+  protected openDropdown: string | null = null;
   protected activeFilters: string[] = [];
   protected dateFilters: Map<string, string> = new Map();
 
-  private readonly statusFilters = ['Payée', 'Non payée', 'En retard'];
-  private readonly typeFilters = ['Achat de crédits', 'Versement'];
-  private readonly periodFilters = ['Après le', 'Avant le'];
+  protected readonly statusFilters = ['Payée', 'Non payée', 'En retard'];
+  protected readonly typeFilters = ['Achat de crédits', 'Versement'];
+  protected readonly periodFilters = ['Après le', 'Avant le'];
 
-  toggleFilterModal(event?: Event) {
+  toggleDropdown(dropdownType: string, event?: Event) {
     if (event) {
       event.stopPropagation();
     }
-    this.isFilterModalOpen = !this.isFilterModalOpen;
-    if (!this.isFilterModalOpen) {
-      this.selectedFilterType = null;
+    this.openDropdown = this.openDropdown === dropdownType ? null : dropdownType;
+  }
+
+  toggleFilter(filterValue: string) {
+    if (this.activeFilters.includes(filterValue)) {
+      this.removeFilter(filterValue);
+    } else {
+      this.addFilter(filterValue);
     }
-  }
-
-  openFilterType(filterType: string) {
-    this.selectedFilterType = filterType;
-  }
-
-  goBack() {
-    this.selectedFilterType = null;
   }
 
   addFilter(filterValue: string) {
     if (!this.activeFilters.includes(filterValue)) {
       this.activeFilters.push(filterValue);
     }
-    this.isFilterModalOpen = false;
-    this.selectedFilterType = null;
-
     this.emitFilterChange();
   }
 
@@ -60,7 +53,6 @@ export class InvoiceFilter {
     if (this.isDateFilter(filterValue)) {
       this.dateFilters.delete(filterValue);
     }
-
     this.emitFilterChange();
   }
 
@@ -77,8 +69,6 @@ export class InvoiceFilter {
       this.activeFilters.push(filterValue);
       this.dateFilters.set(filterValue, '');
     }
-    this.isFilterModalOpen = false;
-    this.selectedFilterType = null;
     
     // Focus on the specific date input that was just added
     setTimeout(() => {
@@ -88,6 +78,8 @@ export class InvoiceFilter {
         input.showPicker?.();
       }
     }, 100);
+
+    this.emitFilterChange();
   }
 
   getDateValue(filterValue: string): string {
@@ -101,14 +93,13 @@ export class InvoiceFilter {
     // Validate date range
     if (this.isDateRangeValid(filterValue, newValue)) {
       this.dateFilters.set(filterValue, newValue);
+      this.emitFilterChange();
     } else {
       // Reset to previous value if invalid
       input.value = this.dateFilters.get(filterValue) || '';
       // Show error message
       alert('La date "Après le" doit être antérieure à la date "Avant le".');
     }
-
-    this.emitFilterChange();
   }
 
   private isDateRangeValid(filterValue: string, newValue: string): boolean {
@@ -127,24 +118,6 @@ export class InvoiceFilter {
     return true; // If only one date is set, it's valid
   }
 
-  hasAvailableStatusFilters(): boolean {
-    return this.statusFilters.some(filter => !this.activeFilters.includes(filter));
-  }
-
-  hasAvailableTypeFilters(): boolean {
-    return this.typeFilters.some(filter => !this.activeFilters.includes(filter));
-  }
-
-  hasAvailablePeriodFilters(): boolean {
-    return this.periodFilters.some(filter => !this.activeFilters.includes(filter));
-  }
-
-  hasAvailableFilters(): boolean {
-    return this.hasAvailableStatusFilters() || 
-           this.hasAvailableTypeFilters() || 
-           this.hasAvailablePeriodFilters();
-  }
-
   getSortedFilters(): string[] {
     // Define the order: Status filters first, then Type filters, then Period filters
     const orderedFilters = [
@@ -158,6 +131,42 @@ export class InvoiceFilter {
       const indexA = orderedFilters.indexOf(a);
       const indexB = orderedFilters.indexOf(b);
       return indexA - indexB;
+    });
+  }
+
+  hasActiveStatusFilters(): boolean {
+    return this.activeFilters.some(f => this.statusFilters.includes(f));
+  }
+
+  hasActiveTypeFilters(): boolean {
+    return this.activeFilters.some(f => this.typeFilters.includes(f));
+  }
+
+  hasActivePeriodFilters(): boolean {
+    return this.activeFilters.some(f => this.periodFilters.includes(f));
+  }
+
+  clearCategoryFilters(category: string, event: Event): void {
+    event.stopPropagation();
+    
+    let filtersToRemove: string[] = [];
+    
+    switch(category) {
+      case 'status':
+        filtersToRemove = this.statusFilters;
+        break;
+      case 'type':
+        filtersToRemove = this.typeFilters;
+        break;
+      case 'period':
+        filtersToRemove = this.periodFilters;
+        break;
+    }
+    
+    filtersToRemove.forEach(filter => {
+      if (this.activeFilters.includes(filter)) {
+        this.removeFilter(filter);
+      }
     });
   }
 
@@ -176,9 +185,8 @@ export class InvoiceFilter {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
-    if (this.isFilterModalOpen) {
-      this.isFilterModalOpen = false;
-      this.selectedFilterType = null;
+    if (this.openDropdown) {
+      this.openDropdown = null;
     }
   }
 }

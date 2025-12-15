@@ -1,27 +1,12 @@
 div {
-    background-color: #F98524;
     margin: 13px;
-    padding: 20px;
-    width: calc(100% - 26px);
-    box-sizing: border-box;
-    border-radius: 10px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    height: 60px;
+    height: auto;
 }
 
 div p {
     margin: 0;
-    color: #FFFFFF;
     text-align: center;
-    font-family: 'FuturaLT-Bold';
+    font-family: 'FuturaLT';
     font-size: 34px;
-}
-
-img {
-    position: absolute;
-    right: 20px;
-    height: 80%;
 }

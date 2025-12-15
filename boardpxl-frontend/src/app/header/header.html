@@ -1,8 +1,15 @@
 <header *ngIf="!isLoginPage()">
-   <nav>
+<nav>
+   <div>
       <a routerLink="/" class="logo-link" aria-label="Home">
          <img src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" alt="App Logo" class="logo">
       </a>
-     <p>{{userName}}</p>
-   </nav>
+      <button class="menu-button" aria-label="Menu" (click)="toggleNavBar()">
+         <span class="bar"></span>
+         <span class="bar"></span>
+         <span class="bar"></span>
+      </button>
+   </div>
+   <p>{{userName}}</p>
+</nav>
 </header>

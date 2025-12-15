@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Mail;
 class PennyLaneController extends Controller
 {
     /**
-     * Création d'une facture Pennylane
+     * Création d'une facture d'achat de crédit Pennylane
      */
-    public function createInvoice(Request $request, PennylaneService $service)
+    public function createCreditsInvoiceClient(Request $request, PennylaneService $service)
     {
         try {
             $validated = $request->validate([
@@ -29,7 +29,7 @@ class PennyLaneController extends Controller
 
             $description = $validated['description'] ?? "";
 
-            $facture = $service->createInvoiceClient(
+            $facture = $service->createCreditsInvoiceClient(
                 $validated['labelTVA'],
                 $validated['labelProduct'],
                 $description,
@@ -55,16 +55,55 @@ class PennyLaneController extends Controller
     }
 
     /**
-     * Récupère ID client via prénom + nom
+     * Création d'une facture de versement de CA
+     */
+    public function createTurnoverPaymentInvoice(Request $request, PennylaneService $service)
+    {
+        try {
+            $validated = $request->validate([
+                'labelTVA' => 'required|string',
+                'amountEuro' => 'required|string',
+                'issueDate' => 'required|string',
+                'dueDate' => 'required|string',
+                'idClient' => 'required|integer',
+                'invoiceTitle' => 'required|string',
+                'invoiceDescription' => 'string',
+            ]);
+
+            $facture = $service->createTurnoverInvoiceClient(
+                $validated['labelTVA'],
+                $validated['amountEuro'],
+                $validated['issueDate'],
+                $validated['dueDate'],
+                (int) $validated['idClient'],
+                $validated['invoiceTitle'],
+                $validated['invoiceDescription']
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Facture créée avec succès.',
+                'data' => $facture
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Récupère ID client via name
      */
     public function getClientId(Request $request, PennylaneService $service)
     {
         $validated = $request->validate([
-            'prenom' => 'required|string',
-            'nom' => 'required|string',
+            'name' => 'required|string',
         ]);
 
-        $clientId = $service->getClientIdByName($validated['prenom'], $validated['nom']);
+        $clientId = $service->getClientIdByName($validated['name']);
 
         if ($clientId) {
             return response()->json([
@@ -103,10 +142,7 @@ class PennyLaneController extends Controller
         $product = $service->getProductFromInvoice($invoiceNumber);
 
         if ($product) {
-            return response()->json([
-                'success' => true,
-                'product' => $product
-            ]);
+            return response()->json($product);
         }
 
         return response()->json([
@@ -169,5 +205,37 @@ class PennyLaneController extends Controller
         return response($fileContent, 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+    }
+
+    public function getPhotographers(PennylaneService $service)
+    {
+        $photographers = $service->getPhotographers();
+
+        return response()->json([
+            $photographers
+          ]);
+    }
+    /**
+     * Récupère la liste des clients
+     */
+    public function getListClients(PennylaneService $service)
+    {
+        $clients = $service->getListClients();
+
+        return response()->json([
+            'success' => true,
+            'clients' => $clients
+        ]);
+    }
+
+    public function getInvoiceById($id, PennylaneService $service)
+    {
+        $invoice = $service->getInvoiceById((int)$id);
+
+        if (!$invoice) {
+            return response()->json(['message' => 'Facture non trouvée'], 404);
+        }
+
+        return response()->json($invoice);
     }
 }

@@ -1,0 +1,32 @@
+<div class="card">
+    <div>
+        <!-- routerLink a changer quand on aura la page profil -->
+        <a routerLink="/" ><p>Photographer : {{ photographer.name }}</p></a> 
+        <p *ngIf="photographer.email">Email : {{ photographer.email }}</p>
+        <p *ngIf="!photographer.email">Pas d'email</p>
+    </div>
+    <div>
+        <p>Chiffre d'affaires</p>
+        <div class="value-button-pair chiffre-affaires">
+            <p class="tag">{{ getChiffreAffaires() | currency:'EUR'}}</p>
+            <!-- routerLink à changer quand on aura la page formulaire -->
+            <button routerLink="/"><span class="material-symbols-outlined">note_add</span></button>
+        </div>
+    </div>
+    <div>
+        <p>Nombre de crédits</p>
+        <div class="value-button-pair credits">
+            <p class="tag">{{ getTotalCredits() }} cr</p>
+            <!-- routerLink à changer quand on aura la page formulaire -->
+            <button routerLink="/"><span class="material-symbols-outlined">note_add</span></button>
+        </div>
+    </div>
+    <div>
+        <p>Statut des factures</p>
+        <div class="statuts">
+            <p>Payées</p><p class="payees status-count">{{ getPaidInvoicesCount() }}</p>
+            <p>Non payées</p><p class="non-payees status-count">{{ getUnpaidInvoicesCount() }}</p>
+            <p>En retard</p><p class="en-retard status-count">{{ getLateInvoicesCount() }}</p>
+        </div>
+    </div>
+</div>

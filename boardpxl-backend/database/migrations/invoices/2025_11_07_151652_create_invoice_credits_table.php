@@ -15,7 +15,7 @@ class CreateInvoiceCreditsTable extends Migration
     {
         Schema::create('invoice_credits', function (Blueprint $table) {
             $table->id();
-            $table->integer('number')->unique();
+            $table->string('number')->unique();
             $table->date('issue_date');
             $table->date('due_date');
             $table->string('description');
@@ -26,6 +26,7 @@ class CreateInvoiceCreditsTable extends Migration
             $table->integer('credits');
             $table->string('status');
             $table->string('link_pdf');
+            $table->string('pdf_invoice_subject')->nullable();
             $table->foreignId('photographer_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

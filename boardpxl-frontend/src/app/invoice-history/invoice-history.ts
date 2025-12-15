@@ -39,14 +39,15 @@ export class InvoiceHistory {
           case 'upcoming':
             invoice.status = 'Non payée';
             break;
-          case 'overdue':
+          case 'late':
             invoice.status = 'En retard';
             break;
         }
 
-        this.invoiceService.getProductFromInvoice(invoice).subscribe(product => {
-          // service may return a string or an object like { product: string }
-          const productValue = typeof product === 'string' ? product : (product as any)?.product;
+        this.invoiceService.getProductFromInvoice(invoice).subscribe((product: any) => {
+          // service may return a string, an object like { label: string } or an array where product[1] is the label
+          let productValue= (product as any).label;
+
           if (productValue && productValue.toLowerCase().includes('crédits')) {
             let creditAmount = parseFloat(
               productValue
@@ -55,6 +56,11 @@ export class InvoiceHistory {
               .replace(',', '.')
               .replace(/[^\d.-]/g, '')
             );
+
+            if (isNaN(creditAmount)) {
+              // product may be an array; try common positions or an object-like .quantity, cast to any to avoid TS error
+              creditAmount = parseFloat((product as any).quantity);
+            }
 
             this.invoices.push(new InvoiceCredit(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.tax, invoice.tax, invoice.remaining_amount_with_tax, creditAmount, invoice.status, invoice.public_file_url, invoice.pdf_invoice_subject));
           }
@@ -69,9 +75,6 @@ export class InvoiceHistory {
   }
 
   onFilterChanged(filters: FilterOptions): void {
-    for (let invoice of this.invoices) {
-      console.log(invoice);
-    }
 
     this.filteredInvoices = this.invoices.filter(invoice => {
       const isCredit = invoice instanceof InvoiceCredit;
@@ -84,7 +87,6 @@ export class InvoiceHistory {
         }
 
         if (!filters.statusFilters.includes(invoice.status)) {
-          console.log(invoice.status)
           return false;
         }
       }
@@ -111,7 +113,6 @@ export class InvoiceHistory {
       // Filter by date range
       if (filters.periodFilters.startDate) {
         const startDate = new Date(filters.periodFilters.startDate);
-        console.log(startDate);
         const invoiceDate = new Date(invoice.issueDate);
         if (invoiceDate < startDate) {
           return false;
@@ -120,9 +121,7 @@ export class InvoiceHistory {
 
       if (filters.periodFilters.endDate) {
         const endDate = new Date(filters.periodFilters.endDate);
-        console.log(endDate);
         const invoiceDate = new Date(invoice.issueDate);
-        console.log(invoice.issueDate);
         if (invoiceDate > endDate) {
           return false;
         }

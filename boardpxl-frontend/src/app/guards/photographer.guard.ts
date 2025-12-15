@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanMatchFn } from '@angular/router';
 import { RoleService } from '../services/role.service';
 
-export const photographGuard: CanMatchFn = () => {
+export const photographerGuard: CanMatchFn = () => {
   const roleService = inject(RoleService);
-  return roleService.getRole() === 'photograph';
+  return roleService.getRole() === 'photographer';
 };
