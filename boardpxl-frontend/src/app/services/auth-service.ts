@@ -67,5 +67,6 @@ export class AuthService {
   logout() {
     localStorage.removeItem('api_token');
     localStorage.removeItem('user');
+    this.http.post(`${this.apiUrl}/logout`, {}).subscribe();
   }
 }

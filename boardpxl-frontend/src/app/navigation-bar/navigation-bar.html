@@ -1,15 +1,23 @@
-<nav [class.open]="isOpen">
-   <ul>
-      <li *ngFor="let page of pages">
-         <a [routerLink]="page.route">
-            <img [src]="page.icon" class="navbar-icon" [alt]="page.label">
-            {{ page.label }}
+<div [class.hide]="isLoginPage()">
+   <nav [class.open]="isOpen">
+      <ul>
+         <li *ngFor="let page of pages">
+            <a [routerLink]="page.route">
+               <img [src]="page.icon" class="navbar-icon" [alt]="page.label">
+               {{ page.label }}
+            </a>
+         </li>
+      </ul>
+      <div class="disconnect-container">
+         <button class="disconnect" aria-label="Disconnect" (click)="disconnect()">
+            <img src="assets/images/logout_icon.svg" class="navbar-icon" alt="Déconnexion">
+            Se déconnecter
+         </button>
+      </div>
+      <div class="legal-links">
+         <a *ngFor="let link of legalLinks" [href]="link.url" target="_blank" rel="noopener noreferrer">
+            {{ link.label }}
          </a>
-      </li>
-   </ul>
-   <div class="legal-links">
-      <a *ngFor="let link of legalLinks" [href]="link.url" target="_blank" rel="noopener noreferrer">
-         {{ link.label }}
-      </a>
-   </div>
-</nav>
+      </div>
+   </nav>
+</div>
