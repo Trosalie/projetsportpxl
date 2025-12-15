@@ -102,5 +102,5 @@ Route::get('/test-mail', [MailController::class, 'testMail']);
 // Récupérer tous les clients
 Route::get('/photographers', [PhotographerController::class, 'getPhotographers']);
 
-}
+});
 
