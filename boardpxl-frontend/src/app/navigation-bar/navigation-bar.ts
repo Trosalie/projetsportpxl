@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { AuthService } from '../services/auth-service';
 import { Router } from '@angular/router';
+import { RoleService } from '../services/role.service';
 
 interface NavPage {
   label: string;
@@ -24,7 +25,7 @@ export class NavigationBar {
   pages: NavPage[] = [];
   legalLinks: LegalLink[] = [];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private roleService: RoleService) {}
 
   ngOnInit() {
     this.pages = [
@@ -62,6 +63,7 @@ export class NavigationBar {
 
   disconnect() {
     this.isOpen = false;
+    this.roleService.clearRole();
     this.authService.logout();
     this.router.navigate(['/login']);
   }

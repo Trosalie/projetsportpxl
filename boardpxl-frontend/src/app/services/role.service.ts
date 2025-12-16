@@ -29,5 +29,6 @@ export class RoleService {
 
   clearRole() {
     this.setRole('none');
+    localStorage.removeItem('user_role');
   }
 }

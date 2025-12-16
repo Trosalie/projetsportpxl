@@ -18,6 +18,8 @@ export class AuthService {
   private apiUrl = `${environment.apiUrl}`;
   private logoutSubject = new Subject<void>();
   public logout$ = this.logoutSubject.asObservable();
+  private loginSubject = new Subject<void>();
+  public login$ = this.loginSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -43,6 +45,7 @@ export class AuthService {
   saveToken(token: string, user: Photographer): void {
     localStorage.setItem('api_token', token);
     this.setUser(user);
+    this.loginSubject.next();
   }
 
   getUser(): Photographer | null {
