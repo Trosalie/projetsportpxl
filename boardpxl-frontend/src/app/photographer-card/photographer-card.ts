@@ -40,7 +40,9 @@ export class PhotographerCard implements OnDestroy {
   getChiffreAffaires(): number {
     let total = 0;
     for(let invoice of this.paymentInvoices) {
-      total += invoice.turnover;
+      const match = invoice.description.match(/(\d+(?:[.,]\d{2})?)\s*€/);
+      const amount = match ? parseFloat(match[1].replace(',', '.')) : 0;
+      total += amount;
     }
     return total;
   }
