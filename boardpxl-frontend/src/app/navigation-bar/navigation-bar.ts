@@ -28,10 +28,13 @@ export class NavigationBar {
   constructor(private authService: AuthService, private router: Router, private roleService: RoleService) {}
 
   ngOnInit() {
+    const role = this.roleService.getRole();
+    const dashboardRoute = role === 'admin' ? '/photographers' : '/';
+
     this.pages = [
       {
         label: 'Tableau de bord',
-        route: '/',
+        route: dashboardRoute,
         icon: 'assets/images/liste_icon.svg'
       },
       // {
