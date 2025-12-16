@@ -19,7 +19,7 @@ const routes: Routes = [
   { path: 'request/success', component: AutomaticResponse, canActivate: [photographerGuard]},
   { path: 'request/failure', component: AutomaticResponse, canActivate: [photographerGuard]},
   { path: 'form/credits', component: CreditPurchaseForm, canActivate: [adminGuard]},
-  { path: 'form/versementCA', component: TurnoverPaymentForm, canActivate: [adminGuard]},
+  { path: 'form/payout', component: TurnoverPaymentForm, canActivate: [adminGuard]},
   { path: '**', redirectTo: '' },
 ];
 
