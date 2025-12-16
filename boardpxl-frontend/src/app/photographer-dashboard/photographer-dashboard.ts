@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../services/auth-service';
 
 @Component({
   selector: 'app-photographer-dashboard',
@@ -7,5 +8,15 @@ import { Component } from '@angular/core';
   styleUrl: './photographer-dashboard.scss',
 })
 export class PhotographerDashboard {
-  protected remainingCredits = 50;
+
+  constructor(private authService: AuthService) {}
+
+  protected remainingCredits = 0;
+
+  ngOnInit() {
+    const user = this.authService.getUser();
+    if (user) {
+      this.remainingCredits = user.total_limit - user.nb_imported_photos;
+    }
+  }
 }

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment.development';
 import { Photographer } from '../models/photographer.model';
 
 interface LoginResponse {
-  user: any;
+  user: Photographer;
   token: string;
 }
 
@@ -16,6 +16,10 @@ interface LoginResponse {
 export class AuthService {
 
   private apiUrl = `${environment.apiUrl}`;
+  private logoutSubject = new Subject<void>();
+  public logout$ = this.logoutSubject.asObservable();
+  private loginSubject = new Subject<void>();
+  public login$ = this.loginSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -37,15 +41,11 @@ export class AuthService {
     });
   }
 
-  // Return an Observable that completes after the user is fetched and cached
-  saveToken(token: string): Observable<Photographer> {
+  // Save token and user data from login response
+  saveToken(token: string, user: Photographer): void {
     localStorage.setItem('api_token', token);
-    return this.getApiUser().pipe(
-      tap(fetched_user => {
-        this.setUser(fetched_user);
-        console.log('Utilisateur sauvegardé :', fetched_user);
-      })
-    );
+    this.setUser(user);
+    this.loginSubject.next();
   }
 
   getUser(): Photographer | null {
@@ -65,7 +65,15 @@ export class AuthService {
   }
 
   logout() {
+    this.logoutSubject.next();
+    this.http.post(`${this.apiUrl}/logout`, {
+      headers: {
+        'Authorization': `Bearer ${this.getToken()}`,
+        'Accept': 'application/json'
+      }
+    }).subscribe();
     localStorage.removeItem('api_token');
     localStorage.removeItem('user');
+    localStorage.removeItem('user_role');
   }
 }

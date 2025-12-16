@@ -3,7 +3,6 @@ import { AuthService } from '../services/auth-service';
 import { Router } from '@angular/router';
 import { RoleService } from '../services/role.service';
 import { environment } from '../../environments/environment.development';
-import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login-page',
@@ -16,35 +15,37 @@ export class LoginPage
 {
   email = "";
   password = "";
+  isLoading = false;
 
   constructor(private auth: AuthService, private router: Router, private role: RoleService) { }
 
   onSubmit()
   {
-    this.auth.login(this.email, this.password).pipe(
-      switchMap((response) => this.auth.saveToken(response.token))
-    ).subscribe(
+    this.isLoading = true;
+    this.auth.login(this.email, this.password).subscribe(
     {
-      next: (user) =>
+      next: (response) =>
       {
-        console.log('Utilisateur connecté :', user);
-
-        if (environment.adminEmail.includes(user.email))
+        this.auth.saveToken(response.token, response.user);
+        
+        if (environment.adminEmail.includes(response.user.email))
         {
           this.role.setRole("admin");
-          this.router.navigate(['/']);
+          this.router.navigate(['/photographers']);
         }
         else
         {
-          this.role.setRole("photograph");
+          this.role.setRole("photographer");
           this.router.navigate(['/']);
         }
+        this.isLoading = false;
       },
 
       error: (err) =>
       {
         console.error('Erreur de login', err);
         alert("Email ou mot de passe incorrect");
+        this.isLoading = false;
       }
     });
   }

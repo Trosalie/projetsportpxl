@@ -11,6 +11,7 @@ class CreateInvoicePaymentsTable extends Migration
      *
      * @return void
      */
+
     public function up()
     {
         Schema::create('invoice_payments', function (Blueprint $table) {
@@ -19,7 +20,6 @@ class CreateInvoicePaymentsTable extends Migration
             $table->date('issue_date');
             $table->date('due_date');
             $table->string('description');
-            $table->decimal('turnover', 10, 2);
             $table->decimal('raw_value', 9, 2);
             $table->decimal('commission', 9, 2);
             $table->decimal('tax', 5, 2);
