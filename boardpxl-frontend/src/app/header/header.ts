@@ -23,7 +23,13 @@ export class Header {
   }
 
   ngOnInit() {
-    this.userName = this.authService.getUser()!.name;
+    const user = this.authService.getUser();
+    if (user) {
+      this.userName = user.name;
+    } else {
+      // Wait and retry if user is not yet loaded
+      setTimeout(() => this.ngOnInit(), 500);
+    }
   }
 
 }

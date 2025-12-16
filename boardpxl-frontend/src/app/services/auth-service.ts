@@ -64,8 +64,13 @@ export class AuthService {
   }
 
   logout() {
+    this.http.post(`${this.apiUrl}/logout`, {
+      headers: {
+        'Authorization': `Bearer ${this.getToken()}`,
+        'Accept': 'application/json'
+      }
+    }).subscribe();
     localStorage.removeItem('api_token');
     localStorage.removeItem('user');
-    this.http.post(`${this.apiUrl}/logout`, {}).subscribe();
   }
 }
