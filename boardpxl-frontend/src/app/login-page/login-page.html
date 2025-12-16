@@ -15,7 +15,10 @@
       </div>
 
       <a href="https://www.app.sportpxl.com/forgot">Forget Password?</a>
-      <button class="btn_login" type="submit">LOG IN</button>
+      <button class="btn_login" type="submit" [disabled]="isLoading">
+        <span *ngIf="!isLoading">LOG IN</span>
+        <span *ngIf="isLoading" class="spinner"></span>
+      </button>
     </form>
   </div>
 </div>

@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
-import { AuthService } from './auth-service';
+import { HttpHeadersService } from './http-headers.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MailService {
 
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(private http: HttpClient, private headersService: HttpHeadersService) {
   }
 
   sendMail(to: string, from: string, subject: string, body: string): Observable<any> {
@@ -19,12 +19,6 @@ export class MailService {
       subject: subject,
       body: body,
     };
-    const token = this.authService.getToken();
-    return this.http.post(`${environment.apiUrl}/send-email`, payload, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
+    return this.http.post(`${environment.apiUrl}/send-email`, payload, this.headersService.getAuthHeaders());
   }
 }

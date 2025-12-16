@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
 import {LoginPage} from './login-page/login-page';
 import { PhotographerDashboard } from './photographer-dashboard/photographer-dashboard';
 import { MailRequestPage } from './mail-request-page/mail-request-page';
@@ -14,7 +13,7 @@ import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-fo
 const routes: Routes = [
   { path: 'login', component: LoginPage },
   { path: '', component: PhotographerDashboard, pathMatch: 'full', canActivate: [photographerGuard] },
-  { path: '', component: PhotographersList, pathMatch: 'full', canActivate: [adminGuard] },
+  { path: 'photographers', component: PhotographersList, canActivate: [adminGuard] },
   { path: 'request/payout', component: MailRequestPage, canActivate: [photographerGuard] },
   { path: 'request/credits', component: MailRequestPage, canActivate: [photographerGuard]},
   { path: 'request/success', component: AutomaticResponse, canActivate: [photographerGuard]},
@@ -25,7 +24,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes), HttpClientModule],
-  exports: [RouterModule, HttpClientModule]
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
 })
 export class AppRoutingModule { }

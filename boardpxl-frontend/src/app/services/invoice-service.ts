@@ -4,95 +4,47 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Invoice } from '../models/invoice.model';
 import { environment } from '../../environments/environment.development';
-import { AuthService } from './auth-service';
+import { HttpHeadersService } from './http-headers.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InvoiceService {
 
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(private http: HttpClient, private headersService: HttpHeadersService) {
   }
 
   getInvoicesByClient(clientId: string): Observable<Invoice[]> {
-    const token = this.authService.getToken();
-    return this.http.get<Invoice[]>(`${environment.apiUrl}/invoices-client/${clientId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
+    return this.http.get<Invoice[]>(`${environment.apiUrl}/invoices-client/${clientId}`, this.headersService.getAuthHeaders());
   }
 
   getProductFromInvoice(invoice: Invoice): Observable<string[]> {
-    const token = this.authService.getToken();
-    return this.http.get<string[]>(`${environment.apiUrl}/invoice-product/${invoice.invoice_number}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
+    return this.http.get<string[]>(`${environment.apiUrl}/invoice-product/${invoice.invoice_number}`, this.headersService.getAuthHeaders());
   }
 
   getInvoicesPaymentByPhotographer(photographerId: number): Observable<InvoicePayment[]> {
-    const token = this.authService.getToken();
-    return this.http.get<InvoicePayment[]>(`${environment.apiUrl}/invoices-payment/${photographerId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
+    return this.http.get<InvoicePayment[]>(`${environment.apiUrl}/invoices-payment/${photographerId}`, this.headersService.getAuthHeaders());
   }
 
   getInvoicesCreditByPhotographer(photographerId: number): Observable<InvoicePayment[]> {
-    const token = this.authService.getToken();
-    return this.http.get<InvoicePayment[]>(`${environment.apiUrl}/invoices-credit/${photographerId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
+    return this.http.get<InvoicePayment[]>(`${environment.apiUrl}/invoices-credit/${photographerId}`, this.headersService.getAuthHeaders());
   }
 
   
   createCreditsInvoice(body: any): Observable<any> {
-    const token = this.authService.getToken();
-    return this.http.post(`${environment.apiUrl}/create-credits-invoice-client`, body, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
+    return this.http.post(`${environment.apiUrl}/create-credits-invoice-client`, body, this.headersService.getAuthHeaders());
   }
 
   createTurnoverPaymentInvoice(body: any): Observable<any> {
-    const token = this.authService.getToken();
-    return this.http.post(`${environment.apiUrl}/create-turnover-invoice-client`, body, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
+    return this.http.post(`${environment.apiUrl}/create-turnover-invoice-client`, body, this.headersService.getAuthHeaders());
   }
 
   insertTurnoverInvoice(body: any): Observable<any> {
-    const token = this.authService.getToken();
-    return this.http.post(`${environment.apiUrl}/insert-turnover-invoice`, body, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
+    return this.http.post(`${environment.apiUrl}/insert-turnover-invoice`, body, this.headersService.getAuthHeaders());
   }
 
   insertCreditsInvoice(body: any): Observable<any> {
-    const token = this.authService.getToken();
-    return this.http.post(`${environment.apiUrl}/insert-credits-invoice`, body, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
+    return this.http.post(`${environment.apiUrl}/insert-credits-invoice`, body, this.headersService.getAuthHeaders());
   }
 
   

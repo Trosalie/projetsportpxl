@@ -2,31 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
-import { AuthService } from './auth-service';
+import { HttpHeadersService } from './http-headers.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClientService {
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient, private headersService: HttpHeadersService) {}
 
   getClientIdByName(body: any): Observable<any> {
-    const token = this.authService.getToken();
-    return this.http.post(`${environment.apiUrl}/client-id` , body, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
+    return this.http.post(`${environment.apiUrl}/client-id` , body, this.headersService.getAuthHeaders());
   }
 
   getClients(): Observable<any> {
-    const token = this.authService.getToken();
-    return this.http.get(`${environment.apiUrl}/list-clients`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
+    return this.http.get(`${environment.apiUrl}/list-clients`, this.headersService.getAuthHeaders());
   }
 }
