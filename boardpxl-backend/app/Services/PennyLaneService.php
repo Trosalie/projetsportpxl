@@ -31,10 +31,37 @@ class PennylaneService
     // Récupérer toutes les factures
     public function getInvoices()
     {
-        $response = $this->client->get('customer_invoices?sort=-id');
-        $data = json_decode($response->getBody()->getContents(), true);
+        $allInvoices = [];
+        $cursor = null;
 
-        return $data['items'] ?? [];
+        do {
+            $response = $this->client->get('customer_invoices', [
+                'query' => array_filter([
+                    'limit' => 100,
+                    'cursor' => $cursor,
+                    'sort' => '-id',
+                ])
+            ]);
+
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            if (!isset($data['items'])) {
+                break;
+            }
+
+            $allInvoices = array_merge($allInvoices, $data['items']);
+
+            $cursor = $data['next_cursor'] ?? null;
+            $hasMore = $data['has_more'] ?? false;
+
+            // Add delay to avoid rate limiting
+            if ($hasMore) {
+                usleep(500000); // 0.5 second delay between requests
+            }
+
+        } while ($hasMore);
+
+        return $allInvoices;
     }
 
     public function getInvoiceByNumber(string $invoiceNumber): ?array
@@ -190,7 +217,7 @@ class PennylaneService
             }
 
             if ($url) {
-                $http = new \GuzzleHttp\Client();
+                $http = new Client();
                 $response = $http->get($url, [
                     'headers' => [
                         'Accept' => 'application/json',

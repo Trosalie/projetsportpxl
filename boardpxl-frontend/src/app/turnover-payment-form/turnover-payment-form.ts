@@ -1,8 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { InvoiceService } from '../services/invoice-service';
 import { ClientService } from '../services/client-service.service';
 import { Popup } from '../popup/popup';
+import { AuthService } from '../services/auth-service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-turnover-payment-form',
@@ -10,7 +13,7 @@ import { Popup } from '../popup/popup';
   templateUrl: './turnover-payment-form.html',
   styleUrl: './turnover-payment-form.scss',
 })
-export class TurnoverPaymentForm {
+export class TurnoverPaymentForm implements OnDestroy {
     today: string = new Date().toISOString().slice(0, 10);
     clientId: any;
     clientName: string = '';
@@ -21,8 +24,13 @@ export class TurnoverPaymentForm {
     photographerInput: string = '';
     notificationVisible: boolean = false;
     notificationMessage: string = "";
+    private destroy$ = new Subject<void>();
   
-    constructor(private invoiceService: InvoiceService, private clientService: ClientService, private router: Router, private route: ActivatedRoute) {}
+    constructor(private invoiceService: InvoiceService, private clientService: ClientService, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
+      this.authService.logout$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        this.destroy$.next();
+      });
+    }
     @ViewChild('popup') popup!: Popup;
   
     ngOnInit() {
@@ -61,7 +69,9 @@ export class TurnoverPaymentForm {
   
     // Récupère tous les clients pour suggestions
     loadClients() {
-      this.clientService.getClients().subscribe({
+      this.clientService.getClients()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
         next: (res) => {
           this.clientsNames = res.clients.map((c: any) => c.name);
         },
@@ -90,7 +100,9 @@ export class TurnoverPaymentForm {
       this.filteredClients = [];
       this.clientName = name;
       const body = { name: this.clientName };
-      this.clientService.getClientIdByName(body).subscribe({
+      this.clientService.getClientIdByName(body)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
         next: (data) => {
           if (data && data.client_id) {
             this.clientId = data.client_id;
@@ -131,7 +143,9 @@ export class TurnoverPaymentForm {
         invoiceDescription: `Versement du chiffre d'affaire de ${chiffreAffaire}€ pour la période du ${startDate} au ${endDate}.`
       }
       this.creationFacture = true;
-      this.invoiceService.createTurnoverPaymentInvoice(body).subscribe({
+      this.invoiceService.createTurnoverPaymentInvoice(body)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
         next: (response) => {
           this.popup.showNotification('Facture créée avec succès !');
           this.creationFacture = false;
@@ -173,7 +187,9 @@ export class TurnoverPaymentForm {
 
     console.log("Insertion de la facture avec le corps :", body);
 
-    this.invoiceService.insertTurnoverInvoice(body).subscribe({
+    this.invoiceService.insertTurnoverInvoice(body)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
       next: () => {
         console.log("Insertion de la facture réussie.");
       },
@@ -191,5 +207,10 @@ export class TurnoverPaymentForm {
     const numeric = value.replace("_", ".");
 
     return parseFloat(numeric);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

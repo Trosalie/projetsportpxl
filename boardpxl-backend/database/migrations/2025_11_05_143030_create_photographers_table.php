@@ -30,6 +30,8 @@ class CreatePhotographersTable extends Migration
             $table->string('locality')->nullable();
             $table->string('country')->nullable();
             $table->string('iban')->nullable();
+            $table->string('password');
+            $table->rememberToken();
             $table->integer('pennylane_id')->nullable();
             $table->timestamps();
         });

@@ -14,7 +14,6 @@ class InvoicePayment extends Model
         'issue_date',
         'due_date',
         'description',
-        'turnover',
         'raw_value',
         'commission',
         'tax',
@@ -34,6 +33,6 @@ class InvoicePayment extends Model
 
     public function photographer()
     {
-        return $this->belongsTo(\App\Models\Photographer::class);
+        return $this->belongsTo(Photographer::class);
     }
 }

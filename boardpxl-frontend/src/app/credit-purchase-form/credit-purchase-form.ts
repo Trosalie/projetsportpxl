@@ -1,8 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { InvoiceService } from '../services/invoice-service';
 import { ClientService } from '../services/client-service.service';
 import { Popup } from '../popup/popup';
+import { AuthService } from '../services/auth-service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 
 @Component({
@@ -11,7 +14,7 @@ import { Popup } from '../popup/popup';
   templateUrl: './credit-purchase-form.html',
   styleUrl: './credit-purchase-form.scss',
 })
-export class CreditPurchaseForm {
+export class CreditPurchaseForm implements OnDestroy {
   today: string = new Date().toISOString().slice(0, 10);
   clientId: any;
   clientName: string = '';
@@ -22,8 +25,13 @@ export class CreditPurchaseForm {
   photographerInput: string = '';
   notificationVisible: boolean = false;
   notificationMessage: string = "";
+  private destroy$ = new Subject<void>();
 
-  constructor(private invoiceService: InvoiceService, private clientService: ClientService, private router: Router, private route: ActivatedRoute) {}
+  constructor(private invoiceService: InvoiceService, private clientService: ClientService, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
+    this.authService.logout$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.destroy$.next();
+    });
+  }
   @ViewChild('popup') popup!: Popup;
 
   ngOnInit() {
@@ -62,7 +70,9 @@ export class CreditPurchaseForm {
 
   // Récupère tous les clients pour suggestions
   loadClients() {
-    this.clientService.getClients().subscribe({
+    this.clientService.getClients()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
       next: (res) => {
         this.clientsNames = res.clients.map((c: any) => c.name);
       },
@@ -91,7 +101,9 @@ export class CreditPurchaseForm {
     this.filteredClients = [];
     this.clientName = name;
     const body = { name: this.clientName };
-    this.clientService.getClientIdByName(body).subscribe({
+    this.clientService.getClientIdByName(body)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
       next: (data) => {
         if (data && data.client_id) {
           this.clientId = data.client_id;
@@ -127,7 +139,9 @@ export class CreditPurchaseForm {
       invoiceTitle: subject
     };
     this.creationFacture = true;
-    this.invoiceService.createCreditsInvoice(body).subscribe({
+    this.invoiceService.createCreditsInvoice(body)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
       next: (response) => {
         this.popup.showNotification('Facture créée avec succès !');
         this.creationFacture = false;
@@ -167,7 +181,9 @@ export class CreditPurchaseForm {
 
     console.log("Insertion de la facture crédit avec :", body);
 
-    this.invoiceService.insertCreditsInvoice(body).subscribe({
+    this.invoiceService.insertCreditsInvoice(body)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
       next: () => console.log("Facture crédit enregistrée."),
       error: err => console.error("Erreur insertion facture crédit :", err)
     });
@@ -181,5 +197,10 @@ export class CreditPurchaseForm {
     const numeric = value.replace("_", ".");
 
     return parseFloat(numeric);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

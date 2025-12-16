@@ -1,8 +1,22 @@
 import { inject } from '@angular/core';
-import { CanMatchFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { RoleService } from '../services/role.service';
+import { AuthService } from '../services/auth-service';
 
-export const adminGuard: CanMatchFn = () => {
+export const adminGuard: CanActivateFn = () => {
   const roleService = inject(RoleService);
-  return roleService.getRole() === 'admin';
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (!authService.getToken()) {
+    router.navigate(['/login']);
+    return false;
+  }
+
+  if (roleService.getRole() !== 'admin') {
+    router.navigate(['/']);
+    return false;
+  }
+
+  return true;
 };

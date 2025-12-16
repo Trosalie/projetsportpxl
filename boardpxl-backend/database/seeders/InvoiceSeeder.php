@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use App\Services\PennylaneService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use SebastianBergmann\CodeCoverage\Report\PHP;
 
 // commande pour lancer le seeder : php artisan db:seed --class=InvoiceSeeder
 
@@ -28,7 +29,7 @@ class InvoiceSeeder extends Seeder
 
     /**
      * Créer une liste de photographes à partir d'un fichier CSV
-     * 
+     *
      * @param string $cheminCSV
      * @return array
      * @throws \RuntimeException
@@ -48,14 +49,14 @@ class InvoiceSeeder extends Seeder
         }
 
         $invoices = $returned ?? [];
-        
+
         return $invoices;
     }
 
 
     /**
      * Insérer une facture dans la base de données
-     * 
+     *
      * @param array $invoice
      * @return void
      */
@@ -64,19 +65,20 @@ class InvoiceSeeder extends Seeder
         $service = new PennylaneService();
         $product = $service->getProductFromInvoice($invoice['invoice_number']);
         $photographerId = DB::table('photographers')->where('pennylane_id', $invoice['customer']['id'])->value('id');
-        
+
         $vat = $invoice['tax'] / $invoice['currency_amount_before_tax'] * 100;
 
-        echo json_encode($invoice) . PHP_EOL;
-
-        if(str_contains(strtolower($product['label']), 'crédits')) {
-            $raw = $product['product'] ?? '';
+        
+        if(str_contains(strtolower($product['label'] ?? ''), 'crédits')) {
+            echo "- Facture de crédits détectée pour la facture n° " . $invoice['invoice_number'] . PHP_EOL;
+            echo "  - Libellé produit brut : " . ($product['label'] ?? 'N/A') . PHP_EOL;
+            $raw = $product['label'] ?? '';
             $clean = preg_replace('/crédits/i', '', $raw);
             $clean = preg_replace('/\s+/', '', $clean);
             $clean = str_replace(',', '.', $clean);
             $clean = preg_replace('/[^\d\.-]/', '', $clean);
-            $creditAmount = (float) $clean;
 
+            $creditAmount = empty($clean) ? $product['quantity'] ?? 0 : (float) $clean;
 
             DB::table('invoice_credits')->insert([
             'id' => $invoice['id'],
@@ -98,14 +100,16 @@ class InvoiceSeeder extends Seeder
         ]);
         }
         else {
+            preg_match('/(\d+(?:[.,]\d{1,2})?)\s*€/', $invoice['pdf_description'], $rawvalue);
+            echo "- Facture de paiement détectée pour la facture n° " . $invoice['invoice_number'] . PHP_EOL;
+            echo "  - Libellé produit brut : " . ($product['label'] ?? 'N/A') . PHP_EOL;
             DB::table('invoice_payments')->insert([
                 'id' => $invoice['id'],
                 'number' => $invoice['invoice_number'],
                 'issue_date' => $invoice['date'],
                 'due_date' => $invoice['deadline'],
                 'description' => $invoice['pdf_description'] ?? 'N/A',
-                'turnover' => $invoice['amount'],
-                'raw_value' => $invoice['currency_amount_before_tax'],
+                'raw_value' => floatval($rawvalue[1] ?? 0),
                 'commission' => $invoice['amount'],
                 'tax' => $invoice['tax'],
                 'vat' => $vat,
@@ -117,6 +121,6 @@ class InvoiceSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-        }    
+        }
     }
 }

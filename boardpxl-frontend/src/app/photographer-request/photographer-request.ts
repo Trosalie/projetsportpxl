@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MailService } from '../services/mail-service';
+import { AuthService } from '../services/auth-service';
 
 @Component({
   selector: 'app-photographer-request',
@@ -11,7 +12,7 @@ export class PhotographerRequest {
   @Input() requestType: 'versement' | 'crédits' = 'versement';
   protected requestMessage: string = '';
 
-  constructor(private mailService: MailService) {}
+  constructor(private mailService: MailService, private authService: AuthService) {}
 
   ngOnInit() {
     requestAnimationFrame(() => {
@@ -125,7 +126,7 @@ Cordialement,
     }
 
     let to = 'boardpxl@placeholder.com'; // remplacer par l'email de SportPXL
-    let from = 'photograph@gmail.com'; // remplacer par l'email du photographe connecté
+    let from = this.authService.getUser()?.email || ''; // remplacer par l'email du photographe connecté
     let subject = `[BoardPXL]`;
     if (this.requestType === 'versement') {
       subject += ' Demande de versement de chiffre d\'affaires';
