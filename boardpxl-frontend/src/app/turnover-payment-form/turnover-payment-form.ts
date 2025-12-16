@@ -151,7 +151,7 @@ export class TurnoverPaymentForm implements OnDestroy {
           this.creationFacture = false;
           this.insertTurnoverInvoice(response, startDate, endDate, chiffreAffaire, commission, TVA, this.today, dueDate, this.clientId);
           setTimeout(() => {
-            this.router.navigate(['/']);
+            this.router.navigate(['/photographers']);
           }, 2000);
         },
         error: () => {

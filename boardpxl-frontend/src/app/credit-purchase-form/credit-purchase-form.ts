@@ -147,7 +147,7 @@ export class CreditPurchaseForm implements OnDestroy {
         this.creationFacture = false;
         this.insertCreditsInvoice( response, form['priceHT'].value, form['credits'].value, (form['tva'] as HTMLSelectElement).value, "À venir",this.today, dueDate, this.clientId);
         setTimeout(() => {
-          this.router.navigate(['/']);
+          this.router.navigate(['/photographers']);
         }, 2000);
       },
       error: () => {
