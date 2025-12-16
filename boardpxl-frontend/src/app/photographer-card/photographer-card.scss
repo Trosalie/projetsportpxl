@@ -1,24 +1,32 @@
-div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 .card {
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 16px;
     margin: 8px;
-    gap: 5px;
-    justify-content: space-between;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(200px, 1fr));
+    column-gap: 16px;
+    row-gap: 8px;
+    align-items: start;
 
-    :first-child{
-        align-items: flex-start;
+    > div {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    > div:not(:first-child) {
+        align-items: center;
+        text-align: center;
     }
 }
 
+.status {
+    text-align: center;
+}
+
 .statuts{
+    display: flex;
     flex-direction: row;
     gap: 8px;
 
@@ -48,6 +56,7 @@ div {
 }
 
 .value-button-pair {
+    display: flex;
     flex-direction: row;
     align-items: center;
     gap: 4px;
