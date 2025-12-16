@@ -20,7 +20,7 @@ class CreateInvoicePaymentsTable extends Migration
             $table->date('issue_date');
             $table->date('due_date');
             $table->string('description');
-            $table->decimal('raw_value', 9, 2);
+            $table->decimal('raw_value', 12, 2);
             $table->decimal('commission', 9, 2);
             $table->decimal('tax', 5, 2);
             $table->decimal('vat', 9, 2);
