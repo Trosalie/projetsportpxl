@@ -31,6 +31,6 @@ class InvoiceCredit extends Model
 
     public function photographer()
     {
-        return $this->belongsTo(\App\Models\Photographer::class);
+        return $this->belongsTo(Photographer::class);
     }
 }

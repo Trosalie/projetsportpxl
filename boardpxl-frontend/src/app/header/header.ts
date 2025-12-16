@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
@@ -8,6 +9,12 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class Header {
   userName: string = 'Test User';
+
+  constructor(private router: Router) {}
+
+  isLoginPage(): boolean {
+    return this.router.url === '/login';
+  }
   @Output() navBarToggled = new EventEmitter<void>();
 
   toggleNavBar() {

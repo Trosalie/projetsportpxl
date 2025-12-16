@@ -17,3 +17,9 @@ use App\Services\PennylaneService;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Auth::routes([
+//     'register' => false,
+//     'reset' => false,
+//     'verify' => false
+// ]);

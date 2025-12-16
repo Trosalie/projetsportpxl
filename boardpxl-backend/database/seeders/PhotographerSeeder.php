@@ -6,6 +6,8 @@ use GuzzleHttp\Client;
 use App\Services\PennylaneService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use SebastianBergmann\CodeCoverage\Report\PHP;
 
 class PhotographerSeeder extends Seeder
 {
@@ -13,9 +15,12 @@ class PhotographerSeeder extends Seeder
     private const ENCLOSURE_CSV = '"';
     private const ESCAPE_CSV = "\0";
     private const CHEMIN_FICHIER_CSV = 'seeders/Photographes.csv';
-    
+
     private const CHAMPS_OBLIGATOIRES = ['aws sub', 'email', 'name'];
     
+    private Client $client;
+    private array $data = [];
+
     /**
      * Exécuter le seeder
      *
@@ -23,13 +28,28 @@ class PhotographerSeeder extends Seeder
      */
     public function run(): void
     {
+        $service = new PennylaneService();
+        $this->client = $service->getHttpClient();
+        $response = $this->client->get('customers?sort=-id');
+        $data = json_decode($response->getBody()->getContents(), true);
+        $this->data = $data["items"] ?? [];
+
+        while($data["has_more"] ?? false) {
+            $response = $this->client->get('customers?sort=-id&cursor=' . $data["next_cursor"]);
+            $data = json_decode($response->getBody()->getContents(), true);
+            $this->data = array_merge($this->data, $data["items"] ?? []);
+            usleep(500000); // Faire 2 appels par seconde pour éviter de saturer l'API Pennylane
+        }
+
+        echo "Fetched " . count($this->data) . " customers from Pennylane API." . PHP_EOL;
+
         $photographes = $this->creerListePhotographes(database_path(self::CHEMIN_FICHIER_CSV));
         $this->insererPhotographesUniques($photographes);
     }
 
     /**
      * Créer une liste de photographes à partir d'un fichier CSV
-     * 
+     *
      * @param string $cheminCSV
      * @return array
      * @throws \RuntimeException
@@ -39,15 +59,15 @@ class PhotographerSeeder extends Seeder
         $handle = $this->ouvrirFichierCSV($cheminCSV);
         $mappingColonnes = $this->creerMappingColonnes($handle);
         $photographes = $this->lireDonneesCSV($handle, $mappingColonnes);
-        
+
         fclose($handle);
-        
+
         return $photographes;
     }
 
     /**
      * Ouvrir le fichier CSV
-     * 
+     *
      * @param string $cheminCSV
      * @return resource
      * @throws \RuntimeException
@@ -55,35 +75,35 @@ class PhotographerSeeder extends Seeder
     private function ouvrirFichierCSV(string $cheminCSV)
     {
         $handle = fopen($cheminCSV, 'r');
-        
+
         if ($handle === false) {
             throw new \RuntimeException("Impossible d'ouvrir le fichier CSV : {$cheminCSV}");
         }
-        
+
         return $handle;
     }
 
     /**
      * Créer un mapping des colonnes à partir des en-têtes
-     * 
+     *
      * @param resource $handle
      * @return array
      */
     private function creerMappingColonnes($handle): array
     {
         $entetes = fgetcsv($handle, 0, self::DELIMITEUR_CSV, self::ENCLOSURE_CSV, self::ESCAPE_CSV);
-        
+
         $mappingColonnes = [];
         foreach ($entetes as $index => $entete) {
             $mappingColonnes[$entete] = $index;
         }
-        
+
         return $mappingColonnes;
     }
 
     /**
      * Lire les données du CSV et créer les tableaux de photographes
-     * 
+     *
      * @param resource $handle
      * @param array $mappingColonnes
      * @return array
@@ -92,21 +112,21 @@ class PhotographerSeeder extends Seeder
     {
         $photographes = [];
         $nombreColonnes = count($mappingColonnes);
-        
+
         while (($donnees = fgetcsv($handle, 0, self::DELIMITEUR_CSV, self::ENCLOSURE_CSV, self::ESCAPE_CSV)) !== false) {
             if (!$this->estLigneValide($donnees, $mappingColonnes, $nombreColonnes)) {
                 continue;
             }
-            
+
             $photographes[] = $this->creerPhotographe($donnees, $mappingColonnes);
         }
-        
+
         return $photographes;
     }
 
     /**
      * Vérifier si la ligne CSV est valide
-     * 
+     *
      * @param array $donnees
      * @param array $mappingColonnes
      * @param int $nombreColonnes
@@ -117,13 +137,13 @@ class PhotographerSeeder extends Seeder
         if (count($donnees) < $nombreColonnes) {
             return false;
         }
-        
+
         foreach (self::CHAMPS_OBLIGATOIRES as $champ) {
             if (!isset($donnees[$mappingColonnes[$champ]]) || empty($donnees[$mappingColonnes[$champ]])) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -135,26 +155,22 @@ class PhotographerSeeder extends Seeder
      */
     private function getOrCreatePennylaneIdFromEmail(array $donnees): ?int
     {
-        $service = new PennylaneService();
-        $client = $service->getHttpClient();
-        $response = $client->get('customers?sort=-id');
-        $data = json_decode($response->getBody()->getContents(), true);
-
-        $photographer = $data['items'] ?? [];
         $email = strtolower(trim($donnees['email']));
 
-        $photographer = collect($data['items'] ?? [])
+        $photographer = collect($this->data)
             ->first(function ($item) use ($email) {
                 $emails = array_map(
                     fn ($e) => strtolower(trim($e)),
                     $item['emails'] ?? []
                 );
-
+                // echo "Checking emails: " . implode(", ", $emails) . PHP_EOL;
+                // echo "Against email: " . $email . PHP_EOL;
                 return in_array($email, $emails, true);
             });
 
+            echo $donnees['email'] . PHP_EOL;
 
-        if(! $photographer) {
+        if(!$photographer || empty($photographer['id'])) {
             $endpoint = 'individual_customers';
 
             if(empty($donnees['given_name']) && empty($donnees['family_name'])) {
@@ -174,6 +190,9 @@ class PhotographerSeeder extends Seeder
             }
             if(empty($donnees['given_name'])) {
                 $donnees['given_name'] = '_';
+            }
+            if(empty($donnees['name'])) {
+                $donnees['name'] = $donnees['given_name'] . ' ' . $donnees['family_name'];
             }
 
             // Parser le champ country pour ne garder que le code pays (par défaut fr_FR, sinon en_GB ou de_DE)
@@ -218,7 +237,7 @@ class PhotographerSeeder extends Seeder
                 $json['name'] = $donnees['name'] ?? '';
             }
 
-            $response = $client->post($endpoint, ['json' => $json]);
+            $response = $this->client->post($endpoint, ['json' => $json]);
             $created = json_decode($response->getBody()->getContents(), true);
   
         }
@@ -227,7 +246,7 @@ class PhotographerSeeder extends Seeder
 
     /**
      * Créer un tableau de photographe à partir d'une ligne CSV
-     * 
+     *
      * @param array $donnees
      * @param array $mappingColonnes
      * @return array
@@ -250,6 +269,7 @@ class PhotographerSeeder extends Seeder
             'locality' => !empty($donnees[$mappingColonnes['locality']]) ? $donnees[$mappingColonnes['locality']] : null,
             'country' => !empty($donnees[$mappingColonnes['country']]) ? $donnees[$mappingColonnes['country']] : null,
             'iban' => !empty($donnees[$mappingColonnes['iban']]) ? $donnees[$mappingColonnes['iban']] : null,
+            'password' => Hash::make('Google@123?'),
             'created_at' => now(),
             'updated_at' => now(),
         ];
@@ -257,7 +277,7 @@ class PhotographerSeeder extends Seeder
 
     /**
      * Insérer les photographes uniques (sans doublons)
-     * 
+     *
      * @param array $photographes
      * @return void
      */
@@ -270,7 +290,7 @@ class PhotographerSeeder extends Seeder
             if (isset($emailsVus[$photographe['email']])) {
                 continue;
             }
-            
+
             if (isset($awsSubsVus[$photographe['aws_sub']])) {
                 continue;
             }
@@ -290,7 +310,7 @@ class PhotographerSeeder extends Seeder
 
             $emailsVus[$photographe['email']] = true;
             $awsSubsVus[$photographe['aws_sub']] = true;
-            
+
             DB::table('photographers')->insert($photographe);
             // Faire 2 appels par seconde pour éviter de saturer l'API Pennylane
             usleep(500000);
