@@ -100,7 +100,7 @@ class InvoiceSeeder extends Seeder
         ]);
         }
         else {
-            preg_match('/(\d+(?:[.,]\d{1,2})?)\s*€/', $invoice['description'], $rawvalue);
+            preg_match('/(\d+(?:[.,]\d{1,2})?)\s*€/', $invoice['pdf_description'], $rawvalue);
             echo "- Facture de paiement détectée pour la facture n° " . $invoice['invoice_number'] . PHP_EOL;
             echo "  - Libellé produit brut : " . ($product['label'] ?? 'N/A') . PHP_EOL;
             DB::table('invoice_payments')->insert([
@@ -109,7 +109,7 @@ class InvoiceSeeder extends Seeder
                 'issue_date' => $invoice['date'],
                 'due_date' => $invoice['deadline'],
                 'description' => $invoice['pdf_description'] ?? 'N/A',
-                'raw_value' => floatval($rawvalue[1]),
+                'raw_value' => floatval($rawvalue[1] ?? 0),
                 'commission' => $invoice['amount'],
                 'tax' => $invoice['tax'],
                 'vat' => $vat,
