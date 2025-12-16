@@ -43,6 +43,11 @@ button {
     margin-right: 25px;
     font-weight: bold;
     cursor: pointer;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 }
 
 .form {
@@ -50,12 +55,58 @@ button {
     padding-top: 40px;
     display: flex;
     flex-direction: column;
+    position: relative;
 
-    div {
+    > div:not(.loading-overlay) {
         width: 100%;
         display: flex;
         flex-direction: column;
     }
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.95);
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 1000;
+    border-radius: 10px;
+    width: auto !important;
+
+    p {
+        margin-top: 20px !important;
+        font-size: 18px !important;
+        color: #F98524 !important;
+        font-weight: bold !important;
+        width: auto !important;
+        display: block !important;
+    }
+}
+
+.spinner {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    max-width: 50px !important;
+    max-height: 50px !important;
+    border: 5px solid #f3f3f3 !important;
+    border-top: 5px solid #F98524 !important;
+    border-radius: 50% !important;
+    animation: spin 1s linear infinite !important;
+    flex-shrink: 0 !important;
+    display: block !important;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .error-message {
