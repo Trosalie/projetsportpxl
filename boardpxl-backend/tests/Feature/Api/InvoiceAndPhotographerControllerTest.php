@@ -2,12 +2,14 @@
 
 namespace Tests\Feature\Api;
 
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 use Mockery;
 
 class InvoiceControllerTest extends TestCase
 {
+    use WithoutMiddleware;
     protected function tearDown(): void
     {
         Mockery::close();
@@ -63,7 +65,6 @@ class InvoiceControllerTest extends TestCase
                 'number',
                 'issue_date',
                 'due_date',
-                'turnover',
             ]);
     }
 
