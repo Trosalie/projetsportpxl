@@ -24,6 +24,7 @@ export class TurnoverPaymentForm implements OnDestroy {
     photographerInput: string = '';
     notificationVisible: boolean = false;
     notificationMessage: string = "";
+    isLoading: boolean = false;
     private destroy$ = new Subject<void>();
   
     constructor(private invoiceService: InvoiceService, private clientService: ClientService, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
@@ -40,6 +41,7 @@ export class TurnoverPaymentForm implements OnDestroy {
         
         // Cherche le client par nom/prénom
         if (this.clientName) {
+          this.isLoading = true;
           const body = { name: this.clientName };
           this.clientService.getClientIdByName(body).subscribe({
             next: (data) => {
@@ -52,10 +54,12 @@ export class TurnoverPaymentForm implements OnDestroy {
                 this.findClient = false;
                 this.photographerInput = this.clientName;
               }
+              this.isLoading = false;
               this.loadClients();
             },
             error: (err) => {
               console.error('Erreur fetch client ID :', err);
+              this.isLoading = false;
               this.findClient = false;
               this.popup.showNotification("Le photographe n'a pas été trouvé !");
               this.loadClients();
@@ -95,6 +99,7 @@ export class TurnoverPaymentForm implements OnDestroy {
   
     // Sélectionne un photographe dans la liste des suggestions
     selectPhotographer(name: string) {
+      this.isLoading = true;
       this.photographerInput = name;
       this.findClient = true;
       this.filteredClients = [];
@@ -108,9 +113,12 @@ export class TurnoverPaymentForm implements OnDestroy {
             this.clientId = data.client_id;
           } else {
             this.popup.showNotification('Client non trouvé !');
-          }      }, 
+          }
+          this.isLoading = false;
+        }, 
         error: (err) => {
           console.error('Erreur fetch client ID après sélection :', err);
+          this.isLoading = false;
         }
       });
     }
