@@ -115,25 +115,25 @@ button {
 }
 
 .loading-tag {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    display: inline-block !important;
     margin: 0 !important;
+    padding: 8px 12px !important;
+    vertical-align: baseline !important;
+    line-height: 1 !important;
 }
 
 .loading-status-count {
-    display: flex !important;
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     background-color: rgba(128, 128, 128, 0.1) !important;
     border: 2px solid rgba(128, 128, 128, 0.3) !important;
+    border-radius: 50% !important;
     color: #666 !important;
     width: 24px !important;
     height: 24px !important;
-    margin: 0solid rgba(128, 128, 128, 0.3) !important;
-    color: #666 !important;
-    width: 24px !important;
-    height: 24px !important;
+    margin: 0 !important;
+    vertical-align: middle !important;
 }
 
 @keyframes spin {
