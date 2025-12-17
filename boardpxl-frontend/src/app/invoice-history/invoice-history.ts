@@ -1,8 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { InvoiceCredit } from '../models/invoice-credit.model';
 import { InvoiceService } from '../services/invoice-service';
 import { FilterOptions } from '../invoice-filter/invoice-filter';
+import { AuthService } from '../services/auth-service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-invoice-history',
@@ -10,12 +13,17 @@ import { FilterOptions } from '../invoice-filter/invoice-filter';
   templateUrl: './invoice-history.html',
   styleUrl: './invoice-history.scss',
 })
-export class InvoiceHistory {
+
+export class InvoiceHistory implements OnDestroy {
   protected invoices: any[] = [];
   protected filteredInvoices: any[] = [];
   @Input() user!: string;
+  private destroy$ = new Subject<void>();
 
-  constructor(private invoiceService: InvoiceService) {
+  constructor(private invoiceService: InvoiceService, private authService: AuthService) {
+    this.authService.logout$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.destroy$.next();
+    });
   }
 
   ngOnInit() {
@@ -27,7 +35,9 @@ export class InvoiceHistory {
       el.style.height = `calc(100vh - ${y}px - 10px)`;
     });
 
-    this.invoiceService.getInvoicesByClient(this.user).subscribe(invoices => {
+    this.invoiceService.getInvoicesByClient(this.user)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(invoices => {
       this.invoices = invoices;
       for (let invoice of this.invoices) {
         let x = 0;
@@ -43,7 +53,9 @@ export class InvoiceHistory {
             break;
         }
 
-        this.invoiceService.getProductFromInvoice(invoice).subscribe((product: any) => {
+        this.invoiceService.getProductFromInvoice(invoice)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((product: any) => {
           // service may return a string, an object like { label: string } or an array where product[1] is the label
           let productValue= (product as any).label;
 
@@ -64,7 +76,7 @@ export class InvoiceHistory {
             this.invoices.push(new InvoiceCredit(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.tax, invoice.tax, invoice.remaining_amount_with_tax, creditAmount, invoice.status, invoice.public_file_url, invoice.pdf_invoice_subject));
           }
           else {
-            this.invoices.push(new InvoicePayment(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.amount, invoice.amount, invoice.tax, invoice.tax, new Date(), new Date(), invoice.public_file_url, invoice.pdf_invoice_subject));
+            this.invoices.push(new InvoicePayment(invoice.invoice_number, invoice.date, invoice.deadline, invoice.description, invoice.amount, invoice.amount, invoice.tax, invoice.tax, new Date(), new Date(), invoice.public_file_url, invoice.pdf_invoice_subject));
           }
         });
         this.invoices = this.invoices.filter(invoice => invoice instanceof InvoiceCredit || invoice instanceof InvoicePayment );
@@ -91,7 +103,7 @@ export class InvoiceHistory {
       }
 
       // Filter by type
-      if (filters.typeFilters.length > 0) {     
+      if (filters.typeFilters.length > 0) {
         if (filters.typeFilters.includes('Versement') && filters.typeFilters.includes('Achat de crédits')) {
           return true;
         }
@@ -128,5 +140,10 @@ export class InvoiceHistory {
 
       return true;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

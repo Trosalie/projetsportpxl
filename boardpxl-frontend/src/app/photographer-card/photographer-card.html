@@ -1,7 +1,7 @@
 <div class="card">
     <div>
         <!-- routerLink a changer quand on aura la page profil -->
-        <a routerLink="/" ><p>Photographer : {{ photographer.name }}</p></a> 
+        <a routerLink="/photographers" ><p>Photographer : {{ photographer.name }}</p></a> 
         <p *ngIf="photographer.email">Email : {{ photographer.email }}</p>
         <p *ngIf="!photographer.email">Pas d'email</p>
     </div>
@@ -9,16 +9,14 @@
         <p>Chiffre d'affaires</p>
         <div class="value-button-pair chiffre-affaires">
             <p class="tag">{{ getChiffreAffaires() | currency:'EUR'}}</p>
-            <!-- routerLink à changer quand on aura la page formulaire -->
-            <button routerLink="/form/versementCA"><span class="material-symbols-outlined">note_add</span></button>
+            <button routerLink="/form/payout" [queryParams]="{ clientName: photographer.name }"><span class="material-symbols-outlined">note_add</span></button>
         </div>
     </div>
     <div>
         <p>Nombre de crédits</p>
         <div class="value-button-pair credits">
             <p class="tag">{{ getTotalCredits() }} cr</p>
-            <!-- routerLink à changer quand on aura la page formulaire -->
-            <button routerLink="/form/credits"><span class="material-symbols-outlined">note_add</span></button>
+            <button routerLink="/form/credits" [queryParams]="{ clientName: photographer.name }"><span class="material-symbols-outlined">note_add</span></button>
         </div>
     </div>
     <div>

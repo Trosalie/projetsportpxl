@@ -8,5 +8,4 @@ import { Component, signal } from '@angular/core';
 })
 export class App {
   protected readonly title = signal('boardpxl-frontend');
-  protected readonly userRole = signal<'photograph' | 'admin'>('admin');
 }

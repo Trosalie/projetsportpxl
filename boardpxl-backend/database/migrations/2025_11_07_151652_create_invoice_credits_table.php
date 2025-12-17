@@ -20,8 +20,8 @@ class CreateInvoiceCreditsTable extends Migration
             $table->date('due_date');
             $table->string('description');
             $table->decimal('amount', 9, 2);
-            $table->decimal('tax', 5, 2);
-            $table->decimal('vat', 9, 2);
+            $table->decimal('tax', 9, 2);
+            $table->decimal('vat', 5, 2);
             $table->decimal('total_due', 10, 2);
             $table->integer('credits');
             $table->string('status');
