@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\InvoicePayment;
@@ -11,6 +12,12 @@ use App\Services\PennylaneService;
 
 class InvoiceController extends Controller
 {
+    /**
+     * add to the db a turnover invoice with specific information
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function insertTurnoverInvoice(Request $request)
     {
         // Validation des données entrantes
@@ -57,6 +64,12 @@ class InvoiceController extends Controller
         ], 201);
     }
 
+    /**
+     * add to the db a credit invoice with specific information
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function insertCreditsInvoice(Request $request)
     {
         // Validation des données
@@ -87,7 +100,7 @@ class InvoiceController extends Controller
             'amount' => $validated['amount'],
             'tax' => $validated['tax'],
             'vat' => $validated['vat'],
-            'total_due' => $validated['total_due'], 
+            'total_due' => $validated['total_due'],
             'credits' => $validated['credits'],
             'status' => $validated['status'],
             'link_pdf' => $validated['link_pdf'],
@@ -103,7 +116,12 @@ class InvoiceController extends Controller
         ], 201);
     }
 
-    
+    /**
+     * get all payment invoices from a photographer
+     *
+     * @param int $photographer_id
+     * @return JsonResponse
+     */
     public function getInvoicesPaymentByPhotographer($photographer_id)
     {
         try {
@@ -126,6 +144,12 @@ class InvoiceController extends Controller
         }
     }
 
+    /**
+     * get all credit invoices from a photographer
+     *
+     * @param int $photographer_id
+     * @return JsonResponse
+     */
     public function getInvoicesCreditByPhotographer($photographer_id)
     {
         try {
