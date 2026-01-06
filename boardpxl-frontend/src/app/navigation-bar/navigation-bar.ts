@@ -91,9 +91,9 @@ export class NavigationBar implements OnDestroy {
           icon: 'assets/images/photographer_icon.svg',
           subPages: [
             {
-              label: 'Informations générales',
+              label: 'Historique des factures',
               route: currentUrlWithoutParams,
-              icon: 'assets/images/infogen_icon.svg'
+              icon: 'assets/images/histofacture_icon.svg'
             }
           ]
         });
