@@ -1,10 +1,4 @@
-<app-title [title]="'FACTURES DU PHOTOGRAPHE'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
-<div>
-    <button class="back-button" (click)="goBack()">
-        ← Retour à la liste des photographes
-    </button>
-    <h2 *ngIf="photographerName" class="photographer-name">{{ photographerName }}</h2>
-</div>
+<app-title [title]="photographerName ? 'FACTURES DE ' + photographerName.toUpperCase() : 'FACTURES DU PHOTOGRAPHE'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
 <main>
     <app-invoice-history *ngIf="pennylaneId" [user]="pennylaneId"></app-invoice-history>
     <p *ngIf="!pennylaneId" style="text-align: center; padding: 20px; color: #666;">Chargement...</p>
