@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use GuzzleHttp\Client;
+use App\Models\Invoice;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class PennylaneService
 {
@@ -34,12 +37,17 @@ class PennylaneService
         $allInvoices = [];
         $cursor = null;
 
+        $lastSync = Invoice::max('updated_at_api');
+
+        $updatedAfter = $lastSync ? $lastSync->toIso8601String() : null;
+
         do {
             $response = $this->client->get('customer_invoices', [
                 'query' => array_filter([
                     'limit' => 100,
                     'cursor' => $cursor,
                     'sort' => '-id',
+                    'updated_after' => $updatedAfter
                 ])
             ]);
 
@@ -108,7 +116,7 @@ class PennylaneService
         return null; // Aucun client trouvé
     }
 
-    
+
     // Création d'une facture d'achat de crédit pour un client
     public function createCreditsInvoiceClient(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle)
     {
@@ -224,7 +232,7 @@ class PennylaneService
                         'Authorization' => 'Bearer ' . $this->token,
                     ],
                 ]);
-                
+
                 $responseBody = $response->getBody()->getContents();
                 $data = json_decode($responseBody, true);
 
@@ -284,5 +292,50 @@ class PennylaneService
         return null; // Facture non trouvée
     }
 
+    public function syncInvoices(): void
+    {
+        try {
+            $invoices = $this->getInvoices();
+
+            foreach ($invoices as $invoice) {
+
+                if (!isset($invoice['id']) or !str_contains(strtolower($invoice['label']), 'crédits')) {
+                    continue;
+                }
+
+                Invoice::updateOrCreate(
+                    [
+                        'external_id' => $invoice['id'],
+                    ],
+                    [
+                        'invoice_number' => $invoice['invoice_number'] ?? null,
+                        'status'         => $invoice['status'] ?? null,
+                        'total_amount'   => $invoice['total_amount'] ?? 0,
+                        'currency'       => $invoice['currency'] ?? 'EUR',
+
+                        'customer_id'    => $invoice['customer']['id'] ?? null,
+                        'customer_name'  => $invoice['customer']['name'] ?? null,
+
+                        'issued_at'      => isset($invoice['date'])
+                            ? Carbon::parse($invoice['date'])
+                            : null,
+
+                        'due_at'         => isset($invoice['deadline'])
+                            ? Carbon::parse($invoice['deadline'])
+                            : null,
+
+                        // trace de synchro API
+                        'updated_at_api' => isset($invoice['updated_at'])
+                            ? Carbon::parse($invoice['updated_at'])
+                            : now(),
+                    ]
+                );
+            }
+        } catch (\Throwable $e) {
+            Log::error('PennyLane sync failed', [
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
 }
 

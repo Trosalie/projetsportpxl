@@ -30,7 +30,6 @@ export class InvoiceService {
     return this.http.get<InvoicePayment[]>(`${environment.apiUrl}/invoices-credit/${photographerId}`, this.headersService.getAuthHeaders());
   }
 
-  
   createCreditsInvoice(body: any): Observable<any> {
     return this.http.post(`${environment.apiUrl}/create-credits-invoice-client`, body, this.headersService.getAuthHeaders());
   }
@@ -46,6 +45,4 @@ export class InvoiceService {
   insertCreditsInvoice(body: any): Observable<any> {
     return this.http.post(`${environment.apiUrl}/insert-credits-invoice`, body, this.headersService.getAuthHeaders());
   }
-
-  
 }

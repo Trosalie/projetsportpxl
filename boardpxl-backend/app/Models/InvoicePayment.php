@@ -21,14 +21,18 @@ class InvoicePayment extends Model
         'start_period',
         'end_period',
         'link_pdf',
-        'pdf_invoice_subject'
+        'pdf_invoice_subject',
+    ];
+
+    protected $dates = [
+        'issue_date',
+        'due_date',
     ];
 
     protected $casts = [
-        'issue_date' => 'date',
-        'due_date' => 'date',
-        'start_period' => 'date',
-        'end_period' => 'date',
+        'tax' => 'decimal:2',
+        'vat' => 'decimal:2',
+        'raw_value' => 'decimal:2',
     ];
 
     public function photographer()
