@@ -48,6 +48,11 @@ class MailController extends Controller
                 'type' => $validated['type'] ?? 'generic'
             ]);
 
+            $this->logService->logAction($request, 'send_email', 'MAIL_LOGS', [
+                'to' => $validated['to'],
+                'subject' => $validated['subject'],
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Email sent successfully.'
@@ -61,6 +66,12 @@ class MailController extends Controller
                 'body' => $validated['body'],
                 'status' => 'failed',
                 'type' => $validated['type'] ?? 'generic'
+            ]);
+
+            $this->logService->logAction($request, 'send_email_failed', 'MAIL_LOGS', [
+                'to' => $validated['to'],
+                'subject' => $validated['subject'],
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
@@ -87,16 +98,34 @@ class MailController extends Controller
         return response()->json(['message' => 'Mail envoyé (si tout va bien) !']);
     }
 
-    public function getLogs($sender_id)
+    public function getLogs(Request $request, $sender_id)
     {
-        // Valider l'ID du photographe passé en paramètre
-        $validated = validator(
-            ['sender_id' => $sender_id],
-            ['sender_id' => 'required|integer|exists:photographers,id']
-        )->validate();
+        try {
+            // Valider l'ID du photographe passé en paramètre
+            $validated = validator(
+                ['sender_id' => $sender_id],
+                ['sender_id' => 'required|integer|exists:photographers,id']
+            )->validate();
 
-        // Récupérer les logs de mails depuis la base de données via l'id du photographe validé
-        $logs = MailLogs::where('sender_id', $validated['sender_id'])->get();
-        return response()->json($logs);
+            // Récupérer les logs de mails depuis la base de données via l'id du photographe validé
+            $logs = MailLogs::where('sender_id', $validated['sender_id'])->get();
+            
+            $this->logService->logAction($request, 'get_mail_logs', 'MAIL_LOGS', [
+                'sender_id' => $validated['sender_id'],
+                'count' => $logs->count(),
+            ]);
+            
+            return response()->json($logs);
+        } catch (\Exception $e) {
+            $this->logService->logAction($request, 'get_mail_logs_failed', 'MAIL_LOGS', [
+                'sender_id' => $sender_id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve logs: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

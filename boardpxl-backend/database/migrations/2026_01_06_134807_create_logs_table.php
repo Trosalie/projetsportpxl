@@ -11,13 +11,12 @@ class CreateLogsTable extends Migration
      *
      * @return void
      */
-    // commande pour lancer juste cette migration : php artisan migrate --path=database/migrations/2026_01_06_134807_create_logs_table.php
     public function up()
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            $table->string('action');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('action_id')->constrained('log_actions')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('photographers')->onDelete('cascade');
             $table->string('table_name')->nullable();
             $table->ipAddress('ip_address')->nullable();
             $table->text('details')->nullable();
