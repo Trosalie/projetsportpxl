@@ -47,6 +47,15 @@ nav {
                 filter: invert(77%) sepia(37%) saturate(7323%) hue-rotate(345deg) brightness(101%) contrast(95%);
             }
         }
+
+        &.active {
+            background-color: #F98524;
+            color: #ffffff;
+
+            .navbar-icon {
+                filter: brightness(0) invert(1);
+            }
+        }
     }
 
     .navbar-icon {
