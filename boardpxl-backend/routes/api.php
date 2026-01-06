@@ -45,6 +45,14 @@ Route::post('/insert-turnover-invoice', [InvoiceController::class, 'insertTurnov
 // Insertion d'une facture de crédits
 Route::post('/insert-credits-invoice', [InvoiceController::class, 'insertCreditsInvoice']);
 
+//Récupérer les informations finaciere d'une facture de crédit
+Route::get('/invoice-credits-financial-info', [InvoiceController::class, 'getFinancialInfoCreditsInvoice']);
+
+//Récupérer les informations finaciere d'une facture de versement de CA
+Route::get('/invoice-turnover-financial-info', [InvoiceController::class, 'getFinancialInfoTurnoverInvoice']);
+
+
+
 // Tester récupération globale
 Route::get('/test', [PennylaneController::class, 'getInvoices']);
 

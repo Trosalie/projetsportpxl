@@ -47,5 +47,12 @@ export class InvoiceService {
     return this.http.post(`${environment.apiUrl}/insert-credits-invoice`, body, this.headersService.getAuthHeaders());
   }
 
+  getCreditsFinancialInfo(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/invoice-credits-financial-info`, this.headersService.getAuthHeaders());
+  }
+
+  getTurnoverFinancialInfo(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/invoice-turnover-financial-info`, this.headersService.getAuthHeaders());
+  }
   
 }

@@ -37,6 +37,11 @@ export class NavigationBar {
         route: dashboardRoute,
         icon: 'assets/images/liste_icon.svg'
       },
+      ...(role === 'admin' ? [{
+        label: 'Graphique général',
+        route: '/general-graph',
+        icon: 'assets/images/graphic_icon.svg'
+      }] : []),
       // {
       //   label: 'Graphique général',
       //   route: '/general-graph',

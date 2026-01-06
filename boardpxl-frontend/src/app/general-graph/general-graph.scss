@@ -1,0 +1,99 @@
+.graph-container {
+    margin: 13px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.loading, .error {
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+}
+
+.error {
+    color: red;
+}
+
+.content-wrapper {
+    display: flex;
+    gap: 20px;
+    height: calc(100vh - 200px); // Ajuster selon la hauteur disponible
+}
+
+.sidebar {
+    width: 300px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.metrics-section {
+    h4 {
+        margin-top: 0;
+        color: #333;
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+}
+
+.metric-card {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .metric-label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+    .metric-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #F98524;
+    }
+}
+
+.bottom-squares {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.square-card {
+    background-color: #F98524;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+
+    .square-label {
+        font-size: 12px;
+        margin-bottom: 5px;
+        opacity: 0.9;
+    }
+
+    .square-value {
+        font-size: 18px;
+        font-weight: bold;
+    }
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+canvas {
+    max-height: 500px;
+    width: 100% !important;
+}

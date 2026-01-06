@@ -9,11 +9,13 @@ import { adminGuard } from './guards/admin.guard';
 import { PhotographersList } from './photographers-list/photographers-list';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
+import { GeneralGraph } from './general-graph/general-graph';
 
 const routes: Routes = [
   { path: 'login', component: LoginPage },
   { path: '', component: PhotographerDashboard, pathMatch: 'full', canActivate: [photographerGuard] },
   { path: 'photographers', component: PhotographersList, canActivate: [adminGuard] },
+  { path: 'general-graph', component: GeneralGraph, canActivate: [adminGuard] },
   { path: 'request/payout', component: MailRequestPage, canActivate: [photographerGuard] },
   { path: 'request/credits', component: MailRequestPage, canActivate: [photographerGuard]},
   { path: 'request/success', component: AutomaticResponse, canActivate: [photographerGuard]},

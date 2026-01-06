@@ -1,7 +1,7 @@
 import {DEFAULT_CURRENCY_CODE, NgModule, provideBrowserGlobalErrorListeners} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-
+import { CommonModule } from '@angular/common';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Header } from './header/header';
@@ -30,6 +30,8 @@ import { Pagination } from './pagination/pagination';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
 import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
+import { GeneralGraph } from './general-graph/general-graph';
+//import { NgChartsModule } from 'ng2-charts';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -44,7 +46,6 @@ registerLocaleData(localeFr);
     PhotographerRequest,
     AutomaticResponse,
     MailRequestPage,
-    InvoiceFilter,
     LoginPage,
     NavigationBar,
     PhotographersList,
@@ -53,13 +54,16 @@ registerLocaleData(localeFr);
     Pagination,
     CreditPurchaseForm,
     Popup,
-    TurnoverPaymentForm
+    TurnoverPaymentForm,
+    GeneralGraph
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    CommonModule,
+    //NgChartsModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
