@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { HttpHeadersService } from './http-headers.service';
+import { Mail } from '../models/mail.model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,7 @@ export class MailService {
     return this.http.post(`${environment.apiUrl}/send-email`, payload, this.headersService.getAuthHeaders());
   }
 
-  getMailLogs(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/mail-logs`, this.headersService.getAuthHeaders());
+  getMailLogs(sender_id: number): Observable<Mail[]> {
+    return this.http.get<Mail[]>(`${environment.apiUrl}/mail-logs/${sender_id}`, this.headersService.getAuthHeaders());
   }
 }

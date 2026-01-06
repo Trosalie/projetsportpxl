@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { AuthService } from '../services/auth-service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { MailService } from '../services/mail-service';
 
 @Component({
   selector: 'app-mails-log',
@@ -16,7 +17,7 @@ export class MailsLog implements OnDestroy {
   protected searchQuery: string = '';
   private destroy$ = new Subject<void>();
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private mailService: MailService) {
     this.authService.logout$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.destroy$.next();
     });
@@ -31,41 +32,13 @@ export class MailsLog implements OnDestroy {
       el.style.height = `calc(100vh - ${y}px - 10px)`;
     });
 
-    // Mock data - À remplacer par un vrai service
-    this.mails = [
-      {
-        id: 1,
-        recipient: 'john.doe@example.com',
-        subject: 'Facture #2024-001',
-        status: 'sent',
-        sentDate: new Date('2024-01-15'),
-        type: 'invoice',
-      },
-      {
-        id: 2,
-        recipient: 'jane.smith@example.com',
-        subject: 'Rappel de paiement',
-        status: 'sent',
-        sentDate: new Date('2024-01-14'),
-        type: 'reminder',
-      },
-      {
-        id: 3,
-        recipient: 'bob.wilson@example.com',
-        subject: 'Confirmation de commande',
-        status: 'failed',
-        sentDate: new Date('2024-01-13'),
-        type: 'confirmation',
-      },
-      {
-        id: 4,
-        recipient: 'alice.johnson@example.com',
-        subject: 'Devis #2024-045',
-        status: 'sent',
-        sentDate: new Date('2024-01-12'),
-        type: 'quote',
-      },
-    ];
+    this.mailService.getMailLogs(this.authService.getUser()?.id || 0)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(mails => {
+      this.mails = mails;
+      this.filteredMails = this.mails;
+      this.isLoading = false;
+    });
 
     this.filteredMails = this.mails;
     this.isLoading = false;
