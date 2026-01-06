@@ -37,17 +37,20 @@ export class NavigationBar {
         route: dashboardRoute,
         icon: 'assets/images/liste_icon.svg'
       },
-      {
-        label: 'Historique des emails',
-        route: '/mails',
-        icon: 'assets/images/mail_icon.svg'
-      },
       // {
       //   label: 'Graphique général',
       //   route: '/general-graph',
       //   icon: 'assets/images/graphic_icon.svg'
       // }
     ];
+
+    if (role === 'photographer') {
+      this.pages.push({
+        label: 'Historique des emails',
+        route: '/mails',
+        icon: 'assets/images/mail_icon.svg'
+      });
+    }
 
     this.legalLinks = [
       {
