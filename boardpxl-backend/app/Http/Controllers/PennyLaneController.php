@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Services\PennylaneService;
 use App\Services\MailService;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Logs;
+use Illuminate\Support\Facades\Auth;
 
 class PennyLaneController extends Controller
 {
@@ -40,6 +42,12 @@ class PennyLaneController extends Controller
                 $validated['invoiceTitle']
             );
 
+            $this->logAction($request, 'create_credits_invoice_client', 'pennylane_invoices', [
+                'id_client' => (int) $validated['idClient'],
+                'invoice_title' => $validated['invoiceTitle'],
+                'amount_euro' => $validated['amountEuro'],
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Facture créée avec succès.',
@@ -47,6 +55,10 @@ class PennyLaneController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            $this->logAction($request, 'create_credits_invoice_client_failed', 'pennylane_invoices', [
+                'error' => $e->getMessage(),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur : ' . $e->getMessage(),
@@ -80,6 +92,12 @@ class PennyLaneController extends Controller
                 $validated['invoiceDescription']
             );
 
+            $this->logAction($request, 'create_turnover_payment_invoice', 'pennylane_invoices', [
+                'id_client' => (int) $validated['idClient'],
+                'invoice_title' => $validated['invoiceTitle'],
+                'amount_euro' => $validated['amountEuro'],
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Facture créée avec succès.',
@@ -87,6 +105,10 @@ class PennyLaneController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            $this->logAction($request, 'create_turnover_payment_invoice_failed', 'pennylane_invoices', [
+                'error' => $e->getMessage(),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur : ' . $e->getMessage(),
@@ -106,11 +128,20 @@ class PennyLaneController extends Controller
         $clientId = $service->getClientIdByName($validated['name']);
 
         if ($clientId) {
+            $this->logAction($request, 'lookup_client_id', 'pennylane_clients', [
+                'name' => $validated['name'],
+                'client_id' => $clientId,
+            ]);
+
             return response()->json([
                 'success' => true,
                 'client_id' => $clientId
             ]);
         }
+
+        $this->logAction($request, 'lookup_client_id_not_found', 'pennylane_clients', [
+            'name' => $validated['name'],
+        ]);
 
         return response()->json([
             'success' => false,
@@ -123,7 +154,13 @@ class PennyLaneController extends Controller
      */
     public function getInvoices(PennylaneService $service)
     {
-        return response()->json($service->getInvoices());
+        $invoices = $service->getInvoices();
+
+        $this->logAction(request(), 'list_invoices', 'pennylane_invoices', [
+            'count' => is_countable($invoices) ? count($invoices) : null,
+        ]);
+
+        return response()->json($invoices);
     }
 
     /**
@@ -131,7 +168,14 @@ class PennyLaneController extends Controller
      */
     public function getInvoicesByClient($idClient, PennylaneService $service)
     {
-        return response()->json($service->getInvoicesByIdClient($idClient));
+        $invoices = $service->getInvoicesByIdClient($idClient);
+
+        $this->logAction(request(), 'list_invoices_by_client', 'pennylane_invoices', [
+            'id_client' => (int) $idClient,
+            'count' => is_countable($invoices) ? count($invoices) : null,
+        ]);
+
+        return response()->json($invoices);
     }
 
     /**
@@ -142,8 +186,15 @@ class PennyLaneController extends Controller
         $product = $service->getProductFromInvoice($invoiceNumber);
 
         if ($product) {
+            $this->logAction(request(), 'get_product_from_invoice', 'pennylane_invoices', [
+                'invoice_number' => $invoiceNumber,
+            ]);
             return response()->json($product);
         }
+
+        $this->logAction(request(), 'get_product_from_invoice_not_found', 'pennylane_invoices', [
+            'invoice_number' => $invoiceNumber,
+        ]);
 
         return response()->json([
             'success' => false,
@@ -171,12 +222,23 @@ class PennyLaneController extends Controller
                 $validated['body']
             );
 
+            $this->logAction($request, 'send_email', 'pennylane_mail', [
+                'to' => $validated['to'],
+                'subject' => $validated['subject'],
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Email sent successfully.'
             ]);
 
         } catch (\Exception $e) {
+            $this->logAction($request, 'send_email_failed', 'pennylane_mail', [
+                'to' => $validated['to'],
+                'subject' => $validated['subject'],
+                'error' => $e->getMessage(),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to send email: ' . $e->getMessage()
@@ -192,6 +254,7 @@ class PennyLaneController extends Controller
         $fileUrl = $request->input('file_url');
 
         if (!$fileUrl) {
+            $this->logAction($request, 'download_invoice_proxy_missing_url', 'pennylane_invoices');
             return response('Aucun fichier spécifié.', 400);
         }
 
@@ -200,6 +263,10 @@ class PennyLaneController extends Controller
 
         // Déterminer le nom du fichier
         $fileName = 'facture.pdf';
+
+        $this->logAction($request, 'download_invoice_proxy', 'pennylane_invoices', [
+            'file_url' => $fileUrl,
+        ]);
 
         // Retourner le fichier en réponse avec les headers
         return response($fileContent, 200)
@@ -210,6 +277,10 @@ class PennyLaneController extends Controller
     public function getPhotographers(PennylaneService $service)
     {
         $photographers = $service->getPhotographers();
+
+        $this->logAction(request(), 'list_photographers', 'photographers', [
+            'count' => is_countable($photographers) ? count($photographers) : null,
+        ]);
 
         return response()->json([
             $photographers
@@ -222,6 +293,10 @@ class PennyLaneController extends Controller
     {
         $clients = $service->getListClients();
 
+        $this->logAction(request(), 'list_clients', 'pennylane_clients', [
+            'count' => is_countable($clients) ? count($clients) : null,
+        ]);
+
         return response()->json([
             'success' => true,
             'clients' => $clients
@@ -233,9 +308,33 @@ class PennyLaneController extends Controller
         $invoice = $service->getInvoiceById((int)$id);
 
         if (!$invoice) {
+            $this->logAction(request(), 'get_invoice_by_id_not_found', 'pennylane_invoices', [
+                'invoice_id' => (int) $id,
+            ]);
             return response()->json(['message' => 'Facture non trouvée'], 404);
         }
 
+        $this->logAction(request(), 'get_invoice_by_id', 'pennylane_invoices', [
+            'invoice_id' => (int) $id,
+        ]);
+
         return response()->json($invoice);
+    }
+
+    private function logAction(Request $request, string $action, ?string $tableName = null, array $details = []): void
+    {
+        $userId = Auth::id() ?? optional($request->user())->id;
+
+        if (!$userId) {
+            return;
+        }
+
+        Logs::create([
+            'action' => $action,
+            'user_id' => $userId,
+            'table_name' => $tableName,
+            'ip_address' => $request->ip(),
+            'details' => $details ? json_encode($details) : null,
+        ]);
     }
 }
