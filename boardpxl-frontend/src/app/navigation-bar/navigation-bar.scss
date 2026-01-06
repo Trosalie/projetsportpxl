@@ -38,6 +38,24 @@ nav {
         padding-left: 0;
     }
 
+    .active-link {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        width: 230px;
+        height: 44px;
+        background-color: #E8EAF6;
+        border-radius: 8px;
+        color: #F98524;
+        font-size: 16px;
+        cursor: default;
+        pointer-events: none;
+
+        .navbar-icon {
+            filter: invert(77%) sepia(37%) saturate(7323%) hue-rotate(345deg) brightness(101%) contrast(95%);
+        }
+    }
+
     .sub-pages {
         list-style: none;
         padding: 0;
@@ -50,6 +68,11 @@ nav {
         }
 
         a {
+            width: 210px;
+            height: 40px;
+        }
+
+        .active-link {
             width: 210px;
             height: 40px;
         }
