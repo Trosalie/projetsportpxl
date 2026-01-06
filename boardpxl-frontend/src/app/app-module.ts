@@ -31,6 +31,7 @@ import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form'
 import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 import { MailsLog } from './mails-log/mails-log';
+import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -55,7 +56,8 @@ registerLocaleData(localeFr);
     CreditPurchaseForm,
     Popup,
     TurnoverPaymentForm,
-    MailsLog
+    MailsLog,
+    AdminPhotographerInvoiceList
   ],
   imports: [
     BrowserModule,
