@@ -19,6 +19,7 @@ class MailController extends Controller
             'from' => 'required|email',
             'subject' => 'required|string|max:255',
             'body' => 'required|string|max:10000',
+            'type' => 'nullable|string|max:100',
         ]);
 
         try {
@@ -30,11 +31,11 @@ class MailController extends Controller
             );
 
             MailLogs::create([
-                'sender_id' => null, // À remplacer par l'ID du photographe si disponible
+                'sender_id' => auth()->id(), 
                 'recipient' => $validated['to'],
                 'subject' => $validated['subject'],
                 'status' => 'sent',
-                'type' => 'generic'
+                'type' => $validated['type'] ?? 'generic'
             ]);
 
             return response()->json([
@@ -43,6 +44,14 @@ class MailController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            MailLogs::create([
+                'sender_id' => auth()->id(), 
+                'recipient' => $validated['to'],
+                'subject' => $validated['subject'],
+                'status' => 'failed',
+                'type' => $validated['type'] ?? 'generic'
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to send email: ' . $e->getMessage()

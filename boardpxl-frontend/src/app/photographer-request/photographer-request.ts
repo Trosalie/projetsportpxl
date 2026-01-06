@@ -129,14 +129,17 @@ Cordialement,
     let to = 'boardpxl@placeholder.com'; // remplacer par l'email de SportPXL
     let from = this.authService.getUser()?.email || ''; // remplacer par l'email du photographe connecté
     let subject = `[BoardPXL]`;
+    let type = '';
     if (this.requestType === 'versement') {
       subject += ' Demande de versement de chiffre d\'affaires';
+      type = 'versement';
     } else if (this.requestType === 'crédits') {
       subject += ' Demande d\'ajout de crédits';
+      type = 'crédits';
     }
 
     this.isSending = true;
-    this.mailService.sendMail(to, from, subject, body).subscribe({
+    this.mailService.sendMail(to, from, subject, body, type).subscribe({
       next: (response) => {
         this.isSending = false;
         window.location.assign('/request/success');
