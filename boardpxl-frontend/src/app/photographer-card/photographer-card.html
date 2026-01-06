@@ -10,7 +10,10 @@
     <div>
         <p>Chiffre d'affaires</p>
         <div class="value-button-pair chiffre-affaires">
-            <p class="tag">{{ getChiffreAffaires() | currency:'EUR'}}</p>
+            <p class="tag" *ngIf="!isLoadingPayments">{{ getChiffreAffaires() | currency:'EUR'}}</p>
+            <div class="tag loading-tag" *ngIf="isLoadingPayments">
+                <div class="mini-spinner"></div>
+            </div>
             <button routerLink="/form/payout" [queryParams]="{ clientName: photographer.name }"><span class="material-symbols-outlined">note_add</span></button>
         </div>
     </div>
@@ -22,11 +25,19 @@
         </div>
     </div>
     <div>
-        <p>Statut des factures</p>
+        <p class="status">Statut des factures</p>
         <div class="statuts">
-            <p>Payées</p><p class="payees status-count">{{ getPaidInvoicesCount() }}</p>
-            <p>Non payées</p><p class="non-payees status-count">{{ getUnpaidInvoicesCount() }}</p>
-            <p>En retard</p><p class="en-retard status-count">{{ getLateInvoicesCount() }}</p>
+            <p>Payées</p>
+            <p class="payees status-count" *ngIf="!isLoadingCredits">{{ getPaidInvoicesCount() }}</p>
+            <div class="status-count loading-status-count" *ngIf="isLoadingCredits"><div class="mini-spinner"></div></div>
+            
+            <p>Non payées</p>
+            <p class="non-payees status-count" *ngIf="!isLoadingCredits">{{ getUnpaidInvoicesCount() }}</p>
+            <div class="status-count loading-status-count" *ngIf="isLoadingCredits"><div class="mini-spinner"></div></div>
+            
+            <p>En retard</p>
+            <p class="en-retard status-count" *ngIf="!isLoadingCredits">{{ getLateInvoicesCount() }}</p>
+            <div class="status-count loading-status-count" *ngIf="isLoadingCredits"><div class="mini-spinner"></div></div>
         </div>
     </div>
 </div>
