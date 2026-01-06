@@ -15,6 +15,7 @@ export class MailsLog implements OnDestroy {
   protected filteredMails: any[] = [];
   protected isLoading: boolean = true;
   protected searchQuery: string = '';
+  protected expandedMailId: number | null = null;
   private destroy$ = new Subject<void>();
 
   constructor(private authService: AuthService, private mailService: MailService) {
@@ -85,6 +86,14 @@ export class MailsLog implements OnDestroy {
       default:
         return type;
     }
+  }
+
+  toggleMailBody(mailId: number): void {
+    this.expandedMailId = this.expandedMailId === mailId ? null : mailId;
+  }
+
+  isExpanded(mailId: number): boolean {
+    return this.expandedMailId === mailId;
   }
 
   ngOnDestroy(): void {

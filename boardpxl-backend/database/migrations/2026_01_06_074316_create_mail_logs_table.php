@@ -18,6 +18,7 @@ class CreateMailLogsTable extends Migration
             $table->foreignId('sender_id')->constrained('photographers')->onDelete('cascade');
             $table->string('recipient');
             $table->string('subject');
+            $table->text('body')->nullable();
             $table->string('status');
             $table->string('type');
             $table->timestamps();

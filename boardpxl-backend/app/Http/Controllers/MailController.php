@@ -34,6 +34,7 @@ class MailController extends Controller
                 'sender_id' => auth()->id(), 
                 'recipient' => $validated['to'],
                 'subject' => $validated['subject'],
+                'body' => $validated['body'],
                 'status' => 'sent',
                 'type' => $validated['type'] ?? 'generic'
             ]);
@@ -48,6 +49,7 @@ class MailController extends Controller
                 'sender_id' => auth()->id(), 
                 'recipient' => $validated['to'],
                 'subject' => $validated['subject'],
+                'body' => $validated['body'],
                 'status' => 'failed',
                 'type' => $validated['type'] ?? 'generic'
             ]);

@@ -9,7 +9,7 @@
             <p>Chargement des emails...</p>
         </div>
         <div class="mail-item" *ngFor="let mail of filteredMails">
-            <div class="card">
+            <div class="card" (click)="toggleMailBody(mail.id)" [class.expanded]="isExpanded(mail.id)">
                 <div class="mail-info">
                     <div class="main-info">
                         <p class="recipient">{{ mail.recipient }}</p>
@@ -25,6 +25,9 @@
                 <div class="date-info">
                     <p class="date">{{ mail.created_at | date: 'mediumDate' }}</p>
                 </div>
+            </div>
+            <div class="mail-body" [class.show]="isExpanded(mail.id)">
+                <div class="body-content" [innerHTML]="mail.body"></div>
             </div>
         </div>
         <div class="no-results" *ngIf="!isLoading && filteredMails.length === 0">

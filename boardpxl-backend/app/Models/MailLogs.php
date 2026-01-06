@@ -14,6 +14,7 @@ class MailLogs extends Model
         'recipient',
         'subject',
         'status',
+        'body',
         'type'
     ];
 

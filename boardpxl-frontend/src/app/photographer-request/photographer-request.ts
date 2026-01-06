@@ -141,12 +141,18 @@ Cordialement,
     this.isSending = true;
     this.mailService.sendMail(to, from, subject, body, type).subscribe({
       next: (response) => {
+        console.log('Mail envoyé avec succès:', response);
         this.isSending = false;
         window.location.assign('/request/success');
       },
       error: (error) => {
+        console.error('Erreur lors de l\'envoi du mail:', error);
+        console.error('Détails de l\'erreur:', error.error);
         this.isSending = false;
-        window.location.assign('/request/failure');
+        // Attendre 3 secondes avant de rediriger pour que l'utilisateur voie le message
+        setTimeout(() => {
+          window.location.assign('/request/failure');
+        }, 3000);
       }
     });
 
