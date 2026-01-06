@@ -9,7 +9,7 @@ class MailLogs extends Model
 {
     use HasFactory;
 
-    protected$fillable = [
+    protected $fillable = [
         'sender_id',
         'recipient',
         'subject',

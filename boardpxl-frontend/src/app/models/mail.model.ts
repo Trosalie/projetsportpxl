@@ -2,9 +2,11 @@ export class Mail {
     to!: string;
     sender_id!: number;
     from!: string;
+    recipient!: string;
     subject!: string;
     body!: string;
     type!: string;
+    status!: string;
     created_at!: Date;
 
     constructor(to: string, sender_id: number, from: string, subject: string, body: string, type: string, created_at: Date) {

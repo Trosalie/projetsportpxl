@@ -78,8 +78,14 @@ class MailController extends Controller
 
     public function getLogs($sender_id)
     {
-        // Récupérer les logs de mails depuis la base de données via l'id du photographe passé en paramètre
-        $logs = MailLogs::where('sender_id', $sender_id)->get();
+        // Valider l'ID du photographe passé en paramètre
+        $validated = validator(
+            ['sender_id' => $sender_id],
+            ['sender_id' => 'required|integer|exists:photographers,id']
+        )->validate();
+
+        // Récupérer les logs de mails depuis la base de données via l'id du photographe validé
+        $logs = MailLogs::where('sender_id', $validated['sender_id'])->get();
         return response()->json($logs);
     }
 }

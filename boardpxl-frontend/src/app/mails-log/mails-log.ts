@@ -36,10 +36,16 @@ export class MailsLog implements OnDestroy {
 
     this.mailService.getMailLogs(this.authService.getUser()?.id || 0)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(mails => {
-        this.mails = mails;
-        this.filteredMails = this.mails;
-        this.isLoading = false;
+      .subscribe({
+        next: mails => {
+          this.mails = mails;
+          this.filteredMails = this.mails;
+          this.isLoading = false;
+        },
+        error: error => {
+          console.error('Failed to load mail logs', error);
+          this.isLoading = false;
+        }
       });
   }
 
@@ -70,14 +76,12 @@ export class MailsLog implements OnDestroy {
 
   getTypeLabel(type: string): string {
     switch (type.toLowerCase()) {
-      case 'invoice':
-        return 'Facture';
-      case 'reminder':
-        return 'Rappel';
-      case 'confirmation':
-        return 'Confirmation';
-      case 'quote':
-        return 'Devis';
+      case 'versement':
+        return 'Versement';
+      case 'crédits':
+        return 'Crédits';
+      case 'generic':
+        return 'Générique';
       default:
         return type;
     }
