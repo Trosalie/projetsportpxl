@@ -15,6 +15,8 @@ export class PhotographerCard implements OnDestroy {
   @Input() index!: number;
   creditsInvoices: any[] = [];
   paymentInvoices: any[] = [];
+  isLoadingCredits: boolean = true;
+  isLoadingPayments: boolean = true;
   private destroy$ = new Subject<void>();
 
   constructor(private invoiceService: InvoiceService, private authService: AuthService) {
@@ -28,19 +30,23 @@ export class PhotographerCard implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((invoices) => {
         this.creditsInvoices = invoices;
+        this.isLoadingCredits = false;
       });
 
     this.invoiceService.getInvoicesPaymentByPhotographer(this.photographer.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe((invoices) => {
         this.paymentInvoices = invoices;
+        this.isLoadingPayments = false;
       });
   }
 
   getChiffreAffaires(): number {
     let total = 0;
     for(let invoice of this.paymentInvoices) {
-      total += invoice.turnover;
+      const match = invoice.description.match(/(\d+(?:[.,]\d{2})?)\s*€/);
+      const amount = match ? parseFloat(match[1].replace(',', '.')) : 0;
+      total += amount;
     }
     return total;
   }

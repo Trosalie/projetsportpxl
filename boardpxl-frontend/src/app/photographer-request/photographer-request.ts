@@ -11,6 +11,7 @@ import { AuthService } from '../services/auth-service';
 export class PhotographerRequest {
   @Input() requestType: 'versement' | 'crédits' = 'versement';
   protected requestMessage: string = '';
+  protected isSending: boolean = false;
 
   constructor(private mailService: MailService, private authService: AuthService) {}
 
@@ -134,11 +135,14 @@ Cordialement,
       subject += ' Demande d\'ajout de crédits';
     }
 
+    this.isSending = true;
     this.mailService.sendMail(to, from, subject, body).subscribe({
       next: (response) => {
+        this.isSending = false;
         window.location.assign('/request/success');
       },
       error: (error) => {
+        this.isSending = false;
         window.location.assign('/request/failure');
       }
     });
