@@ -98,6 +98,7 @@ Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']
 // Routes Mail
 Route::post('/send-email', [MailController::class, 'sendEmail']);
 Route::get('/test-mail', [MailController::class, 'testMail']);
+Route::get('/mail-logs/{sender_id}', [MailController::class, 'getLogs']);
 
 // Récupérer tous les clients
 Route::get('/photographers', [PhotographerController::class, 'getPhotographers']);

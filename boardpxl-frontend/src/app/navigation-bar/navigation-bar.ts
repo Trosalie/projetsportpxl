@@ -70,6 +70,14 @@ export class NavigationBar implements OnDestroy {
         icon: 'assets/images/liste_icon.svg'
       }
     ];
+    
+    if (role === 'photographer') {
+      this.pages.push({
+        label: 'Historique des emails',
+        route: '/mails',
+        icon: 'assets/images/mail_icon.svg'
+      });
+    }
 
     // Si on est sur la page de liste des photographes
     if (currentUrl.startsWith('/photographers')) {
