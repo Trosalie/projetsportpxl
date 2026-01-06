@@ -24,6 +24,8 @@ export class MailsLog implements OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading = true;
+
     requestAnimationFrame(() => {
       const el = document.querySelector('.mails-list') as HTMLElement | null;
       if (!el) return;
@@ -35,13 +37,10 @@ export class MailsLog implements OnDestroy {
     this.mailService.getMailLogs(this.authService.getUser()?.id || 0)
       .pipe(takeUntil(this.destroy$))
       .subscribe(mails => {
-      this.mails = mails;
-      this.filteredMails = this.mails;
-      this.isLoading = false;
-    });
-
-    this.filteredMails = this.mails;
-    this.isLoading = false;
+        this.mails = mails;
+        this.filteredMails = this.mails;
+        this.isLoading = false;
+      });
   }
 
   onSearch(query: string) {

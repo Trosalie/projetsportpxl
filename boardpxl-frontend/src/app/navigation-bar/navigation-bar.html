@@ -2,7 +2,7 @@
    <nav [class.open]="isOpen">
       <ul>
          <li *ngFor="let page of pages">
-            <a [routerLink]="page.route">
+            <a [routerLink]="page.route" [class.active]="isActive(page.route)">
                <img [src]="page.icon" class="navbar-icon" [alt]="page.label">
                {{ page.label }}
             </a>

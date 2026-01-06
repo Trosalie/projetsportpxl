@@ -1,7 +1,7 @@
+<app-title [title]="'HISTORIQUE DES EMAILS'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
 <div class="container">
     <div class="header">
-        <p>Historique des emails</p>
-        <app-search-bar (filter)="onSearch($event)"></app-search-bar>
+        <app-search-bar [placeholder]="'Rechercher un email...'" (filter)="onSearch($event)"></app-search-bar>
     </div>
     <div class="mails-list">
         <div class="loading-overlay" *ngIf="isLoading">
@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="date-info">
-                    <p class="date">{{ mail.sentDate | date: 'mediumDate' }}</p>
+                    <p class="date">{{ mail.created_at | date: 'mediumDate' }}</p>
                 </div>
             </div>
         </div>

@@ -37,6 +37,11 @@ export class NavigationBar {
         route: dashboardRoute,
         icon: 'assets/images/liste_icon.svg'
       },
+      {
+        label: 'Historique des emails',
+        route: '/mails',
+        icon: 'assets/images/mail_icon.svg'
+      },
       // {
       //   label: 'Graphique général',
       //   route: '/general-graph',
@@ -73,5 +78,9 @@ export class NavigationBar {
 
   isLoginPage(): boolean {
     return this.router.url === '/login';
+  }
+
+  isActive(route: string): boolean {
+    return this.router.url === route || this.router.url.startsWith(route + '/');
   }
 }
