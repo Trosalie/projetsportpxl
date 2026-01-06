@@ -16,6 +16,22 @@ div {
     :first-child{
         align-items: flex-start;
     }
+
+    a {
+        text-decoration: none;
+        color: #007bff;
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        p {
+            margin: 0;
+        }
+    }
 }
 
 .statuts{
