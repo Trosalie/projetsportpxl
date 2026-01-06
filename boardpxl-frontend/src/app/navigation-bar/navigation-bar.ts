@@ -9,6 +9,7 @@ interface NavPage {
   label: string;
   route: string;
   icon: string;
+  subPages?: NavPage[];
 }
 
 interface LegalLink {
@@ -59,6 +60,7 @@ export class NavigationBar implements OnDestroy {
 
   updateNavigation() {
     const currentUrl = this.router.url;
+    const currentUrlWithoutParams = currentUrl.split('?')[0];
     
     // Route par défaut
     this.pages = [
@@ -85,8 +87,15 @@ export class NavigationBar implements OnDestroy {
         const photographerName = new URLSearchParams(window.location.search).get('name') || 'Photographe';
         this.pages.push({
           label: photographerName,
-          route: currentUrl,
-          icon: 'assets/images/liste_icon.svg'
+          route: '',
+          icon: 'assets/images/photographer_icon.svg',
+          subPages: [
+            {
+              label: 'Informations générales',
+              route: currentUrlWithoutParams,
+              icon: 'assets/images/infogen_icon.svg'
+            }
+          ]
         });
       }
     }
@@ -120,7 +129,17 @@ export class NavigationBar implements OnDestroy {
       return currentUrl === '/' || currentUrl === '';
     }
     
-    // Pour les autres routes, vérifier si l'URL commence par la route
-    return currentUrl.startsWith(route);
+    // Vérifier si c'est une correspondance exacte
+    if (currentUrl === route) {
+      return true;
+    }
+    
+    // Pour /photographers, vérifier que l'URL est exactement /photographers (pas de sous-routes)
+    if (route === '/photographers') {
+      return currentUrl === '/photographers';
+    }
+    
+    // Pour les autres routes avec sous-chemins, vérifier correspondance exacte
+    return currentUrl === route;
   }
 }

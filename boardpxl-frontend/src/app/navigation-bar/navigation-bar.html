@@ -2,10 +2,22 @@
    <nav [class.open]="isOpen">
       <ul>
          <li *ngFor="let page of pages">
-            <a [routerLink]="page.route" [class.active]="isActivePage(page.route)">
+            <a *ngIf="page.route" [routerLink]="page.route" [class.active]="isActivePage(page.route)">
                <img [src]="page.icon" class="navbar-icon" [alt]="page.label">
                {{ page.label }}
             </a>
+            <div *ngIf="!page.route" class="parent-page">
+               <img [src]="page.icon" class="navbar-icon" [alt]="page.label">
+               {{ page.label }}
+            </div>
+            <ul *ngIf="page.subPages" class="sub-pages">
+               <li *ngFor="let subPage of page.subPages">
+                  <a [routerLink]="subPage.route" [class.active]="isActivePage(subPage.route)">
+                     <img [src]="subPage.icon" class="navbar-icon" [alt]="subPage.label">
+                     {{ subPage.label }}
+                  </a>
+               </li>
+            </ul>
          </li>
       </ul>
       <div class="disconnect-container">
