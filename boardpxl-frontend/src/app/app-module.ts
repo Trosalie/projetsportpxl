@@ -30,6 +30,7 @@ import { Pagination } from './pagination/pagination';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
 import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
+import { MailsLog } from './mails-log/mails-log';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -53,7 +54,8 @@ registerLocaleData(localeFr);
     Pagination,
     CreditPurchaseForm,
     Popup,
-    TurnoverPaymentForm
+    TurnoverPaymentForm,
+    MailsLog
   ],
   imports: [
     BrowserModule,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\MailService;
 use Illuminate\Support\Facades\Mail;
+use App\Models\MailLogs;
 
 class MailController extends Controller
 {
@@ -27,6 +28,14 @@ class MailController extends Controller
                 $validated['subject'],
                 $validated['body']
             );
+
+            MailLogs::create([
+                'sender_id' => null, // À remplacer par l'ID du photographe si disponible
+                'recipient' => $validated['to'],
+                'subject' => $validated['subject'],
+                'status' => 'sent',
+                'type' => 'generic'
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -56,5 +65,12 @@ class MailController extends Controller
         }
 
         return response()->json(['message' => 'Mail envoyé (si tout va bien) !']);
+    }
+
+    public function getLogs($sender_id)
+    {
+        // Récupérer les logs de mails depuis la base de données via l'id du photographe passé en paramètre
+        $logs = MailLogs::where('sender_id', $sender_id)->get();
+        return response()->json($logs);
     }
 }

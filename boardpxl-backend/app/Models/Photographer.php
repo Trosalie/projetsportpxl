@@ -54,4 +54,9 @@ class Photographer extends Authenticatable
     {
         return $this->hasMany(InvoicePayment::class);
     }
+
+    public function mailLogs()
+    {
+        return $this->hasMany(MailLogs::class, 'sender_id');
+    }
 }
