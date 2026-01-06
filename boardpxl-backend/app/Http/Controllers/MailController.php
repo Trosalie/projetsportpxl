@@ -6,9 +6,18 @@ use Illuminate\Http\Request;
 use App\Services\MailService;
 use Illuminate\Support\Facades\Mail;
 use App\Models\MailLogs;
+use App\Services\LogService;
 
 class MailController extends Controller
 {
+    private LogService $logService;
+
+    public function __construct(LogService $logService)
+    {
+        $this->logService = $logService;
+    }
+
+
     /**
      * Envoi de mail via MailService
      */
