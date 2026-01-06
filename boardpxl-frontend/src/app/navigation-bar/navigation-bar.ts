@@ -71,7 +71,7 @@ export class NavigationBar implements OnDestroy {
       }
     ];
     
-    if (role === 'photographer') {
+    if (this.roleService.getRole() === 'photographer') {
       this.pages.push({
         label: 'Historique des emails',
         route: '/mails',
