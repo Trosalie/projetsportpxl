@@ -28,6 +28,7 @@ import { PhotographerCard } from './photographer-card/photographer-card';
 import { SearchBar } from './search-bar/search-bar';
 import { Pagination } from './pagination/pagination';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
+import {ProfileInformation} from './profile-information/profile-information';
 import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 import { MailsLog } from './mails-log/mails-log';
@@ -47,6 +48,8 @@ registerLocaleData(localeFr);
     PhotographerRequest,
     AutomaticResponse,
     MailRequestPage,
+    CreditPurchaseForm,
+    ProfileInformation,
     InvoiceFilter,
     LoginPage,
     NavigationBar,
