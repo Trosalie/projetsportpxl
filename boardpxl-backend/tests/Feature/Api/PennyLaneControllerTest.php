@@ -5,14 +5,18 @@ namespace Tests\Feature\Api;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use App\Http\Controllers\PennyLaneController;
 use App\Services\PennylaneService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Mockery;
 
 class PennyLaneControllerTest extends TestCase
 {
     use WithoutMiddleware;
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
+    }
     // Ce test vérifie la création réussie d'une facture de crédits pour un client.
     // Il simule un appel au service PennyLane qui retourne une facture créée avec succès.
     // La requête POST contient les paramètres nécessaires comme labelTVA, amountEuro, etc.

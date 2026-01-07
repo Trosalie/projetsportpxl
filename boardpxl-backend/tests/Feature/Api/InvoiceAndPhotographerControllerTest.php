@@ -7,7 +7,7 @@ use Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 use Mockery;
 
-class InvoiceControllerTest extends TestCase
+class InvoiceAndPhotographerControllerTest extends TestCase
 {
     use WithoutMiddleware;
     protected function tearDown(): void

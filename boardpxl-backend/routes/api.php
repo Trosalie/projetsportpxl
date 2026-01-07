@@ -12,8 +12,6 @@ use App\Models\Photographer;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\PhotographerController;
 
-
-
 // Création d'une facture de crédits pour un client
 // Testé : PennyLaneControllerTest::test_create_credits_invoice_client_success et test_create_credits_invoice_client_invalid_client
 use App\Http\Controllers\Auth\LoginController;
@@ -86,6 +84,7 @@ Route::post('/logout', [LoginController::class, 'logout']);
 Route::get('/invoices-payment/{photographer_id}', [InvoiceController::class, 'getInvoicesPaymentByPhotographer']);
 
 // Récupérer les factures de crédit d’un photographe
+// Testé : Non couvert actuellement - test à ajouter (par exemple dans InvoiceControllerTest)
 Route::get('/invoices-credit/{photographer_id}', [InvoiceController::class, 'getInvoicesCreditByPhotographer']);
 
 // Récupérer la liste des clients
