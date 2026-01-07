@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PhotographerController;
 use App\Http\Controllers\InvoiceController;
 use App\Services\PennyLaneService;
 use App\Services\MailService;
@@ -10,7 +11,6 @@ use App\Http\Controllers\PennyLaneController;
 use App\Http\Controllers\MailController;
 use App\Models\Photographer;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Controllers\PhotographerController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -103,5 +103,6 @@ Route::get('/mail-logs/{sender_id}', [MailController::class, 'getLogs']);
 // Récupérer tous les clients
 Route::get('/photographers', [PhotographerController::class, 'getPhotographers']);
 
+Route::get('photographer/{id}', [PhotographerController::class, 'getPhotographer']);
 });
 

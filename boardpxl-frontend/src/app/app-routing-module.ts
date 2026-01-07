@@ -8,6 +8,7 @@ import { photographerGuard } from './guards/photographer.guard';
 import { adminGuard } from './guards/admin.guard';
 import { PhotographersList } from './photographers-list/photographers-list';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
+import {ProfileInformation} from './profile-information/profile-information';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
@@ -24,6 +25,7 @@ const routes: Routes = [
   { path: 'mails', component: MailsLog, canActivate: [photographerGuard]},
   { path: 'form/credits', component: CreditPurchaseForm, canActivate: [adminGuard]},
   { path: 'form/payout', component: TurnoverPaymentForm, canActivate: [adminGuard]},
+  { path: 'photographer/:id', component: ProfileInformation, canMatch: [adminGuard]},
   { path: '**', redirectTo: '' },
 ];
 
