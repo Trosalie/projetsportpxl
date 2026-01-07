@@ -1,4 +1,0 @@
-<div *ngIf="currentPhotographerName">
-  <app-header [userName]="currentPhotographerName"></app-header>
-</div>
-<router-outlet></router-outlet>

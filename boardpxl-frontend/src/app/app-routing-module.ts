@@ -17,7 +17,7 @@ const routes: Routes = [
   { path: 'login', component: LoginPage },
   { path: '', component: PhotographerDashboard, pathMatch: 'full', canActivate: [photographerGuard] },
   { path: 'photographers', component: PhotographersList, canActivate: [adminGuard] },
-  { path: 'photographers/:id/invoices', component: AdminPhotographerInvoiceList, canActivate: [adminGuard] },
+  { path: 'photographer/:id/invoices', component: AdminPhotographerInvoiceList, canActivate: [adminGuard] },
   { path: 'request/payout', component: MailRequestPage, canActivate: [photographerGuard] },
   { path: 'request/credits', component: MailRequestPage, canActivate: [photographerGuard]},
   { path: 'request/success', component: AutomaticResponse, canActivate: [photographerGuard]},
@@ -25,7 +25,7 @@ const routes: Routes = [
   { path: 'mails', component: MailsLog, canActivate: [photographerGuard]},
   { path: 'form/credits', component: CreditPurchaseForm, canActivate: [adminGuard]},
   { path: 'form/payout', component: TurnoverPaymentForm, canActivate: [adminGuard]},
-  { path: 'photographer/:id', component: ProfileInformation, canMatch: [adminGuard]},
+  { path: 'photographer/:id', component: ProfileInformation, canActivate: [adminGuard]},
   { path: '**', redirectTo: '' },
 ];
 

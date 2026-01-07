@@ -80,7 +80,7 @@ export class NavigationBar implements OnDestroy {
     }
 
     // Si on est sur la page de liste des photographes
-    if (currentUrl.startsWith('/photographers')) {
+    if (this.roleService.getRole() === 'photographer') {
       this.pages = [
         {
           label: 'Liste des photographes',
