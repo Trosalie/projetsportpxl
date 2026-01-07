@@ -1,6 +1,10 @@
 <section class="profile">
   <app-title [title]="name" [icon]="''"></app-title>
-  <div class="profile_layout">
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement du profil...</p>
+  </div>
+  <div class="profile_layout" *ngIf="!isLoading">
     <section class="card info-card">
       <h2 class="card_title">Informations générales</h2>
       <div class="info-card_content">
