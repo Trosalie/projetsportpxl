@@ -87,6 +87,11 @@ export class NavigationBar implements OnDestroy {
           label: 'Liste des photographes',
           route: '/photographers',
           icon: 'assets/images/liste_icon.svg'
+        },
+        {
+          label: 'Logs',
+          route: '/logs',
+          icon: 'assets/images/logs_icon.svg'
         }
       ];
 

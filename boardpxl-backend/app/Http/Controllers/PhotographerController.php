@@ -9,9 +9,18 @@ use App\Services\PennylaneService;
 use App\Services\MailService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use App\Services\LogService;
 
 class PhotographerController extends Controller
 {
+    private LogService $logService;
+
+    public function __construct(LogService $logService)
+    {
+        $this->logService = $logService;
+    }
+
+    
     public function getPhotographer($id)
     {
         $photographer = Photographer::find($id);
@@ -26,7 +35,15 @@ class PhotographerController extends Controller
   
     public function getPhotographers()
     {
-        $photographers = DB::table('photographers')->get();
-        return response()->json($photographers);
+        try {
+            $photographers = DB::table('photographers')->get();
+            
+            return response()->json($photographers);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }
