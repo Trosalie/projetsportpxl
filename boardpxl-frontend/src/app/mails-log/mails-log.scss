@@ -239,6 +239,24 @@
             padding: 1rem;
         }
 
+        .mail-info {
+            width: 100%;
+            
+            .main-info {
+                .recipient {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .subject {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+            }
+        }
+
         .mail-details {
             width: 100%;
             margin: 1rem 0;
