@@ -30,7 +30,6 @@ import { Pagination } from './pagination/pagination';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
 import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
-import { GeneralGraph } from './general-graph/general-graph';
 //import { NgChartsModule } from 'ng2-charts';
 registerLocaleData(localeFr);
 
@@ -54,8 +53,7 @@ registerLocaleData(localeFr);
     Pagination,
     CreditPurchaseForm,
     Popup,
-    TurnoverPaymentForm,
-    GeneralGraph
+    TurnoverPaymentForm
   ],
   imports: [
     BrowserModule,

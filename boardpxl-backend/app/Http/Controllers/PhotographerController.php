@@ -16,4 +16,21 @@ class PhotographerController extends Controller
         $photographers = DB::table('photographers')->get();
         return response()->json($photographers);
     }
+
+    public function getPhotographerId(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string',
+        ]);
+
+        $photographer = DB::table('photographers')
+            ->where('name', $validated['name'])
+            ->first();
+            
+        if ($photographer) {
+            return response()->json(['id' => $photographer->id]);
+        } else {
+            return response()->json(['error' => 'Photographer not found'], 404);
+        }
+    }
 }

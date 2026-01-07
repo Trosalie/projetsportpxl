@@ -26,7 +26,7 @@ use App\Http\Controllers\Auth\ConfirmPasswordController;
 */
 
 // Routes d'authentification publiques
-Route::post('/login', [LoginController::class, 'login']);
+Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 
@@ -98,7 +98,7 @@ Route::post('/password/confirm', [ConfirmPasswordController::class, 'confirm']);
 // Routes PennyLane (factures)
 Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
 Route::get('/test', [PennylaneController::class, 'getInvoices']);
-Route::get('/client-id', [PennylaneController::class, 'getClientId']);
+Route::get('/photographer-id', [PhotographerController::class, 'getPhotographerId']);
 Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);
 Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
 Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
@@ -111,4 +111,3 @@ Route::get('/test-mail', [MailController::class, 'testMail']);
 Route::get('/photographers', [PhotographerController::class, 'getPhotographers']);
 
 });
-
