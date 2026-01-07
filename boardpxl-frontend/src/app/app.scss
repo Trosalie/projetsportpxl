@@ -6,6 +6,10 @@
     margin-left: 270px;
   }
 
+  &.login-page {
+    margin-left: 0;
+  }
+
   @media (max-width: 768px) {
     &.nav-open {
       margin-left: 20px;
