@@ -17,6 +17,7 @@ export class PhotographerCard implements OnDestroy {
   paymentInvoices: any[] = [];
   isLoadingCredits: boolean = true;
   isLoadingPayments: boolean = true;
+  isExpanded: boolean = false;
   private destroy$ = new Subject<void>();
 
   constructor(private invoiceService: InvoiceService, private authService: AuthService) {
@@ -83,6 +84,10 @@ export class PhotographerCard implements OnDestroy {
       }
     }
     return unpaidCount;
+  }
+
+  toggleExpand(): void {
+    this.isExpanded = !this.isExpanded;
   }
 
   ngOnDestroy(): void {
