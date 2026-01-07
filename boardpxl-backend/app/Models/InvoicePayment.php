@@ -14,14 +14,14 @@ class InvoicePayment extends Model
         'issue_date',
         'due_date',
         'description',
-        'turnover',
         'raw_value',
         'commission',
         'tax',
         'vat',
         'start_period',
         'end_period',
-        'link_pdf'
+        'link_pdf',
+        'pdf_invoice_subject'
     ];
 
     protected $casts = [
@@ -33,6 +33,6 @@ class InvoicePayment extends Model
 
     public function photographer()
     {
-        return $this->belongsTo(\App\Models\Photographer::class);
+        return $this->belongsTo(Photographer::class);
     }
 }

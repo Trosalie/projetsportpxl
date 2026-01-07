@@ -1,6 +1,11 @@
-import { Component } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { InvoiceService } from '../services/invoice-service';
 import { ClientService } from '../services/client-service.service';
+import { Popup } from '../popup/popup';
+import { AuthService } from '../services/auth-service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 
 @Component({
@@ -9,10 +14,10 @@ import { ClientService } from '../services/client-service.service';
   templateUrl: './credit-purchase-form.html',
   styleUrl: './credit-purchase-form.scss',
 })
-export class CreditPurchaseForm {
+export class CreditPurchaseForm implements OnDestroy {
   today: string = new Date().toISOString().slice(0, 10);
   clientId: any;
-  clientName: string = 'Thibault Rosalie';
+  clientName: string = '';
   findClient: boolean = false;
   creationFacture: boolean = false;
   clientsNames: string[] = [];
@@ -20,30 +25,48 @@ export class CreditPurchaseForm {
   photographerInput: string = '';
   notificationVisible: boolean = false;
   notificationMessage: string = "";
+  isLoading: boolean = false;
+  private destroy$ = new Subject<void>();
 
-  constructor(private invoiceService: InvoiceService, private clientService: ClientService) {}
+  constructor(private invoiceService: InvoiceService, private clientService: ClientService, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
+    this.authService.logout$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.destroy$.next();
+    });
+  }
+  @ViewChild('popup') popup!: Popup;
 
   ngOnInit() {
-    // Cherche le client par nom/prénom
-    const body = { name: this.clientName };
-    this.clientService.getClientIdByName(body).subscribe({
-      next: (data) => {
-        if (data && data.client_id) {
-          this.clientId = data.client_id;
-          this.findClient = true;
-          this.photographerInput = this.clientName; 
-          this.loadClients();
-          console.log('Client ID:', this.clientId);
-        } else {
-          // Client non trouvé
-          this.findClient = false;
-          this.loadClients();
-        }
-      },
-      error: (err) => {
-        console.error('Erreur fetch client ID :', err);
-        this.findClient = false;
-        this.showNotification("Le photographe n'a pas été trouvé !");
+    // Récupère le nom du client depuis les query params
+    this.route.queryParams.subscribe(params => {
+      this.clientName = params['clientName'] || '';
+      
+      // Cherche le client par nom/prénom
+      if (this.clientName) {
+        this.isLoading = true;
+        const body = { name: this.clientName };
+        this.clientService.getClientIdByName(body).subscribe({
+          next: (data) => {
+            if (data && data.client_id) {
+              this.clientId = data.client_id;
+              this.findClient = true;
+              this.photographerInput = this.clientName;
+            } else {
+              // Client non trouvé
+              this.findClient = false;
+              this.photographerInput = this.clientName;
+            }
+            this.isLoading = false;
+            this.loadClients();
+          },
+          error: (err) => {
+            console.error('Erreur fetch client ID :', err);
+            this.isLoading = false;
+            this.findClient = false;
+            this.popup.showNotification("Le photographe n'a pas été trouvé !");
+            this.loadClients();
+          }
+        });
+      } else {
         this.loadClients();
       }
     });
@@ -51,10 +74,11 @@ export class CreditPurchaseForm {
 
   // Récupère tous les clients pour suggestions
   loadClients() {
-    this.clientService.getClients().subscribe({
+    this.clientService.getClients()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
       next: (res) => {
         this.clientsNames = res.clients.map((c: any) => c.name);
-        console.log('Clients récupérés :', this.clientsNames);
       },
       error: (err) => console.error('Erreur fetch clients :', err)
     });
@@ -76,26 +100,28 @@ export class CreditPurchaseForm {
 
   // Sélectionne un photographe dans la liste des suggestions
   selectPhotographer(name: string) {
+    this.isLoading = true;
     this.photographerInput = name;
     this.findClient = true;
     this.filteredClients = [];
     this.clientName = name;
-    console.log('Client sélectionné :', this.clientName);
     const body = { name: this.clientName };
-    this.clientService.getClientIdByName(body).subscribe({
+    this.clientService.getClientIdByName(body)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
       next: (data) => {
         if (data && data.client_id) {
           this.clientId = data.client_id;
-          console.log('Client ID après sélection :', this.clientId);
         } else {
-          console.error('Client non trouvé après sélection');
-        }      }, 
+          this.popup.showNotification('Client non trouvé !');
+        }
+        this.isLoading = false;
+      }, 
       error: (err) => {
         console.error('Erreur fetch client ID après sélection :', err);
+        this.isLoading = false;
       }
     });
-    
-    console.log('Client ID après sélection :', this.clientId);
   }
 
   onSubmit(event: Event) {
@@ -107,6 +133,10 @@ export class CreditPurchaseForm {
     const due = new Date(issue);
     due.setMonth(due.getMonth() + 1);
     const dueDate = due.toISOString().slice(0, 10);
+    if (!subject || !dueDate || !form['priceHT'].value || !form['credits'].value || !(form['tva'] as HTMLSelectElement).value || !this.findClient) {
+      this.popup.showNotification("Merci de remplir tous les champs du formulaire.");
+      return;
+    }
     const body = {
       labelTVA: (form['tva'] as HTMLSelectElement).value,
       labelProduct: `${form['credits'].value} crédits`,
@@ -117,26 +147,68 @@ export class CreditPurchaseForm {
       invoiceTitle: subject
     };
     this.creationFacture = true;
-    this.invoiceService.createCreditsInvoice(body).subscribe({
-      next: () => {
-        this.showNotification('Facture créée avec succès !');
+    this.invoiceService.createCreditsInvoice(body)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+      next: (response) => {
+        this.popup.showNotification('Facture créée avec succès !');
         this.creationFacture = false;
+        this.insertCreditsInvoice( response, form['priceHT'].value, form['credits'].value, (form['tva'] as HTMLSelectElement).value, "À venir",this.today, dueDate, this.clientId);
+        setTimeout(() => {
+          this.router.navigate(['/photographers']);
+        }, 2000);
       },
       error: () => {
-        this.showNotification("Erreur lors de la création de la facture."),
+        this.popup.showNotification("Erreur lors de la création de la facture");
         this.creationFacture = false;
       }
     });
-    console.log(body);
   }
 
-  // Afficher la notification quelques secondes
-  showNotification(message: string) {
-    console.log("Afficher notification:", message);
-    this.notificationMessage = message;
-    this.notificationVisible = true;
-    setTimeout(() => {
-      this.notificationVisible = false;
-    }, 5000); // 5 secondes
+  insertCreditsInvoice( reponse: any, amount: number, credits: number, tva: string, status: string, issueDate: string, dueDate: string, clientId: number) 
+  {
+    const invoice = reponse.data;
+    const vatValue = this.convertTvaCodeToPercent(tva);
+
+    const body = {
+      id: invoice.id,
+      number: invoice.invoice_number,
+      issue_date: issueDate,
+      due_date: dueDate,
+      description: invoice.pdf_description,
+      amount: amount,
+      tax: invoice.tax,
+      vat: vatValue,
+      total_due: amount + invoice.tax, 
+      credits: credits,
+      status: status,
+      link_pdf: invoice.public_file_url,
+      photographer_id: clientId,
+      pdf_invoice_subject: invoice.pdf_invoice_subject
+    };
+
+    console.log("Insertion de la facture crédit avec :", body);
+
+    this.invoiceService.insertCreditsInvoice(body)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+      next: () => console.log("Facture crédit enregistrée."),
+      error: err => console.error("Erreur insertion facture crédit :", err)
+    });
+  }
+
+
+
+  private convertTvaCodeToPercent(tva: string): number {
+    const value = tva.replace("FR_", "");
+
+    const numeric = value.replace("_", ".");
+
+    return parseFloat(numeric);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

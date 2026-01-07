@@ -1,0 +1,43 @@
+<div class="card">
+    <div>
+        <a [routerLink]="['/photographers', photographer.id, 'invoices']" 
+           [queryParams]="{name: photographer.name}">
+            <p>Photographer : {{ photographer.name }}</p>
+        </a> 
+        <p *ngIf="photographer.email">Email : {{ photographer.email }}</p>
+        <p *ngIf="!photographer.email">Pas d'email</p>
+    </div>
+    <div>
+        <p>Chiffre d'affaires</p>
+        <div class="value-button-pair chiffre-affaires">
+            <p class="tag" *ngIf="!isLoadingPayments">{{ getChiffreAffaires() | currency:'EUR'}}</p>
+            <div class="tag loading-tag" *ngIf="isLoadingPayments">
+                <div class="mini-spinner"></div>
+            </div>
+            <button routerLink="/form/payout" [queryParams]="{ clientName: photographer.name }"><span class="material-symbols-outlined">note_add</span></button>
+        </div>
+    </div>
+    <div>
+        <p>Nombre de crédits</p>
+        <div class="value-button-pair credits">
+            <p class="tag">{{ getTotalCredits() }} cr</p>
+            <button routerLink="/form/credits" [queryParams]="{ clientName: photographer.name }"><span class="material-symbols-outlined">note_add</span></button>
+        </div>
+    </div>
+    <div>
+        <p class="status">Statut des factures</p>
+        <div class="statuts">
+            <p>Payées</p>
+            <p class="payees status-count" *ngIf="!isLoadingCredits">{{ getPaidInvoicesCount() }}</p>
+            <div class="status-count loading-status-count" *ngIf="isLoadingCredits"><div class="mini-spinner"></div></div>
+            
+            <p>Non payées</p>
+            <p class="non-payees status-count" *ngIf="!isLoadingCredits">{{ getUnpaidInvoicesCount() }}</p>
+            <div class="status-count loading-status-count" *ngIf="isLoadingCredits"><div class="mini-spinner"></div></div>
+            
+            <p>En retard</p>
+            <p class="en-retard status-count" *ngIf="!isLoadingCredits">{{ getLateInvoicesCount() }}</p>
+            <div class="status-count loading-status-count" *ngIf="isLoadingCredits"><div class="mini-spinner"></div></div>
+        </div>
+    </div>
+</div>

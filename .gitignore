@@ -45,3 +45,6 @@ Thumbs.db
 
 # Importation files
 Photographes.csv
+
+# Environment files
+boardpxl-frontend/src/environments

@@ -1,4 +1,5 @@
-<div *ngIf="photographerName">
-  <app-header [userName]="photographerName"></app-header>
+<app-header (navBarToggled)="navigationBar.onNavbarToggled()"></app-header>
+<app-navigation-bar #navigationBar [isOpen]="navigationBar.isOpen"></app-navigation-bar>
+<div class="main-content" [class.nav-open]="navigationBar.isOpen">
+  <router-outlet></router-outlet>
 </div>
-<router-outlet></router-outlet>

@@ -17,10 +17,11 @@ class InvoiceCredit extends Model
         'amount',
         'tax',
         'vat',
-        'total-due',
+        'total_due',
         'credits',
         'status',
-        'link_pdf'
+        'link_pdf',
+        'pdf_invoice_subject'
     ];
 
     protected $casts = [
@@ -30,6 +31,6 @@ class InvoiceCredit extends Model
 
     public function photographer()
     {
-        return $this->belongsTo(\App\Models\Photographer::class);
+        return $this->belongsTo(Photographer::class);
     }
 }

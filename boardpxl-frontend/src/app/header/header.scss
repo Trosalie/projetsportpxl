@@ -1,0 +1,44 @@
+header{
+  position: sticky;
+  top: 0;
+  width: 100%;
+}
+
+nav > div {
+  display: flex;
+  align-items: center;
+}
+
+.menu-button {
+  width: 34px;
+  height: 34px;
+  background-color: #E8EAF6;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0;
+  margin-left: 50px;
+  transition: background-color 0.3s ease;
+
+  .bar {
+    width: 17px;
+    height: 2px;
+    background-color: #F98524;
+    border-radius: 2px;
+    transition: background-color 0.3s ease;
+  }
+
+  &:hover {
+    background-color: #F98524;
+    filter: brightness(1) !important;
+
+    .bar {
+      background-color: #E8EAF6;
+    }
+  }
+}

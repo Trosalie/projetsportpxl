@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\MailService;
 use Illuminate\Support\Facades\Mail;
+use App\Models\MailLogs;
 
 class MailController extends Controller
 {
@@ -18,6 +19,7 @@ class MailController extends Controller
             'from' => 'required|email',
             'subject' => 'required|string|max:255',
             'body' => 'required|string|max:10000',
+            'type' => 'nullable|string|max:100',
         ]);
 
         try {
@@ -28,12 +30,30 @@ class MailController extends Controller
                 $validated['body']
             );
 
+            MailLogs::create([
+                'sender_id' => auth()->id(), 
+                'recipient' => $validated['to'],
+                'subject' => $validated['subject'],
+                'body' => $validated['body'],
+                'status' => 'sent',
+                'type' => $validated['type'] ?? 'generic'
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Email sent successfully.'
             ]);
 
         } catch (\Exception $e) {
+            MailLogs::create([
+                'sender_id' => auth()->id(), 
+                'recipient' => $validated['to'],
+                'subject' => $validated['subject'],
+                'body' => $validated['body'],
+                'status' => 'failed',
+                'type' => $validated['type'] ?? 'generic'
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to send email: ' . $e->getMessage()
@@ -56,5 +76,18 @@ class MailController extends Controller
         }
 
         return response()->json(['message' => 'Mail envoyé (si tout va bien) !']);
+    }
+
+    public function getLogs($sender_id)
+    {
+        // Valider l'ID du photographe passé en paramètre
+        $validated = validator(
+            ['sender_id' => $sender_id],
+            ['sender_id' => 'required|integer|exists:photographers,id']
+        )->validate();
+
+        // Récupérer les logs de mails depuis la base de données via l'id du photographe validé
+        $logs = MailLogs::where('sender_id', $validated['sender_id'])->get();
+        return response()->json($logs);
     }
 }

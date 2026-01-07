@@ -4,6 +4,10 @@
         <app-invoice-filter (filtersChanged)="onFilterChanged($event)"></app-invoice-filter>
     </div>
     <div class="invoice-list">
+        <div class="loading-overlay" *ngIf="isLoading">
+            <div class="spinner"></div>
+            <p>Chargement des factures...</p>
+        </div>
         <div class="invoice-item" *ngFor="let invoice of filteredInvoices">
             <app-invoice-card [invoice]="invoice"></app-invoice-card>
         </div>

@@ -4,25 +4,47 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Invoice } from '../models/invoice.model';
 import { environment } from '../../environments/environment.development';
+import { HttpHeadersService } from './http-headers.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InvoiceService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private headersService: HttpHeadersService) {
   }
 
   getInvoicesByClient(clientId: string): Observable<Invoice[]> {
-    return this.http.get<Invoice[]>(`${environment.apiUrl}/invoices-client/${clientId}`);
+    return this.http.get<Invoice[]>(`${environment.apiUrl}/invoices-client/${clientId}`, this.headersService.getAuthHeaders());
   }
 
   getProductFromInvoice(invoice: Invoice): Observable<string[]> {
-    return this.http.get<string[]>(`${environment.apiUrl}/invoice-product/${invoice.invoice_number}`);
+    return this.http.get<string[]>(`${environment.apiUrl}/invoice-product/${invoice.invoice_number}`, this.headersService.getAuthHeaders());
   }
+
+  getInvoicesPaymentByPhotographer(photographerId: number): Observable<InvoicePayment[]> {
+    return this.http.get<InvoicePayment[]>(`${environment.apiUrl}/invoices-payment/${photographerId}`, this.headersService.getAuthHeaders());
+  }
+
+  getInvoicesCreditByPhotographer(photographerId: number): Observable<InvoicePayment[]> {
+    return this.http.get<InvoicePayment[]>(`${environment.apiUrl}/invoices-credit/${photographerId}`, this.headersService.getAuthHeaders());
+  }
+
   
   createCreditsInvoice(body: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/creation-facture`, body);
+    return this.http.post(`${environment.apiUrl}/create-credits-invoice-client`, body, this.headersService.getAuthHeaders());
+  }
+
+  createTurnoverPaymentInvoice(body: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/create-turnover-invoice-client`, body, this.headersService.getAuthHeaders());
+  }
+
+  insertTurnoverInvoice(body: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/insert-turnover-invoice`, body, this.headersService.getAuthHeaders());
+  }
+
+  insertCreditsInvoice(body: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/insert-credits-invoice`, body, this.headersService.getAuthHeaders());
   }
 
   

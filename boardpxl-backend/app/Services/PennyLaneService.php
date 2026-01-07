@@ -11,23 +11,57 @@ class PennylaneService
 
     public function __construct()
     {
-        $this->token = 'eed8y6tW50z94_tiKQp7yFK-mIfnNXTNJkp1y_gRmjw';
+        $this->token = config('services.pennylane.token');
+
         $this->client = new Client([
             'base_uri' => 'https://app.pennylane.com/api/external/v2/',
             'headers' => [
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->token,
             ],
+            'verify' => false,
         ]);
+    }
+
+    public function getHttpClient(): Client
+    {
+        return $this->client;
     }
 
     // Récupérer toutes les factures
     public function getInvoices()
     {
-        $response = $this->client->get('customer_invoices?sort=-id');
-        $data = json_decode($response->getBody()->getContents(), true);
+        $allInvoices = [];
+        $cursor = null;
 
-        return $data['items'] ?? [];
+        do {
+            $response = $this->client->get('customer_invoices', [
+                'query' => array_filter([
+                    'limit' => 100,
+                    'cursor' => $cursor,
+                    'sort' => '-id',
+                ])
+            ]);
+
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            if (!isset($data['items'])) {
+                break;
+            }
+
+            $allInvoices = array_merge($allInvoices, $data['items']);
+
+            $cursor = $data['next_cursor'] ?? null;
+            $hasMore = $data['has_more'] ?? false;
+
+            // Add delay to avoid rate limiting
+            if ($hasMore) {
+                usleep(500000); // 0.5 second delay between requests
+            }
+
+        } while ($hasMore);
+
+        return $allInvoices;
     }
 
     public function getInvoiceByNumber(string $invoiceNumber): ?array
@@ -75,11 +109,10 @@ class PennylaneService
     }
 
     
-    // Création d'une facture pour un client
-    public function createInvoiceClient(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle)
+    // Création d'une facture d'achat de crédit pour un client
+    public function createCreditsInvoiceClient(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle)
     {
         $client = new \GuzzleHttp\Client();
-        $this->token = 'eed8y6tW50z94_tiKQp7yFK-mIfnNXTNJkp1y_gRmjw';
 
         $response = $client->request('POST', 'https://app.pennylane.com/api/external/v2/customer_invoices', [
             'json' => [
@@ -107,16 +140,67 @@ class PennylaneService
                 "date" => $issueDate,
                 "deadline" => $dueDate,
                 "customer_id" => $idClient,
-                "customer_invoice_template_id" => 207554338,
                 "pdf_invoice_subject" => $invoiceTitle
             ],
             'headers' => [
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $this->token,
+                'Authorization' => 'Bearer ' . config('services.pennylane.token'),
             ],
         ]);
 
         return json_decode($response->getBody()->getContents(), true);
+    }
+
+    // Création d'une facture d'achat de crédit pour un client
+    public function createTurnoverInvoiceClient(string $labelTVA, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle, string $invoiceDescription)
+    {
+        $client = new \GuzzleHttp\Client();
+
+        $response = $client->request('POST', 'https://app.pennylane.com/api/external/v2/customer_invoices', [
+            'json' => [
+                "currency" => "EUR",
+                "language" => "fr_FR",
+                "discount" => [
+                    "type" => "absolute",
+                    "value" => "0"
+                ],
+                "draft" => false,
+                "invoice_lines" => [
+                    [
+                        "discount" => [
+                            "type" => "absolute",
+                            "value" => "0"
+                        ],
+                        "vat_rate" => $labelTVA,
+                        "label" => "Commission SportPxl",
+                        "description" => "Le CA & la commission sont estimés. Ils seront ajustés en fin d'exercice.",
+                        "quantity" => 1,
+                        "raw_currency_unit_price" => $amountEuro,
+                        "unit" => "piece"
+                    ]
+                ],
+                "date" => $issueDate,
+                "deadline" => $dueDate,
+                "customer_id" => $idClient,
+                "customer_invoice_template_id" => 207554338,
+                "pdf_invoice_subject" => $invoiceTitle,
+                "pdf_description" => $invoiceDescription,
+            ],
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . config('services.pennylane.token'),
+            ],
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    public function getPhotographers()
+    {
+        $response = $this->client->get('customers?sort=-id');
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        return $data['items'] ?? [];
     }
 
     public function getProductFromInvoice(string $invoiceNumber): ?array
@@ -133,7 +217,7 @@ class PennylaneService
             }
 
             if ($url) {
-                $http = new \GuzzleHttp\Client();
+                $http = new Client();
                 $response = $http->get($url, [
                     'headers' => [
                         'Accept' => 'application/json',
@@ -187,6 +271,17 @@ class PennylaneService
         } while ($hasMore);
 
         return $allClients;
+    }
+
+    public function getInvoiceById(int $id): ?array
+    {
+        $response = $this->client->get("customer_invoices/{$id}");
+
+        if ($response->getStatusCode() === 200) {
+            return json_decode($response->getBody()->getContents(), true);
+        }
+
+        return null; // Facture non trouvée
     }
 
 }

@@ -1,0 +1,18 @@
+.notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f98524; // couleur d'avertissement
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+  font-weight: 500;
+  animation: slideDown 0.3s ease-out;
+}
+@keyframes slideDown {
+  from { transform: translate(-50%, -50px); opacity: 0; }
+  to { transform: translateX(-50%); opacity: 1; }
+}
