@@ -10,6 +10,7 @@ interface NavPage {
   route: string;
   icon: string;
   subPages?: NavPage[];
+  queryParams?: Record<string, string>;
 }
 
 interface LegalLink {
@@ -80,7 +81,7 @@ export class NavigationBar implements OnDestroy {
     }
 
     // Si on est sur la page de liste des photographes
-    if (currentUrl.startsWith('/photographers')) {
+    if (this.roleService.getRole() === 'admin') {
       this.pages = [
         {
           label: 'Liste des photographes',
@@ -89,19 +90,33 @@ export class NavigationBar implements OnDestroy {
         }
       ];
 
-      // Si on est sur la page des factures d'un photographe
-      const invoiceMatch = currentUrl.match(/\/photographers\/(\d+)\/invoices/);
-      if (invoiceMatch) {
+      // Si on est sur la page profil ou factures d'un photographe
+      const invoiceMatch = currentUrl.match(/\/photographer\/(\d+)\/invoices/);
+      const profileMatch = currentUrl.match(/\/photographer\/(\d+)/);
+      const photographerId = invoiceMatch?.[1] ?? profileMatch?.[1] ?? null;
+
+      if (photographerId) {
         const photographerName = new URLSearchParams(window.location.search).get('name') || 'Photographe';
+        const profileRoute = `/photographer/${photographerId}`;
+        const invoicesRoute = `/photographer/${photographerId}/invoices`;
+        const queryParams = photographerName ? { name: photographerName } : undefined;
+
         this.pages.push({
           label: photographerName,
           route: '',
           icon: 'assets/images/photographer_icon.svg',
           subPages: [
             {
+              label: 'Profil',
+              route: profileRoute,
+              icon: 'assets/images/profile_info_icon.svg',
+              queryParams
+            },
+            {
               label: 'Historique des factures',
-              route: currentUrlWithoutParams,
-              icon: 'assets/images/histofacture_icon.svg'
+              route: invoicesRoute,
+              icon: 'assets/images/histofacture_icon.svg',
+              queryParams
             }
           ]
         });

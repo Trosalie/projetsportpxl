@@ -19,6 +19,6 @@ export class ClientService {
   }
 
   getPhotographer(id: string|null): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/photographer/${id}`);
+    return this.http.get(`${environment.apiUrl}/photographer/${id}`, this.headersService.getAuthHeaders());
   }
 }

@@ -26,6 +26,7 @@ export class ProfileInformation
   protected postal_code: string = '';
   protected country: string = '';
   protected numberSell: number = 0;
+  protected isLoading: boolean = true;
   findPhotographer: boolean = false;
   photographerId: string | null = null;
 
@@ -61,15 +62,18 @@ export class ProfileInformation
             this.locality = data.locality;
             this.country = data.country;
             this.loadTurnover();
+            this.isLoading = false;
           }
           else
           {
             this.findPhotographer = false;
+            this.isLoading = false;
           }
         },
         error: (err) => {
           console.error('Error fetch photographer :', err);
           this.findPhotographer = false;
+          this.isLoading = false;
         }
       }
     )

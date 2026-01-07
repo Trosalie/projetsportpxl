@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Photographer;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Request;
 use App\Services\PennylaneService;
 use App\Services\MailService;
 use Illuminate\Support\Facades\DB;

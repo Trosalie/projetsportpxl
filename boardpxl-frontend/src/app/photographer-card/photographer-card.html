@@ -1,6 +1,6 @@
 <div class="card">
     <div>
-        <a [routerLink]="['/photographers', photographer.id, 'invoices']" 
+        <a [routerLink]="['/photographer', photographer.id]" 
            [queryParams]="{name: photographer.name}">
             <p>Photographer : {{ photographer.name }}</p>
         </a> 

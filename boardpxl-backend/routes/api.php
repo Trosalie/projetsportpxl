@@ -33,17 +33,6 @@ Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 // Routes de vérification d'email
 Route::get('/email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
-// Création d'une facture
-Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
-
-// Création d'une facture de versement de CA
-Route::post('/create-turnover-invoice-client', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
-
-// Insertion d'une facture de versement de CA
-Route::post('/insert-turnover-invoice', [InvoiceController::class, 'insertTurnoverInvoice']);
-
-// Insertion d'une facture de crédits
-Route::post('/insert-credits-invoice', [InvoiceController::class, 'insertCreditsInvoice']);
 
 // Tester récupération globale
 Route::get('/test', [PennylaneController::class, 'getInvoices']);
@@ -73,6 +62,20 @@ Route::get('/invoices-payment/{photographer_id}', [InvoiceController::class, 'ge
 
 // Récupérer les factures de crédit d’un photographe
 Route::get('/invoices-credit/{photographer_id}', [InvoiceController::class, 'getInvoicesCreditByPhotographer']);
+
+// Création d'une facture
+Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
+
+// Création d'une facture de versement de CA
+Route::post('/create-turnover-invoice-client', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
+
+// Insertion d'une facture de versement de CA
+Route::post('/insert-turnover-invoice', [InvoiceController::class, 'insertTurnoverInvoice']);
+
+// Insertion d'une facture de crédits
+Route::post('/insert-credits-invoice', [InvoiceController::class, 'insertCreditsInvoice']);
+
+
 // Récupérer la liste des clients
 Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
 
