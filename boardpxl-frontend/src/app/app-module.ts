@@ -32,6 +32,7 @@ import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
+import { Logs } from './logs/logs';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -57,7 +58,8 @@ registerLocaleData(localeFr);
     Popup,
     TurnoverPaymentForm,
     MailsLog,
-    AdminPhotographerInvoiceList
+    AdminPhotographerInvoiceList,
+    Logs
   ],
   imports: [
     BrowserModule,

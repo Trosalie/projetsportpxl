@@ -80,12 +80,17 @@ export class NavigationBar implements OnDestroy {
     }
 
     // Si on est sur la page de liste des photographes
-    if (currentUrl.startsWith('/photographers')) {
+    if (this.roleService.getRole() === 'admin') {
       this.pages = [
         {
           label: 'Liste des photographes',
           route: '/photographers',
           icon: 'assets/images/liste_icon.svg'
+        },
+        {
+          label: 'Logs',
+          route: '/logs',
+          icon: 'assets/images/logs_icon.svg'
         }
       ];
 

@@ -19,6 +19,8 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 
+use App\Http\Controllers\LogsController;
+
 /*
 |--------------------------------------------------------------------------
 | Routes publiques (sans authentification)
@@ -103,5 +105,6 @@ Route::get('/mail-logs/{sender_id}', [MailController::class, 'getLogs']);
 // Récupérer tous les clients
 Route::get('/photographers', [PhotographerController::class, 'getPhotographers']);
 
+// Logs
+Route::get('/logs', [LogsController::class, 'getLogs']);
 });
-

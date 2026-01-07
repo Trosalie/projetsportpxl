@@ -109,19 +109,8 @@ class MailController extends Controller
 
             // Récupérer les logs de mails depuis la base de données via l'id du photographe validé
             $logs = MailLogs::where('sender_id', $validated['sender_id'])->get();
-            
-            $this->logService->logAction($request, 'get_mail_logs', 'MAIL_LOGS', [
-                'sender_id' => $validated['sender_id'],
-                'count' => $logs->count(),
-            ]);
-            
             return response()->json($logs);
         } catch (\Exception $e) {
-            $this->logService->logAction($request, 'get_mail_logs_failed', 'MAIL_LOGS', [
-                'sender_id' => $sender_id,
-                'error' => $e->getMessage(),
-            ]);
-            
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to retrieve logs: ' . $e->getMessage()
