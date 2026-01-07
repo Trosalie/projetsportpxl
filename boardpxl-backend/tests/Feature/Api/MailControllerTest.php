@@ -12,11 +12,6 @@ class MailControllerTest extends TestCase
 {
     use WithoutMiddleware;
 
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
     // Ce test vérifie l'envoi réussi d'un email.
     // Il simule une requête POST avec les détails de l'email et s'attend à une confirmation de succès.
     public function test_send_email_success()
