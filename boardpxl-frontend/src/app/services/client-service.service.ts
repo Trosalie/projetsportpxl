@@ -18,7 +18,7 @@ export class ClientService {
     return this.http.get(`${environment.apiUrl}/list-clients`);
   }
 
-  getPhotographerByEmail(email: string): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/photographer/${email}`);
+  getPhotographer(id: string|null): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/photographer/${id}`);
   }
 }

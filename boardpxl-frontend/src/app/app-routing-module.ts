@@ -16,7 +16,7 @@ const routes: Routes = [
   { path: 'request/success', component: AutomaticResponse, canMatch: [photographGuard]},
   { path: 'request/failure', component: AutomaticResponse, canMatch: [photographGuard]},
   { path: 'form/credits', component: CreditPurchaseForm, canMatch: [adminGuard]},
-  { path: 'redirect/profile', component: ProfileInformation, canMatch: [photographGuard]}
+  { path: 'photographer/:id', component: ProfileInformation, canMatch: [adminGuard]}
 ];
 
 @NgModule({
