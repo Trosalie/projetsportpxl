@@ -33,6 +33,7 @@ import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
+import { TestGraph } from './test-graph/test-graph';
 registerLocaleData(localeFr);
 
 @NgModule({

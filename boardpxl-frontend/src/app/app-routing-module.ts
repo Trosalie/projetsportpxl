@@ -12,6 +12,7 @@ import {ProfileInformation} from './profile-information/profile-information';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
+import { TestGraph } from './test-graph/test-graph';
 
 const routes: Routes = [
   { path: 'login', component: LoginPage },
@@ -26,6 +27,7 @@ const routes: Routes = [
   { path: 'form/credits', component: CreditPurchaseForm, canActivate: [adminGuard]},
   { path: 'form/payout', component: TurnoverPaymentForm, canActivate: [adminGuard]},
   { path: 'photographer/:id', component: ProfileInformation, canMatch: [adminGuard]},
+  { path: 'graph', component: TestGraph, canActivate: [adminGuard]},
   { path: '**', redirectTo: '' },
 ];
 
