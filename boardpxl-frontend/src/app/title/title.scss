@@ -2,6 +2,10 @@ div {
     margin: 13px;
     display: flex;
     height: auto;
+
+    @media (max-width: 768px) {
+        display: none;
+    }
 }
 
 div p {

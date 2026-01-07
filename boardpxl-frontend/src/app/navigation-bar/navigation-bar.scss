@@ -15,6 +15,28 @@ nav {
         left: 0;
     }
 
+    @media (max-width: 768px) {
+        top: 0;
+        height: 100vh;
+        z-index: 1001;
+    }
+
+    .nav-logo-mobile {
+        display: none;
+        
+        @media (max-width: 768px) {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            width: 100%;
+            
+            .logo {
+                height: 32px;
+                width: auto;
+            }
+        }
+    }
+
     ul {
         list-style: none;
         padding: 20px;

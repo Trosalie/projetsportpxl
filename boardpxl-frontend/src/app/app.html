@@ -1,5 +1,6 @@
-<app-header (navBarToggled)="navigationBar.onNavbarToggled()"></app-header>
+<app-header (navBarToggled)="navigationBar.onNavbarToggled()" [isNavOpen]="navigationBar.isOpen"></app-header>
 <app-navigation-bar #navigationBar [isOpen]="navigationBar.isOpen"></app-navigation-bar>
+<div class="nav-overlay" [class.active]="navigationBar.isOpen" (click)="navigationBar.closeNav()"></div>
 <div class="main-content" [class.nav-open]="navigationBar.isOpen">
   <router-outlet></router-outlet>
 </div>

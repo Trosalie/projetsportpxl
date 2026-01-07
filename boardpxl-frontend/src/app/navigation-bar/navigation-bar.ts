@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { AuthService } from '../services/auth-service';
 import { Router, NavigationEnd } from '@angular/router';
 import { RoleService } from '../services/role.service';
@@ -25,6 +25,7 @@ interface LegalLink {
 })
 export class NavigationBar implements OnDestroy {
   @Input() isOpen: boolean = false;
+  @Output() isOpenChange = new EventEmitter<boolean>();
   pages: NavPage[] = [];
   legalLinks: LegalLink[] = [];
   private destroy$ = new Subject<void>();
@@ -111,6 +112,12 @@ export class NavigationBar implements OnDestroy {
 
   onNavbarToggled() {
     this.isOpen = !this.isOpen;
+    this.isOpenChange.emit(this.isOpen);
+  }
+
+  closeNav() {
+    this.isOpen = false;
+    this.isOpenChange.emit(this.isOpen);
   }
 
   ngOnDestroy() {

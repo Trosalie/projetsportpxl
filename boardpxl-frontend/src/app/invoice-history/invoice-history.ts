@@ -29,12 +29,11 @@ export class InvoiceHistory implements OnDestroy {
 
   ngOnInit() {
     requestAnimationFrame(() => {
-      const el = document.querySelector('.invoice-list') as HTMLElement | null;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const y = rect.top + window.scrollY;
-      el.style.height = `calc(100vh - ${y}px - 10px)`;
+      this.adjustHeight();
     });
+
+    // Écouter les changements de taille d'écran
+    window.addEventListener('resize', this.adjustHeight.bind(this));
 
     this.invoiceService.getInvoicesByClient(this.user)
       .pipe(takeUntil(this.destroy$))
@@ -144,7 +143,25 @@ export class InvoiceHistory implements OnDestroy {
     });
   }
 
+  private adjustHeight() {
+    const el = document.querySelector('.invoice-list') as HTMLElement | null;
+    if (!el) return;
+
+    if (window.innerWidth > 768) {
+      // Desktop: hauteur calculée
+      const rect = el.getBoundingClientRect();
+      const y = rect.top + window.scrollY;
+      el.style.height = `calc(100vh - ${y}px - 10px)`;
+      el.style.maxHeight = 'none';
+    } else {
+      // Mobile: hauteur auto avec max-height
+      el.style.height = 'auto';
+      el.style.maxHeight = '60vh';
+    }
+  }
+
   ngOnDestroy(): void {
+    window.removeEventListener('resize', this.adjustHeight.bind(this));
     this.destroy$.next();
     this.destroy$.complete();
   }
