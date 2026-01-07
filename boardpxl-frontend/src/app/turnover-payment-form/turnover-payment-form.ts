@@ -48,6 +48,7 @@ export class TurnoverPaymentForm implements OnDestroy {
                 this.clientId = data.client_id;
                 this.findClient = true;
                 this.photographerInput = this.clientName;
+                console.log("Client trouvé :", data);
               } else {
                 // Client non trouvé
                 this.findClient = false;

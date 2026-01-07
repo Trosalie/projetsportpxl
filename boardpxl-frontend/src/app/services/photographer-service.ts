@@ -39,6 +39,6 @@ export class PhotographerService {
   }
 
   getPhotographerIdByName(name: string): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/photographer-id?name=${encodeURIComponent(name)}`, this.headersService.getAuthHeaders());
+    return this.http.get(`${environment.apiUrl}/photographer-id/${encodeURIComponent(name)}`, this.headersService.getAuthHeaders());
   }
 }

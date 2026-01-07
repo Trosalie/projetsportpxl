@@ -31,6 +31,8 @@ class InvoiceController extends Controller
             'pdf_invoice_subject'=> 'required|string',
         ]);
 
+        
+
         // Insertion directe dans la base de données
         DB::table('invoice_payments')->insert([
             'id' => $validated['id'],
