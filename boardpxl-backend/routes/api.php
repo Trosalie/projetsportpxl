@@ -11,7 +11,6 @@ use App\Http\Controllers\PennyLaneController;
 use App\Http\Controllers\MailController;
 use App\Models\Photographer;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Controllers\PhotographerController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
