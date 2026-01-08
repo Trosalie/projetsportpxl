@@ -6,6 +6,7 @@
     border-radius: 20px;
     width: calc(100% - 170px);
     padding-top: 5px;
+    padding-bottom: 40px;
 
     h1 {
         font-size: 24px;
@@ -34,6 +35,12 @@
         width: 100px;
         height: 100px;
     }
+
+    @media (max-width: 768px) {
+        margin-left: 13px;
+        margin-right: 13px;
+        width: calc(100% - 26px);
+    }
 }
 
 .buttons {
@@ -41,7 +48,7 @@
     justify-content: center;
     gap: 40px;
     margin-top: 60px;
-    margin-bottom: 40px;
+    margin-bottom: 0;
 }
 
 button {
