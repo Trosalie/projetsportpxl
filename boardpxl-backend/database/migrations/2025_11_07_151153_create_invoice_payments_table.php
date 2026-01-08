@@ -22,8 +22,8 @@ class CreateInvoicePaymentsTable extends Migration
             $table->string('description');
             $table->decimal('raw_value', 12, 2);
             $table->decimal('commission', 9, 2);
-            $table->decimal('tax', 5, 2);
-            $table->decimal('vat', 9, 2);
+            $table->decimal('tax', 9, 2);
+            $table->decimal('vat', 5, 2);
             $table->date('start_period');
             $table->date('end_period');
             $table->string('link_pdf');

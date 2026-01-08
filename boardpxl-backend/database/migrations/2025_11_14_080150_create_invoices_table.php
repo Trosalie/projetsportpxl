@@ -19,8 +19,8 @@ class CreateInvoicesTable extends Migration
             $table->date('issue_date');
             $table->date('due_date');
             $table->string('description');
-            $table->decimal('tax', 5, 2);
-            $table->decimal('vat', 9, 2);
+            $table->decimal('tax', 9, 2);
+            $table->decimal('vat', 5, 2);
             $table->string('link_pdf');
             $table->morphs('invoiceable');
             $table->foreignId('photographer_id')->constrained()->onDelete('cascade');

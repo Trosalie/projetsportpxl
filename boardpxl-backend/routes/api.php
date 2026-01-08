@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PhotographerController;
 use App\Http\Controllers\InvoiceController;
 use App\Services\PennyLaneService;
 use App\Services\MailService;
@@ -10,7 +11,6 @@ use App\Http\Controllers\PennyLaneController;
 use App\Http\Controllers\MailController;
 use App\Models\Photographer;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Controllers\PhotographerController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -18,6 +18,8 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
+
+use App\Http\Controllers\LogsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,17 +35,6 @@ Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 // Routes de vérification d'email
 Route::get('/email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
-// Création d'une facture
-Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
-
-// Création d'une facture de versement de CA
-Route::post('/create-turnover-invoice-client', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
-
-// Insertion d'une facture de versement de CA
-Route::post('/insert-turnover-invoice', [InvoiceController::class, 'insertTurnoverInvoice']);
-
-// Insertion d'une facture de crédits
-Route::post('/insert-credits-invoice', [InvoiceController::class, 'insertCreditsInvoice']);
 
 //Récupérer les informations finaciere d'une facture de crédit
 Route::get('/invoice-credits-financial-info', [InvoiceController::class, 'getFinancialInfoCreditsInvoice']);
@@ -81,6 +72,20 @@ Route::get('/invoices-payment/{photographer_id}', [InvoiceController::class, 'ge
 
 // Récupérer les factures de crédit d’un photographe
 Route::get('/invoices-credit/{photographer_id}', [InvoiceController::class, 'getInvoicesCreditByPhotographer']);
+
+// Création d'une facture
+Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
+
+// Création d'une facture de versement de CA
+Route::post('/create-turnover-invoice-client', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
+
+// Insertion d'une facture de versement de CA
+Route::post('/insert-turnover-invoice', [InvoiceController::class, 'insertTurnoverInvoice']);
+
+// Insertion d'une facture de crédits
+Route::post('/insert-credits-invoice', [InvoiceController::class, 'insertCreditsInvoice']);
+
+
 // Récupérer la liste des clients
 Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
 
@@ -106,8 +111,14 @@ Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']
 // Routes Mail
 Route::post('/send-email', [MailController::class, 'sendEmail']);
 Route::get('/test-mail', [MailController::class, 'testMail']);
+Route::get('/mail-logs/{sender_id}', [MailController::class, 'getLogs']);
 
 // Récupérer tous les clients
 Route::get('/photographers', [PhotographerController::class, 'getPhotographers']);
 
+//un client
+Route::get('photographer/{id}', [PhotographerController::class, 'getPhotographer']);
+
+// Logs
+Route::get('/logs', [LogsController::class, 'getLogs']);
 });

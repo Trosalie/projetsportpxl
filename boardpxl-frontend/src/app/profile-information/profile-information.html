@@ -1,0 +1,91 @@
+<section class="profile">
+  <app-title [title]="name" [icon]="''"></app-title>
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement du profil...</p>
+  </div>
+  <div class="profile_layout" *ngIf="!isLoading">
+    <section class="card info-card">
+      <h2 class="card_title">Informations générales</h2>
+      <div class="info-card_content">
+        <div class="identity">
+          <div class="identity_name">{{ family_name || name }} {{ given_name }}</div>
+          <div class="identity_email" *ngIf="email">{{ email }}</div>
+        </div>
+        <div class="info-row">
+          <span class="info-row_label">Nom</span>
+          <span class="info-row_value">{{ family_name || name }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row_label">Prénom</span>
+          <span class="info-row_value">{{ given_name }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row_label">email</span>
+          <span class="info-row_value">{{ email }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row_label">Nombre de ventes totales</span>
+          <span class="info-row_value">{{ numberSell || '—' }} ventes</span>
+        </div>
+
+        <div class="address-card">
+          <div class="address-card_item">
+            <span class="info-row_label">Adresse</span>
+            <span class="info-row_value">{{ street_address }}</span>
+          </div>
+          <div class="address-card_item">
+            <span class="info-row_label">Ville</span>
+            <span class="info-row_value">{{ locality }}</span>
+          </div>
+          <div class="address-card_item">
+            <span class="info-row_label">Code postal</span>
+            <span class="info-row_value">{{ postal_code }}</span>
+          </div>
+          <div class="address-card_item">
+            <span class="info-row_label">Pays</span>
+            <span class="info-row_value">{{ country }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card metrics-card">
+      <div class="metrics">
+        <div class="metric metric--turnover">
+          <div class="metric_label">Chiffre d'affaire</div>
+          <div class="metric_value">{{ turnover }} €</div>
+        </div>
+        <div class="metric metric--credits">
+          <div class="metric_label">Crédits restants</div>
+          <div class="metric_value">{{ remainingCredits }}</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card_header">
+          <div class="chart-card_title">Filtres</div>
+          <button class="chart-card_toggle" type="button" aria-label="Ouvrir les filtres">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+        <div class="chips">
+          <button class="chip" type="button">
+            <span class="chip_close">×</span>
+            <span>Chiffre d'affaire</span>
+          </button>
+          <button class="chip" type="button">
+            <span class="chip_close">×</span>
+            <span>Total crédit</span>
+          </button>
+        </div>
+        <div class="chart-placeholder" aria-hidden="true">
+          <div class="chart-placeholder_grid"></div>
+          <div class="chart-placeholder_lines"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>

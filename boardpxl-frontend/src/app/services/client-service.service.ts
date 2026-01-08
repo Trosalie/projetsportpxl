@@ -13,4 +13,8 @@ export class ClientService {
   getClients(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/list-clients`, this.headersService.getAuthHeaders());
   }
+
+  getPhotographer(id: string|null): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/photographer/${id}`, this.headersService.getAuthHeaders());
+  }
 }

@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Ramsey\Collection\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
@@ -53,5 +56,18 @@ class Photographer extends Authenticatable
     public function invoicesPayment()
     {
         return $this->hasMany(InvoicePayment::class);
+    }
+
+    public function mailLogs()
+    {
+        return $this->hasMany(MailLogs::class, 'sender_id');
+    }
+
+    public function findProfilData(string $email)
+    {
+        return DB::table('photographers')
+            ->select('email', 'family_name', 'given_name', 'name', 'nb_imported_photos', 'total_limit', 'street_address', 'postal_code', 'locality', 'country')
+            ->where('email', $email)
+            ->first();
     }
 }

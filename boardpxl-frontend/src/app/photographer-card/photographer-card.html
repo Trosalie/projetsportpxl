@@ -1,7 +1,9 @@
 <div class="card">
     <div>
-        <!-- routerLink a changer quand on aura la page profil -->
-        <a routerLink="/photographers" ><p>Photographer : {{ photographer.name }}</p></a> 
+        <a [routerLink]="['/photographer', photographer.id]" 
+           [queryParams]="{name: photographer.name}">
+            <p>Photographer : {{ photographer.name }}</p>
+        </a> 
         <p *ngIf="photographer.email">Email : {{ photographer.email }}</p>
         <p *ngIf="!photographer.email">Pas d'email</p>
     </div>

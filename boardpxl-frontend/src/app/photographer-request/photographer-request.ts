@@ -129,21 +129,30 @@ Cordialement,
     let to = 'boardpxl@placeholder.com'; // remplacer par l'email de SportPXL
     let from = this.authService.getUser()?.email || ''; // remplacer par l'email du photographe connecté
     let subject = `[BoardPXL]`;
+    let type = '';
     if (this.requestType === 'versement') {
       subject += ' Demande de versement de chiffre d\'affaires';
+      type = 'versement';
     } else if (this.requestType === 'crédits') {
       subject += ' Demande d\'ajout de crédits';
+      type = 'crédits';
     }
 
     this.isSending = true;
-    this.mailService.sendMail(to, from, subject, body).subscribe({
+    this.mailService.sendMail(to, from, subject, body, type).subscribe({
       next: (response) => {
+        console.log('Mail envoyé avec succès:', response);
         this.isSending = false;
         window.location.assign('/request/success');
       },
       error: (error) => {
+        console.error('Erreur lors de l\'envoi du mail:', error);
+        console.error('Détails de l\'erreur:', error.error);
         this.isSending = false;
-        window.location.assign('/request/failure');
+        // Attendre 3 secondes avant de rediriger pour que l'utilisateur voie le message
+        setTimeout(() => {
+          window.location.assign('/request/failure');
+        }, 3000);
       }
     });
 
