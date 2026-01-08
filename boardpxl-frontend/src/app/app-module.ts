@@ -15,6 +15,7 @@ import { PhotographerRequest } from './photographer-request/photographer-request
 import { AutomaticResponse } from './automatic-response/automatic-response';
 import { MailRequestPage } from './mail-request-page/mail-request-page';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 
 import { LOCALE_ID } from '@angular/core';
@@ -33,7 +34,9 @@ import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
-import { TestGraph } from './test-graph/test-graph';
+
+
+import { GeneralGraph } from './general-graph/general-graph';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -61,13 +64,15 @@ registerLocaleData(localeFr);
     Popup,
     TurnoverPaymentForm,
     MailsLog,
-    AdminPhotographerInvoiceList
+    AdminPhotographerInvoiceList,
+    GeneralGraph
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    CommonModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

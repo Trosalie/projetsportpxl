@@ -147,4 +147,34 @@ class InvoiceController extends Controller
             ], 500);
         }
     }
+
+
+    public function getFinancialInfoCreditsInvoice(){
+        try {
+            $invoices = DB::table('invoice_credits')
+                ->select('id','issue_date', 'amount', 'credits')
+                ->get();
+            return response()->json($invoices);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getFinancialInfoTurnoverInvoice(){
+        try {
+            $invoices = DB::table('invoice_payments')
+                ->select('id','issue_date', 'raw_value', 'commission')
+                ->get();
+            return response()->json($invoices);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }

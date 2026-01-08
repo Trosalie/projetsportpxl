@@ -73,6 +73,13 @@ Route::get('/invoices-payment/{photographer_id}', [InvoiceController::class, 'ge
 
 // Récupérer les factures de crédit d’un photographe
 Route::get('/invoices-credit/{photographer_id}', [InvoiceController::class, 'getInvoicesCreditByPhotographer']);
+
+//Récupérer les informations finaciere d'une facture de crédit
+Route::get('/invoice-credits-financial-info', [InvoiceController::class, 'getFinancialInfoCreditsInvoice']);
+
+//Récupérer les informations finaciere d'une facture de versement de CA
+Route::get('/invoice-turnover-financial-info', [InvoiceController::class, 'getFinancialInfoTurnoverInvoice']);
+
 // Récupérer la liste des clients
 Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
 

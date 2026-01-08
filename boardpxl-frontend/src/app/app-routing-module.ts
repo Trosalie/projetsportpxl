@@ -13,6 +13,7 @@ import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-fo
 import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
 import { TestGraph } from './test-graph/test-graph';
+import { GeneralGraph } from './general-graph/general-graph';
 
 const routes: Routes = [
   { path: 'login', component: LoginPage },
@@ -28,6 +29,7 @@ const routes: Routes = [
   { path: 'form/payout', component: TurnoverPaymentForm, canActivate: [adminGuard]},
   { path: 'photographer/:id', component: ProfileInformation, canMatch: [adminGuard]},
   { path: 'graph', component: TestGraph, canActivate: [adminGuard]},
+  {path: 'general-graph', component: GeneralGraph, canActivate: [adminGuard]},
   { path: '**', redirectTo: '' },
 ];
 
