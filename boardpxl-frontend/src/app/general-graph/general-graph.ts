@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
 import { InvoiceService } from '../services/invoice-service';
 import { ChartData, ChartOptions } from 'chart.js'
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 Chart.register(...registerables);
 
@@ -11,6 +11,55 @@ Chart.register(...registerables);
   styleUrl: './general-graph.scss',
 })
 export class GeneralGraph implements OnInit {
+    @ViewChild('lineChartCanvas') lineChartCanvas!: ElementRef<HTMLCanvasElement>;
+    lineChart: Chart | null = null;
+
+    lineChartConfig: ChartConfiguration = {
+        type: 'line',
+        data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [
+            {
+            label: 'Sales 2024',
+            data: [30, 59, 80, 81, 56, 55, 40, 70, 85, 92, 88, 95],
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true,
+            borderWidth: 2
+            },
+            {
+            label: 'Sales 2025',
+            data: [40, 65, 90, 95, 70, 75, 60, 85, 100, 110, 105, 120],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true,
+            borderWidth: 2
+            }
+        ]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+            display: true,
+            position: 'top' as const
+            },
+            title: {
+            display: false
+            }
+        },
+        scales: {
+            y: {
+            beginAtZero: true,
+            max: 150
+            }
+        }
+        }
+    };
+
 
     creditsFinancialInfo: any = null;
     turnoverFinancialInfo: any = null;
@@ -26,38 +75,7 @@ export class GeneralGraph implements OnInit {
     caParMois: { [month: string]: number } = {};
     commissionParMois: { [month: string]: number } = {};
 
-    chartData: ChartData<'line'> = {
-        labels: [],
-        datasets: []
-    };
-
-    chartOptions: ChartOptions<'line'> = {
-        responsive: true,
-        plugins: {
-            legend: {
-                display: true,
-                position: 'top',
-            },
-            title: {
-                display: true,
-                text: 'Évolution Mensuelle des Commissions et Argent Crédits'
-            }
-        },
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    text: 'Mois'
-                }
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: 'Valeur (€)'
-                }
-            }
-        }
-    };
+    
 
     constructor(private invoiceService: InvoiceService) {}
 
@@ -65,6 +83,17 @@ export class GeneralGraph implements OnInit {
         this.loadFinancialData();
     }
 
+    ngAfterViewInit(): void {
+        if (!this.loading && !this.error) {
+            this.initializeCharts();
+        }
+    }
+
+    private initializeCharts(): void {
+        if (this.lineChartCanvas) {
+            this.lineChart = new Chart(this.lineChartCanvas.nativeElement, this.lineChartConfig);
+        }
+    }
 
     loadFinancialData(): void {
         this.loading = true;
@@ -101,8 +130,12 @@ export class GeneralGraph implements OnInit {
 
     checkLoadingDone(): void {
         if (this.creditsFinancialInfo && this.turnoverFinancialInfo) {
-        this.loading = false;
-        this.computeMetrics(); // calcul des métriques une fois les données prêtes
+            this.loading = false;
+            this.computeMetrics();
+
+            setTimeout(() => {
+            this.initializeCharts();
+            });
         }
     }
 
@@ -133,7 +166,8 @@ export class GeneralGraph implements OnInit {
         console.log('Total Commission:', this.totalCommission);
 
         // Calcul des données mensuelles
-        this.computeMonthlyData();
+        //this.computeMonthlyData();
+  
     }
 
 
@@ -162,50 +196,6 @@ export class GeneralGraph implements OnInit {
         });
 
         return grouped;
-    }
-
-    computeMonthlyData(): void {
-        // Calcul de l'argent des crédits par mois
-        this.caParMois = this.groupByMonth(this.creditsFinancialInfo || [], 'amount');
-
-        // Calcul des commissions par mois
-        this.commissionParMois = this.groupByMonth(this.turnoverFinancialInfo || [], 'commission');
-
-        console.log('Argent Crédits par mois:', this.caParMois);
-        console.log('Commission par mois:', this.commissionParMois);
-
-        // Générer les données du graphique
-        this.generateChartData();
-    }
-
-    generateChartData(): void {
-        // Collecter tous les mois uniques
-        const allMonths = new Set([
-            ...Object.keys(this.caParMois),
-            ...Object.keys(this.commissionParMois)
-        ]);
-
-        const sortedMonths = Array.from(allMonths).sort();
-
-        this.chartData = {
-            labels: sortedMonths,
-            datasets: [
-                {
-                    label: 'Argent Crédits (par mois)',
-                    data: sortedMonths.map(month => this.caParMois[month] || 0),
-                    borderColor: 'orange',
-                    backgroundColor: 'rgba(255, 165, 0, 0.1)',
-                    tension: 0.1
-                },
-                {
-                    label: 'Commission (par mois)',
-                    data: sortedMonths.map(month => this.commissionParMois[month] || 0),
-                    borderColor: 'green',
-                    backgroundColor: 'rgba(0, 128, 0, 0.1)',
-                    tension: 0.1
-                }
-            ]
-        };
     }
 
 

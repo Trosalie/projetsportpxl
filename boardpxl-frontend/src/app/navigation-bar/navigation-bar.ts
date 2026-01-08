@@ -33,7 +33,7 @@ export class NavigationBar implements OnDestroy {
 
   ngOnInit() {
     this.updateNavigation();
-
+    
     // Écouter les changements de route
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
@@ -86,8 +86,13 @@ export class NavigationBar implements OnDestroy {
           label: 'Liste des photographes',
           route: '/photographers',
           icon: 'assets/images/liste_icon.svg'
-        }
-      ];
+        },
+        {
+        label: 'Graphique général',
+        route: '/general-graph',
+        icon: 'assets/images/graphic_icon.svg'
+      }
+    ];
 
       // Si on est sur la page des factures d'un photographe
       const invoiceMatch = currentUrl.match(/\/photographers\/(\d+)\/invoices/);
