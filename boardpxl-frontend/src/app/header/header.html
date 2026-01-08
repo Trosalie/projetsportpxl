@@ -1,7 +1,7 @@
 <header *ngIf="!isLoginPage()">
 <nav>
    <div>
-      <a routerLink="/" class="logo-link" aria-label="Home">
+      <a [routerLink]="homeRoute" class="logo-link" aria-label="Home">
          <img src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" alt="App Logo" class="logo">
       </a>
       <button class="menu-button" aria-label="Menu" (click)="toggleNavBar()">

@@ -17,6 +17,7 @@ import { takeUntil } from 'rxjs/operators';
 export class InvoiceHistory implements OnDestroy {
   protected invoices: any[] = [];
   protected filteredInvoices: any[] = [];
+  protected isLoading: boolean = true;
   @Input() user!: string;
   private destroy$ = new Subject<void>();
 
@@ -82,6 +83,7 @@ export class InvoiceHistory implements OnDestroy {
         this.invoices = this.invoices.filter(invoice => invoice instanceof InvoiceCredit || invoice instanceof InvoicePayment );
         this.filteredInvoices = this.invoices;
       }
+      this.isLoading = false;
     });
   }
 

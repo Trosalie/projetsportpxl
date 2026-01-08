@@ -28,8 +28,12 @@ import { PhotographerCard } from './photographer-card/photographer-card';
 import { SearchBar } from './search-bar/search-bar';
 import { Pagination } from './pagination/pagination';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
+import {ProfileInformation} from './profile-information/profile-information';
 import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
+import { MailsLog } from './mails-log/mails-log';
+import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
+import { Logs } from './logs/logs';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -44,6 +48,8 @@ registerLocaleData(localeFr);
     PhotographerRequest,
     AutomaticResponse,
     MailRequestPage,
+    CreditPurchaseForm,
+    ProfileInformation,
     InvoiceFilter,
     LoginPage,
     NavigationBar,
@@ -53,7 +59,10 @@ registerLocaleData(localeFr);
     Pagination,
     CreditPurchaseForm,
     Popup,
-    TurnoverPaymentForm
+    TurnoverPaymentForm,
+    MailsLog,
+    AdminPhotographerInvoiceList,
+    Logs
   ],
   imports: [
     BrowserModule,

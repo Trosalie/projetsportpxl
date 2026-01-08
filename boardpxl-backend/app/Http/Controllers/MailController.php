@@ -5,9 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\MailService;
 use Illuminate\Support\Facades\Mail;
+use App\Models\MailLogs;
+use App\Services\LogService;
 
 class MailController extends Controller
 {
+    private LogService $logService;
+
+    public function __construct(LogService $logService)
+    {
+        $this->logService = $logService;
+    }
+
+
     /**
      * Envoi de mail via MailService
      */
@@ -18,6 +28,7 @@ class MailController extends Controller
             'from' => 'required|email',
             'subject' => 'required|string|max:255',
             'body' => 'required|string|max:10000',
+            'type' => 'nullable|string|max:100',
         ]);
 
         try {
@@ -28,12 +39,41 @@ class MailController extends Controller
                 $validated['body']
             );
 
+            MailLogs::create([
+                'sender_id' => auth()->id(), 
+                'recipient' => $validated['to'],
+                'subject' => $validated['subject'],
+                'body' => $validated['body'],
+                'status' => 'sent',
+                'type' => $validated['type'] ?? 'generic'
+            ]);
+
+            $this->logService->logAction($request, 'send_email', 'MAIL_LOGS', [
+                'to' => $validated['to'],
+                'subject' => $validated['subject'],
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Email sent successfully.'
             ]);
 
         } catch (\Exception $e) {
+            MailLogs::create([
+                'sender_id' => auth()->id(), 
+                'recipient' => $validated['to'],
+                'subject' => $validated['subject'],
+                'body' => $validated['body'],
+                'status' => 'failed',
+                'type' => $validated['type'] ?? 'generic'
+            ]);
+
+            $this->logService->logAction($request, 'send_email_failed', 'MAIL_LOGS', [
+                'to' => $validated['to'],
+                'subject' => $validated['subject'],
+                'error' => $e->getMessage(),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to send email: ' . $e->getMessage()
@@ -56,5 +96,25 @@ class MailController extends Controller
         }
 
         return response()->json(['message' => 'Mail envoyé (si tout va bien) !']);
+    }
+
+    public function getLogs(Request $request, $sender_id)
+    {
+        try {
+            // Valider l'ID du photographe passé en paramètre
+            $validated = validator(
+                ['sender_id' => $sender_id],
+                ['sender_id' => 'required|integer|exists:photographers,id']
+            )->validate();
+
+            // Récupérer les logs de mails depuis la base de données via l'id du photographe validé
+            $logs = MailLogs::where('sender_id', $validated['sender_id'])->get();
+            return response()->json($logs);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve logs: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

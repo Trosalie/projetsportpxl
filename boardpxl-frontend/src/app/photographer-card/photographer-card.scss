@@ -1,24 +1,48 @@
-div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 .card {
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 16px;
     margin: 8px;
-    gap: 5px;
-    justify-content: space-between;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(200px, 1fr));
+    column-gap: 16px;
+    row-gap: 8px;
+    align-items: start;
 
-    :first-child{
-        align-items: flex-start;
+    > div {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    > div:not(:first-child) {
+        align-items: center;
+        text-align: center;
+    }
+
+    a {
+        text-decoration: none;
+        color: #000000;
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        p {
+            margin: 0;
+        }
     }
 }
 
+.status {
+    text-align: center;
+}
+
 .statuts{
+    display: flex;
     flex-direction: row;
     gap: 8px;
 
@@ -48,6 +72,7 @@ div {
 }
 
 .value-button-pair {
+    display: flex;
     flex-direction: row;
     align-items: center;
     gap: 4px;
@@ -88,6 +113,48 @@ button {
         background-color: rgba(64, 177, 85, .4);
         border-color: #2E9040;
     }
+}
+
+.mini-spinner {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    min-height: 16px !important;
+    max-width: 16px !important;
+    max-height: 16px !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-top: 2px solid currentColor !important;
+    border-radius: 50% !important;
+    animation: spin 1s linear infinite !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+}
+
+.loading-tag {
+    display: inline-block !important;
+    margin: 0 !important;
+    padding: 8px 12px !important;
+    vertical-align: baseline !important;
+    line-height: 1 !important;
+}
+
+.loading-status-count {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: rgba(128, 128, 128, 0.1) !important;
+    border: 2px solid rgba(128, 128, 128, 0.3) !important;
+    border-radius: 50% !important;
+    color: #666 !important;
+    width: 24px !important;
+    height: 24px !important;
+    margin: 0 !important;
+    vertical-align: middle !important;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 a {
