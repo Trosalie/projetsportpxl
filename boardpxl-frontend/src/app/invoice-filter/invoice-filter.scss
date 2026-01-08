@@ -3,6 +3,7 @@
   align-items: center;
   gap: 12px;
   position: relative;
+  padding: 2px 0;
 }
 
 .filter-label {
@@ -18,10 +19,21 @@
 .filter-buttons {
   display: flex;
   gap: 8px;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
 }
 
 .filter-dropdown-container {
   position: relative;
+
+  @media (max-width: 768px) {
+    &:last-child {
+      order: 1;
+    }
+  }
 }
 
 .filter-button {
@@ -117,6 +129,11 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+
+  @media (max-width: 768px) {
+    right: 0;
+    left: auto;
+  }
 }
 
 .period-dropdown {
