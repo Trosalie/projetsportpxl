@@ -22,7 +22,6 @@ import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 
 import localeFr from '@angular/common/locales/fr';
-// import {FormsModule} from "@angular/forms";
 import { NavigationBar } from './navigation-bar/navigation-bar';
 import { PhotographersList } from './photographers-list/photographers-list';
 import { PhotographerCard } from './photographer-card/photographer-card';
