@@ -98,7 +98,7 @@ Route::post('/password/confirm', [ConfirmPasswordController::class, 'confirm']);
 // Routes PennyLane (factures)
 Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
 Route::get('/test', [PennylaneController::class, 'getInvoices']);
-Route::get('/photographer-id/{name}', [PhotographerController::class, 'getPhotographerId']);
+Route::get('/photographer-ids/{name}', [PhotographerController::class, 'getPhotographerIds']);
 Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);
 Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
 Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);

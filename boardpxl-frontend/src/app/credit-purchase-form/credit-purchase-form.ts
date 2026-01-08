@@ -17,6 +17,7 @@ import { takeUntil } from 'rxjs/operators';
 export class CreditPurchaseForm implements OnDestroy {
   today: string = new Date().toISOString().slice(0, 10);
   clientId: any;
+  pennylaneId: any;
   clientName: string = '';
   findClient: boolean = false;
   creationFacture: boolean = false;
@@ -43,10 +44,11 @@ export class CreditPurchaseForm implements OnDestroy {
       // Cherche le client par nom/prénom
       if (this.clientName) {
         this.isLoading = true;
-        this.photographerService.getPhotographerIdByName(this.clientName).subscribe({
+        this.photographerService.getPhotographerIdsByName(this.clientName).subscribe({
           next: (data) => {
             if (data && data.client_id) {
               this.clientId = data.client_id;
+              this.pennylaneId = data.pennylane_id;
               this.findClient = true;
               this.photographerInput = this.clientName;
             } else {
@@ -104,12 +106,13 @@ export class CreditPurchaseForm implements OnDestroy {
     this.findClient = true;
     this.filteredClients = [];
     this.clientName = name;
-    this.photographerService.getPhotographerIdByName(this.clientName)
+    this.photographerService.getPhotographerIdsByName(this.clientName)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
       next: (data) => {
         if (data && data.client_id) {
           this.clientId = data.client_id;
+          this.pennylaneId = data.pennylane_id;
         } else {
           this.popup.showNotification('Client non trouvé !');
         }
@@ -141,10 +144,11 @@ export class CreditPurchaseForm implements OnDestroy {
       amountEuro: form['priceHT'].value,
       issueDate: issueDate,
       dueDate: dueDate,
-      idClient: this.clientId,
+      idClient: this.pennylaneId,
       invoiceTitle: subject
     };
     this.creationFacture = true;
+    console.log("Création de la facture crédit avec :", body);
     this.invoiceService.createCreditsInvoice(body)
       .pipe(takeUntil(this.destroy$))
       .subscribe({

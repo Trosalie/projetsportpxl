@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Services\PennylaneService;
 use App\Services\MailService;
-use Illuminate\Support\Facades\Mail;
 
 class PennyLaneController extends Controller
 {

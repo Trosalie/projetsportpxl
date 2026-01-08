@@ -16,6 +16,7 @@ import { takeUntil } from 'rxjs/operators';
 export class TurnoverPaymentForm implements OnDestroy {
     today: string = new Date().toISOString().slice(0, 10);
     clientId: any;
+    pennylaneId: any;
     clientName: string = '';
     findClient: boolean = false;
     creationFacture: boolean = false;
@@ -42,10 +43,11 @@ export class TurnoverPaymentForm implements OnDestroy {
         // Cherche le client par nom/prénom
         if (this.clientName) {
           this.isLoading = true;
-          this.photographerService.getPhotographerIdByName(this.clientName).subscribe({
+          this.photographerService.getPhotographerIdsByName(this.clientName).subscribe({
             next: (data) => {
               if (data && data.client_id) {
                 this.clientId = data.client_id;
+                this.pennylaneId = data.pennylane_id;
                 this.findClient = true;
                 this.photographerInput = this.clientName;
                 console.log("Client trouvé :", data);
@@ -104,12 +106,13 @@ export class TurnoverPaymentForm implements OnDestroy {
       this.findClient = true;
       this.filteredClients = [];
       this.clientName = name;
-      this.photographerService.getPhotographerIdByName(this.clientName)
+      this.photographerService.getPhotographerIdsByName(this.clientName)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
         next: (data) => {
           if (data && data.client_id) {
             this.clientId = data.client_id;
+            this.pennylaneId = data.pennylane_id;
           } else {
             this.popup.showNotification('Client non trouvé !');
           }
@@ -145,7 +148,7 @@ export class TurnoverPaymentForm implements OnDestroy {
         amountEuro: commission,
         issueDate: this.today,
         dueDate: dueDate,
-        idClient: this.clientId,
+        idClient: this.pennylaneId,
         invoiceTitle: subject,
         invoiceDescription: `Versement du chiffre d'affaire de ${chiffreAffaire}€ pour la période du ${startDate} au ${endDate}.`
       }

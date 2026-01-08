@@ -13,7 +13,7 @@ class PhotographerController extends Controller
         return response()->json($photographers);
     }
 
-    public function getPhotographerId($name)
+    public function getPhotographerIds($name)
     {   
         if (!$name) {
             return response()->json(['error' => 'Name parameter is required'], 400);
@@ -24,7 +24,7 @@ class PhotographerController extends Controller
             ->first();
         
         if ($photographer) {
-            return response()->json(['id' => $photographer->id, 'client_id' => $photographer->id]);
+            return response()->json(['id' => $photographer->id, 'client_id' => $photographer->id, "pennylane_id" => $photographer->pennylane_id]);
         } else {
             return response()->json(['error' => 'Photographer not found'], 404);
         }
