@@ -40,7 +40,7 @@ class MailController extends Controller
             );
 
             MailLogs::create([
-                'sender_id' => auth()->id(), 
+                'sender_id' => auth()->id() ?? 1, 
                 'recipient' => $validated['to'],
                 'subject' => $validated['subject'],
                 'body' => $validated['body'],
@@ -60,7 +60,7 @@ class MailController extends Controller
 
         } catch (\Exception $e) {
             MailLogs::create([
-                'sender_id' => auth()->id(), 
+                'sender_id' => auth()->id() ?? 1, 
                 'recipient' => $validated['to'],
                 'subject' => $validated['subject'],
                 'body' => $validated['body'],

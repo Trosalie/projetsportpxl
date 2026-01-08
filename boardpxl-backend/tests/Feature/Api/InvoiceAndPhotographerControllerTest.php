@@ -65,6 +65,15 @@ class InvoiceAndPhotographerControllerTest extends TestCase
                 'number',
                 'issue_date',
                 'due_date',
+                'raw_value',
+                'commission',
+                'tax',
+                'vat',
+                'start_period',
+                'end_period',
+                'link_pdf',
+                'photographer_id',
+                'pdf_invoice_subject',
             ]);
     }
 
@@ -107,18 +116,25 @@ class InvoiceAndPhotographerControllerTest extends TestCase
 
     public function test_insert_credits_invoice_validation_error()
     {
-        // On envoie un payload vide pour déclencher toutes les règles de validation
         $response = $this->postJson('/api/insert-credits-invoice', []);
 
-        // On vérifie qu'on reçoit bien le code 422 (Unprocessable Entity)
-        $response->assertStatus(422);
-
-        // On vérifie que les erreurs contiennent bien tous les champs requis
-        $response->assertJsonValidationErrors([
-            'id', 'number', 'issue_date', 'due_date', 'amount',
-            'tax', 'vat', 'total_due', 'credits', 'status',
-            'link_pdf', 'photographer_id', 'pdf_invoice_subject'
-        ]);
+        $response
+            ->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'id',
+                'number',
+                'issue_date',
+                'due_date',
+                'amount',
+                'tax',
+                'vat',
+                'total_due',
+                'credits',
+                'status',
+                'link_pdf',
+                'photographer_id',
+                'pdf_invoice_subject',
+            ]);
     }
 
 

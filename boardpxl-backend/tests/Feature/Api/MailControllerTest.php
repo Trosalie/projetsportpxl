@@ -28,7 +28,8 @@ class MailControllerTest extends TestCase
             'to' => 'test@example.com',
             'from' => 'noreply@example.com',
             'subject' => 'Test Subject',
-            'body' => 'Test Body'
+            'body' => 'Test Body',
+            'type' => 'generic'
         ]);
 
         $response->assertStatus(200)

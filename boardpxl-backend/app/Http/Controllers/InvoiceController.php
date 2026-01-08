@@ -20,25 +20,25 @@ class InvoiceController extends Controller
     }
     public function insertTurnoverInvoice(Request $request)
     {
-        try {
-            // Validation des données entrantes
-            $validated = $request->validate([
-                'id'=> 'required|numeric',
-                'number'=> 'required|string',
-                'issue_date'=> 'required|date',
-                'due_date'=> 'required|date',
-                'description'=> 'nullable|string',
-                'raw_value'=> 'required|numeric',
-                'commission'=> 'required|numeric',
-                'tax'=> 'required|numeric',
-                'vat'=> 'required|numeric',
-                'start_period'=> 'required|date',
-                'end_period'=> 'required|date',
-                'link_pdf'=> 'required|string',
-                'photographer_id'=> 'required|numeric',
-                'pdf_invoice_subject'=> 'required|string',
-            ]);
+        // Validation des données entrantes
+        $validated = $request->validate([
+            'id'=> 'required|numeric',
+            'number'=> 'required|string',
+            'issue_date'=> 'required|date',
+            'due_date'=> 'required|date',
+            'description'=> 'nullable|string',
+            'raw_value'=> 'required|numeric',
+            'commission'=> 'required|numeric',
+            'tax'=> 'required|numeric',
+            'vat'=> 'required|numeric',
+            'start_period'=> 'required|date',
+            'end_period'=> 'required|date',
+            'link_pdf'=> 'required|string',
+            'photographer_id'=> 'required|numeric',
+            'pdf_invoice_subject'=> 'required|string',
+        ]);
 
+        try {
             // Insertion directe dans la base de données
             DB::table('invoice_payments')->insert([
                 'id' => $validated['id'],
@@ -83,25 +83,25 @@ class InvoiceController extends Controller
 
     public function insertCreditsInvoice(Request $request)
     {
-        try {
-            // Validation des données
-            $validated = $request->validate([
-                'id' => 'required|numeric',
-                'number' => 'required|string',
-                'issue_date' => 'required|date',
-                'due_date' => 'required|date',
-                'description' => 'nullable|string',
-                'amount' => 'required|numeric',
-                'tax' => 'required|numeric',
-                'vat' => 'required|numeric',
-                'total_due' => 'required|numeric',
-                'credits' => 'required|numeric',
-                'status' => 'required|string',
-                'link_pdf' => 'required|string',
-                'photographer_id' => 'required|numeric',
-                'pdf_invoice_subject' => 'required|string',
-            ]);
+        // Validation des données
+        $validated = $request->validate([
+            'id' => 'required|numeric',
+            'number' => 'required|string',
+            'issue_date' => 'required|date',
+            'due_date' => 'required|date',
+            'description' => 'nullable|string',
+            'amount' => 'required|numeric',
+            'tax' => 'required|numeric',
+            'vat' => 'required|numeric',
+            'total_due' => 'required|numeric',
+            'credits' => 'required|numeric',
+            'status' => 'required|string',
+            'link_pdf' => 'required|string',
+            'photographer_id' => 'required|numeric',
+            'pdf_invoice_subject' => 'required|string',
+        ]);
 
+        try {
             // Insert SQL direct
             DB::table('invoice_credits')->insert([
                 'id' => $validated['id'],
