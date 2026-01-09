@@ -3,12 +3,15 @@ input {
     font-size: 16px;
     border: 1px solid #000;
     border-radius: 4px;
+    min-width: 0;
+    flex: 1;
 }
 
 div {
     display: flex;
     align-items: center;
     gap: 8px;
+    width: 100%;
 }
 
 button {
@@ -17,4 +20,5 @@ button {
     padding: 5px 12px;
     padding-top: 8px;
     border-radius: 7px;
+    flex-shrink: 0;
 }

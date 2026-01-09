@@ -16,7 +16,14 @@
     margin-bottom: 13px;
 
     app-search-bar {
-        flex-shrink: 0;
+        flex-shrink: 1;
+        min-width: 0;
+        width: 100%;
+        max-width: 400px;
+
+        @media (max-width: 768px) {
+            max-width: 100%;
+        }
     }
 }
 
