@@ -30,13 +30,21 @@ use App\Http\Controllers\LogsController;
 */
 
 // Routes d'authentification publiques
-Route::post('/login', [LoginController::class, 'login']);
+Route::post('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 
 // Routes de vérification d'email
 Route::get('/email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
+
+//Récupérer les informations finaciere d'une facture de crédit
+Route::get('/invoice-credits-financial-info', [InvoiceController::class, 'getFinancialInfoCreditsInvoice']);
+
+//Récupérer les informations finaciere d'une facture de versement de CA
+Route::get('/invoice-turnover-financial-info', [InvoiceController::class, 'getFinancialInfoTurnoverInvoice']);
+
+
 
 // Tester récupération globale
 // Testé : PennyLaneControllerTest::test_get_invoices
@@ -116,7 +124,7 @@ Route::post('/password/confirm', [ConfirmPasswordController::class, 'confirm']);
 // Routes PennyLane (factures)
 Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
 Route::get('/test', [PennylaneController::class, 'getInvoices']);
-Route::get('/client-id', [PennylaneController::class, 'getClientId']);
+Route::get('/photographer-ids/{name}', [PhotographerController::class, 'getPhotographerIds']);
 Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);
 Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
 Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
