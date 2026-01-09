@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->call(fn () => app(PennylaneService::class)->syncInvoices())
-            ->everyFifteenMinutes();
+            ->everyTenMinutes();
     }
 
     /**
