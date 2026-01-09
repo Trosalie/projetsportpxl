@@ -49,8 +49,8 @@ Route::post('/insert-credits-invoice', [InvoiceController::class, 'insertCredits
 
 Route::middleware(['auth:sanctum', 'sync.pennylane'])->group(function () {
 
-    // Tester récupération globale
-    Route::get('/test', [PennylaneController::class, 'getInvoices']);
+    // Récupérer toutes les factures Pennylane pour sync
+    Route::get('/pennylane-invoices', [PennylaneController::class, 'getInvoices']);
 
     // Récupérer l'ID d’un client
     Route::post('/client-id', [PennylaneController::class, 'getClientId']);
@@ -84,20 +84,16 @@ Route::middleware(['auth:sanctum', 'sync.pennylane'])->group(function () {
     Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
 
     // Afficher une facture spécifique
-    Route::get('/invoices/{id}', [PennylaneController::class, 'getInvoiceById']);
+    Route::get('/invoices/{id}', [InvoiceController::class, 'getInvoiceById']);
 
+    // Récupérer les factures d'un client
+    Route::get('/invoices-client/{idClient}', [InvoiceController::class, 'getInvoicesByClient']);
 
+    // Récupérer un produit d'une facture
+    Route::get('/invoice-product/{invoiceNumber}', [InvoiceController::class, 'getProductFromInvoice']);
 
     // Confirmation de mot de passe
     Route::post('/password/confirm', [ConfirmPasswordController::class, 'confirm']);
-
-    // Routes PennyLane (factures)
-    Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
-    Route::get('/test', [PennylaneController::class, 'getInvoices']);
-    Route::get('/client-id', [PennylaneController::class, 'getClientId']);
-    Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);
-    Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
-    Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
 
     // Routes Mail
     Route::post('/send-email', [MailController::class, 'sendEmail']);

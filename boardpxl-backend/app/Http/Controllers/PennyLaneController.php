@@ -119,39 +119,6 @@ class PennyLaneController extends Controller
     }
 
     /**
-     * Retourne toutes les factures
-     */
-    public function getInvoices(PennylaneService $service)
-    {
-        return response()->json($service->getInvoices());
-    }
-
-    /**
-     * Retourne factures d’un client
-     */
-    public function getInvoicesByClient($idClient, PennylaneService $service)
-    {
-        return response()->json($service->getInvoicesByIdClient($idClient));
-    }
-
-    /**
-     * Récupère un produit d’une facture
-     */
-    public function getProductFromInvoice($invoiceNumber, PennylaneService $service)
-    {
-        $product = $service->getProductFromInvoice($invoiceNumber);
-
-        if ($product) {
-            return response()->json($product);
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Produit non trouvé'
-        ], 404);
-    }
-
-    /**
      * Envoi de mail
      */
     public function sendEmail(Request $request, MailService $mailService)
@@ -228,14 +195,10 @@ class PennyLaneController extends Controller
         ]);
     }
 
-    public function getInvoiceById($id, PennylaneService $service)
+    public function getInvoices(PennylaneService $service)
     {
-        $invoice = $service->getInvoiceById((int)$id);
+        $invoices = $service->getInvoices();
 
-        if (!$invoice) {
-            return response()->json(['message' => 'Facture non trouvée'], 404);
-        }
-
-        return response()->json($invoice);
+        return response()->json($invoices);
     }
 }

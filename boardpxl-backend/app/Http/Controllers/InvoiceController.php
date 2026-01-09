@@ -171,4 +171,60 @@ class InvoiceController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Retourne factures d'un client
+     */
+    public function getInvoicesByClient($idClient)
+    {
+        $invoiceCredits = $this->getInvoicesCreditByPhotographer($idClient);
+        $invoicePayments = $this->getInvoicesPaymentByPhotographer($idClient);
+        // merge both responses in a single json response
+        return response()->json(array_merge(
+            $invoiceCredits->getData(true),
+            $invoicePayments->getData(true)
+        ));
+    }
+
+    /**
+     * Récupère un produit d'une facture
+     */
+    public function getProductFromInvoice($invoiceNumber, PennylaneService $service)
+    {
+        $product = $service->getProductFromInvoice($invoiceNumber);
+
+        if ($product) {
+            return response()->json($product);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Produit non trouvé'
+        ], 404);
+    }
+
+    /**
+     * get the invoice with a specific id
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getInvoiceById($id)
+    {
+        $invoice = DB::table('invoice_credits')
+            ->where('id', $id)
+            ->first();
+        
+        if (! $invoice) {
+            $invoice = DB::table('invoice_payments')
+                ->where('id', $id)
+                ->first();
+        }
+
+        if (!$invoice) {
+            return response()->json(['message' => 'Facture non trouvée'], 404);
+        }
+
+        return response()->json($invoice);
+    }
 }

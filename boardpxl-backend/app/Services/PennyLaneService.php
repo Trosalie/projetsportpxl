@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Http\Controllers\InvoiceController;
 use GuzzleHttp\Client;
-use App\Models\Invoice;
+use App\Models\InvoiceCredit;
+use App\Models\InvoicePayment;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
@@ -47,48 +49,16 @@ class PennylaneService
     }
 
     /**
-     * Get all invoices
+     * Get all invoices from database (credits and payments)
      *
      * @return array
      * */
     public function getInvoices()
     {
-        $allInvoices = [];
-        $cursor = null;
-
-        $lastSync = Invoice::max('updated_at_api');
-
-        $updatedAfter = $lastSync ? $lastSync->toIso8601String() : null;
-
-        do {
-            $response = $this->client->get('customer_invoices', [
-                'query' => array_filter([
-                    'limit' => 100,
-                    'cursor' => $cursor,
-                    'sort' => '-id',
-                    'updated_after' => $updatedAfter
-                ])
-            ]);
-
-            $data = json_decode($response->getBody()->getContents(), true);
-
-            if (!isset($data['items'])) {
-                break;
-            }
-
-            $allInvoices = array_merge($allInvoices, $data['items']);
-
-            $cursor = $data['next_cursor'] ?? null;
-            $hasMore = $data['has_more'] ?? false;
-
-            // Add delay to avoid rate limiting
-            if ($hasMore) {
-                usleep(500000); // 0.5 second delay between requests
-            }
-
-        } while ($hasMore);
-
-        return $allInvoices;
+        $creditInvoices = InvoiceCredit::all()->toArray();
+        $paymentInvoices = InvoicePayment::all()->toArray();
+        
+        return array_merge($creditInvoices, $paymentInvoices);
     }
 
     /**
@@ -380,37 +350,69 @@ class PennylaneService
 
             foreach ($invoices as $invoice) {
 
-                if (!isset($invoice['id']) or !str_contains(strtolower($invoice['label']), 'crédits')) {
+                if (!isset($invoice['id'])) {
                     continue;
                 }
+                
+                $product = $this->getProductFromInvoice($invoice['invoice_number']);
+                $isCredit = str_contains(strtolower($product['label'] ?? ''), 'crédits');
+                $vat = $invoice['tax'] / $invoice['currency_amount_before_tax'] * 100;
 
-                Invoice::updateOrCreate(
-                    [
-                        'external_id' => $invoice['id'],
-                    ],
-                    [
-                        'invoice_number' => $invoice['invoice_number'] ?? null,
-                        'status'         => $invoice['status'] ?? null,
-                        'total_amount'   => $invoice['total_amount'] ?? 0,
-                        'currency'       => $invoice['currency'] ?? 'EUR',
+                if($isCredit){
+                    $raw = $product['label'] ?? '';
+                    $clean = preg_replace('/crédits/i', '', $raw);
+                    $clean = preg_replace('/\s+/', '', $clean);
+                    $clean = str_replace(',', '.', $clean);
+                    $clean = preg_replace('/[^\d\.-]/', '', $clean);
+                    $creditAmount = empty($clean) ? $product['quantity'] ?? 0 : (float) $clean;
 
-                        'customer_id'    => $invoice['customer']['id'] ?? null,
-                        'customer_name'  => $invoice['customer']['name'] ?? null,
+                    InvoiceCredit::updateOrCreate(
+                        [
+                            'id' => $invoice['id'],
+                        ],
+                        [
+                            'number' => $invoice['invoice_number'] ?? null,
+                            'issue_date' => $invoice['date'] ?? null,
+                            'due_date' => $invoice['deadline'] ?? null,
+                            'description' => $invoice['pdf_description'] ?? null,
+                            'amount' => $invoice['amount'] ?? null,
+                            'tax' => $invoice['tax'] ?? null,
+                            'vat' => $vat ?? null,
+                            'total_due' => $invoice['remaining_amount_with_tax'] ?? null,
+                            'credits' => $creditAmount ?? null,
+                            'status' => $invoice['status'] ?? null,
+                            'link_pdf' => $invoice['public_file_url'] ?? null,
+                            'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null
+                        ]
+                    );
+                }
+                else {
+                    $match = [];
+                    preg_match('/(\d+(?:[.,]\d{2})?)\s*€/', $invoice['pdf_description'] ?? '', $match);
+                    $rawValue = $match ? (float) str_replace(',', '.', $match[1]) : 0;
 
-                        'issued_at'      => isset($invoice['date'])
-                            ? Carbon::parse($invoice['date'])
-                            : null,
+                    $invoicePrev = InvoicePayment::find($invoice['id']);
 
-                        'due_at'         => isset($invoice['deadline'])
-                            ? Carbon::parse($invoice['deadline'])
-                            : null,
-
-                        // trace de synchro API
-                        'updated_at_api' => isset($invoice['updated_at'])
-                            ? Carbon::parse($invoice['updated_at'])
-                            : now(),
-                    ]
-                );
+                    InvoicePayment::updateOrCreate(
+                        [
+                            'id' => $invoice['id'],
+                        ],
+                        [
+                            'number' => $invoice['invoice_number'] ?? null,
+                            'issue_date' => $invoice['date'] ?? null,
+                            'due_date' => $invoice['deadline'] ?? null,
+                            'description' => $invoice['pdf_description'] ?? null,
+                            'raw_value' => $rawValue ?? null,
+                            'commission' => $invoice['amount'] ?? null,
+                            'tax' => $invoice['tax'] ?? null,
+                            'vat' => $vat ?? null,
+                            'start_period' => $invoicePrev->start_period ?? null,
+                            'end_period' => $invoicePrev->end_period ?? null,
+                            'link_pdf' => $invoice['public_file_url'] ?? null,
+                            'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null,
+                        ]
+                    );
+                }
             }
         } catch (\Throwable $e) {
             Log::error('PennyLane sync failed', [
