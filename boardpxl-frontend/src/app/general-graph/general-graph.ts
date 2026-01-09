@@ -14,14 +14,24 @@ export class GeneralGraph implements OnInit {
     @ViewChild('lineChartCanvas') lineChartCanvas!: ElementRef<HTMLCanvasElement>;
     lineChart: Chart | null = null;
 
+    graphInfoCreditsInvoice: any;
+    graphInfoTurnoverInvoice: any;
+
+    labelsMonthsGraph: any = [];
+    graphData1: any = [];
+    graphData2: any = [];
+    labelData1: string = 'Ventes de Crédits (€)';
+    labelData2: string = 'Chiffre d\'Affaires (€)';
+
+
     lineChartConfig: ChartConfiguration = {
         type: 'line',
         data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        labels: this.labelsMonthsGraph,
         datasets: [
             {
-            label: 'Sales 2024',
-            data: [30, 59, 80, 81, 56, 55, 40, 70, 85, 92, 88, 95],
+            label: this.labelData1,
+            data: this.graphData1,
             borderColor: '#3b82f6',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',
             tension: 0.4,
@@ -29,8 +39,8 @@ export class GeneralGraph implements OnInit {
             borderWidth: 2
             },
             {
-            label: 'Sales 2025',
-            data: [40, 65, 90, 95, 70, 75, 60, 85, 100, 110, 105, 120],
+            label: this.labelData2,
+            data: this.graphData2,
             borderColor: '#10b981',
             backgroundColor: 'rgba(16, 185, 129, 0.1)',
             tension: 0.4,
@@ -54,7 +64,7 @@ export class GeneralGraph implements OnInit {
         scales: {
             y: {
             beginAtZero: true,
-            max: 150
+            max: 150,
             }
         }
         }
@@ -68,7 +78,7 @@ export class GeneralGraph implements OnInit {
     error: string | null = null;
 
     totalRevenue = 0;
-    totalCredits = 0;
+    totalCreditsVendus = 0;
     totalCommission = 0;
 
     creditsParMois: { [month: string]: number } = {};
@@ -89,7 +99,10 @@ export class GeneralGraph implements OnInit {
         }
     }
 
+    // Initialisation des graphiques
     private initializeCharts(): void {
+        this.adaptTabOfDatas();
+
         if (this.lineChartCanvas) {
             this.lineChart = new Chart(this.lineChartCanvas.nativeElement, this.lineChartConfig);
         }
@@ -128,6 +141,7 @@ export class GeneralGraph implements OnInit {
         });
     }
 
+    //Affiche les information lorsque le chargement est terminé
     checkLoadingDone(): void {
         if (this.creditsFinancialInfo && this.turnoverFinancialInfo) {
             this.loading = false;
@@ -139,6 +153,7 @@ export class GeneralGraph implements OnInit {
         }
     }
 
+    // calcul les informations financières
     computeMetrics(): void {
         // Calcul du chiffre d'affaires total
         this.totalRevenue = 0;
@@ -150,9 +165,9 @@ export class GeneralGraph implements OnInit {
         }
 
         // Calcul du total des crédits vendus
-        this.totalCredits = 0;
+        this.totalCreditsVendus = 0;
         if (Array.isArray(this.creditsFinancialInfo)) {
-        this.totalCredits = this.creditsFinancialInfo.reduce((sum, invoice) => sum + (parseInt(invoice.credits) || 0), 0);
+        this.totalCreditsVendus = this.creditsFinancialInfo.reduce((sum, invoice) => sum + (parseInt(invoice.credits) || 0), 0);
         }
 
         // Calcul de la commission totale
@@ -161,12 +176,15 @@ export class GeneralGraph implements OnInit {
         this.totalCommission = this.turnoverFinancialInfo.reduce((sum, invoice) => sum + (parseFloat(invoice.commission) || 0), 0);
         }
 
+
         console.log('Total Revenue:', this.totalRevenue);
-        console.log('Total Credits:', this.totalCredits);
+        console.log('Total Credits:', this.totalCreditsVendus);
         console.log('Total Commission:', this.totalCommission);
 
         // Calcul des données mensuelles
         //this.computeMonthlyData();
+        this.graphInfoCreditsInvoice = this.groupByMonth(this.creditsFinancialInfo, 'amount');
+        this.graphInfoTurnoverInvoice = this.groupByMonth(this.turnoverFinancialInfo, 'commission');
   
     }
 
@@ -176,7 +194,7 @@ export class GeneralGraph implements OnInit {
     }
 
     getTotalCreditsSold(): number {
-        return this.totalCredits;
+        return this.totalCreditsVendus;
     }
 
     getTotalCommission(): number {
@@ -186,17 +204,84 @@ export class GeneralGraph implements OnInit {
 
 
     // Fonction pour regrouper par mois
-    groupByMonth(factures: any[], valueKey: string, dateKey: string = 'created_at') {
-        const grouped: { [month: string]: number } = {};
-
-        factures.forEach(facture => {
-            const date = new Date(facture[dateKey]);
-            const month = `${date.getFullYear()}-${('0'+(date.getMonth()+1)).slice(-2)}`; // ex: 2025-11
-            grouped[month] = (grouped[month] || 0) + Number(facture[valueKey] ?? 0);
-        });
-
-        return grouped;
+    groupByMonth(invoices: any[], nameField: string) {
+        let newInvoicesList: any = [];
+        for (let invoice of invoices) {
+            const yearMonth = invoice.issue_date.slice(0, 7);
+            
+            //parse float sert à convertir une chaîne de caractères en nombre à virgule flottante
+            const amount = Math.round(parseFloat(invoice[nameField]) || 0);
+            
+            if (newInvoicesList.find((item: any) => item[0] === yearMonth) === undefined) {
+                newInvoicesList.push([invoice.issue_date.slice(0, 7), amount]);
+            }
+            else {                
+                for (let item of newInvoicesList) {
+                    if (item[0] === invoice.issue_date.slice(0, 7)) {
+                        item[1] += amount;
+                    }
+                }
+            }
+        }
+        console.log('Grouped by month:', newInvoicesList);
+        return newInvoicesList;
     }
 
 
+    adaptTabOfDatas() {
+        //adapte les tableau pour qu'il y ait la même taille
+        for (let item of this.graphInfoCreditsInvoice) {
+            const month = item[0];
+            if (!this.graphInfoTurnoverInvoice.find((i: any) => i[0] === month)) {
+                this.graphInfoTurnoverInvoice.push([month, 0]);
+            }
+        }
+        for (let item of this.graphInfoTurnoverInvoice) {
+            const month = item[0];
+            if (!this.graphInfoCreditsInvoice.find((i: any) => i[0] === month)) {
+                this.graphInfoCreditsInvoice.push([month, 0]);
+            }
+        }
+
+        // Trier les deux tableaux par date croissante 
+        const sortByDate = (a: [string, number], b: [string, number]) => {
+            const dateA = new Date(a[0] + '-01');
+            const dateB = new Date(b[0] + '-01');
+            return dateA.getTime() - dateB.getTime();
+        };
+
+        this.graphInfoCreditsInvoice.sort(sortByDate);
+        this.graphInfoTurnoverInvoice.sort(sortByDate);
+
+        // remplie les datas de la première courbe et les labels
+        for (let item of this.graphInfoCreditsInvoice) {
+            this.labelsMonthsGraph.push(item[0]);
+            this.graphData1.push(item[1]);
+            
+        }
+
+        // remplie les datas de la deuxième courbe et ajoute les mois manquants dans les labels
+        for(let item of this.graphInfoTurnoverInvoice){
+            if (!this.labelsMonthsGraph.includes(item[0])) {
+                this.labelsMonthsGraph.push(item[0]);
+            }
+            this.graphData2.push(item[1]);
+        }
+
+        //Adapte l'échelle Y en fonction des données
+        if (this.graphData1.length) {
+            let maxValue: number;
+            if (Math.max(...this.graphData1) > Math.max(...this.graphData2)) {
+                maxValue = Math.max(...this.graphData1);
+            }
+            else {
+                maxValue = Math.max(...this.graphData2);
+            }
+            const yAxisMax = Math.ceil(maxValue * 1.1); 
+
+            this.lineChartConfig.options!.scales!['y']!.max = yAxisMax;
+        }
+        console.log('Labels Months Graph:', this.labelsMonthsGraph);
+        console.log('Graph Data 1:', this.graphData1);
+    }
 }
