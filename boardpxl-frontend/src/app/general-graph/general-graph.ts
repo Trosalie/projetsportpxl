@@ -413,6 +413,10 @@ export class GeneralGraph implements OnInit {
         return this.activeFilters.some(f => this.periodFilters.includes(f));
     }
 
+    canApplyFilters(): boolean {
+        return this.hasActiveDataTypeFilters() || this.hasActivePeriodFilters();
+    }
+
     clearCategoryFilters(category: string, event: Event): void {
         event.stopPropagation();
         
@@ -435,6 +439,11 @@ export class GeneralGraph implements OnInit {
     }
 
     applyFilters(): void {
+        // Empêcher l'application si aucun filtre n'est coché
+        if (!this.canApplyFilters()) {
+            alert('Veuillez cocher au moins un filtre avant d\'appliquer.');
+            return;
+        }
         // 1) Préparer les données filtrées (par date)
         const startDate = this.dateFilters.get('Après le') || '';
         const endDate = this.dateFilters.get('Avant le') || '';

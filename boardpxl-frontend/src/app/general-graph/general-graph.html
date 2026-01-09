@@ -76,7 +76,7 @@
         </div>
 
         <!-- Bouton Appliquer -->
-        <button class="apply-button" (click)="applyFilters()">
+        <button class="apply-button" (click)="applyFilters()" [disabled]="!canApplyFilters()">
           Appliquer
         </button>
       </div>

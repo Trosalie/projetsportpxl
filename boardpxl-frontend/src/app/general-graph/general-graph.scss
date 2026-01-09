@@ -41,6 +41,11 @@
   &:active {
     background-color: #d06a1c;
   }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
 }
 
 // Filtres Section (old - keep for compatibility)
