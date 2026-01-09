@@ -8,6 +8,7 @@ use App\Models\InvoiceCredit;
 use App\Models\InvoicePayment;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PennylaneService
 {
@@ -400,6 +401,20 @@ class PennylaneService
                         $clean = str_replace(',', '.', $clean);
                         $clean = preg_replace('/[^\d\.-]/', '', $clean);
                         $creditAmount = empty($clean) ? $product['quantity'] ?? 0 : (float) $clean;
+                        
+                        $invoicePrev = InvoiceCredit::find($invoice['id']);
+
+                        if(!$invoicePrev){
+                            $photographerId = 1;
+                            if (isset($invoice['customer']['id'])) {
+                                $photographer = DB::table('photographers')
+                                    ->where('pennylane_id', $invoice['customer']['id'])
+                                    ->first();
+                                if ($photographer) {
+                                    $photographerId = $photographer->id;
+                                }
+                            }
+                        }
 
                         InvoiceCredit::updateOrCreate(
                             [
@@ -409,7 +424,7 @@ class PennylaneService
                                 'number' => $invoice['invoice_number'] ?? null,
                                 'issue_date' => $invoice['date'] ?? null,
                                 'due_date' => $invoice['deadline'] ?? null,
-                                'description' => $invoice['pdf_description'] ?? null,
+                                'description' => $invoice['pdf_description'] ?? "N/A",
                                 'amount' => $invoice['amount'] ?? null,
                                 'tax' => $invoice['tax'] ?? null,
                                 'vat' => $vat ?? null,
@@ -417,7 +432,8 @@ class PennylaneService
                                 'credits' => $creditAmount ?? null,
                                 'status' => $invoice['status'] ?? null,
                                 'link_pdf' => $invoice['public_file_url'] ?? null,
-                                'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null
+                                'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null,
+                                'photographer_id' => $invoicePrev->photographer_id ?? $photographerId,
                             ]
                         );
                     }
@@ -428,6 +444,18 @@ class PennylaneService
 
                         $invoicePrev = InvoicePayment::find($invoice['id']);
 
+                        if(!$invoicePrev){
+                            $photographerId = 1;
+                            if (isset($invoice['customer']['id'])) {
+                                $photographer = DB::table('photographers')
+                                    ->where('pennylane_id', $invoice['customer']['id'])
+                                    ->first();
+                                if ($photographer) {
+                                    $photographerId = $photographer->id;
+                                }
+                            }
+                        }
+
                         InvoicePayment::updateOrCreate(
                             [
                                 'id' => $invoice['id'],
@@ -436,15 +464,16 @@ class PennylaneService
                                 'number' => $invoice['invoice_number'] ?? null,
                                 'issue_date' => $invoice['date'] ?? null,
                                 'due_date' => $invoice['deadline'] ?? null,
-                                'description' => $invoice['pdf_description'] ?? null,
+                                'description' => $invoice['pdf_description'] ?? "N/A",
                                 'raw_value' => $rawValue ?? null,
                                 'commission' => $invoice['amount'] ?? null,
                                 'tax' => $invoice['tax'] ?? null,
                                 'vat' => $vat ?? null,
-                                'start_period' => $invoicePrev->start_period ?? null,
-                                'end_period' => $invoicePrev->end_period ?? null,
+                                'start_period' => $invoicePrev->start_period ?? now()->startOfMonth(),
+                                'end_period' => $invoicePrev->end_period ?? now()->endOfMonth(),
                                 'link_pdf' => $invoice['public_file_url'] ?? null,
                                 'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null,
+                                'photographer_id' => $invoicePrev->photographer_id ?? null,
                             ]
                         );
                     }
