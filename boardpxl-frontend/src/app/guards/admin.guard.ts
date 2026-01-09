@@ -3,18 +3,27 @@ import { CanActivateFn, Router } from '@angular/router';
 import { RoleService } from '../services/role.service';
 import { AuthService } from '../services/auth-service';
 
-export const adminGuard: CanActivateFn = () => {
+export const adminGuard: CanActivateFn = async (route, state) => {
   const roleService = inject(RoleService);
   const authService = inject(AuthService);
   const router = inject(Router);
 
   if (!authService.getToken()) {
-    router.navigate(['/login']);
+    // Clear any stale role data
+    roleService.clearRole();
+    await router.navigate(['/login']);
     return false;
   }
 
-  if (roleService.getRole() !== 'admin') {
-    router.navigate(['/']);
+  const role = roleService.getRole();
+  if (role !== 'admin') {
+    if (role === 'photographer') {
+      await router.navigate(['/']);
+    } else {
+      // If no valid role, redirect to login
+      roleService.clearRole();
+      await router.navigate(['/login']);
+    }
     return false;
   }
 
