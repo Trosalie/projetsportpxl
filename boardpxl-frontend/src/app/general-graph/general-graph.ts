@@ -1,6 +1,6 @@
 import { InvoiceService } from '../services/invoice-service';
 import { ChartData, ChartOptions } from 'chart.js'
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 Chart.register(...registerables);
 
@@ -85,6 +85,21 @@ export class GeneralGraph implements OnInit {
     caParMois: { [month: string]: number } = {};
     commissionParMois: { [month: string]: number } = {};
 
+    // Filtres
+    protected openDropdown: string | null = null;
+    protected activeFilters: string[] = ['Crédits vendus', 'Commission'];
+    protected dateFilters: Map<string, string> = new Map();
+    
+    protected readonly dataTypeFilters = ['Crédits vendus', 'Chiffre d\'affaires', 'Commission'];
+    protected readonly periodFilters = ['Après le', 'Avant le'];
+
+    // Totaux additionnels
+    totalCreditsAmount = 0;
+
+    // Données originales pour réinitialiser/filtrer
+    private originalCreditsInfo: any[] = [];
+    private originalTurnoverInfo: any[] = [];
+
     
 
     constructor(private invoiceService: InvoiceService) {}
@@ -94,17 +109,29 @@ export class GeneralGraph implements OnInit {
     }
 
     ngAfterViewInit(): void {
-        if (!this.loading && !this.error) {
-            this.initializeCharts();
-        }
+        // Le graphique sera initialisé après le chargement des données dans checkLoadingDone()
     }
 
     // Initialisation des graphiques
     private initializeCharts(): void {
+        if (!this.lineChartCanvas?.nativeElement) {
+            console.error('Canvas not available');
+            return;
+        }
+
+        // Détruire le graphique existant si présent
+        if (this.lineChart) {
+            this.lineChart.destroy();
+            this.lineChart = null;
+        }
+
         this.adaptTabOfDatas();
 
-        if (this.lineChartCanvas) {
+        try {
             this.lineChart = new Chart(this.lineChartCanvas.nativeElement, this.lineChartConfig);
+            console.log('Chart initialized successfully');
+        } catch (error) {
+            console.error('Error initializing chart:', error);
         }
     }
 
@@ -116,6 +143,7 @@ export class GeneralGraph implements OnInit {
         this.invoiceService.getCreditsFinancialInfo().subscribe({
         next: (data) => {
             this.creditsFinancialInfo = data;
+            this.originalCreditsInfo = Array.isArray(data) ? [...data] : [];
             console.log('Credits Financial Info:', data);
             this.checkLoadingDone();
         },
@@ -130,6 +158,7 @@ export class GeneralGraph implements OnInit {
         this.invoiceService.getTurnoverFinancialInfo().subscribe({
         next: (data) => {
             this.turnoverFinancialInfo = data;
+            this.originalTurnoverInfo = Array.isArray(data) ? [...data] : [];
             console.log('Turnover Financial Info:', data);
             this.checkLoadingDone();
         },
@@ -147,9 +176,10 @@ export class GeneralGraph implements OnInit {
             this.loading = false;
             this.computeMetrics();
 
+            // S'assurer que la vue est prête avant d'initialiser le graphique
             setTimeout(() => {
-            this.initializeCharts();
-            });
+                this.initializeCharts();
+            }, 100);
         }
     }
 
@@ -157,14 +187,17 @@ export class GeneralGraph implements OnInit {
     computeMetrics(): void {
         // Calcul du chiffre d'affaires total
         this.totalRevenue = 0;
+        this.totalCreditsAmount = 0;
         if (Array.isArray(this.creditsFinancialInfo)) {
-        this.totalRevenue += this.creditsFinancialInfo.reduce((sum, invoice) => sum + (parseFloat(invoice.amount) || 0), 0);
+        const creditsEuro = this.creditsFinancialInfo.reduce((sum, invoice) => sum + (parseFloat(invoice.amount) || 0), 0);
+        this.totalRevenue += creditsEuro;
+        this.totalCreditsAmount = creditsEuro;
         }
         if (Array.isArray(this.turnoverFinancialInfo)) {
         this.totalRevenue += this.turnoverFinancialInfo.reduce((sum, invoice) => sum + (parseFloat(invoice.raw_value) || 0), 0);
         }
 
-        // Calcul du total des crédits vendus
+        // Calcul du total des crédits vendus (en unités, si besoin ailleurs)
         this.totalCreditsVendus = 0;
         if (Array.isArray(this.creditsFinancialInfo)) {
         this.totalCreditsVendus = this.creditsFinancialInfo.reduce((sum, invoice) => sum + (parseInt(invoice.credits) || 0), 0);
@@ -199,6 +232,10 @@ export class GeneralGraph implements OnInit {
 
     getTotalCommission(): number {
         return this.totalCommission;
+    }
+
+    getTotalCreditsAmount(): number {
+        return this.totalCreditsAmount;
     }
 
 
@@ -283,5 +320,225 @@ export class GeneralGraph implements OnInit {
         }
         console.log('Labels Months Graph:', this.labelsMonthsGraph);
         console.log('Graph Data 1:', this.graphData1);
+    }
+
+    // Gestion des filtres
+    toggleDropdown(dropdownType: string, event?: Event) {
+        if (event) {
+            event.stopPropagation();
+        }
+        this.openDropdown = this.openDropdown === dropdownType ? null : dropdownType;
+    }
+
+    toggleFilter(filterValue: string) {
+        if (this.activeFilters.includes(filterValue)) {
+            this.removeFilter(filterValue);
+        } else {
+            this.addFilter(filterValue);
+        }
+    }
+
+    addFilter(filterValue: string) {
+        if (!this.activeFilters.includes(filterValue)) {
+            this.activeFilters.push(filterValue);
+        }
+    }
+
+    removeFilter(filterValue: string) {
+        this.activeFilters = this.activeFilters.filter(f => f !== filterValue);
+        if (this.isDateFilter(filterValue)) {
+            this.dateFilters.delete(filterValue);
+        }
+    }
+
+    isDateFilter(filterValue: string): boolean {
+        return this.periodFilters.includes(filterValue);
+    }
+
+    isFilterActive(filterValue: string): boolean {
+        return this.activeFilters.includes(filterValue);
+    }
+
+    addDateFilter(filterValue: string) {
+        if (!this.activeFilters.includes(filterValue)) {
+            this.activeFilters.push(filterValue);
+            this.dateFilters.set(filterValue, '');
+        }
+        
+        setTimeout(() => {
+            const input = document.querySelector(`.date-input[data-filter="${filterValue}"]`) as HTMLInputElement;
+            if (input) {
+                input.focus();
+                input.showPicker?.();
+            }
+        }, 100);
+    }
+
+    getDateValue(filterValue: string): string {
+        return this.dateFilters.get(filterValue) || '';
+    }
+
+    updateDateFilter(filterValue: string, event: Event) {
+        const input = event.target as HTMLInputElement;
+        const newValue = input.value;
+        
+        if (this.isDateRangeValid(filterValue, newValue)) {
+            this.dateFilters.set(filterValue, newValue);
+        } else {
+            input.value = this.dateFilters.get(filterValue) || '';
+            alert('La date "Après le" doit être antérieure à la date "Avant le".');
+        }
+    }
+
+    private isDateRangeValid(filterValue: string, newValue: string): boolean {
+        if (!newValue) {
+            return true;
+        }
+
+        const afterDate = filterValue === 'Après le' ? newValue : this.dateFilters.get('Après le');
+        const beforeDate = filterValue === 'Avant le' ? newValue : this.dateFilters.get('Avant le');
+
+        if (afterDate && beforeDate) {
+            return new Date(afterDate) < new Date(beforeDate);
+        }
+
+        return true;
+    }
+
+    hasActiveDataTypeFilters(): boolean {
+        return this.activeFilters.some(f => this.dataTypeFilters.includes(f));
+    }
+
+    hasActivePeriodFilters(): boolean {
+        return this.activeFilters.some(f => this.periodFilters.includes(f));
+    }
+
+    clearCategoryFilters(category: string, event: Event): void {
+        event.stopPropagation();
+        
+        let filtersToRemove: string[] = [];
+        
+        switch(category) {
+            case 'dataType':
+                filtersToRemove = this.dataTypeFilters;
+                break;
+            case 'period':
+                filtersToRemove = this.periodFilters;
+                break;
+        }
+        
+        filtersToRemove.forEach(filter => {
+            if (this.activeFilters.includes(filter)) {
+                this.removeFilter(filter);
+            }
+        });
+    }
+
+    applyFilters(): void {
+        // 1) Préparer les données filtrées (par date)
+        const startDate = this.dateFilters.get('Après le') || '';
+        const endDate = this.dateFilters.get('Avant le') || '';
+
+        let filteredCredits = [...this.originalCreditsInfo];
+        let filteredTurnover = [...this.originalTurnoverInfo];
+
+        const inRange = (isoDate: string) => {
+            const d = new Date(isoDate);
+            if (startDate && d < new Date(startDate)) return false;
+            if (endDate && d > new Date(endDate)) return false;
+            return true;
+        };
+
+        if (startDate || endDate) {
+            filteredCredits = filteredCredits.filter((inv: any) => inv?.issue_date && inRange(inv.issue_date));
+            filteredTurnover = filteredTurnover.filter((inv: any) => inv?.issue_date && inRange(inv.issue_date));
+        }
+
+        // 2) Recalculer les métriques de la sidebar sur les données filtrées
+        this.creditsFinancialInfo = filteredCredits;
+        this.turnoverFinancialInfo = filteredTurnover;
+        this.computeMetrics();
+
+        // 3) Déterminer les séries à afficher
+        const hasType = this.hasActiveDataTypeFilters();
+        const showCredits = !hasType || this.isFilterActive('Crédits vendus');
+        const showCA = !hasType || this.isFilterActive('Chiffre d\'affaires');
+        const showCommission = !hasType || this.isFilterActive('Commission');
+
+        // 4) Construire les séries mensuelles
+        const monthKey = (iso: string) => iso?.slice(0, 7);
+        const addToMap = (map: Map<string, number>, key: string | undefined, val: number) => {
+            if (!key) return;
+            map.set(key, (map.get(key) || 0) + (isFinite(val) ? val : 0));
+        };
+
+        const creditsMap = new Map<string, number>(); // amount
+        const caMap = new Map<string, number>();       // raw_value
+        const commissionMap = new Map<string, number>(); // commission
+
+        if (showCredits) {
+            for (const inv of filteredCredits) addToMap(creditsMap, monthKey(inv?.issue_date), Math.round(parseFloat(inv?.amount) || 0));
+        }
+        if (showCA || showCommission) {
+            for (const inv of filteredTurnover) {
+                const mk = monthKey(inv?.issue_date);
+                if (showCA) addToMap(caMap, mk, Math.round(parseFloat(inv?.raw_value) || 0));
+                if (showCommission) addToMap(commissionMap, mk, Math.round(parseFloat(inv?.commission) || 0));
+            }
+        }
+
+        // 5) Construire les labels (union des mois utilisés) et les datasets alignés
+        const monthSet = new Set<string>();
+        if (showCredits) creditsMap.forEach((_, k) => monthSet.add(k));
+        if (showCA) caMap.forEach((_, k) => monthSet.add(k));
+        if (showCommission) commissionMap.forEach((_, k) => monthSet.add(k));
+
+        const labels = Array.from(monthSet);
+        labels.sort((a, b) => new Date(a + '-01').getTime() - new Date(b + '-01').getTime());
+
+        const datasetFor = (label: string, color: string, bg: string, map: Map<string, number>) => ({
+            label,
+            data: labels.map(m => map.get(m) || 0),
+            borderColor: color,
+            backgroundColor: bg,
+            tension: 0.4,
+            fill: true,
+            borderWidth: 2
+        });
+
+        const datasets: any[] = [];
+        if (showCredits) datasets.push(datasetFor(this.labelData1, '#3b82f6', 'rgba(59, 130, 246, 0.1)', creditsMap));
+        if (showCA) datasets.push(datasetFor("Chiffre d'Affaires (€)", '#f59e0b', 'rgba(245, 158, 11, 0.1)', caMap));
+        if (showCommission) datasets.push(datasetFor('Commission (€)', '#10b981', 'rgba(16, 185, 129, 0.1)', commissionMap));
+
+        // 6) Mettre à jour/initialiser le graphique
+        if (!this.lineChart) {
+            if (!this.lineChartCanvas?.nativeElement) return;
+            this.lineChart = new Chart(this.lineChartCanvas.nativeElement, {
+                type: 'line',
+                data: { labels, datasets },
+                options: this.lineChartConfig.options
+            });
+        } else {
+            this.lineChart.data.labels = labels;
+            this.lineChart.data.datasets = datasets as any;
+        }
+
+        // 7) Adapter l'échelle Y en fonction du max
+        const allVals = datasets.flatMap(d => d.data as number[]);
+        const maxVal = allVals.length ? Math.max(...allVals) : 0;
+        const yMax = maxVal > 0 ? Math.ceil(maxVal * 1.1) : 10;
+        if (this.lineChart.options?.scales && (this.lineChart.options.scales as any)['y']) {
+            (this.lineChart.options.scales as any)['y'].max = yMax;
+        }
+
+        this.lineChart.update();
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: Event) {
+        if (this.openDropdown) {
+            this.openDropdown = null;
+        }
     }
 }
