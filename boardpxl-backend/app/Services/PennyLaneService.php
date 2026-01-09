@@ -55,10 +55,37 @@ class PennylaneService
      * */
     public function getInvoices()
     {
-        $creditInvoices = InvoiceCredit::all()->toArray();
-        $paymentInvoices = InvoicePayment::all()->toArray();
-        
-        return array_merge($creditInvoices, $paymentInvoices);
+        $allInvoices = [];
+        $cursor = null;
+
+        do {
+            $response = $this->client->get('customer_invoices', [
+                'query' => array_filter([
+                    'limit' => 100,
+                    'cursor' => $cursor,
+                    'sort' => '-id',
+                ])
+            ]);
+
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            if (!isset($data['items'])) {
+                break;
+            }
+
+            $allInvoices = array_merge($allInvoices, $data['items']);
+
+            $cursor = $data['next_cursor'] ?? null;
+            $hasMore = $data['has_more'] ?? false;
+
+            // Add delay to avoid rate limiting
+            if ($hasMore) {
+                usleep(500000); // 0.5 second delay between requests
+            }
+
+        } while ($hasMore);
+
+        return $allInvoices;
     }
 
     /**
@@ -349,69 +376,83 @@ class PennylaneService
             $invoices = $this->getInvoices();
 
             foreach ($invoices as $invoice) {
+                try {
+                    if (!isset($invoice['id'])) {
+                        continue;
+                    }
+                    echo "Synchronisation de la facture ID " . $invoice['id'] . PHP_EOL;
+                    
+                    $product = $this->getProductFromInvoice($invoice['invoice_number']);
+                    if (!$product) {
+                        Log::warning('Could not get product for invoice: ' . $invoice['invoice_number']);
+                        continue;
+                    }
+                    
+                    $isCredit = str_contains(strtolower($product['label'] ?? ''), 'crédits');
+                    $vat = isset($invoice['tax'], $invoice['currency_amount_before_tax']) && $invoice['currency_amount_before_tax'] != 0
+                        ? $invoice['tax'] / $invoice['currency_amount_before_tax'] * 100
+                        : 0;
 
-                if (!isset($invoice['id'])) {
-                    continue;
-                }
-                
-                $product = $this->getProductFromInvoice($invoice['invoice_number']);
-                $isCredit = str_contains(strtolower($product['label'] ?? ''), 'crédits');
-                $vat = $invoice['tax'] / $invoice['currency_amount_before_tax'] * 100;
+                    if($isCredit){
+                        $raw = $product['label'] ?? '';
+                        $clean = preg_replace('/crédits/i', '', $raw);
+                        $clean = preg_replace('/\s+/', '', $clean);
+                        $clean = str_replace(',', '.', $clean);
+                        $clean = preg_replace('/[^\d\.-]/', '', $clean);
+                        $creditAmount = empty($clean) ? $product['quantity'] ?? 0 : (float) $clean;
 
-                if($isCredit){
-                    $raw = $product['label'] ?? '';
-                    $clean = preg_replace('/crédits/i', '', $raw);
-                    $clean = preg_replace('/\s+/', '', $clean);
-                    $clean = str_replace(',', '.', $clean);
-                    $clean = preg_replace('/[^\d\.-]/', '', $clean);
-                    $creditAmount = empty($clean) ? $product['quantity'] ?? 0 : (float) $clean;
+                        InvoiceCredit::updateOrCreate(
+                            [
+                                'id' => $invoice['id'],
+                            ],
+                            [
+                                'number' => $invoice['invoice_number'] ?? null,
+                                'issue_date' => $invoice['date'] ?? null,
+                                'due_date' => $invoice['deadline'] ?? null,
+                                'description' => $invoice['pdf_description'] ?? null,
+                                'amount' => $invoice['amount'] ?? null,
+                                'tax' => $invoice['tax'] ?? null,
+                                'vat' => $vat ?? null,
+                                'total_due' => $invoice['remaining_amount_with_tax'] ?? null,
+                                'credits' => $creditAmount ?? null,
+                                'status' => $invoice['status'] ?? null,
+                                'link_pdf' => $invoice['public_file_url'] ?? null,
+                                'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null
+                            ]
+                        );
+                    }
+                    else {
+                        $match = [];
+                        preg_match('/(\d+(?:[.,]\d{2})?)\s*€/', $invoice['pdf_description'] ?? '', $match);
+                        $rawValue = $match ? (float) str_replace(',', '.', $match[1]) : 0;
 
-                    InvoiceCredit::updateOrCreate(
-                        [
-                            'id' => $invoice['id'],
-                        ],
-                        [
-                            'number' => $invoice['invoice_number'] ?? null,
-                            'issue_date' => $invoice['date'] ?? null,
-                            'due_date' => $invoice['deadline'] ?? null,
-                            'description' => $invoice['pdf_description'] ?? null,
-                            'amount' => $invoice['amount'] ?? null,
-                            'tax' => $invoice['tax'] ?? null,
-                            'vat' => $vat ?? null,
-                            'total_due' => $invoice['remaining_amount_with_tax'] ?? null,
-                            'credits' => $creditAmount ?? null,
-                            'status' => $invoice['status'] ?? null,
-                            'link_pdf' => $invoice['public_file_url'] ?? null,
-                            'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null
-                        ]
-                    );
-                }
-                else {
-                    $match = [];
-                    preg_match('/(\d+(?:[.,]\d{2})?)\s*€/', $invoice['pdf_description'] ?? '', $match);
-                    $rawValue = $match ? (float) str_replace(',', '.', $match[1]) : 0;
+                        $invoicePrev = InvoicePayment::find($invoice['id']);
 
-                    $invoicePrev = InvoicePayment::find($invoice['id']);
-
-                    InvoicePayment::updateOrCreate(
-                        [
-                            'id' => $invoice['id'],
-                        ],
-                        [
-                            'number' => $invoice['invoice_number'] ?? null,
-                            'issue_date' => $invoice['date'] ?? null,
-                            'due_date' => $invoice['deadline'] ?? null,
-                            'description' => $invoice['pdf_description'] ?? null,
-                            'raw_value' => $rawValue ?? null,
-                            'commission' => $invoice['amount'] ?? null,
-                            'tax' => $invoice['tax'] ?? null,
-                            'vat' => $vat ?? null,
-                            'start_period' => $invoicePrev->start_period ?? null,
-                            'end_period' => $invoicePrev->end_period ?? null,
-                            'link_pdf' => $invoice['public_file_url'] ?? null,
-                            'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null,
-                        ]
-                    );
+                        InvoicePayment::updateOrCreate(
+                            [
+                                'id' => $invoice['id'],
+                            ],
+                            [
+                                'number' => $invoice['invoice_number'] ?? null,
+                                'issue_date' => $invoice['date'] ?? null,
+                                'due_date' => $invoice['deadline'] ?? null,
+                                'description' => $invoice['pdf_description'] ?? null,
+                                'raw_value' => $rawValue ?? null,
+                                'commission' => $invoice['amount'] ?? null,
+                                'tax' => $invoice['tax'] ?? null,
+                                'vat' => $vat ?? null,
+                                'start_period' => $invoicePrev->start_period ?? null,
+                                'end_period' => $invoicePrev->end_period ?? null,
+                                'link_pdf' => $invoice['public_file_url'] ?? null,
+                                'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null,
+                            ]
+                        );
+                    }
+                } catch (\Throwable $e) {
+                    Log::error('Failed to sync invoice: ' . ($invoice['id'] ?? 'unknown'), [
+                        'error' => $e->getMessage(),
+                        'invoice' => $invoice
+                    ]);
                 }
             }
         } catch (\Throwable $e) {

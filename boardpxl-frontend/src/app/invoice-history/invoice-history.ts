@@ -27,7 +27,9 @@ export class InvoiceHistory implements OnDestroy {
     });
   }
 
+  
   ngOnInit() {
+    console.log("User ID in InvoiceHistory:", this.user);
     requestAnimationFrame(() => {
       const el = document.querySelector('.invoice-list') as HTMLElement | null;
       if (!el) return;
@@ -40,8 +42,8 @@ export class InvoiceHistory implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(invoices => {
       this.invoices = invoices;
+      console.log(this.invoices);
       for (let invoice of this.invoices) {
-        let x = 0;
         switch (invoice.status.toLowerCase()) {
           case 'paid':
             invoice.status = 'Payée';

@@ -177,13 +177,32 @@ class InvoiceController extends Controller
      */
     public function getInvoicesByClient($idClient)
     {
-        $invoiceCredits = $this->getInvoicesCreditByPhotographer($idClient);
-        $invoicePayments = $this->getInvoicesPaymentByPhotographer($idClient);
-        // merge both responses in a single json response
-        return response()->json(array_merge(
-            $invoiceCredits->getData(true),
-            $invoicePayments->getData(true)
-        ));
+        try {
+            if (!is_numeric($idClient)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid client id',
+                ], 422);
+            }
+
+            $invoiceCredits = DB::table('invoice_credits')
+                ->where('photographer_id', $idClient)
+                ->get();
+            
+            $invoicePayments = DB::table('invoice_payments')
+                ->where('photographer_id', $idClient)
+                ->get();
+            
+            return response()->json(array_merge(
+                $invoiceCredits->toArray(),
+                $invoicePayments->toArray()
+            ));
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
