@@ -14,8 +14,8 @@ export class InvoiceService {
   constructor(private http: HttpClient, private headersService: HttpHeadersService) {
   }
 
-  getInvoicesByClient(clientId: string): Observable<Invoice[]> {
-    return this.http.get<Invoice[]>(`${environment.apiUrl}/invoices-client/${clientId}`, this.headersService.getAuthHeaders());
+  getInvoicesByPhotographer(photographerId: string): Observable<Invoice[]> {
+    return this.http.get<Invoice[]>(`${environment.apiUrl}/invoices-photographer/${photographerId}`, this.headersService.getAuthHeaders());
   }
 
   getProductFromInvoice(invoice: Invoice): Observable<string[]> {
@@ -30,13 +30,13 @@ export class InvoiceService {
     return this.http.get<InvoicePayment[]>(`${environment.apiUrl}/invoices-credit/${photographerId}`, this.headersService.getAuthHeaders());
   }
 
-  
+
   createCreditsInvoice(body: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/create-credits-invoice-client`, body, this.headersService.getAuthHeaders());
+    return this.http.post(`${environment.apiUrl}/create-credits-invoice-photographer`, body, this.headersService.getAuthHeaders());
   }
 
   createTurnoverPaymentInvoice(body: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/create-turnover-invoice-client`, body, this.headersService.getAuthHeaders());
+    return this.http.post(`${environment.apiUrl}/create-turnover-invoice-photographer`, body, this.headersService.getAuthHeaders());
   }
 
   insertTurnoverInvoice(body: any): Observable<any> {
@@ -47,5 +47,5 @@ export class InvoiceService {
     return this.http.post(`${environment.apiUrl}/insert-credits-invoice`, body, this.headersService.getAuthHeaders());
   }
 
-  
+
 }

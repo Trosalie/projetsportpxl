@@ -36,7 +36,7 @@ export class InvoiceHistory implements OnDestroy {
       el.style.height = `calc(100vh - ${y}px - 10px)`;
     });
 
-    this.invoiceService.getInvoicesByClient(this.user)
+    this.invoiceService.getInvoicesByPhotographer(this.user)
       .pipe(takeUntil(this.destroy$))
       .subscribe(invoices => {
       this.invoices = invoices;

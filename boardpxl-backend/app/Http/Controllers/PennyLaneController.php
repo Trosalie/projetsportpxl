@@ -13,7 +13,7 @@ class PennyLaneController extends Controller
     /**
      * Création d'une facture d'achat de crédit Pennylane
      */
-    public function createCreditsInvoiceClient(Request $request, PennylaneService $service)
+    public function createCreditsInvoicePhotographer(Request $request, PennylaneService $service)
     {
         try {
             $validated = $request->validate([
@@ -23,20 +23,20 @@ class PennyLaneController extends Controller
                 'amountEuro' => 'required|string',
                 'issueDate' => 'required|string',
                 'dueDate' => 'required|string',
-                'idClient' => 'required|integer',
+                'idPhotographer' => 'required|integer',
                 'invoiceTitle' => 'required|string',
             ]);
 
             $description = $validated['description'] ?? "";
 
-            $facture = $service->createCreditsInvoiceClient(
+            $facture = $service->createCreditsInvoicePhotographer(
                 $validated['labelTVA'],
                 $validated['labelProduct'],
                 $description,
                 $validated['amountEuro'],
                 $validated['issueDate'],
                 $validated['dueDate'],
-                (int) $validated['idClient'],
+                (int) $validated['idPhotographer'],
                 $validated['invoiceTitle']
             );
 
@@ -65,17 +65,17 @@ class PennyLaneController extends Controller
                 'amountEuro' => 'required|string',
                 'issueDate' => 'required|string',
                 'dueDate' => 'required|string',
-                'idClient' => 'required|integer',
+                'idPhotographer' => 'required|integer',
                 'invoiceTitle' => 'required|string',
                 'invoiceDescription' => 'string',
             ]);
 
-            $facture = $service->createTurnoverInvoiceClient(
+            $facture = $service->createTurnoverInvoicePhotographer(
                 $validated['labelTVA'],
                 $validated['amountEuro'],
                 $validated['issueDate'],
                 $validated['dueDate'],
-                (int) $validated['idClient'],
+                (int) $validated['idPhotographer'],
                 $validated['invoiceTitle'],
                 $validated['invoiceDescription']
             );
@@ -95,26 +95,26 @@ class PennyLaneController extends Controller
     }
 
     /**
-     * Récupère ID client via name
+     * Récupère ID photographe via name
      */
-    public function getClientId(Request $request, PennylaneService $service)
+    public function getPhotographerId(Request $request, PennylaneService $service)
     {
         $validated = $request->validate([
             'name' => 'required|string',
         ]);
 
-        $clientId = $service->getClientIdByName($validated['name']);
+        $photographerId = $service->getPhotographerIdByName($validated['name']);
 
-        if ($clientId) {
+        if ($photographerId) {
             return response()->json([
                 'success' => true,
-                'client_id' => $clientId
+                'photographer_id' => $photographerId
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'Client non trouvé'
+            'message' => 'Photographe non trouvé'
         ], 404);
     }
 
@@ -127,11 +127,11 @@ class PennyLaneController extends Controller
     }
 
     /**
-     * Retourne factures d’un client
+     * Retourne factures d’un photographe
      */
-    public function getInvoicesByClient($idClient, PennylaneService $service)
+    public function getInvoicesByPhotographer($idPhotographer, PennylaneService $service)
     {
-        return response()->json($service->getInvoicesByIdClient($idClient));
+        return response()->json($service->getInvoicesByIdPhotographer($idPhotographer));
     }
 
     /**
@@ -216,15 +216,15 @@ class PennyLaneController extends Controller
           ]);
     }
     /**
-     * Récupère la liste des clients
+     * Récupère la liste des photographes
      */
-    public function getListClients(PennylaneService $service)
+    public function getListPhotographers(PennylaneService $service)
     {
-        $clients = $service->getListClients();
+        $photographers = $service->getListPhotographers();
 
         return response()->json([
             'success' => true,
-            'clients' => $clients
+            'photographers' => $photographers
         ]);
     }
 

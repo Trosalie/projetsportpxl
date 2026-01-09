@@ -7,14 +7,14 @@ import { HttpHeadersService } from './http-headers.service';
 @Injectable({
   providedIn: 'root',
 })
-export class ClientService {
+export class PhotographerPennylaneService {
   constructor(private http: HttpClient, private headersService: HttpHeadersService) {}
 
-  getClientIdByName(body: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/client-id` , body, this.headersService.getAuthHeaders());
+  getPhotographerIdByName(body: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/photographer-id` , body, this.headersService.getAuthHeaders());
   }
 
-  getClients(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/list-clients`, this.headersService.getAuthHeaders());
+  getPhotographers(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/list-photographers`, this.headersService.getAuthHeaders());
   }
 }

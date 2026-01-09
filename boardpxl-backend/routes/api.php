@@ -34,10 +34,10 @@ Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 Route::get('/email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 // Création d'une facture
-Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
+Route::post('/create-credits-invoice-photographer', [PennylaneController::class, 'createCreditsInvoicePhotographer']);
 
 // Création d'une facture de versement de CA
-Route::post('/create-turnover-invoice-client', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
+Route::post('/create-turnover-invoice-photographer', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
 
 // Insertion d'une facture de versement de CA
 Route::post('/insert-turnover-invoice', [InvoiceController::class, 'insertTurnoverInvoice']);
@@ -48,8 +48,8 @@ Route::post('/insert-credits-invoice', [InvoiceController::class, 'insertCredits
 // Tester récupération globale
 Route::get('/test', [PennylaneController::class, 'getInvoices']);
 
-// Récupérer l'ID d’un client
-Route::post('/client-id', [PennylaneController::class, 'getClientId']);
+// Récupérer l'ID d’un photographe
+Route::post('/photographer-id', [PennylaneController::class, 'getPhotographerId']);
 
 /*
 |--------------------------------------------------------------------------
@@ -66,15 +66,15 @@ Route::get('/user', function (Request $request) {
 
 // Déconnexion
 Route::post('/logout', [LoginController::class, 'logout']);
-  
-  
+
+
 // Récupérer les factures de versement d’un photographe
 Route::get('/invoices-payment/{photographer_id}', [InvoiceController::class, 'getInvoicesPaymentByPhotographer']);
 
 // Récupérer les factures de crédit d’un photographe
 Route::get('/invoices-credit/{photographer_id}', [InvoiceController::class, 'getInvoicesCreditByPhotographer']);
-// Récupérer la liste des clients
-Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
+// Récupérer la liste des photographes
+Route::get('/list-photographers', [PennylaneController::class, 'getListPhotographers']);
 
 // Téléchargement contournement CORS
 Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
@@ -90,8 +90,8 @@ Route::post('/password/confirm', [ConfirmPasswordController::class, 'confirm']);
 // Routes PennyLane (factures)
 Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
 Route::get('/test', [PennylaneController::class, 'getInvoices']);
-Route::get('/client-id', [PennylaneController::class, 'getClientId']);
-Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);
+Route::get('/photographer-id', [PennylaneController::class, 'getPhotographerId']);
+Route::get('/invoices-photographer/{idPhotographer}', [PennylaneController::class, 'getInvoicesByPhotographer']);
 Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
 Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
 
@@ -100,7 +100,7 @@ Route::post('/send-email', [MailController::class, 'sendEmail']);
 Route::get('/test-mail', [MailController::class, 'testMail']);
 Route::get('/mail-logs/{sender_id}', [MailController::class, 'getLogs']);
 
-// Récupérer tous les clients
+// Récupérer tous les photographers
 Route::get('/photographers', [PhotographerController::class, 'getPhotographers']);
 
 });

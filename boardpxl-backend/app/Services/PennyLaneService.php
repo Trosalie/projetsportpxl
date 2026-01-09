@@ -6,14 +6,14 @@ use GuzzleHttp\Client;
 
 class PennylaneService
 {
-    protected $client;
+    protected $photographer;
     protected $token;
 
     public function __construct()
     {
         $this->token = config('services.pennylane.token');
 
-        $this->client = new Client([
+        $this->photographer = new Client([
             'base_uri' => 'https://app.pennylane.com/api/external/v2/',
             'headers' => [
                 'Accept' => 'application/json',
@@ -23,9 +23,9 @@ class PennylaneService
         ]);
     }
 
-    public function getHttpClient(): Client
+    public function getHttpPhotographer(): Client
     {
-        return $this->client;
+        return $this->photographer;
     }
 
     // Récupérer toutes les factures
@@ -35,7 +35,7 @@ class PennylaneService
         $cursor = null;
 
         do {
-            $response = $this->client->get('customer_invoices', [
+            $response = $this->photographer->get('customer_invoices', [
                 'query' => array_filter([
                     'limit' => 100,
                     'cursor' => $cursor,
@@ -78,43 +78,43 @@ class PennylaneService
     }
 
 
-    // Récupérer les factures d'un client par son ID
-    public function getInvoicesByIdClient(int $idClient): array
+    // Récupérer les factures d'un photographe par son ID
+    public function getInvoicesByIdPhotographer(int $idPhotographer): array
     {
         $allInvoices = $this->getInvoices();
 
-        $clientInvoices = array_filter($allInvoices, function ($invoice) use ($idClient) {
-            return isset($invoice['customer']['id']) && $invoice['customer']['id'] == $idClient;
+        $photographerInvoices = array_filter($allInvoices, function ($invoice) use ($idPhotographer) {
+            return isset($invoice['customer']['id']) && $invoice['customer']['id'] == $idPhotographer;
         });
 
-        return array_values($clientInvoices); // Ré-indexe le tableau
+        return array_values($photographerInvoices); // Ré-indexe le tableau
     }
 
-    // Récupérer l'ID client par nom et prénom
-    public function getClientIdByName(string $name): ?int
+    // Récupérer l'ID photographe par nom et prénom
+    public function getPhotographerIdByName(string $name): ?int
     {
-        // Récupérer tous les clients
-        $clients = $this->getListClients();
+        // Récupérer tous les photographes
+        $photographers = $this->getListPhotographers();
 
-        // Filtrer le client par nom et prénom (insensible à la casse)
-        foreach ($clients as $client) {
-            $clientName = $client['name'] ?? '';
+        // Filtrer le photographe par nom et prénom (insensible à la casse)
+        foreach ($photographers as $photographer) {
+            $photographerName = $photographer['name'] ?? '';
 
-            if (strcasecmp($clientName, $name) === 0) {
-                return $client['id'];
+            if (strcasecmp($photographerName, $name) === 0) {
+                return $photographer['id'];
             }
         }
 
-        return null; // Aucun client trouvé
+        return null; // Aucun photographe trouvé
     }
 
-    
-    // Création d'une facture d'achat de crédit pour un client
-    public function createCreditsInvoiceClient(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle)
-    {
-        $client = new \GuzzleHttp\Client();
 
-        $response = $client->request('POST', 'https://app.pennylane.com/api/external/v2/customer_invoices', [
+    // Création d'une facture d'achat de crédit pour un photographe
+    public function createCreditsInvoicePhotographer(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $issueDate, string $dueDate, int $idPhotographer, string $invoiceTitle)
+    {
+        $photographer = new \GuzzleHttp\Client();
+
+        $response = $photographer->request('POST', 'https://app.pennylane.com/api/external/v2/customer_invoices', [
             'json' => [
                 "currency" => "EUR",
                 "language" => "fr_FR",
@@ -139,7 +139,7 @@ class PennylaneService
                 ],
                 "date" => $issueDate,
                 "deadline" => $dueDate,
-                "customer_id" => $idClient,
+                "customer_id" => $idPhotographer,
                 "pdf_invoice_subject" => $invoiceTitle
             ],
             'headers' => [
@@ -151,12 +151,12 @@ class PennylaneService
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    // Création d'une facture d'achat de crédit pour un client
-    public function createTurnoverInvoiceClient(string $labelTVA, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle, string $invoiceDescription)
+    // Création d'une facture d'achat de crédit pour un photographe
+    public function createTurnoverInvoicePhotographer(string $labelTVA, string $amountEuro, string $issueDate, string $dueDate, int $idPhotographer, string $invoiceTitle, string $invoiceDescription)
     {
-        $client = new \GuzzleHttp\Client();
+        $photographer = new \GuzzleHttp\Client();
 
-        $response = $client->request('POST', 'https://app.pennylane.com/api/external/v2/customer_invoices', [
+        $response = $photographer->request('POST', 'https://app.pennylane.com/api/external/v2/customer_invoices', [
             'json' => [
                 "currency" => "EUR",
                 "language" => "fr_FR",
@@ -181,7 +181,7 @@ class PennylaneService
                 ],
                 "date" => $issueDate,
                 "deadline" => $dueDate,
-                "customer_id" => $idClient,
+                "customer_id" => $idPhotographer,
                 "customer_invoice_template_id" => 207554338,
                 "pdf_invoice_subject" => $invoiceTitle,
                 "pdf_description" => $invoiceDescription,
@@ -197,7 +197,7 @@ class PennylaneService
 
     public function getPhotographers()
     {
-        $response = $this->client->get('customers?sort=-id');
+        $response = $this->photographer->get('customers?sort=-id');
         $data = json_decode($response->getBody()->getContents(), true);
 
         return $data['items'] ?? [];
@@ -224,7 +224,7 @@ class PennylaneService
                         'Authorization' => 'Bearer ' . $this->token,
                     ],
                 ]);
-                
+
                 $responseBody = $response->getBody()->getContents();
                 $data = json_decode($responseBody, true);
 
@@ -242,13 +242,13 @@ class PennylaneService
         return null; // Produit non trouvé
     }
 
-    public function getListClients(): array
+    public function getListPhotographers(): array
     {
-        $allClients = [];
+        $allPhotographers = [];
         $cursor = null;
 
         do {
-            $response = $this->client->get('customers', [
+            $response = $this->photographer->get('customers', [
                 'query' => array_filter([
                     'limit' => 100,           // max PennyLane
                     'cursor' => $cursor,      // null pour la 1ère page
@@ -262,7 +262,7 @@ class PennylaneService
                 break; // sécurité
             }
 
-            $allClients = array_merge($allClients, $data['items']);
+            $allPhotographers = array_merge($allPhotographers, $data['items']);
 
             // valeurs de pagination
             $cursor = $data['next_cursor'] ?? null;
@@ -270,12 +270,12 @@ class PennylaneService
 
         } while ($hasMore);
 
-        return $allClients;
+        return $allPhotographers;
     }
 
     public function getInvoiceById(int $id): ?array
     {
-        $response = $this->client->get("customer_invoices/{$id}");
+        $response = $this->photographer->get("customer_invoices/{$id}");
 
         if ($response->getStatusCode() === 200) {
             return json_decode($response->getBody()->getContents(), true);
