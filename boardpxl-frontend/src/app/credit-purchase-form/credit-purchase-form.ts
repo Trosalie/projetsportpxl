@@ -7,7 +7,6 @@ import { AuthService } from '../services/auth-service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-
 @Component({
   selector: 'app-credit-purchase-form',
   standalone: false,
@@ -22,7 +21,7 @@ export class CreditPurchaseForm implements OnDestroy {
   findClient: boolean = false;
   creationFacture: boolean = false;
   clientsNames: string[] = [];
-  filteredClients: string[] = [];
+  filteredPhotographers: string[] = [];
   photographerInput: string = '';
   notificationVisible: boolean = false;
   notificationMessage: string = "";
@@ -40,7 +39,7 @@ export class CreditPurchaseForm implements OnDestroy {
     // Récupère le nom du client depuis les query params
     this.route.queryParams.subscribe(params => {
       this.clientName = params['clientName'] || '';
-      
+
       // Cherche le client par nom/prénom
       if (this.clientName) {
         this.isLoading = true;
@@ -85,7 +84,6 @@ export class CreditPurchaseForm implements OnDestroy {
     });
   }
 
-
   // Actualise les suggestions de photographes en fonction de la saisie
   onPhotographerChange(value: string) {
     this.photographerInput = value;
@@ -94,7 +92,7 @@ export class CreditPurchaseForm implements OnDestroy {
     this.findClient = this.clientsNames.includes(value);
 
     // Filtrer les suggestions en fonction du texte saisi
-    this.filteredClients = this.clientsNames.filter(name =>
+    this.filteredPhotographers = this.clientsNames.filter(name =>
       name.toLowerCase().includes(value.toLowerCase())
     );
   }
@@ -104,7 +102,7 @@ export class CreditPurchaseForm implements OnDestroy {
     this.isLoading = true;
     this.photographerInput = name;
     this.findClient = true;
-    this.filteredClients = [];
+    this.filteredPhotographers = [];
     this.clientName = name;
     this.photographerService.getPhotographerIdsByName(this.clientName)
       .pipe(takeUntil(this.destroy$))
@@ -117,7 +115,7 @@ export class CreditPurchaseForm implements OnDestroy {
           this.popup.showNotification('Client non trouvé !');
         }
         this.isLoading = false;
-      }, 
+      },
       error: (err) => {
         console.error('Erreur fetch client ID après sélection :', err);
         this.isLoading = false;
@@ -167,7 +165,7 @@ export class CreditPurchaseForm implements OnDestroy {
     });
   }
 
-  insertCreditsInvoice( reponse: any, amount: number, credits: number, tva: string, status: string, issueDate: string, dueDate: string, clientId: number) 
+  insertCreditsInvoice( reponse: any, amount: number, credits: number, tva: string, status: string, issueDate: string, dueDate: string, clientId: number)
   {
     const invoice = reponse.data;
     const vatValue = this.convertTvaCodeToPercent(tva);
@@ -181,7 +179,7 @@ export class CreditPurchaseForm implements OnDestroy {
       amount: amount,
       tax: invoice.tax,
       vat: vatValue,
-      total_due: amount + invoice.tax, 
+      total_due: amount + invoice.tax,
       credits: credits,
       status: status,
       link_pdf: invoice.public_file_url,
