@@ -93,32 +93,23 @@ export class InvoiceHistory implements OnDestroy {
       const isCredit = invoice instanceof InvoiceCredit;
       const isPayment = invoice instanceof InvoicePayment;
 
-      // Filter by status
-      if (filters.statusFilters.length > 0) {
-        if (filters.statusFilters.includes('Payée') && isPayment) {
-          return true;
-        }
-
-        if (!filters.statusFilters.includes(invoice.status)) {
+      // Filter by type
+      if (filters.typeFilters.length > 0) {
+        const matchesType = 
+          (filters.typeFilters.includes('Achat de crédits') && isCredit) ||
+          (filters.typeFilters.includes('Versement') && isPayment);
+        
+        if (!matchesType) {
           return false;
         }
       }
 
-      // Filter by type
-      if (filters.typeFilters.length > 0) {
-        if (filters.typeFilters.includes('Versement') && filters.typeFilters.includes('Achat de crédits')) {
-          return true;
-        }
-        if (filters.typeFilters.includes('Achat de crédits') && !isCredit) {
-          return false;
-        }
-        if (filters.typeFilters.includes('Versement') && !isPayment) {
-          return false;
-        }
-        if (!filters.typeFilters.includes('Achat de crédits') && isCredit) {
-          return false;
-        }
-        if (!filters.typeFilters.includes('Versement') && isPayment) {
+      // Filter by status
+      if (filters.statusFilters.length > 0) {
+        // For payments, status is always "Payée"
+        const invoiceStatus = isPayment ? 'Payée' : invoice.status;
+        
+        if (!filters.statusFilters.includes(invoiceStatus)) {
           return false;
         }
       }
