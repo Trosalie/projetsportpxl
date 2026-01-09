@@ -13,6 +13,7 @@ import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-fo
 import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
 import { Logs } from './logs/logs';
+import { AboutUs } from './about-us/about-us'
 
 const routes: Routes = [
   { path: 'login', component: LoginPage },
@@ -28,7 +29,9 @@ const routes: Routes = [
   { path: 'form/payout', component: TurnoverPaymentForm, canActivate: [adminGuard]},
   { path: 'logs', component: Logs, canActivate: [adminGuard]},
   { path: 'photographer/:id', component: ProfileInformation, canActivate: [adminGuard]},
+  { path: 'about-us', component: AboutUs, canActivate: [photographerGuard]},
   { path: '**', redirectTo: '' },
+  
 ];
 
 @NgModule({
