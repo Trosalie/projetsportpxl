@@ -30,7 +30,7 @@ use App\Http\Controllers\LogsController;
 */
 
 // Routes d'authentification publiques
-Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->middleware('login.ratelimit')->name('login');
 Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 
