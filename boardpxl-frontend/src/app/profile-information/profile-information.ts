@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ClientService } from '../services/client-service.service';
+import { PhotographerService } from '../services/photographer-service';
 import { InvoiceService } from '../services/invoice-service';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { App } from '../app';
@@ -31,6 +32,7 @@ export class ProfileInformation
   photographerId: string | null = null;
 
   constructor(
+    private photographerService: PhotographerService,
     private clientService: ClientService,
     private invoiceService: InvoiceService,
     private route: ActivatedRoute,
@@ -87,7 +89,7 @@ export class ProfileInformation
     }
 
     const body = { name: this.name };
-    this.clientService.getClientIdByName(body).subscribe({
+    this.photographerService.getPhotographerIdsByName(body.name).subscribe({
       next: (data) =>
       {
         if (data && data.client_id)

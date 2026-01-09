@@ -8,7 +8,6 @@ use App\Models\Photographer;
 use Illuminate\Support\Facades\Http;
 use App\Services\PennylaneService;
 use App\Services\MailService;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Services\LogService;
 
