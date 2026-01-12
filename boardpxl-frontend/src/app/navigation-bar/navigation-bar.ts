@@ -56,10 +56,10 @@ export class NavigationBar implements OnDestroy {
         label: 'Politique de confidentialité',
         url: 'https://sportpxl.com/politique-de-confidentialite/'
       },
-      {
-        label: "A propos de nous",
-        url: "/about-us"
-      }
+      // {
+      //   label: "A propos de nous",
+      //   url: "/about-us"
+      // }
     ];
   }
 
