@@ -30,7 +30,7 @@ use App\Http\Controllers\LogsController;
 */
 
 // Routes d'authentification publiques
-Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->middleware('login.ratelimit')->name('login');
 Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 
@@ -85,6 +85,11 @@ Route::get('/invoices-payment/{photographer_id}', [InvoiceController::class, 'ge
 // Testé : Non couvert actuellement - test à ajouter (par exemple dans InvoiceControllerTest)
 Route::get('/invoices-credit/{photographer_id}', [InvoiceController::class, 'getInvoicesCreditByPhotographer']);
 
+//Récupérer les informations finaciere d'une facture de crédit
+Route::get('/invoice-credits-financial-info', [InvoiceController::class, 'getFinancialInfoCreditsInvoice']);
+
+//Récupérer les informations finaciere d'une facture de versement de CA
+Route::get('/invoice-turnover-financial-info', [InvoiceController::class, 'getFinancialInfoTurnoverInvoice']);
 // Création d'une facture
 Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
 

@@ -192,6 +192,7 @@ class InvoiceController extends Controller
         }
     }
 
+
     public function getFinancialInfoCreditsInvoice(){
         try {
             $invoices = DB::table('invoice_credits')
@@ -219,7 +220,6 @@ class InvoiceController extends Controller
             ], 500);
         }
     }
-
 
 
 }

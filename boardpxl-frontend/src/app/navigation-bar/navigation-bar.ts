@@ -35,7 +35,7 @@ export class NavigationBar implements OnDestroy {
 
   ngOnInit() {
     this.updateNavigation();
-
+    
     // Écouter les changements de route
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
@@ -56,7 +56,11 @@ export class NavigationBar implements OnDestroy {
       {
         label: 'Politique de confidentialité',
         url: 'https://sportpxl.com/politique-de-confidentialite/'
-      }
+      },
+      // {
+      //   label: "A propos de nous",
+      //   url: "/about-us"
+      // }
     ];
   }
 
@@ -65,16 +69,14 @@ export class NavigationBar implements OnDestroy {
     const currentUrlWithoutParams = currentUrl.split('?')[0];
     
     // Route par défaut
-    this.pages = [
-      {
-        label: 'Tableau de bord',
-        route: '/',
-        icon: 'assets/images/liste_icon.svg'
-      }
-    ];
+    this.pages = [];
     
     if (this.roleService.getRole() === 'photographer') {
       this.pages.push({
+        label: 'Tableau de bord',
+        route: '/',
+        icon: 'assets/images/liste_icon.svg'
+      },{
         label: 'Historique des emails',
         route: '/mails',
         icon: 'assets/images/mail_icon.svg'
@@ -83,18 +85,20 @@ export class NavigationBar implements OnDestroy {
 
     // Si on est sur la page de liste des photographes
     if (this.roleService.getRole() === 'admin') {
-      this.pages = [
-        {
-          label: 'Liste des photographes',
-          route: '/photographers',
-          icon: 'assets/images/liste_icon.svg'
-        },
-        {
-          label: 'Logs',
-          route: '/logs',
-          icon: 'assets/images/logs_icon.svg'
-        }
-      ];
+
+      this.pages.push({
+        label: 'Liste des photographes',
+        route: '/photographers',
+        icon: 'assets/images/liste_icon.svg'
+      }, {
+        label: 'Graphique général',
+        route: '/general-graph',
+        icon: 'assets/images/graphic_icon.svg'
+      }, {
+        label: 'Logs',
+        route: '/logs',
+        icon: 'assets/images/logs_icon.svg'
+      });
 
       // Si on est sur la page profil ou factures d'un photographe
       const invoiceMatch = currentUrl.match(/\/photographer\/(\d+)\/invoices/);

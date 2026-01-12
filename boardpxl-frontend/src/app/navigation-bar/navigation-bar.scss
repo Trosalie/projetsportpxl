@@ -127,6 +127,17 @@ nav {
             }
         }
 
+        a.active {
+            background-color: #E8EAF6;
+            color: #F98524;
+            cursor: default;
+            pointer-events: none;
+
+            .navbar-icon {
+                filter: invert(77%) sepia(37%) saturate(7323%) hue-rotate(345deg) brightness(101%) contrast(95%);
+            }
+        }
+
         .active-link {
             background-color: #E8EAF6;
             color: #F98524;
@@ -164,6 +175,8 @@ nav {
         &.active {
             background-color: #E8EAF6;
             color: #F98524;
+            cursor: default;
+            pointer-events: none;
 
             .navbar-icon {
                 filter: invert(77%) sepia(37%) saturate(7323%) hue-rotate(345deg) brightness(101%) contrast(95%);

@@ -1,0 +1,121 @@
+<app-title
+  [title]="'GRAPHIQUE GÉNÉRAL'"
+  [icon]="'assets/images/logo-tableau-de-bord.png'">
+</app-title>
+
+<div class="graph-container">
+
+  <div *ngIf="loading" class="loading">
+    <p>Chargement des données...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="!loading && !error" class="content-wrapper">
+
+    <!-- Sidebar gauche -->
+    <div class="sidebar">
+      <!-- Filters Section -->
+      <div class="filter-section-sidebar">
+        <div class="filter-label">Filtres</div>
+
+        <div class="filter-buttons-vertical">
+          <!-- Type de données Button -->
+          <div class="filter-dropdown-container">
+            <button class="filter-button" [class.active]="hasActiveDataTypeFilters()" (click)="toggleDropdown('dataType', $event)">
+              <img src="assets/category_icon.png" alt="Type" class="filter-icon">
+              <span>Type de données</span>
+              <button *ngIf="hasActiveDataTypeFilters()" class="clear-category-btn" (click)="clearCategoryFilters('dataType', $event)">
+                <img src="assets/close_icon.png" alt="Clear">
+              </button>
+            </button>
+            <div class="dropdown-menu" *ngIf="openDropdown === 'dataType'" (click)="$event.stopPropagation()">
+              <label class="checkbox-item" *ngFor="let type of dataTypeFilters">
+                <input 
+                  type="checkbox" 
+                  [checked]="isFilterActive(type)"
+                  (change)="toggleFilter(type)">
+                <span>{{ type }}</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Période Button -->
+          <div class="filter-dropdown-container">
+            <button class="filter-button" [class.active]="hasActivePeriodFilters()" (click)="toggleDropdown('period', $event)">
+              <img src="assets/calendar_icon.png" alt="Période" class="filter-icon">
+              <span>Période</span>
+              <button *ngIf="hasActivePeriodFilters()" class="clear-category-btn" (click)="clearCategoryFilters('period', $event)">
+                <img src="assets/close_icon.png" alt="Clear">
+              </button>
+            </button>
+            <div class="dropdown-menu period-dropdown" *ngIf="openDropdown === 'period'" (click)="$event.stopPropagation()">
+              <div class="date-filter-item" *ngFor="let period of periodFilters">
+                <label class="checkbox-item">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isFilterActive(period)"
+                    (change)="toggleFilter(period); isFilterActive(period) && addDateFilter(period)">
+                  <span>{{ period }}</span>
+                </label>
+                <input 
+                  *ngIf="isFilterActive(period)"
+                  type="date" 
+                  class="date-input" 
+                  [attr.data-filter]="period"
+                  [value]="getDateValue(period)" 
+                  (change)="updateDateFilter(period, $event)"
+                  [min]="period === 'Avant le' ? getDateValue('Après le') : ''"
+                  [max]="period === 'Après le' ? getDateValue('Avant le') : ''"
+                  (click)="$event.stopPropagation()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bouton Appliquer -->
+        <button class="apply-button" (click)="applyFilters()" [disabled]="!canApplyFilters()">
+          Appliquer
+        </button>
+      </div>
+
+      <div class="bottom-squares">
+
+        <div class="square-card">
+          <div class="square-label">Chiffre d'Affaires Total</div>
+          <div class="square-value">
+            {{ getTotalRevenue() | currency:'EUR':'symbol':'1.0-0':'fr' }}
+          </div>
+        </div>
+
+        <div class="square-card">
+          <div class="square-label">Crédits vendus (€)</div>
+          <div class="square-value">
+            {{ getTotalCreditsAmount() | currency:'EUR':'symbol':'1.0-0':'fr' }}
+          </div>
+        </div>
+
+        <div class="square-card">
+          <div class="square-label">Commission Totale</div>
+          <div class="square-value">
+            {{ getTotalCommission() | currency:'EUR':'symbol':'1.0-0':'fr' }}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- <div class="main-content">
+      <canvas #lineChartCanvas></canvas>
+    </div> -->
+
+    <!-- Line Chart -->
+    <div class="chart-wrapper">
+      <canvas #lineChartCanvas></canvas>
+    </div>
+
+  </div>
+</div>
