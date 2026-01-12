@@ -183,21 +183,14 @@ php artisan test
 
 <p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-<!-- ROADMAP -->
+<!-- ROADMAP
 ## Roadmap
 
-- [x] Authentification des utilisateurs
-- [x] Gestion des factures
-- [x] Intégration Stripe
-- [ ] Intégration Pennylane complète
-- [ ] Export de données financières
-- [ ] Notifications par email
-- [ ] Module de reporting avancé
-- [ ] API REST documentée
+/!\ WORK IN PROGRESS /!\
 
-Consultez les [issues ouvertes](https://github.com/Trosalie/projetsportpxl/issues) pour la liste complète des fonctionnalités proposées et problèmes connus.
+Consultez les [issues ouvertes](https://github.com/Trosalie/projetsportpxl/issues) pour la liste complète des fonctionnalités proposées et problèmes connus. -->
 
-<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
+<!-- <p align="right">(<a href="#readme-top">retour en haut</a>)</p> -->
 
 <!-- CONTACT -->
 ## Contact
