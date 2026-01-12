@@ -15,6 +15,12 @@
         gap: 6px;
     }
 
+    > div.photographer-info {
+        align-items: flex-start;
+        text-align: left;
+        margin-top: 13px;
+    }
+
     > div:not(:first-child) {
         align-items: center;
         text-align: center;
