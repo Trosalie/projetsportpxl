@@ -28,10 +28,10 @@ const routes: Routes = [
   { path: 'form/credits', component: CreditPurchaseForm, canActivate: [adminGuard]},
   { path: 'form/payout', component: TurnoverPaymentForm, canActivate: [adminGuard]},
   { path: 'photographer/:id', component: ProfileInformation, canMatch: [adminGuard]},
-  {path: 'general-graph', component: GeneralGraph, canActivate: [adminGuard]},
+  { path: 'general-graph', component: GeneralGraph, canActivate: [adminGuard]},
   { path: 'logs', component: Logs, canActivate: [adminGuard]},
   { path: 'photographer/:id', component: ProfileInformation, canActivate: [adminGuard]},
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: '' },
 ];
 
 @NgModule({
