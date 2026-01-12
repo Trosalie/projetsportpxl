@@ -58,11 +58,7 @@ export class InvoiceCard {
   }
 
   getTurnover(): number {
-    if (this.invoicePayment && this.invoicePayment.description) {
-      const match = this.invoicePayment.description.match(/(\d+(?:[.,]\d{2})?)\s*€/);
-      return match ? parseFloat(match[1].replace(',', '.')) : 0;
-    }
-    return 0;
+    return this.invoicePayment ? this.invoicePayment.raw_value : 0;
   }
 
 }
