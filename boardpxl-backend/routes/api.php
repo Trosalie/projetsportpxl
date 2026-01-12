@@ -44,7 +44,7 @@ Route::get('/email/resend', [VerificationController::class, 'resend'])->name('ve
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth:sanctum', 'sync.pennylane'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
 
     // Récupérer toutes les factures Pennylane pour sync
     Route::get('/pennylane-invoices', [PennylaneController::class, 'getInvoices']);
