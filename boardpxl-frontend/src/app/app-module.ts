@@ -15,7 +15,6 @@ import { PhotographerRequest } from './photographer-request/photographer-request
 import { AutomaticResponse } from './automatic-response/automatic-response';
 import { MailRequestPage } from './mail-request-page/mail-request-page';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 
 
 import { LOCALE_ID } from '@angular/core';
@@ -65,7 +64,7 @@ registerLocaleData(localeFr);
     TurnoverPaymentForm,
     MailsLog,
     AdminPhotographerInvoiceList,
-    GeneralGraph
+    GeneralGraph,
     Logs
   ],
   imports: [

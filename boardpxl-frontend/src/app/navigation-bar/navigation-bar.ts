@@ -92,8 +92,8 @@ export class NavigationBar implements OnDestroy {
         label: 'Graphique général',
         route: '/general-graph',
         icon: 'assets/images/graphic_icon.svg'
-      }
-    ];
+      },
+        {
           label: 'Logs',
           route: '/logs',
           icon: 'assets/images/logs_icon.svg'
