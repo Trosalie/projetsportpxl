@@ -89,7 +89,7 @@ ${this.userName}`;
     const body = ta?.value || '';
 
     // Validation du montant
-    if (!this.amount || this.amount.trim() === '') {
+    if (!this.amount || this.amount === '' || Number(this.amount) <= 0) {
       if (errorMessage) {
         errorMessage.innerHTML = `Veuillez indiquer un montant ${this.requestType === 'versement' ? 'du chiffre d\'affaires' : 'de crédits'} avant de soumettre la demande.`;
         errorMessage.style.opacity = '1';
