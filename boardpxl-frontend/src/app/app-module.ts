@@ -1,7 +1,7 @@
 import {DEFAULT_CURRENCY_CODE, NgModule, provideBrowserGlobalErrorListeners} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-
+import { CommonModule } from '@angular/common';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Header } from './header/header';
@@ -28,8 +28,12 @@ import { PhotographerCard } from './photographer-card/photographer-card';
 import { SearchBar } from './search-bar/search-bar';
 import { Pagination } from './pagination/pagination';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
+import {ProfileInformation} from './profile-information/profile-information';
 import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
+import { MailsLog } from './mails-log/mails-log';
+import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
+import { Logs } from './logs/logs';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -44,6 +48,8 @@ registerLocaleData(localeFr);
     PhotographerRequest,
     AutomaticResponse,
     MailRequestPage,
+    CreditPurchaseForm,
+    ProfileInformation,
     InvoiceFilter,
     LoginPage,
     NavigationBar,
@@ -53,13 +59,18 @@ registerLocaleData(localeFr);
     Pagination,
     CreditPurchaseForm,
     Popup,
-    TurnoverPaymentForm
+    TurnoverPaymentForm,
+    MailsLog,
+    AdminPhotographerInvoiceList,
+    Logs
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    CommonModule,
+    //NgChartsModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

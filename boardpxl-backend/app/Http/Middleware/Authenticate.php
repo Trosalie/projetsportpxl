@@ -19,6 +19,7 @@ class Authenticate extends Middleware
         }
         
         // For API requests, return null to trigger the default 401 Unauthorized response
+        // This prevents the RouteNotFoundException
         return null;
     }
 }
