@@ -6,13 +6,14 @@
     <div class="amount-field">
         <label for="amount">{{ requestType === 'versement' ? 'Montant du chiffre d\'affaires' : 'Nombre de crédits souhaités' }}</label>
         <input 
-            type="text" 
+            type="number" 
             id="amount" 
             name="amount" 
             [(ngModel)]="amount" 
             (ngModelChange)="onAmountChange()" 
-            [placeholder]="requestType === 'versement' ? 'Ex: 1500€' : 'Ex: 100'" 
+            [placeholder]="requestType === 'versement' ? 'Ex: 1500' : 'Ex: 100'" 
             [disabled]="isSending"
+            min="0"
         />
     </div>
     <div>
