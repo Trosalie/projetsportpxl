@@ -177,7 +177,6 @@ export class CreditPurchaseForm implements OnDestroy {
       number: invoice.invoice_number,
       issue_date: issueDate,
       due_date: dueDate,
-      description: invoice.pdf_description,
       amount: amount,
       tax: invoice.tax,
       vat: vatValue,
