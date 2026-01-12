@@ -13,18 +13,25 @@ use App\Models\Photographer;
 class PennylaneService
 {
     /**
+     * HTTP client used to communicate with the Pennylane external API.
      *
-     *
-     *
-     * */
+     * @var Client
+     */
     protected $client;
+
+    /**
+     * API authentication token used for Pennylane requests.
+     *
+     * @var string|null
+     */
     protected $token;
 
     /**
+     * Create a new PennylaneService instance and configure the HTTP client.
      *
-     *
-     *
-     * */
+     * The HTTP client is initialised with the base URI and authorization
+     * headers required to communicate with the Pennylane external API.
+     */
     public function __construct()
     {
         $this->token = config('services.pennylane.token');
