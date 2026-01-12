@@ -12,10 +12,11 @@ import { HttpHeadersService } from './http-headers.service';
 export class InvoiceService {
 
   /**
+   * Initializes the InvoiceService with HTTP and header utilities.
    *
-   *
-   *
-   * */
+   * @param http Angular HttpClient used to perform HTTP requests to the invoice API.
+   * @param headersService Service that provides authenticated HTTP headers for API calls.
+   */
   constructor(private http: HttpClient, private headersService: HttpHeadersService) {
   }
 
