@@ -291,16 +291,4 @@ class PennyLaneController extends Controller
             'clients' => $clients
         ]);
     }
-
-    public function getInvoiceById($id, PennylaneService $service)
-    {
-        $invoice = $service->getInvoiceById((int)$id);
-
-        if (!$invoice) {
-            return response()->json(['message' => 'Facture non trouvée'], 404);
-        }
-
-        return response()->json($invoice);
-    }
-
 }

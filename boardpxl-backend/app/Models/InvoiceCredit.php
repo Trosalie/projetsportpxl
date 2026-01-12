@@ -24,9 +24,17 @@ class InvoiceCredit extends Model
         'pdf_invoice_subject'
     ];
 
+    protected $dates = [
+        'issue_date',
+        'due_date',
+    ];
+
     protected $casts = [
-        'issue_date' => 'date',
-        'due_date' => 'date',
+        'amount' => 'decimal:2',
+        'tax' => 'decimal:2',
+        'vat' => 'decimal:2',
+        'total_due' => 'decimal:2',
+        'credits' => 'integer',
     ];
 
     public function photographer()
