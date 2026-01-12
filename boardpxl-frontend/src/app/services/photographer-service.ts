@@ -22,7 +22,6 @@ export class PhotographerService {
   }
 
   forceGetPhotographers(): Observable<Photographer[]> {
-    console.log('Fetching photographers from API');
     return this.http.get<Photographer[]>(`${environment.apiUrl}/photographers`, this.headersService.getAuthHeaders()).pipe(
       tap(data => {
         this.photographers = data;

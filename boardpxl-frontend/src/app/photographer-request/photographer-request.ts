@@ -141,7 +141,6 @@ Cordialement,
     this.isSending = true;
     this.mailService.sendMail(to, from, subject, body, type).subscribe({
       next: (response) => {
-        console.log('Mail envoyé avec succès:', response);
         this.isSending = false;
         window.location.assign('/request/success');
       },

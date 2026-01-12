@@ -128,7 +128,6 @@ export class GeneralGraph implements OnInit {
 
         try {
             this.lineChart = new Chart(this.lineChartCanvas.nativeElement, this.lineChartConfig);
-            console.log('Chart initialized successfully');
         } catch (error) {
             console.error('Error initializing chart:', error);
         }
@@ -143,7 +142,6 @@ export class GeneralGraph implements OnInit {
         next: (data) => {
             this.creditsFinancialInfo = data;
             this.originalCreditsInfo = Array.isArray(data) ? [...data] : [];
-            console.log('Credits Financial Info:', data);
             this.checkLoadingDone();
         },
         error: (err) => {
@@ -158,7 +156,6 @@ export class GeneralGraph implements OnInit {
         next: (data) => {
             this.turnoverFinancialInfo = data;
             this.originalTurnoverInfo = Array.isArray(data) ? [...data] : [];
-            console.log('Turnover Financial Info:', data);
             this.checkLoadingDone();
         },
         error: (err) => {
@@ -209,11 +206,6 @@ export class GeneralGraph implements OnInit {
         }
 
 
-        console.log('Total Revenue:', this.totalRevenue);
-        console.log('Total Credits:', this.totalCreditsVendus);
-        console.log('Total Commission:', this.totalCommission);
-
-        // Calcul des données mensuelles
         //this.computeMonthlyData();
         this.graphInfoCreditsInvoice = this.groupByMonth(this.creditsFinancialInfo, 'amount');
         this.graphInfoTurnoverInvoice = this.groupByMonth(this.turnoverFinancialInfo, 'commission');
@@ -259,13 +251,11 @@ export class GeneralGraph implements OnInit {
                 }
             }
         }
-        console.log('Grouped by month:', newInvoicesList);
         return newInvoicesList;
     }
 
 
     adaptTabOfDatas() {
-        //adapte les tableau pour qu'il y ait la même taille
         for (let item of this.graphInfoCreditsInvoice) {
             const month = item[0];
             if (!this.graphInfoTurnoverInvoice.find((i: any) => i[0] === month)) {
@@ -317,10 +307,8 @@ export class GeneralGraph implements OnInit {
 
             this.lineChartConfig.options!.scales!['y']!.max = yAxisMax;
         }
-        console.log('Labels Months Graph:', this.labelsMonthsGraph);
-        console.log('Graph Data 1:', this.graphData1);
     }
-
+    
     // Gestion des filtres
     toggleDropdown(dropdownType: string, event?: Event) {
         if (event) {
