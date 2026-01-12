@@ -30,7 +30,7 @@ use App\Http\Controllers\LogsController;
 */
 
 // Routes d'authentification publiques
-Route::post('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->middleware('login.ratelimit')->name('login');
 Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 
@@ -72,6 +72,13 @@ Route::middleware(['auth:sanctum', 'sync.pennylane'])->group(function () {
     // Récupérer la liste des clients
     // Testé : PennyLaneControllerTest::test_get_list_clients
     Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
+//Récupérer les informations finaciere d'une facture de crédit
+Route::get('/invoice-credits-financial-info', [InvoiceController::class, 'getFinancialInfoCreditsInvoice']);
+
+//Récupérer les informations finaciere d'une facture de versement de CA
+Route::get('/invoice-turnover-financial-info', [InvoiceController::class, 'getFinancialInfoTurnoverInvoice']);
+// Création d'une facture
+Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
 
     // Afficher une facture spécifique
     // Testé : InvoiceAndPhotographerControllerTest::test_get_invoice_by_id_success et test_get_invoice_by_id_not_found

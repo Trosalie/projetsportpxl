@@ -13,4 +13,8 @@ class LogActions extends Model
         'action',
         'permission',
     ];
+
+    public function logs(){
+        return $this->hasMany(Logs::class);
+    }
 }
