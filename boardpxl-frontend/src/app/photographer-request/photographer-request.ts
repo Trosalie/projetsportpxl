@@ -26,7 +26,7 @@ export class PhotographerRequest {
       el.style.height = `calc(100vh - ${y}px - 120px)`;
 
       const user = this.authService.getUser();
-      this.userName = user ? `${user.given_name} ${user.family_name}` : '[Prénom Nom]';
+      this.userName = user ? user.name : '[Prénom Nom]';
 
       this.updateMessage();
     });
@@ -69,7 +69,7 @@ export class PhotographerRequest {
     if (this.requestType === 'versement') {
       this.requestMessage = `Bonjour,
 
-Je vous contacte pour vous demander de bien vouloir procéder au versement de mon chiffre d'affaires, qui s'élève à ${amountText}.
+Je vous contacte pour vous demander de bien vouloir procéder au versement de mon chiffre d'affaires, qui s'élève à ${amountText} €.
 Merci d'avance pour le traitement de ma demande.
 
 Cordialement,
