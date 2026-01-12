@@ -12,6 +12,8 @@ export class PhotographerRequest {
   @Input() requestType: 'versement' | 'crédits' = 'versement';
   protected requestMessage: string = '';
   protected isSending: boolean = false;
+  protected amount: string = '';
+  private userName: string = '';
 
   constructor(private mailService: MailService, private authService: AuthService) {}
 
@@ -23,23 +25,10 @@ export class PhotographerRequest {
       let y = rect.top + window.scrollY;
       el.style.height = `calc(100vh - ${y}px - 120px)`;
 
-      if (this.requestType === 'versement') {
-        this.requestMessage = `Bonjour,
+      const user = this.authService.getUser();
+      this.userName = user ? user.name : '[Prénom Nom]';
 
-Je vous contacte pour vous demander de bien vouloir procéder au versement de mon chiffre d'affaires, qui s'élève à [insérer le montant].
-Merci d’avance pour le traitement de ma demande.
-
-Cordialement,
-[Prénom Nom]`;
-      } else if (this.requestType === 'crédits') {
-      this.requestMessage = `Bonjour,
-
-Je vous contacte afin de solliciter l'envoi d'un devis pour [insérer le montant] crédits.
-Merci de bien vouloir me transmettre le devis détaillé ainsi que les conditions et les délais.
-
-Cordialement,
-[Prénom Nom]`;
-      }
+      this.updateMessage();
     });
 
     const textareas = Array.from(document.querySelectorAll('textarea')) as HTMLTextAreaElement[];
@@ -66,12 +55,84 @@ Cordialement,
 
   }
 
+  updateMessage() {
+    let amountText = '[insérer le montant]';
+    if (this.amount && this.amount !== '') {
+      const amountValue = Number(this.amount);
+      if (this.requestType === 'crédits') {
+        amountText = Math.floor(amountValue).toString();
+      } else {
+        amountText = amountValue.toString();
+      }
+    }
+
+    if (this.requestType === 'versement') {
+      this.requestMessage = `Bonjour,
+
+Je vous contacte pour vous demander de bien vouloir procéder au versement de mon chiffre d'affaires, qui s'élève à ${amountText} €.
+Merci d'avance pour le traitement de ma demande.
+
+Cordialement,
+${this.userName}`;
+    } else if (this.requestType === 'crédits') {
+      this.requestMessage = `Bonjour,
+
+Je vous contacte afin de solliciter l'envoi d'un devis pour ${amountText} crédits.
+Merci de bien vouloir me transmettre le devis détaillé ainsi que les conditions et les délais.
+
+Cordialement,
+${this.userName}`;
+    }
+  }
+
+  onAmountChange() {
+    this.updateMessage();
+  }
+
   submitRequest() {
     // Validate form
     const ta = document.querySelector('textarea') as HTMLTextAreaElement | null;
     const errorMessage = document.querySelector('.error-message') as HTMLElement | null;
 
     const body = ta?.value || '';
+
+    // Validation du montant
+    const isValidAmount = this.requestType === 'crédits' 
+      ? (!this.amount || this.amount === '' || Number(this.amount) <= 0 || !Number.isInteger(Number(this.amount)))
+      : (!this.amount || this.amount === '' || Number(this.amount) <= 0);
+    
+    if (isValidAmount) {
+      if (errorMessage) {
+        const messageType = this.requestType === 'crédits' ? 'un nombre entier de crédits' : 'un montant du chiffre d\'affaires';
+        errorMessage.innerHTML = `Veuillez indiquer ${messageType} avant de soumettre la demande.`;
+        errorMessage.style.opacity = '1';
+
+        // animation
+        if (errorMessage.animate) {
+        errorMessage.animate(
+          [
+          { transform: 'translateY(8px)', opacity: '1' },
+          { transform: 'translateY(-8px)', opacity: '1' },
+          { transform: 'translateY(4px)', opacity: '1' },
+          { transform: 'translateY(0)', opacity: '1' }
+          ],
+          {
+          duration: 420,
+          easing: 'cubic-bezier(.2,.8,.2,1)',
+          iterations: 1,
+          fill: 'forwards'
+          }
+        );
+        } else {
+        errorMessage.style.transition = 'transform 0.14s cubic-bezier(.2,.8,.2,1)';
+        errorMessage.style.transform = 'translateY(8px)';
+        setTimeout(() => { errorMessage.style.transform = 'translateY(-8px)'; }, 140);
+        setTimeout(() => { errorMessage.style.transform = 'translateY(4px)'; }, 280);
+        setTimeout(() => { errorMessage.style.transform = 'translateY(0)'; }, 420);
+        }
+      }
+      return;
+    }
 
     if (ta) {
       const clearError = () => {
