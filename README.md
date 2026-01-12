@@ -43,9 +43,7 @@
       </ul>
     </li>
     <li><a href="#utilisation">Utilisation</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contribution">Contribution</a></li>
-    <li><a href="#licence">Licence</a></li>
+    <!-- <li><a href="#roadmap">Roadmap</a></li> -->
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
