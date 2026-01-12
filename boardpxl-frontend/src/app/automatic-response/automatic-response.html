@@ -1,6 +1,5 @@
 <app-title [title]="requestStatus === 'success' ? 'CONFIRMATION DE DEMANDE' : 'STATUT DE LA DEMANDE'"></app-title>
 <div class="container">
-    <hr>
     <p>{{ requestStatus === 'success' ? 'Votre demande a bien été prise en compte.' : 'Une erreur est survenue. Veuillez réessayer.' }}</p>
     <img src="{{ requestStatus === 'success' ? 'assets/images/checkmark.png' : 'assets/images/failure.png' }}" alt="checkmark">
     <div class="buttons">
