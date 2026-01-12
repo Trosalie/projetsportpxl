@@ -211,29 +211,37 @@ class InvoiceAndPhotographerControllerTest extends TestCase
                 ]);
     }
 
-        // Ce test vérifie la récupération réussie d'une facture spécifique par son ID.
-    // Le service retourne les détails de la facture, et on vérifie la réponse JSON.
+    // Ce test vérifie la récupération réussie d'une facture spécifique par son ID.
+    // Le contrôleur interroge d'abord invoice_credits et trouve la facture.
+    // On s'attend à une réponse 200 avec les détails de la facture.
     public function test_get_invoice_by_id_success()
     {
-        $mock = Mockery::mock(InvoiceController::class);
-        $mock->shouldReceive('getInvoiceById')
-            ->with(123)
+        // Mock pour invoice_credits - facture trouvée
+        DB::shouldReceive('table')
             ->once()
-            ->andReturn([
-                'id' => 123,
-                'invoice_number' => 'INV-123',
-                'total' => 100.00
-            ]);
+            ->with('invoice_credits')
+            ->andReturnSelf();
 
-        $this->app->instance(InvoiceController::class, $mock);
+        DB::shouldReceive('where')
+            ->once()
+            ->with('id', 123)
+            ->andReturnSelf();
+
+        DB::shouldReceive('first')
+            ->once()
+            ->andReturn((object)[
+                'id' => 123,
+                'number' => 'INV-123',
+                'amount' => 100.00
+            ]);
 
         $response = $this->getJson('/api/invoices/123');
 
         $response->assertStatus(200)
                 ->assertJson([
                     'id' => 123,
-                    'invoice_number' => 'INV-123',
-                    'total' => 100.00
+                    'number' => 'INV-123',
+                    'amount' => 100.00
                 ]);
     }
 
