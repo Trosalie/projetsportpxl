@@ -1,256 +1,219 @@
-[![Contributors][contributors-shield]][https://github.com/Trosalie/projetsportpxl/settings/access]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
+<a id="readme-top"></a>
+
+<!-- PROJECT SHIELDS -->
+[![Contributors][contributors-shield]][contributors-url]
 [![Issues][issues-shield]][issues-url]
-[![Unlicense License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-![Laravel](https://img.shields.io/badge/laravel-%23FF2D20.svg?style=for-the-badge&logo=laravel&logoColor=white) ![Angular](https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white) ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) ![Jira](https://img.shields.io/badge/jira-%230A0FFF.svg?style=for-the-badge&logo=jira&logoColor=white)
-# BoardPxl
+[![Pull Requests][pr-shield]][pr-url]
 
-Tableau de bord financier pour la plateforme SportPXL permettant aux photographes et administrateurs de gérer leurs factures, crédits et versements de manière centralisée.
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/Trosalie/projetsportpxl">
+    <img src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" alt="Logo Sportpxl" height="80">
+  </a>
+  <h3 align="center">BoardPxl</h3>
 
-## 📋 À propos
+  <p align="center">
+    Tableau de bord financier pour SportPXL
+    <!-- <br />
+    <a href="https://github.com/Trosalie/projetsportpxl"><strong>Explorer la documentation »</strong></a>
+    <br /> -->
+    <br />
+    <a href="https://github.com/Trosalie/projetsportpxl/issues">Reporter un Bug</a>
+    ·
+    <a href="https://github.com/Trosalie/projetsportpxl/issues">Proposer une Fonctionnalité</a>
+  </p>
+</div>
 
-BoardPxl centralise la gestion des flux financiers de SportPXL :
-- Suivi des abonnements Stripe
-- Gestion des crédits photographes
-- Historique des factures
-- Versements de chiffre d'affaires
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table des matières</summary>
+  <ol>
+    <li>
+      <a href="#à-propos-du-projet">À propos du projet</a>
+      <ul>
+        <li><a href="#construit-avec">Technologies principales</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#pour-commencer">Pour commencer</a>
+      <ul>
+        <li><a href="#prérequis">Prérequis</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#utilisation">Utilisation</a></li>
+    <!-- <li><a href="#roadmap">Roadmap</a></li> -->
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
 
-## 🚀 Technologies
+<!-- ABOUT THE PROJECT -->
+## À propos du projet
 
-- **Frontend**: Angular
-- **Backend**: Laravel (PHP)
-- **Base de données**: MySQL/PostgreSQL
-- **Intégrations**: Stripe, Pennylane, ForestAdmin
-- **Conteneurisation**: Docker
+BoardPxl est une application web conçue pour centraliser la gestion des flux financiers de la plateforme SportPXL. Elle permet aux photographes et administrateurs de suivre leurs transactions, gérer leurs crédits et consulter leur historique financier de manière claire et efficace.
 
-## 📦 Prérequis
+**Fonctionnalités principales :**
+* Gestion centralisée des factures et transactions
+* Suivi des crédits photographes
+* Intégration avec Stripe, Pennylane et ForestAdmin
+* Tableau de bord intuitif pour photographes et administrateurs
 
-- Docker et Docker Compose
-- Node.js 18+ (pour le développement frontend)
-- PHP 8.1+ (pour le développement backend)
-- Composer
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-## 🛠️ Installation
+### Technologies principales
 
-### 1. Cloner le projet
+Les technologies principales utilisées pour développer BoardPxl :
 
-```bash
-git clone <repository-url>
-cd projetsportpxl
-```
+* [![Angular][Angular.io]][Angular-url]
+* [![Laravel][Laravel.com]][Laravel-url]
+* [![TypeScript][TypeScript]][TypeScript-url]
+* [![Docker][Docker]][Docker-url]
+* [![MySQL][MySQL]][MySQL-url]
 
-### 2. Configuration avec Docker
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-Le projet utilise Docker Compose pour orchestrer les services frontend et backend.
+<!-- GETTING STARTED -->
+## Pour commencer
 
-```bash
-# Lancer tous les services
+Pour obtenir une copie locale et la faire fonctionner, suivez ces étapes simples.
+
+### Prérequis
+
+Assurez-vous d'avoir les outils suivants installés sur votre machine :
+
+* Docker et Docker Compose
+  ```sh
+  # Vérifier l'installation de Docker
+  docker --version
+  docker-compose --version
+  ```
+* Node.js 18+
+  ```sh
+  node --version
+  npm --version
+  ```
+* PHP 7.4+ et Composer
+  ```sh
+  php --version
+  composer --version
+  ```
+
+### Installation
+
+1. Cloner le repository
+   ```sh
+   git clone https://github.com/Trosalie/projetsportpxl.git
+   cd projetsportpxl
+   ```
+
+2. Démarrer les services avec Docker
+   ```sh
+   docker-compose up -d
+   ```
+
+3. Configurer le Backend (Laravel)
+   ```sh
+   cd boardpxl-backend
+   cp .env.example .env
+   composer install
+   php artisan key:generate
+   php artisan migrate
+   php artisan db:seed
+   ```
+
+4. Configurer le Frontend (Angular)
+   ```sh
+   cd ../boardpxl-frontend
+   npm install
+   ```
+
+5. Configurer les variables d'environnement
+   
+   **Backend** - Modifier `.env` :
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=db
+   DB_DATABASE=boardpxl
+   
+   STRIPE_KEY=your_stripe_key
+   STRIPE_SECRET=your_stripe_secret
+   PENNYLANE_API_KEY=your_pennylane_key
+   ```
+
+6. Lancer l'application
+   ```sh
+   # Le frontend sera accessible sur http://localhost:4200
+   ```
+
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
+
+<!-- USAGE -->
+## Utilisation
+
+BoardPxl propose deux espaces utilisateur distincts :
+
+### Espace Photographe
+- Consulter l'historique des factures
+- Visualiser le solde de crédits
+- Demander un versement de chiffre d'affaires
+
+### Espace Administrateur
+- Gérer les utilisateurs de la plateforme
+- Générer des factures (crédits, versements)
+- Consulter les flux financiers globaux
+- Accéder à l'historique complet des transactions
+
+**Commandes utiles :**
+
+```sh
+# Démarrer/Arrêter les services
 docker-compose up -d
-
-# Vérifier que les conteneurs sont actifs
-docker-compose ps
-```
-
-### 3. Configuration du Backend (Laravel)
-
-```bash
-# Accéder au répertoire backend
-cd boardpxl-backend
-
-# Copier le fichier d'environnement
-cp .env.example .env
-
-# Installer les dépendances
-composer install
-
-# Générer la clé d'application
-php artisan key:generate
-
-# Lancer les migrations
-php artisan migrate
-
-# (Optionnel) Charger les données de test
-php artisan db:seed
-```
-
-### 4. Configuration du Frontend (Angular)
-
-```bash
-# Accéder au répertoire frontend
-cd boardpxl-frontend
-
-# Installer les dépendances
-npm install
-
-# Lancer le serveur de développement
-npm start
-```
-
-### 5. Variables d'environnement
-
-#### Backend (.env)
-```env
-APP_NAME=BoardPxl
-APP_ENV=local
-APP_KEY=
-APP_DEBUG=true
-APP_URL=http://localhost:8000
-
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=boardpxl
-DB_USERNAME=root
-DB_PASSWORD=
-
-STRIPE_KEY=
-STRIPE_SECRET=
-PENNYLANE_API_KEY=
-```
-
-#### Frontend (environment.ts)
-```typescript
-export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:8000/api'
-};
-```
-
-## 🚀 Utilisation
-
-Une fois les services lancés :
-
-- **Frontend**: http://localhost:4200
-- **Backend API**: http://localhost:8000
-- **Base de données**: localhost:3306
-
-## 👥 Rôles utilisateurs
-
-### Administrateur
-- Gestion des utilisateurs
-- Génération de factures (crédits, versements)
-- Vue globale des flux financiers
-- Consultation des historiques
-
-### Photographe
-- Consultation de l'historique des factures
-- Visualisation du solde de crédits
-- Demande de versement
-
-## 📝 Commandes utiles
-
-### Docker
-```bash
-# Démarrer les services
-docker-compose up -d
-
-# Arrêter les services
 docker-compose down
 
 # Voir les logs
 docker-compose logs -f
 
-# Rebuild les images
-docker-compose build
-```
-
-### Backend
-```bash
-# Tests
-php artisan test
-
-# Générer des données de test
-php artisan db:seed
-
-# Clear cache
-php artisan cache:clear
-```
-
-### Frontend
-```bash
-# Build production
-npm run build
-
-# Tests
-npm test
-
-# Linter
-npm run lint
-```
-
-## 📁 Structure du projet
-
-```
-projetsportpxl/
-├── boardpxl-backend/     # API Laravel
-│   ├── app/              # Logique métier
-│   ├── database/         # Migrations & seeders
-│   └── routes/           # Routes API
-├── boardpxl-frontend/    # Application Angular
-│   └── src/
-│       └── app/          # Composants & services
-└── docker-compose.yml    # Configuration Docker
-```
-
-## 🔧 Développement
-
-### Installation locale sans Docker
-
-#### Backend
-```bash
+# Tests Backend
 cd boardpxl-backend
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-php artisan serve
+php artisan test
 ```
 
-#### Frontend
-```bash
-cd boardpxl-frontend
-npm install
-npm start
-```
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-## 🐛 Dépannage
+<!-- ROADMAP
+## Roadmap
 
-### Problèmes courants
+/!\ WORK IN PROGRESS /!\
 
-**Erreur de connexion à la base de données**
-```bash
-# Vérifier que le conteneur MySQL est actif
-docker-compose ps
+Consultez les [issues ouvertes](https://github.com/Trosalie/projetsportpxl/issues) pour la liste complète des fonctionnalités proposées et problèmes connus. -->
 
-# Vérifier les logs
-docker-compose logs db
-```
+<!-- <p align="right">(<a href="#readme-top">retour en haut</a>)</p> -->
 
-**Port déjà utilisé**
-```bash
-# Modifier les ports dans docker-compose.yml
-# ou arrêter les services qui utilisent les ports 4200, 8000, 3306
-```
+<!-- CONTACT -->
+## Contact
 
-**Permissions Docker (Linux/Mac)**
-```bash
-sudo usermod -aG docker $USER
-# Redémarrer la session
-```
+Mail : projetsportpxl@gmail.com
 
-## 🤝 Contribution
+Lien du projet: [https://github.com/Trosalie/projetsportpxl](https://github.com/Trosalie/projetsportpxl)
 
-1. Créer une branche depuis `develop`
-2. Faire vos modifications
-3. Créer une Pull Request
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-### Convention de nommage des branches
-- `feature/nom-feature` : Nouvelle fonctionnalité
-- `fix/nom-bug` : Correction de bug
-- `refactor/nom-refactor` : Refactorisation
+<!-- MARKDOWN LINKS & IMAGES -->
+[contributors-shield]: https://img.shields.io/github/contributors/Trosalie/projetsportpxl.svg?style=for-the-badge
+[contributors-url]: https://github.com/Trosalie/projetsportpxl/graphs/contributors
+[issues-shield]: https://img.shields.io/github/issues/Trosalie/projetsportpxl.svg?style=for-the-badge
+[issues-url]: https://github.com/Trosalie/projetsportpxl/issues
+[pr-shield]: https://img.shields.io/github/issues-pr/Trosalie/projetsportpxl.svg?style=for-the-badge
+[pr-url]: https://github.com/Trosalie/projetsportpxl/pulls
 
-## 📄 Licence
-
-Projet interne SportPXL
+[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
+[Angular-url]: https://angular.io/
+[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
+[Laravel-url]: https://laravel.com
+[TypeScript]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+[TypeScript-url]: https://www.typescriptlang.org/
+[Docker]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
+[Docker-url]: https://www.docker.com/
+[MySQL]: https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white
+[MySQL-url]: https://www.mysql.com/
