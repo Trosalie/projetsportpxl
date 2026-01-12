@@ -74,8 +74,8 @@ Route::middleware(['auth:sanctum', 'sync.pennylane'])->group(function () {
     Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
 
     // Afficher une facture spécifique
-    // Testé : PennyLaneControllerTest::test_get_invoice_by_id_success et test_get_invoice_by_id_not_found
-    Route::get('/invoices/{id}', [PennylaneController::class, 'getInvoiceById']);
+    // Testé : InvoiceAndPhotographerControllerTest::test_get_invoice_by_id_success et test_get_invoice_by_id_not_found
+    Route::get('/invoices/{id}', [InvoiceController::class, 'getInvoiceById']);
 
     // Utilisateur connecté
     Route::get('/user', function (Request $request) {
