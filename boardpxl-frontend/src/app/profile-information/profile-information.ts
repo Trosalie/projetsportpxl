@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ClientService } from '../services/client-service.service';
+import { PhotographerService } from '../services/photographer-service';
 import { InvoiceService } from '../services/invoice-service';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { App } from '../app';
@@ -26,10 +27,12 @@ export class ProfileInformation
   protected postal_code: string = '';
   protected country: string = '';
   protected numberSell: number = 0;
+  protected isLoading: boolean = true;
   findPhotographer: boolean = false;
   photographerId: string | null = null;
 
   constructor(
+    private photographerService: PhotographerService,
     private clientService: ClientService,
     private invoiceService: InvoiceService,
     private route: ActivatedRoute,
@@ -61,15 +64,18 @@ export class ProfileInformation
             this.locality = data.locality;
             this.country = data.country;
             this.loadTurnover();
+            this.isLoading = false;
           }
           else
           {
             this.findPhotographer = false;
+            this.isLoading = false;
           }
         },
         error: (err) => {
           console.error('Error fetch photographer :', err);
           this.findPhotographer = false;
+          this.isLoading = false;
         }
       }
     )
@@ -83,7 +89,7 @@ export class ProfileInformation
     }
 
     const body = { name: this.name };
-    this.clientService.getClientIdByName(body).subscribe({
+    this.photographerService.getPhotographerIdsByName(body.name).subscribe({
       next: (data) =>
       {
         if (data && data.client_id)

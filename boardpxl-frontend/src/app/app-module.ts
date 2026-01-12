@@ -1,7 +1,7 @@
 import {DEFAULT_CURRENCY_CODE, NgModule, provideBrowserGlobalErrorListeners} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-
+import { CommonModule } from '@angular/common';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Header } from './header/header';
@@ -36,6 +36,7 @@ import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/
 
 
 import { GeneralGraph } from './general-graph/general-graph';
+import { Logs } from './logs/logs';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -65,6 +66,7 @@ registerLocaleData(localeFr);
     MailsLog,
     AdminPhotographerInvoiceList,
     GeneralGraph
+    Logs
   ],
   imports: [
     BrowserModule,
