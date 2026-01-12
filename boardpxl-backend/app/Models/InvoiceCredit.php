@@ -13,7 +13,6 @@ class InvoiceCredit extends Model
         'number',
         'issue_date',
         'due_date',
-        'description',
         'amount',
         'tax',
         'vat',

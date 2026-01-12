@@ -85,7 +85,6 @@ class InvoiceSeeder extends Seeder
             'number' => $invoice['invoice_number'],
             'issue_date' => $invoice['date'],
             'due_date' => $invoice['deadline'],
-            'description' => $invoice['pdf_description'] ?? 'N/A',
             'amount' => $invoice['amount'],
             'tax' => $invoice['tax'],
             'vat' => $vat,
