@@ -1,7 +1,5 @@
-<app-title [title]="requestType === 'versement' ? 'DEMANDE DE VERSEMENT' : 'DEMANDE DE CRÉDITS'"></app-title>
+<app-title [title]="requestType === 'versement' ? 'DEMANDE DE VERSEMENT DE CHIFFRE D\'AFFAIRES' : 'DEMANDE D\'AJOUT DE CRÉDITS'"></app-title>
 <div class="container">
-    <h1>{{ requestType === 'versement' ? 'Versement de chiffre d\'affaires' : 'Ajout de crédits' }}</h1>
-    <hr>
     <app-photographer-request [requestType]="requestType"></app-photographer-request>
 </div>
 
