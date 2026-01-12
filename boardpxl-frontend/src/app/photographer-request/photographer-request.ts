@@ -88,6 +88,39 @@ ${this.userName}`;
 
     const body = ta?.value || '';
 
+    // Validation du montant
+    if (!this.amount || this.amount.trim() === '') {
+      if (errorMessage) {
+        errorMessage.innerHTML = `Veuillez indiquer un montant ${this.requestType === 'versement' ? 'du chiffre d\'affaires' : 'de crédits'} avant de soumettre la demande.`;
+        errorMessage.style.opacity = '1';
+
+        // animation
+        if (errorMessage.animate) {
+        errorMessage.animate(
+          [
+          { transform: 'translateY(8px)', opacity: '1' },
+          { transform: 'translateY(-8px)', opacity: '1' },
+          { transform: 'translateY(4px)', opacity: '1' },
+          { transform: 'translateY(0)', opacity: '1' }
+          ],
+          {
+          duration: 420,
+          easing: 'cubic-bezier(.2,.8,.2,1)',
+          iterations: 1,
+          fill: 'forwards'
+          }
+        );
+        } else {
+        errorMessage.style.transition = 'transform 0.14s cubic-bezier(.2,.8,.2,1)';
+        errorMessage.style.transform = 'translateY(8px)';
+        setTimeout(() => { errorMessage.style.transform = 'translateY(-8px)'; }, 140);
+        setTimeout(() => { errorMessage.style.transform = 'translateY(4px)'; }, 280);
+        setTimeout(() => { errorMessage.style.transform = 'translateY(0)'; }, 420);
+        }
+      }
+      return;
+    }
+
     if (ta) {
       const clearError = () => {
       ta.style.border = '';
