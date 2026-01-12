@@ -6,6 +6,7 @@ import { MailRequestPage } from './mail-request-page/mail-request-page';
 import { AutomaticResponse } from './automatic-response/automatic-response';
 import { photographerGuard } from './guards/photographer.guard';
 import { adminGuard } from './guards/admin.guard';
+import { loginGuard } from './guards/login.guard';
 import { PhotographersList } from './photographers-list/photographers-list';
 import { CreditPurchaseForm } from './credit-purchase-form/credit-purchase-form';
 import {ProfileInformation} from './profile-information/profile-information';
@@ -15,7 +16,7 @@ import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/
 import { Logs } from './logs/logs';
 
 const routes: Routes = [
-  { path: 'login', component: LoginPage },
+  { path: 'login', component: LoginPage, canActivate: [loginGuard] },
   { path: '', component: PhotographerDashboard, pathMatch: 'full', canActivate: [photographerGuard] },
   { path: 'photographers', component: PhotographersList, canActivate: [adminGuard] },
   { path: 'photographer/:id/invoices', component: AdminPhotographerInvoiceList, canActivate: [adminGuard] },
