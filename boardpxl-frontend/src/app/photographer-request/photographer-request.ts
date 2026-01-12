@@ -12,6 +12,8 @@ export class PhotographerRequest {
   @Input() requestType: 'versement' | 'crédits' = 'versement';
   protected requestMessage: string = '';
   protected isSending: boolean = false;
+  protected amount: string = '';
+  private userName: string = '';
 
   constructor(private mailService: MailService, private authService: AuthService) {}
 
@@ -23,23 +25,10 @@ export class PhotographerRequest {
       let y = rect.top + window.scrollY;
       el.style.height = `calc(100vh - ${y}px - 120px)`;
 
-      if (this.requestType === 'versement') {
-        this.requestMessage = `Bonjour,
+      const user = this.authService.getUser();
+      this.userName = user ? `${user.given_name} ${user.family_name}` : '[Prénom Nom]';
 
-Je vous contacte pour vous demander de bien vouloir procéder au versement de mon chiffre d'affaires, qui s'élève à [insérer le montant].
-Merci d’avance pour le traitement de ma demande.
-
-Cordialement,
-[Prénom Nom]`;
-      } else if (this.requestType === 'crédits') {
-      this.requestMessage = `Bonjour,
-
-Je vous contacte afin de solliciter l'envoi d'un devis pour [insérer le montant] crédits.
-Merci de bien vouloir me transmettre le devis détaillé ainsi que les conditions et les délais.
-
-Cordialement,
-[Prénom Nom]`;
-      }
+      this.updateMessage();
     });
 
     const textareas = Array.from(document.querySelectorAll('textarea')) as HTMLTextAreaElement[];
@@ -64,6 +53,32 @@ Cordialement,
         ta.addEventListener('blur', onBlur);
       });
 
+  }
+
+  updateMessage() {
+    const amountText = this.amount ? this.amount : '[insérer le montant]';
+
+    if (this.requestType === 'versement') {
+      this.requestMessage = `Bonjour,
+
+Je vous contacte pour vous demander de bien vouloir procéder au versement de mon chiffre d'affaires, qui s'élève à ${amountText}.
+Merci d'avance pour le traitement de ma demande.
+
+Cordialement,
+${this.userName}`;
+    } else if (this.requestType === 'crédits') {
+      this.requestMessage = `Bonjour,
+
+Je vous contacte afin de solliciter l'envoi d'un devis pour ${amountText} crédits.
+Merci de bien vouloir me transmettre le devis détaillé ainsi que les conditions et les délais.
+
+Cordialement,
+${this.userName}`;
+    }
+  }
+
+  onAmountChange() {
+    this.updateMessage();
   }
 
   submitRequest() {
