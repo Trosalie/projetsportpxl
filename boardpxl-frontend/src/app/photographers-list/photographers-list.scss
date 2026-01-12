@@ -7,11 +7,16 @@ main {
 
 .header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     flex-direction: row;
     margin: 13px;
     gap: 13px;
+    
+    app-search-bar {
+        margin-left: auto; // align search field + button to the right
+        margin-top: 13px;
+    }
 
     p {
         font-size: 24px;

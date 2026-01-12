@@ -21,7 +21,6 @@ export class MailService {
       body: body,
       type: type
     };
-    console.log('Tentative d\'envoi de mail:', payload);
     return this.http.post(`${environment.apiUrl}/send-email`, payload, this.headersService.getAuthHeaders());
   }
 

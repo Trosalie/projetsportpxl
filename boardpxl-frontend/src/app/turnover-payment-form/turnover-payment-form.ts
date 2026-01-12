@@ -50,7 +50,6 @@ export class TurnoverPaymentForm implements OnDestroy {
                 this.pennylaneId = data.pennylane_id;
                 this.findClient = true;
                 this.photographerInput = this.clientName;
-                console.log("Client trouvé :", data);
               } else {
                 // Client non trouvé
                 this.findClient = false;
@@ -94,9 +93,15 @@ export class TurnoverPaymentForm implements OnDestroy {
       this.findClient = this.clientsNames.includes(value);
   
       // Filtrer les suggestions en fonction du texte saisi
-      this.filteredClients = this.clientsNames.filter(name =>
-        name.toLowerCase().includes(value.toLowerCase())
-      );
+      const normalizedQuery = value.trim().toLowerCase();
+      this.filteredClients = this.clientsNames.filter(name => this.matchesQuery(name, normalizedQuery));
+    }
+
+    private matchesQuery(name: string, normalizedQuery: string): boolean {
+      if (!normalizedQuery) return false;
+
+      const normalizedName = name.toLowerCase();
+      return normalizedName.startsWith(normalizedQuery) || normalizedName.includes(` ${normalizedQuery}`);
     }
   
     // Sélectionne un photographe dans la liste des suggestions
@@ -140,7 +145,6 @@ export class TurnoverPaymentForm implements OnDestroy {
       const dueDate = due.toISOString().slice(0, 10);
       if (!subject || !startDate || !endDate || !commission || !chiffreAffaire || !TVA || !this.findClient) {
         this.popup.showNotification("Merci de remplir tous les champs du formulaire.");
-        console.log("Formulaire incomplet :", {subject, startDate, endDate, commission, chiffreAffaire, TVA, findClient: this.findClient});
         return;
       }
       const body = {
@@ -195,17 +199,11 @@ export class TurnoverPaymentForm implements OnDestroy {
       pdf_invoice_subject: invoice.pdf_invoice_subject
     };
 
-    console.log("Insertion de la facture avec le corps :", body);
-
     this.invoiceService.insertTurnoverInvoice(body)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-      next: () => {
-        console.log("Insertion de la facture réussie.");
-      },
-      error: (err) => {
-        console.error("Erreur lors de l'insertion :", err);
-      }
+      next: () => {},
+      error: err => console.error("Erreur lors de l'insertion :", err)
     });
   
   }

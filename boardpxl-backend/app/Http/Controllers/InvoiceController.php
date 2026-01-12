@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\InvoicePayment;
@@ -18,6 +19,13 @@ class InvoiceController extends Controller
     {
         $this->logService = $logService;
     }
+  
+      /**
+     * add to the db a turnover invoice with specific information
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function insertTurnoverInvoice(Request $request)
     {
         // Validation des données entrantes
@@ -81,6 +89,12 @@ class InvoiceController extends Controller
         }
     }
 
+    /**
+     * add to the db a credit invoice with specific information
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function insertCreditsInvoice(Request $request)
     {
         // Validation des données
@@ -89,7 +103,6 @@ class InvoiceController extends Controller
             'number' => 'required|string',
             'issue_date' => 'required|date',
             'due_date' => 'required|date',
-            'description' => 'nullable|string',
             'amount' => 'required|numeric',
             'tax' => 'required|numeric',
             'vat' => 'required|numeric',
@@ -108,7 +121,6 @@ class InvoiceController extends Controller
                 'number' => $validated['number'],
                 'issue_date' => $validated['issue_date'],
                 'due_date' => $validated['due_date'],
-                'description' => $validated['description']  ?? 'N/A',
                 'amount' => $validated['amount'],
                 'tax' => $validated['tax'],
                 'vat' => $validated['vat'],
@@ -145,7 +157,12 @@ class InvoiceController extends Controller
         }
     }
 
-    
+    /**
+     * get all payment invoices from a photographer
+     *
+     * @param int $photographer_id
+     * @return JsonResponse
+     */    
     public function getInvoicesPaymentByPhotographer(Request $request, $photographer_id)
     {
         try {
@@ -169,6 +186,12 @@ class InvoiceController extends Controller
         }
     }
 
+    /**
+     * get all credit invoices from a photographer
+     *
+     * @param int $photographer_id
+     * @return JsonResponse
+     */
     public function getInvoicesCreditByPhotographer(Request $request, $photographer_id)
     {
         try {
@@ -192,7 +215,39 @@ class InvoiceController extends Controller
         }
     }
 
+    /**
+     * Retourne factures d'un client
+     */
+    public function getInvoicesByClient($idClient)
+    {
+        try {
+            if (!is_numeric($idClient)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid client id',
+                ], 422);
+            }
 
+            $invoiceCredits = DB::table('invoice_credits')
+                ->where('photographer_id', $idClient)
+                ->get();
+            
+            $invoicePayments = DB::table('invoice_payments')
+                ->where('photographer_id', $idClient)
+                ->get();
+            
+            return response()->json(array_merge(
+                $invoiceCredits->toArray(),
+                $invoicePayments->toArray()
+            ));
+          } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+  
     public function getFinancialInfoCreditsInvoice(){
         try {
             $invoices = DB::table('invoice_credits')
@@ -207,6 +262,48 @@ class InvoiceController extends Controller
         }
     }
 
+    /**
+     * Récupère un produit d'une facture
+     */
+    public function getProductFromInvoice($invoiceNumber, PennylaneService $service)
+    {
+        $product = $service->getProductFromInvoice($invoiceNumber);
+
+        if ($product) {
+            return response()->json($product);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Produit non trouvé'
+        ], 404);
+    }
+
+    /**
+     * get the invoice with a specific id
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getInvoiceById($id)
+    {
+        $invoice = DB::table('invoice_credits')
+            ->where('id', $id)
+            ->first();
+        
+        if (! $invoice) {
+            $invoice = DB::table('invoice_payments')
+                ->where('id', $id)
+                ->first();
+        }
+
+        if (!$invoice) {
+            return response()->json(['message' => 'Facture non trouvée'], 404);
+        }
+
+        return response()->json($invoice);
+    }
+  
     public function getFinancialInfoTurnoverInvoice(){
         try {
             $invoices = DB::table('invoice_payments')
@@ -221,5 +318,6 @@ class InvoiceController extends Controller
         }
     }
 
+    
 
 }

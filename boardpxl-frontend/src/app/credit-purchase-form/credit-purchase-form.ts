@@ -94,9 +94,15 @@ export class CreditPurchaseForm implements OnDestroy {
     this.findClient = this.clientsNames.includes(value);
 
     // Filtrer les suggestions en fonction du texte saisi
-    this.filteredClients = this.clientsNames.filter(name =>
-      name.toLowerCase().includes(value.toLowerCase())
-    );
+    const normalizedQuery = value.trim().toLowerCase();
+    this.filteredClients = this.clientsNames.filter(name => this.matchesQuery(name, normalizedQuery));
+  }
+
+  private matchesQuery(name: string, normalizedQuery: string): boolean {
+    if (!normalizedQuery) return false;
+
+    const normalizedName = name.toLowerCase();
+    return normalizedName.startsWith(normalizedQuery) || normalizedName.includes(` ${normalizedQuery}`);
   }
 
   // Sélectionne un photographe dans la liste des suggestions
@@ -148,7 +154,6 @@ export class CreditPurchaseForm implements OnDestroy {
       invoiceTitle: subject
     };
     this.creationFacture = true;
-    console.log("Création de la facture crédit avec :", body);
     this.invoiceService.createCreditsInvoice(body)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -177,7 +182,6 @@ export class CreditPurchaseForm implements OnDestroy {
       number: invoice.invoice_number,
       issue_date: issueDate,
       due_date: dueDate,
-      description: invoice.pdf_description,
       amount: amount,
       tax: invoice.tax,
       vat: vatValue,
@@ -189,12 +193,10 @@ export class CreditPurchaseForm implements OnDestroy {
       pdf_invoice_subject: invoice.pdf_invoice_subject
     };
 
-    console.log("Insertion de la facture crédit avec :", body);
-
     this.invoiceService.insertCreditsInvoice(body)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-      next: () => console.log("Facture crédit enregistrée."),
+      next: () => {},
       error: err => console.error("Erreur insertion facture crédit :", err)
     });
   }

@@ -54,7 +54,7 @@
       <div class="metrics">
         <div class="metric metric--turnover">
           <div class="metric_label">Chiffre d'affaire</div>
-          <div class="metric_value">{{ turnover }} €</div>
+          <div class="metric_value">{{ turnover | number:'1.0-9':'fr-FR' }} €</div>
         </div>
         <div class="metric metric--credits">
           <div class="metric_label">Crédits restants</div>
