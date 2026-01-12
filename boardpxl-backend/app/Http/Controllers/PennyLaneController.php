@@ -291,12 +291,4 @@ class PennyLaneController extends Controller
             'clients' => $clients
         ]);
     }
-
-    public function getInvoices(PennylaneService $service)
-    {
-        $invoices = $service->getInvoices();
-
-        return response()->json($invoices);
-    }
-
 }
