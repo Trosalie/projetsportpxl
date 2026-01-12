@@ -98,6 +98,14 @@ export class NavigationBar implements OnDestroy {
         label: 'Logs',
         route: '/logs',
         icon: 'assets/images/logs_icon.svg'
+      }, {
+        label: 'Formulaire de versement',
+        route: '/form/payout',
+        icon: 'assets/images/form_icon.svg'
+      }, {
+        label: 'Formulaire d\'ajout de crédits',
+        route: '/form/credits',
+        icon: 'assets/images/form_icon.svg'
       });
 
       // Si on est sur la page profil ou factures d'un photographe
@@ -162,23 +170,24 @@ export class NavigationBar implements OnDestroy {
 
   isActivePage(route: string): boolean {
     const currentUrl = this.router.url.split('?')[0]; // Enlever les query params
+    const normalizedRoute = route.startsWith('/') ? route : '/' + route;
     
     // Si c'est la route racine
-    if (route === '/') {
+    if (normalizedRoute === '/') {
       return currentUrl === '/' || currentUrl === '';
     }
     
     // Vérifier si c'est une correspondance exacte
-    if (currentUrl === route) {
+    if (currentUrl === normalizedRoute) {
       return true;
     }
     
     // Pour /photographers, vérifier que l'URL est exactement /photographers (pas de sous-routes)
-    if (route === '/photographers') {
+    if (normalizedRoute === '/photographers') {
       return currentUrl === '/photographers';
     }
     
     // Pour les autres routes avec sous-chemins, vérifier correspondance exacte
-    return currentUrl === route;
+    return currentUrl === normalizedRoute;
   }
 }

@@ -233,7 +233,7 @@ nav {
         width: 100%;
 
         a {
-            width: auto;
+            width: fit-content;
             height: auto;
             padding: 5px 0;
             font-size: 14px;
@@ -241,6 +241,13 @@ nav {
             color: #FEB62C;
             background-color: transparent;
             border-radius: 0;
+            display: inline;
+            justify-content: flex-start;
+
+            &:hover {
+                background-color: transparent;
+                color: #F98524;
+            }
         }
     }
 }
