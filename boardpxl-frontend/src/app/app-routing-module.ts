@@ -31,7 +31,6 @@ const routes: Routes = [
   { path: 'photographer/:id', component: ProfileInformation, canActivate: [adminGuard]},
   { path: 'about-us', component: AboutUs, canActivate: [photographerGuard]},
   { path: '**', redirectTo: '' },
-  
 ];
 
 @NgModule({
