@@ -311,6 +311,9 @@ export class GeneralGraph implements OnInit {
     
     // Gestion des filtres
     toggleDropdown(dropdownType: string, event?: Event) {
+        if (event) {
+            event.stopPropagation();
+        }
         this.openDropdown = this.openDropdown === dropdownType ? null : dropdownType;
     }
 
