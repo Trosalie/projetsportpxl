@@ -3,6 +3,14 @@
   [icon]="'assets/images/logo-tableau-de-bord.png'">
 </app-title>
 
+<div class="mobile-only-message">
+  <div class="message-card">
+    <span class="material-symbols-outlined">desktop_windows</span>
+    <h2>Page non disponible sur mobile</h2>
+    <p>Cette page est uniquement accessible depuis un ordinateur pour une meilleure expérience de visualisation des graphiques.</p>
+  </div>
+</div>
+
 <div class="graph-container">
 
   <div *ngIf="loading" class="loading">

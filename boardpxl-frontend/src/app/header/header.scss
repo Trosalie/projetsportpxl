@@ -2,7 +2,7 @@ header{
   position: sticky;
   top: 0;
   width: 100%;
-  z-index: 10;
+  z-index: 999;
 }
 
 nav > div {
@@ -41,5 +41,11 @@ nav > div {
     .bar {
       background-color: #E8EAF6;
     }
+  }
+}
+
+.logo-link {
+  @media (max-width: 768px) {
+    display: none !important;
   }
 }

@@ -1,5 +1,8 @@
 <div [class.hide]="isLoginPage()">
    <nav [class.open]="isOpen">
+      <div class="nav-logo-mobile">
+         <img src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" alt="App Logo" class="logo">
+      </div>
       <ul>
          <li *ngFor="let page of pages">
             <a *ngIf="page.route" [routerLink]="page.route" [queryParams]="page.queryParams" [class.active]="isActivePage(page.route)">
