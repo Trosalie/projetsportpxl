@@ -1,7 +1,7 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { InvoiceService } from '../services/invoice-service';
-import { ClientService } from '../services/client-service.service';
+import { PhotographerService } from '../services/photographer-service';
 import { Popup } from '../popup/popup';
 import { AuthService } from '../services/auth-service';
 import { Subject } from 'rxjs';
@@ -16,6 +16,7 @@ import { takeUntil } from 'rxjs/operators';
 export class TurnoverPaymentForm implements OnDestroy {
     today: string = new Date().toISOString().slice(0, 10);
     clientId: any;
+    pennylaneId: any;
     clientName: string = '';
     findClient: boolean = false;
     creationFacture: boolean = false;
@@ -27,7 +28,7 @@ export class TurnoverPaymentForm implements OnDestroy {
     isLoading: boolean = false;
     private destroy$ = new Subject<void>();
   
-    constructor(private invoiceService: InvoiceService, private clientService: ClientService, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
+    constructor(private invoiceService: InvoiceService, private photographerService: PhotographerService, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
       this.authService.logout$.pipe(takeUntil(this.destroy$)).subscribe(() => {
         this.destroy$.next();
       });
@@ -42,13 +43,14 @@ export class TurnoverPaymentForm implements OnDestroy {
         // Cherche le client par nom/prénom
         if (this.clientName) {
           this.isLoading = true;
-          const body = { name: this.clientName };
-          this.clientService.getClientIdByName(body).subscribe({
+          this.photographerService.getPhotographerIdsByName(this.clientName).subscribe({
             next: (data) => {
               if (data && data.client_id) {
                 this.clientId = data.client_id;
+                this.pennylaneId = data.pennylane_id;
                 this.findClient = true;
                 this.photographerInput = this.clientName;
+                console.log("Client trouvé :", data);
               } else {
                 // Client non trouvé
                 this.findClient = false;
@@ -73,11 +75,11 @@ export class TurnoverPaymentForm implements OnDestroy {
   
     // Récupère tous les clients pour suggestions
     loadClients() {
-      this.clientService.getClients()
+      this.photographerService.getPhotographers()
         .pipe(takeUntil(this.destroy$))
         .subscribe({
         next: (res) => {
-          this.clientsNames = res.clients.map((c: any) => c.name);
+          this.clientsNames = res.map((c: any) => c.name);
         },
         error: (err) => console.error('Erreur fetch clients :', err)
       });
@@ -104,13 +106,13 @@ export class TurnoverPaymentForm implements OnDestroy {
       this.findClient = true;
       this.filteredClients = [];
       this.clientName = name;
-      const body = { name: this.clientName };
-      this.clientService.getClientIdByName(body)
+      this.photographerService.getPhotographerIdsByName(this.clientName)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
         next: (data) => {
           if (data && data.client_id) {
             this.clientId = data.client_id;
+            this.pennylaneId = data.pennylane_id;
           } else {
             this.popup.showNotification('Client non trouvé !');
           }
@@ -146,7 +148,7 @@ export class TurnoverPaymentForm implements OnDestroy {
         amountEuro: commission,
         issueDate: this.today,
         dueDate: dueDate,
-        idClient: this.clientId,
+        idClient: this.pennylaneId,
         invoiceTitle: subject,
         invoiceDescription: `Versement du chiffre d'affaire de ${chiffreAffaire}€ pour la période du ${startDate} au ${endDate}.`
       }

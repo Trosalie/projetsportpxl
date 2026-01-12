@@ -8,10 +8,18 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use App\Services\LogService;
 
 
 class LoginController extends Controller
 {
+    private LogService $logService;
+
+    public function __construct(LogService $logService)
+    {
+        $this->logService = $logService;
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Login Controller
@@ -43,6 +51,11 @@ class LoginController extends Controller
         // Créer un token API pour l'authentification
         $token = $photographer->createToken('API Token')->plainTextToken;
 
+        $this->logService->logAction($request, 'login', 'USERS', [
+            'user_id' => $photographer->id,
+            'email' => $photographer->email,
+        ]);
+
         return response()->json([
             'message' => 'Login successful',
             'user' => $photographer,
@@ -51,6 +64,10 @@ class LoginController extends Controller
 
     }
 
+        $this->logService->logAction($request, 'login_failed', 'USERS', [
+            'email' => $credentials['email'],
+        ]);
+
         return response()->json([
             'message' => 'Invalid credentials'
         ], 401);
@@ -58,10 +75,16 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        $userId = Auth::id();
+        
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        $this->logService->logAction($request, 'logout', 'USERS', [
+            'user_id' => $userId,
+        ]);
 
         return response()->json([
             'message' => 'Logged out successfully'

@@ -10,11 +10,11 @@ import { HttpHeadersService } from './http-headers.service';
 export class ClientService {
   constructor(private http: HttpClient, private headersService: HttpHeadersService) {}
 
-  getClientIdByName(body: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/client-id` , body, this.headersService.getAuthHeaders());
-  }
-
   getClients(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/list-clients`, this.headersService.getAuthHeaders());
+  }
+
+  getPhotographer(id: string|null): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/photographer/${id}`, this.headersService.getAuthHeaders());
   }
 }

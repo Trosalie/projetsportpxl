@@ -37,4 +37,8 @@ export class PhotographerService {
   getFilteredPhotographers(): Photographer[] {
     return this.filteredPhotographers;
   }
+
+  getPhotographerIdsByName(name: string): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/photographer-ids/${encodeURIComponent(name)}`, this.headersService.getAuthHeaders());
+  }
 }

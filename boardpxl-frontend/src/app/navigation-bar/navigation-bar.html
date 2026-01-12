@@ -5,7 +5,7 @@
       </div>
       <ul>
          <li *ngFor="let page of pages">
-            <a *ngIf="page.route && !isActivePage(page.route)" [routerLink]="page.route">
+            <a *ngIf="page.route && !isActivePage(page.route)" [routerLink]="page.route" [queryParams]="page.queryParams">
                <img [src]="page.icon" class="navbar-icon" [alt]="page.label">
                {{ page.label }}
             </a>
@@ -14,12 +14,15 @@
                {{ page.label }}
             </div>
             <div *ngIf="!page.route" class="parent-page">
-               <img [src]="page.icon" class="navbar-icon" [alt]="page.label">
-               {{ page.label }}
+               <div class="parent-label">
+                  <img [src]="page.icon" class="navbar-icon" [alt]="page.label">
+                  {{ page.label }}
+               </div>
+               <span class="chevron"></span>
             </div>
             <ul *ngIf="page.subPages" class="sub-pages">
                <li *ngFor="let subPage of page.subPages">
-                  <a *ngIf="!isActivePage(subPage.route)" [routerLink]="subPage.route">
+                  <a *ngIf="!isActivePage(subPage.route)" [routerLink]="subPage.route" [queryParams]="subPage.queryParams">
                      <img [src]="subPage.icon" class="navbar-icon" [alt]="subPage.label">
                      {{ subPage.label }}
                   </a>

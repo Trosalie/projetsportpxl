@@ -6,9 +6,18 @@ use Illuminate\Http\Request;
 use App\Services\MailService;
 use Illuminate\Support\Facades\Mail;
 use App\Models\MailLogs;
+use App\Services\LogService;
 
 class MailController extends Controller
 {
+    private LogService $logService;
+
+    public function __construct(LogService $logService)
+    {
+        $this->logService = $logService;
+    }
+
+
     /**
      * Envoi de mail via MailService
      */
@@ -31,12 +40,17 @@ class MailController extends Controller
             );
 
             MailLogs::create([
-                'sender_id' => auth()->id(), 
+                'sender_id' => auth()->id() ?? 1, 
                 'recipient' => $validated['to'],
                 'subject' => $validated['subject'],
                 'body' => $validated['body'],
                 'status' => 'sent',
                 'type' => $validated['type'] ?? 'generic'
+            ]);
+
+            $this->logService->logAction($request, 'send_email', 'MAIL_LOGS', [
+                'to' => $validated['to'],
+                'subject' => $validated['subject'],
             ]);
 
             return response()->json([
@@ -46,12 +60,18 @@ class MailController extends Controller
 
         } catch (\Exception $e) {
             MailLogs::create([
-                'sender_id' => auth()->id(), 
+                'sender_id' => auth()->id() ?? 1, 
                 'recipient' => $validated['to'],
                 'subject' => $validated['subject'],
                 'body' => $validated['body'],
                 'status' => 'failed',
                 'type' => $validated['type'] ?? 'generic'
+            ]);
+
+            $this->logService->logAction($request, 'send_email_failed', 'MAIL_LOGS', [
+                'to' => $validated['to'],
+                'subject' => $validated['subject'],
+                'error' => $e->getMessage(),
             ]);
 
             return response()->json([
@@ -78,16 +98,23 @@ class MailController extends Controller
         return response()->json(['message' => 'Mail envoyé (si tout va bien) !']);
     }
 
-    public function getLogs($sender_id)
+    public function getLogs(Request $request, $sender_id)
     {
-        // Valider l'ID du photographe passé en paramètre
-        $validated = validator(
-            ['sender_id' => $sender_id],
-            ['sender_id' => 'required|integer|exists:photographers,id']
-        )->validate();
+        try {
+            // Valider l'ID du photographe passé en paramètre
+            $validated = validator(
+                ['sender_id' => $sender_id],
+                ['sender_id' => 'required|integer|exists:photographers,id']
+            )->validate();
 
-        // Récupérer les logs de mails depuis la base de données via l'id du photographe validé
-        $logs = MailLogs::where('sender_id', $validated['sender_id'])->get();
-        return response()->json($logs);
+            // Récupérer les logs de mails depuis la base de données via l'id du photographe validé
+            $logs = MailLogs::where('sender_id', $validated['sender_id'])->get();
+            return response()->json($logs);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve logs: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
