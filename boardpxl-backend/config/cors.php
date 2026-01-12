@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['http://localhost:4200', 'http://127.0.0.1:4200'],
 
     'allowed_origins_patterns' => [],
 
@@ -29,6 +29,7 @@ return [
 
     'max_age' => 0,
 
+    // Allow cookies/Authorization headers for SPA -> API calls
     'supports_credentials' => true,
 
 ];
