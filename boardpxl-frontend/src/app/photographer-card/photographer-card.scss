@@ -82,6 +82,9 @@
     flex-direction: row;
     align-items: center;
     gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: 0;
 }
 
 button {
@@ -95,6 +98,11 @@ button {
     padding: 8px 12px;
     border: 1px solid;
     border-radius: 7px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    text-align: center;
+    min-width: 0;
 }
 
 .chiffre-affaires{
@@ -311,5 +319,10 @@ a {
             order: 1;
             margin-top: 8px;
         }
+    }
+
+    .tag {
+        font-size: 14px;
+        padding: 6px 10px;
     }
 }
