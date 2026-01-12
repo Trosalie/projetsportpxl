@@ -6,6 +6,53 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.mobile-only-message {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .mobile-only-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+    padding: 20px;
+  }
+
+  .message-card {
+    background: white;
+    border-radius: 16px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+
+    .material-symbols-outlined {
+      font-size: 80px;
+      color: #F98524;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      color: #2d3a4b;
+      margin-bottom: 16px;
+      font-family: 'FuturaLT-Bold', sans-serif;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #6c7a89;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+
+  .graph-container {
+    display: none;
+  }
+}
+
 // Filtres dans la sidebar
 .filter-section-sidebar {
   margin-bottom: 20px;
