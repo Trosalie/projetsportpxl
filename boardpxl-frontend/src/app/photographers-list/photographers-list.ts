@@ -34,19 +34,28 @@ export class PhotographersList implements OnDestroy {
   }
 
   onFilterChange(query: string) {
-    let fieldsToFilter = ['name', 'email'];
-    if (query.trim() === '') {
+    const fieldsToFilter = ['name', 'email'];
+    const normalizedQuery = query.trim().toLowerCase();
+
+    if (normalizedQuery === '') {
       this.renderedList = this.photographers.slice(0, this.itemsToShow);
       this.filterActive = false;
     } else {
       this.bufferedList = this.photographers.filter(photographer =>
         fieldsToFilter.some(field =>
-          photographer[field]?.toString().toLowerCase().includes(query.toLowerCase())
+          this.matchesQuery(photographer[field], normalizedQuery)
         )
       );
       this.renderedList = this.bufferedList.slice(0, this.itemsToShow);
       this.filterActive = true;
     }
+  }
+
+  private matchesQuery(fieldValue: unknown, normalizedQuery: string): boolean {
+    if (!fieldValue) return false;
+
+    const normalizedValue = fieldValue.toString().toLowerCase();
+    return normalizedValue.startsWith(normalizedQuery) || normalizedValue.includes(` ${normalizedQuery}`);
   }
 
   ngOnDestroy(): void {
