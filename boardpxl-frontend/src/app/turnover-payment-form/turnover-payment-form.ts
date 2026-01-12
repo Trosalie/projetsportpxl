@@ -50,7 +50,6 @@ export class TurnoverPaymentForm implements OnDestroy {
                 this.pennylaneId = data.pennylane_id;
                 this.findClient = true;
                 this.photographerInput = this.clientName;
-                console.log("Client trouvé :", data);
               } else {
                 // Client non trouvé
                 this.findClient = false;
@@ -140,7 +139,6 @@ export class TurnoverPaymentForm implements OnDestroy {
       const dueDate = due.toISOString().slice(0, 10);
       if (!subject || !startDate || !endDate || !commission || !chiffreAffaire || !TVA || !this.findClient) {
         this.popup.showNotification("Merci de remplir tous les champs du formulaire.");
-        console.log("Formulaire incomplet :", {subject, startDate, endDate, commission, chiffreAffaire, TVA, findClient: this.findClient});
         return;
       }
       const body = {
@@ -195,17 +193,11 @@ export class TurnoverPaymentForm implements OnDestroy {
       pdf_invoice_subject: invoice.pdf_invoice_subject
     };
 
-    console.log("Insertion de la facture avec le corps :", body);
-
     this.invoiceService.insertTurnoverInvoice(body)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-      next: () => {
-        console.log("Insertion de la facture réussie.");
-      },
-      error: (err) => {
-        console.error("Erreur lors de l'insertion :", err);
-      }
+      next: () => {},
+      error: err => console.error("Erreur lors de l'insertion :", err)
     });
   
   }

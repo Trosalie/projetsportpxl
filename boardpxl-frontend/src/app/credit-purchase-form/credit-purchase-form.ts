@@ -148,7 +148,6 @@ export class CreditPurchaseForm implements OnDestroy {
       invoiceTitle: subject
     };
     this.creationFacture = true;
-    console.log("Création de la facture crédit avec :", body);
     this.invoiceService.createCreditsInvoice(body)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -189,12 +188,10 @@ export class CreditPurchaseForm implements OnDestroy {
       pdf_invoice_subject: invoice.pdf_invoice_subject
     };
 
-    console.log("Insertion de la facture crédit avec :", body);
-
     this.invoiceService.insertCreditsInvoice(body)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-      next: () => console.log("Facture crédit enregistrée."),
+      next: () => {},
       error: err => console.error("Erreur insertion facture crédit :", err)
     });
   }
