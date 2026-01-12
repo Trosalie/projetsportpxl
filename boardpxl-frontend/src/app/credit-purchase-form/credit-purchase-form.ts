@@ -94,9 +94,15 @@ export class CreditPurchaseForm implements OnDestroy {
     this.findClient = this.clientsNames.includes(value);
 
     // Filtrer les suggestions en fonction du texte saisi
-    this.filteredClients = this.clientsNames.filter(name =>
-      name.toLowerCase().includes(value.toLowerCase())
-    );
+    const normalizedQuery = value.trim().toLowerCase();
+    this.filteredClients = this.clientsNames.filter(name => this.matchesQuery(name, normalizedQuery));
+  }
+
+  private matchesQuery(name: string, normalizedQuery: string): boolean {
+    if (!normalizedQuery) return false;
+
+    const normalizedName = name.toLowerCase();
+    return normalizedName.startsWith(normalizedQuery) || normalizedName.includes(` ${normalizedQuery}`);
   }
 
   // Sélectionne un photographe dans la liste des suggestions
