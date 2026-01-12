@@ -16,4 +16,8 @@ class Logs extends Model
         'ip_address',
         'details',
     ];
+
+    public function logAction(){
+        return $this->belongsTo(LogActions::class);
+    }
 }

@@ -36,6 +36,7 @@ import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/
 
 import { GeneralGraph } from './general-graph/general-graph';
 import { Logs } from './logs/logs';
+import { AboutUs } from './about-us/about-us';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -65,7 +66,8 @@ registerLocaleData(localeFr);
     MailsLog,
     AdminPhotographerInvoiceList,
     GeneralGraph,
-    Logs
+    Logs,
+    AboutUs
   ],
   imports: [
     BrowserModule,

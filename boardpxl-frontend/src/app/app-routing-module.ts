@@ -14,6 +14,7 @@ import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
 import { GeneralGraph } from './general-graph/general-graph';
 import { Logs } from './logs/logs';
+import { AboutUs } from './about-us/about-us'
 
 const routes: Routes = [
   { path: 'login', component: LoginPage },
@@ -31,7 +32,8 @@ const routes: Routes = [
   { path: 'general-graph', component: GeneralGraph, canActivate: [adminGuard]},
   { path: 'logs', component: Logs, canActivate: [adminGuard]},
   { path: 'photographer/:id', component: ProfileInformation, canActivate: [adminGuard]},
-  { path: '**', redirectTo: '' },
+  { path: 'about-us', component: AboutUs, canActivate: [photographerGuard]},
+  { path: '**', redirectTo: 'login' },
 ];
 
 @NgModule({
