@@ -1,5 +1,4 @@
 import { InvoiceService } from '../services/invoice-service';
-import { ChartData, ChartOptions } from 'chart.js'
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 Chart.register(...registerables);
