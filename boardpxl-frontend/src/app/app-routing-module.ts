@@ -30,8 +30,7 @@ const routes: Routes = [
   { path: 'logs', component: Logs, canActivate: [adminGuard]},
   { path: 'photographer/:id', component: ProfileInformation, canActivate: [adminGuard]},
   { path: 'about-us', component: AboutUs, canActivate: [photographerGuard]},
-  { path: '**', redirectTo: '' },
-  
+  { path: '**', redirectTo: 'login' },
 ];
 
 @NgModule({
