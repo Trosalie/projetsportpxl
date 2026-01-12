@@ -94,14 +94,11 @@ export class ProfileInformation
       {
         if (data && data.client_id)
         {
-          this.invoiceService.getInvoicesByClient(data.client_id).subscribe(invoices => {
+          this.invoiceService.getInvoicesPaymentByPhotographer(data.client_id).subscribe(invoices => {
             const invoicesTemp = invoices;
             this.turnover = 0;
             for (const invoice of invoicesTemp) {
-              if (invoice instanceof InvoicePayment)
-              {
-                this.turnover += invoice.turnover;
-              }
+              this.turnover += Number(invoice.raw_value);
             }
           })
         }
