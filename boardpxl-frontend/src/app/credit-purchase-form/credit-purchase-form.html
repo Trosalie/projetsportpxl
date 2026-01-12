@@ -1,8 +1,6 @@
-<app-title [title]="'TABLEAU DE BORD'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
+<app-title [title]="'Achat de crédits'"></app-title>
 <app-popup #popup></app-popup>
 <form class="credit-purchase-form" (submit)="onSubmit($event)">
-  <h2 class="form-title">Achat de crédits</h2>
-  <div class="form-separator"></div>
   <div class="form-group">
     <label for="photographer">Photographe :</label>
     <input type="text" id="photographer" name="photographer" required [value]="photographerInput" (input)="onPhotographerChange($event.target.value)" [disabled]="isLoading"/>
