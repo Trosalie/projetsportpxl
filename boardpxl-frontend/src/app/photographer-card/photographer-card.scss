@@ -98,11 +98,13 @@ button {
     padding: 8px 12px;
     border: 1px solid;
     border-radius: 7px;
-    word-break: break-word;
-    overflow-wrap: break-word;
     max-width: 100%;
     text-align: center;
     min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: clamp(10px, 2.5vw, 16px);
 }
 
 .chiffre-affaires{
@@ -322,7 +324,6 @@ a {
     }
 
     .tag {
-        font-size: 14px;
-        padding: 6px 10px;
+        padding: 6px 8px;
     }
 }
