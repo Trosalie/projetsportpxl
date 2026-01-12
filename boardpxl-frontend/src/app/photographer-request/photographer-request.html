@@ -14,6 +14,7 @@
             [placeholder]="requestType === 'versement' ? 'Ex: 1500' : 'Ex: 100'" 
             [disabled]="isSending"
             min="0"
+            [step]="requestType === 'crédits' ? '1' : '0.01'"
         />
     </div>
     <div>

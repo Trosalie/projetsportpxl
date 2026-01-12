@@ -56,7 +56,15 @@ export class PhotographerRequest {
   }
 
   updateMessage() {
-    const amountText = this.amount ? this.amount : '[insérer le montant]';
+    let amountText = '[insérer le montant]';
+    if (this.amount && this.amount !== '') {
+      const amountValue = Number(this.amount);
+      if (this.requestType === 'crédits') {
+        amountText = Math.floor(amountValue).toString();
+      } else {
+        amountText = amountValue.toString();
+      }
+    }
 
     if (this.requestType === 'versement') {
       this.requestMessage = `Bonjour,
@@ -89,9 +97,14 @@ ${this.userName}`;
     const body = ta?.value || '';
 
     // Validation du montant
-    if (!this.amount || this.amount === '' || Number(this.amount) <= 0) {
+    const isValidAmount = this.requestType === 'crédits' 
+      ? (!this.amount || this.amount === '' || Number(this.amount) <= 0 || !Number.isInteger(Number(this.amount)))
+      : (!this.amount || this.amount === '' || Number(this.amount) <= 0);
+    
+    if (isValidAmount) {
       if (errorMessage) {
-        errorMessage.innerHTML = `Veuillez indiquer un montant ${this.requestType === 'versement' ? 'du chiffre d\'affaires' : 'de crédits'} avant de soumettre la demande.`;
+        const messageType = this.requestType === 'crédits' ? 'un nombre entier de crédits' : 'un montant du chiffre d\'affaires';
+        errorMessage.innerHTML = `Veuillez indiquer ${messageType} avant de soumettre la demande.`;
         errorMessage.style.opacity = '1';
 
         // animation
