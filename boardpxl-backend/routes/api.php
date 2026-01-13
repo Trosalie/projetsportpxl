@@ -72,13 +72,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Récupérer la liste des clients
     // Testé : PennyLaneControllerTest::test_get_list_clients
     Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
-//Récupérer les informations finaciere d'une facture de crédit
-Route::get('/invoice-credits-financial-info', [InvoiceController::class, 'getFinancialInfoCreditsInvoice']);
+    //Récupérer les informations finaciere d'une facture de crédit
+    Route::get('/invoice-credits-financial-info', [InvoiceController::class, 'getFinancialInfoCreditsInvoice']);
 
-//Récupérer les informations finaciere d'une facture de versement de CA
-Route::get('/invoice-turnover-financial-info', [InvoiceController::class, 'getFinancialInfoTurnoverInvoice']);
-// Création d'une facture
-Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
+    //Récupérer les informations finaciere d'une facture de versement de CA
+    Route::get('/invoice-turnover-financial-info', [InvoiceController::class, 'getFinancialInfoTurnoverInvoice']);
+    // Création d'une facture
+    Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
 
     // Afficher une facture spécifique
     // Testé : InvoiceAndPhotographerControllerTest::test_get_invoice_by_id_success et test_get_invoice_by_id_not_found
@@ -110,9 +110,10 @@ Route::post('/create-credits-invoice-client', [PennylaneController::class, 'crea
     Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);
     Route::get('/test', [PennylaneController::class, 'getInvoices']);
     Route::get('/photographer-ids/{name}', [PhotographerController::class, 'getPhotographerIds']);
-    Route::get('/invoices-client/{idClient}', [PennylaneController::class, 'getInvoicesByClient']);
     Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
     Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
+    
+    Route::get('/invoices-client/{idClient}', [InvoiceController::class, 'getInvoicesByClient']);
 
     // Routes Mail
     Route::post('/send-email', [MailController::class, 'sendEmail']);

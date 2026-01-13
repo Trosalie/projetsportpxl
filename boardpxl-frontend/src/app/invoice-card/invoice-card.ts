@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { InvoiceCredit } from '../models/invoice-credit.model';
-import { HttpClient } from '@angular/common/http';
+import { InvoiceService } from '../services/invoice-service';
 
 @Component({
   selector: 'app-invoice-card',
@@ -15,7 +15,7 @@ export class InvoiceCard {
   protected invoiceCredit!: InvoiceCredit;
   protected invoiceType!: string;
 
-  constructor(private http: HttpClient) {}
+  constructor(private invoiceService: InvoiceService) {}
 
   ngOnInit(): void {
     if (!this.invoice) {
@@ -44,17 +44,17 @@ export class InvoiceCard {
     const formData = new FormData();
     formData.append('file_url', fileUrl);
     //appel à l'API pour télécharger le fichier
-    this.http.post('http://localhost:9000/api/download-invoice', formData, { responseType: 'blob' })
-      .subscribe(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = pdf_invoice_subject;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      }, error => {
-        alert('Impossible de télécharger le fichier.');
-      });
+    this.invoiceService.downloadInvoice(formData).subscribe((response: any) => {
+      const blob = new Blob([response], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = pdf_invoice_subject;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    });
   }
 
   getTurnover(): number {
