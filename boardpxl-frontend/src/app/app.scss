@@ -1,6 +1,7 @@
 .main-content {
   transition: margin-left 0.3s ease;
   margin-left: 20px;
+  margin-top: 96px;
 
   &.nav-open {
     margin-left: 270px;
@@ -8,6 +9,7 @@
 
   &.login-page {
     margin-left: 0;
+    margin-top: 0;
   }
 
   @media (max-width: 768px) {
