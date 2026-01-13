@@ -1,0 +1,44 @@
+name: Generate and Deploy Documentation
+
+on:
+  push:
+    branches:
+      - main
+      - 'doc/majAuto'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Récupération du code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Installation de Node.js (Requis pour le filtre TypeScript)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 3. Installation des outils (Doxygen et le filtre TS)
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen
+          npm install -g doxygen-filter-ts
+
+      # 4. Génération de la documentation
+      - name: Run Doxygen
+        run: doxygen Doxyfile
+
+      # 5. Déploiement sur GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/html # Doit correspondre à OUTPUT_DIRECTORY dans votre Doxyfile
+          force_orphan: true # Écrase l'historique de la branche doc pour qu'elle reste légère
