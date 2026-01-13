@@ -15,9 +15,9 @@
 
   <p align="center">
     Tableau de bord financier pour SportPXL
-    <!-- <br />
-    <a href="https://github.com/Trosalie/projetsportpxl"><strong>Explorer la documentation »</strong></a>
-    <br /> -->
+    <br />
+    <a href="https://trosalie.github.io/projetsportpxl/"><strong>Explorer la documentation »</strong></a>
+    <br />
     <br />
     <a href="https://github.com/Trosalie/projetsportpxl/issues">Reporter un Bug</a>
     ·
