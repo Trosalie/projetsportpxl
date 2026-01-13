@@ -3,7 +3,7 @@ import { InvoicePayment } from '../models/invoice-payment.model';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Invoice } from '../models/invoice.model';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { HttpHeadersService } from './http-headers.service';
 import { InvoiceCredit } from '../models/invoice-credit.model';
 
