@@ -1,5 +1,11 @@
 <app-title [title]="'VERSEMENT DE CHIFFRE D\'AFFAIRES'"></app-title>
 <app-popup #popup></app-popup>
+<app-confirm-modal 
+  [isVisible]="showConfirmModal" 
+  [invoiceData]="modalData"
+  (confirm)="onConfirmInvoice()"
+  (discard)="onCancelInvoice()">
+</app-confirm-modal>
 <form class="credit-purchase-form" (submit)="onSubmit($event)">
   <div class="form-group">
     <label for="photographer">Photographe :</label>

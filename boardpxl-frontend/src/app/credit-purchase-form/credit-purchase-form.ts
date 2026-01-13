@@ -4,6 +4,7 @@ import { InvoiceService } from '../services/invoice-service';
 import { PhotographerService } from '../services/photographer-service';
 import { Popup } from '../popup/popup';
 import { AuthService } from '../services/auth-service';
+import { ConfirmModal, type InvoiceData } from '../confirm-modal/confirm-modal';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -27,6 +28,9 @@ export class CreditPurchaseForm implements OnDestroy {
   notificationVisible: boolean = false;
   notificationMessage: string = "";
   isLoading: boolean = false;
+  showConfirmModal: boolean = false;
+  modalData: InvoiceData | null = null;
+  pendingFormData: any = null;
   private destroy$ = new Subject<void>();
 
   constructor(private invoiceService: InvoiceService, private photographerService: PhotographerService, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
@@ -35,6 +39,7 @@ export class CreditPurchaseForm implements OnDestroy {
     });
   }
   @ViewChild('popup') popup!: Popup;
+  @ViewChild(ConfirmModal) confirmModal!: ConfirmModal;
 
   ngOnInit() {
     // Récupère le nom du client depuis les query params
@@ -144,10 +149,38 @@ export class CreditPurchaseForm implements OnDestroy {
       this.popup.showNotification("Merci de remplir tous les champs du formulaire.");
       return;
     }
+
+    // Store form data and show modal
+    this.pendingFormData = {
+      issueDate,
+      subject,
+      dueDate,
+      priceHT: parseFloat(form['priceHT'].value),
+      credits: parseInt(form['credits'].value),
+      tva: (form['tva'] as HTMLSelectElement).value
+    };
+
+    this.modalData = {
+      title: subject,
+      amount: parseFloat(form['priceHT'].value),
+      items: [
+        { label: 'Photographe', value: this.photographerInput },
+        { label: 'Crédits', value: `${form['credits'].value} crédits` },
+        { label: 'TVA', value: (form['tva'] as HTMLSelectElement).value }
+      ]
+    };
+
+    this.showConfirmModal = true;
+  }
+
+  onConfirmInvoice() {
+    if (!this.pendingFormData) return;
+
+    const { issueDate, subject, dueDate, priceHT, credits, tva } = this.pendingFormData;
     const body = {
-      labelTVA: (form['tva'] as HTMLSelectElement).value,
-      labelProduct: `${form['credits'].value} crédits`,
-      amountEuro: form['priceHT'].value,
+      labelTVA: tva,
+      labelProduct: `${credits} crédits`,
+      amountEuro: priceHT,
       issueDate: issueDate,
       dueDate: dueDate,
       idClient: this.pennylaneId,
@@ -160,7 +193,7 @@ export class CreditPurchaseForm implements OnDestroy {
       next: (response) => {
         this.popup.showNotification('Facture créée avec succès !');
         this.creationFacture = false;
-        this.insertCreditsInvoice( response, form['priceHT'].value, form['credits'].value, (form['tva'] as HTMLSelectElement).value, "À venir",this.today, dueDate, this.clientId);
+        this.insertCreditsInvoice( response, priceHT, credits, tva, "À venir", this.today, dueDate, this.clientId);
         setTimeout(() => {
           this.router.navigate(['/photographers']);
         }, 2000);
@@ -170,6 +203,12 @@ export class CreditPurchaseForm implements OnDestroy {
         this.creationFacture = false;
       }
     });
+  }
+
+  onCancelInvoice() {
+    this.pendingFormData = null;
+    this.modalData = null;
+    this.showConfirmModal = false;
   }
 
   insertCreditsInvoice( reponse: any, amount: number, credits: number, tva: string, status: string, issueDate: string, dueDate: string, clientId: number) 

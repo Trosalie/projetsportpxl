@@ -4,6 +4,7 @@ import { InvoiceService } from '../services/invoice-service';
 import { PhotographerService } from '../services/photographer-service';
 import { Popup } from '../popup/popup';
 import { AuthService } from '../services/auth-service';
+import { ConfirmModal, type InvoiceData } from '../confirm-modal/confirm-modal';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -26,6 +27,9 @@ export class TurnoverPaymentForm implements OnDestroy {
     notificationVisible: boolean = false;
     notificationMessage: string = "";
     isLoading: boolean = false;
+    showConfirmModal: boolean = false;
+    modalData: InvoiceData | null = null;
+    pendingFormData: any = null;
     private destroy$ = new Subject<void>();
   
     constructor(private invoiceService: InvoiceService, private photographerService: PhotographerService, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
@@ -34,6 +38,7 @@ export class TurnoverPaymentForm implements OnDestroy {
       });
     }
     @ViewChild('popup') popup!: Popup;
+    @ViewChild(ConfirmModal) confirmModal!: ConfirmModal;
   
     ngOnInit() {
       // Récupère le nom du client depuis les query params
@@ -147,32 +152,68 @@ export class TurnoverPaymentForm implements OnDestroy {
         this.popup.showNotification("Merci de remplir tous les champs du formulaire.");
         return;
       }
-      const body = {
-        labelTVA: TVA,
-        amountEuro: commission,
-        issueDate: this.today,
-        dueDate: dueDate,
-        idClient: this.pennylaneId,
-        invoiceTitle: subject,
-        invoiceDescription: `Versement du chiffre d'affaire de ${chiffreAffaire}€ pour la période du ${startDate} au ${endDate}.`
+
+      // Store form data and show modal
+      this.pendingFormData = {
+        startDate,
+        endDate,
+        subject,
+        commission: parseFloat(commission),
+        chiffreAffaire: parseFloat(chiffreAffaire),
+        TVA,
+        dueDate
+      };
+
+      this.modalData = {
+        title: subject,
+        amount: parseFloat(commission),
+        items: [
+          { label: 'Photographe', value: this.photographerInput },
+          { label: 'Chiffre d\'affaire', value: `${chiffreAffaire}€` },
+          { label: 'Période', value: `${startDate} au ${endDate}` },
+          { label: 'TVA', value: TVA }
+        ]
+      };
+
+      this.showConfirmModal = true;
+  }
+
+  onConfirmInvoice() {
+    if (!this.pendingFormData) return;
+
+    const { startDate, endDate, subject, commission, chiffreAffaire, TVA, dueDate } = this.pendingFormData;
+    const body = {
+      labelTVA: TVA,
+      amountEuro: commission,
+      issueDate: this.today,
+      dueDate: dueDate,
+      idClient: this.pennylaneId,
+      invoiceTitle: subject,
+      invoiceDescription: `Versement du chiffre d'affaire de ${chiffreAffaire}€ pour la période du ${startDate} au ${endDate}.`
+    }
+    this.creationFacture = true;
+    this.invoiceService.createTurnoverPaymentInvoice(body)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+      next: (response) => {
+        this.popup.showNotification('Facture créée avec succès !');
+        this.creationFacture = false;
+        this.insertTurnoverInvoice(response, startDate, endDate, chiffreAffaire, commission, TVA, this.today, dueDate, this.clientId);
+        setTimeout(() => {
+          this.router.navigate(['/photographers']);
+        }, 2000);
+      },
+      error: () => {
+        this.popup.showNotification("Erreur lors de la création de la facture."),
+        this.creationFacture = false;
       }
-      this.creationFacture = true;
-      this.invoiceService.createTurnoverPaymentInvoice(body)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-        next: (response) => {
-          this.popup.showNotification('Facture créée avec succès !');
-          this.creationFacture = false;
-          this.insertTurnoverInvoice(response, startDate, endDate, chiffreAffaire, commission, TVA, this.today, dueDate, this.clientId);
-          setTimeout(() => {
-            this.router.navigate(['/photographers']);
-          }, 2000);
-        },
-        error: () => {
-          this.popup.showNotification("Erreur lors de la création de la facture."),
-          this.creationFacture = false;
-        }
-      });
+    });
+  }
+
+  onCancelInvoice() {
+    this.pendingFormData = null;
+    this.modalData = null;
+    this.showConfirmModal = false;
   }
   
 
