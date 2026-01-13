@@ -1,0 +1,121 @@
+\hypertarget{class_app_1_1_http_1_1_controllers_1_1_photographer_controller}{}\doxysection{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Photographer\+Controller Class Reference}
+\label{class_app_1_1_http_1_1_controllers_1_1_photographer_controller}\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController}}
+
+
+Contrôleur de gestion des photographes.  
+
+
+Inheritance diagram for App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Photographer\+Controller\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_app_1_1_http_1_1_controllers_1_1_photographer_controller}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_app_1_1_http_1_1_controllers_1_1_photographer_controller_aab98d9295a66acafed3fbddd43b1ce66}{\+\_\+\+\_\+construct}} (\mbox{\hyperlink{class_app_1_1_services_1_1_log_service}{Log\+Service}} \$log\+Service)
+\begin{DoxyCompactList}\small\item\em Constructeur du contrôleur. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_app_1_1_http_1_1_controllers_1_1_photographer_controller_a4a2a7b999b21d4ab7039bc00e5461499}{get\+Photographer}} (\$id)
+\begin{DoxyCompactList}\small\item\em Récupère un photographe par son ID. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_app_1_1_http_1_1_controllers_1_1_photographer_controller_a26f91426590c70d1e0fd149b420d3b12}{get\+Photographers}} ()
+\begin{DoxyCompactList}\small\item\em Récupère la liste de tous les photographes. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_app_1_1_http_1_1_controllers_1_1_photographer_controller_a4f380a6b0e775ead0cd9f1db20859314}{get\+Photographer\+Ids}} (\$name)
+\begin{DoxyCompactList}\small\item\em Récupère les identifiants d\textquotesingle{}un photographe par son nom. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Contrôleur de gestion des photographes. 
+
+Gère toutes les opérations CRUD liées aux photographes, incluant la récupération des informations et des identifiants.
+
+\begin{DoxyAuthor}{Author}
+Sport\+Pxl Team 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\+0.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2026-\/01-\/13 
+\end{DoxyDate}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_app_1_1_http_1_1_controllers_1_1_photographer_controller_aab98d9295a66acafed3fbddd43b1ce66}\label{class_app_1_1_http_1_1_controllers_1_1_photographer_controller_aab98d9295a66acafed3fbddd43b1ce66}} 
+\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController}!\_\_construct@{\_\_construct}}
+\index{\_\_construct@{\_\_construct}!App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController}}
+\doxysubsubsection{\texorpdfstring{\_\_construct()}{\_\_construct()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Http\textbackslash{}\+Controllers\textbackslash{}\+Photographer\+Controller\+::\+\_\+\+\_\+construct (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_app_1_1_services_1_1_log_service}{Log\+Service}}}]{\$log\+Service }\end{DoxyParamCaption})}
+
+
+
+Constructeur du contrôleur. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+Log\+Service & {\em \$log\+Service} & Injection du service de logs \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_app_1_1_http_1_1_controllers_1_1_photographer_controller_a4a2a7b999b21d4ab7039bc00e5461499}\label{class_app_1_1_http_1_1_controllers_1_1_photographer_controller_a4a2a7b999b21d4ab7039bc00e5461499}} 
+\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController}!getPhotographer@{getPhotographer}}
+\index{getPhotographer@{getPhotographer}!App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController}}
+\doxysubsubsection{\texorpdfstring{getPhotographer()}{getPhotographer()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Http\textbackslash{}\+Controllers\textbackslash{}\+Photographer\+Controller\+::get\+Photographer (\begin{DoxyParamCaption}\item[{}]{\$id }\end{DoxyParamCaption})}
+
+
+
+Récupère un photographe par son ID. 
+
+Recherche et retourne les informations d\textquotesingle{}un photographe spécifique. Retourne une erreur 404 si le photographe n\textquotesingle{}existe pas.
+
+
+\begin{DoxyParams}[1]{Parameters}
+int & {\em \$id} & Identifiant du photographe \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\textbackslash{}\+Illuminate\textbackslash{}\+Http\textbackslash{}\+Json\+Response Données du photographe ou message d\textquotesingle{}erreur 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_app_1_1_http_1_1_controllers_1_1_photographer_controller_a4f380a6b0e775ead0cd9f1db20859314}\label{class_app_1_1_http_1_1_controllers_1_1_photographer_controller_a4f380a6b0e775ead0cd9f1db20859314}} 
+\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController}!getPhotographerIds@{getPhotographerIds}}
+\index{getPhotographerIds@{getPhotographerIds}!App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController}}
+\doxysubsubsection{\texorpdfstring{getPhotographerIds()}{getPhotographerIds()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Http\textbackslash{}\+Controllers\textbackslash{}\+Photographer\+Controller\+::get\+Photographer\+Ids (\begin{DoxyParamCaption}\item[{}]{\$name }\end{DoxyParamCaption})}
+
+
+
+Récupère les identifiants d\textquotesingle{}un photographe par son nom. 
+
+Recherche un photographe par son nom et retourne ses différents identifiants \+: ID interne, client\+\_\+id et pennylane\+\_\+id.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$name} & Nom du photographe à rechercher \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\textbackslash{}\+Illuminate\textbackslash{}\+Http\textbackslash{}\+Json\+Response Identifiants du photographe ou message d\textquotesingle{}erreur 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_app_1_1_http_1_1_controllers_1_1_photographer_controller_a26f91426590c70d1e0fd149b420d3b12}\label{class_app_1_1_http_1_1_controllers_1_1_photographer_controller_a26f91426590c70d1e0fd149b420d3b12}} 
+\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController}!getPhotographers@{getPhotographers}}
+\index{getPhotographers@{getPhotographers}!App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}PhotographerController}}
+\doxysubsubsection{\texorpdfstring{getPhotographers()}{getPhotographers()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Http\textbackslash{}\+Controllers\textbackslash{}\+Photographer\+Controller\+::get\+Photographers (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Récupère la liste de tous les photographes. 
+
+Retourne l\textquotesingle{}ensemble des photographes enregistrés dans la base de données. En cas d\textquotesingle{}erreur, retourne un message d\textquotesingle{}erreur avec le code 500.
+
+\begin{DoxyReturn}{Returns}
+\textbackslash{}\+Illuminate\textbackslash{}\+Http\textbackslash{}\+Json\+Response Liste des photographes ou message d\textquotesingle{}erreur 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+boardpxl-\/backend/app/\+Http/\+Controllers/\mbox{\hyperlink{_photographer_controller_8php}{Photographer\+Controller.\+php}}\end{DoxyCompactItemize}

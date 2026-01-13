@@ -1,0 +1,62 @@
+\hypertarget{class_app_1_1_services_1_1_log_service}{}\doxysection{App\textbackslash{}Services\textbackslash{}Log\+Service Class Reference}
+\label{class_app_1_1_services_1_1_log_service}\index{App\textbackslash{}Services\textbackslash{}LogService@{App\textbackslash{}Services\textbackslash{}LogService}}
+
+
+Service de journalisation des actions utilisateurs.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_app_1_1_services_1_1_log_service_a18d1c6c456376884568df6a6785d5dd6}{log\+Action}} (Request \$request, \mbox{\hyperlink{profile-information_8ts_aa958b82a044c39b0508402a0cb1e8048}{string}} \$action, ?\mbox{\hyperlink{profile-information_8ts_aa958b82a044c39b0508402a0cb1e8048}{string}} \$table\+Name=null, array \$details=\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em Enregistre une action utilisateur dans les logs. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Service de journalisation des actions utilisateurs. 
+
+Cette classe gère l\textquotesingle{}enregistrement des actions effectuées par les utilisateurs dans la base de données. Elle utilise un cache interne pour optimiser les performances lors de la recherche des IDs d\textquotesingle{}actions.
+
+\begin{DoxyAuthor}{Author}
+Sport\+Pxl Team 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\+0.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2026-\/01-\/13 
+\end{DoxyDate}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_app_1_1_services_1_1_log_service_a18d1c6c456376884568df6a6785d5dd6}\label{class_app_1_1_services_1_1_log_service_a18d1c6c456376884568df6a6785d5dd6}} 
+\index{App\textbackslash{}Services\textbackslash{}LogService@{App\textbackslash{}Services\textbackslash{}LogService}!logAction@{logAction}}
+\index{logAction@{logAction}!App\textbackslash{}Services\textbackslash{}LogService@{App\textbackslash{}Services\textbackslash{}LogService}}
+\doxysubsubsection{\texorpdfstring{logAction()}{logAction()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Services\textbackslash{}\+Log\+Service\+::log\+Action (\begin{DoxyParamCaption}\item[{Request}]{\$request,  }\item[{\mbox{\hyperlink{profile-information_8ts_aa958b82a044c39b0508402a0cb1e8048}{string}}}]{\$action,  }\item[{?\mbox{\hyperlink{profile-information_8ts_aa958b82a044c39b0508402a0cb1e8048}{string}}}]{\$table\+Name = {\ttfamily null},  }\item[{array}]{\$details = {\ttfamily \mbox{[}\mbox{]}} }\end{DoxyParamCaption})}
+
+
+
+Enregistre une action utilisateur dans les logs. 
+
+Crée une entrée de log pour l\textquotesingle{}action spécifiée, incluant l\textquotesingle{}utilisateur, la table concernée, l\textquotesingle{}adresse IP et des détails supplémentaires optionnels. Si l\textquotesingle{}utilisateur n\textquotesingle{}est pas authentifié ou l\textquotesingle{}action n\textquotesingle{}existe pas, le log n\textquotesingle{}est pas créé.
+
+
+\begin{DoxyParams}[1]{Parameters}
+Request & {\em \$request} & Requête HTTP contenant les informations de contexte \\
+\hline
+string & {\em \$action} & Nom de l\textquotesingle{}action à journaliser \\
+\hline
+string | null & {\em \$table\+Name} & Nom de la table concernée (optionnel) \\
+\hline
+array & {\em \$details} & Informations supplémentaires à enregistrer (optionnel) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+boardpxl-\/backend/app/\+Services/\mbox{\hyperlink{_log_service_8php}{Log\+Service.\+php}}\end{DoxyCompactItemize}

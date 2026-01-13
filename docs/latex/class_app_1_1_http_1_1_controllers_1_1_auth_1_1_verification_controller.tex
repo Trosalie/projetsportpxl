@@ -1,0 +1,68 @@
+\hypertarget{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller}{}\doxysection{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}Verification\+Controller Class Reference}
+\label{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller}\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController}}
+Inheritance diagram for App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}Verification\+Controller\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller_a5454985b559ef6bf188b3867d4d21e72}{\+\_\+\+\_\+construct}} ()
+\item 
+\mbox{\hyperlink{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller_ab7c7d5613fed76214e6bfd8754fe6ba7}{verify}} (Request \$request, \$id)
+\item 
+\mbox{\hyperlink{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller_aed6f0c1916e45248a06ea870da996150}{resend}} (Request \$request)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller_a5454985b559ef6bf188b3867d4d21e72}\label{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller_a5454985b559ef6bf188b3867d4d21e72}} 
+\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController}!\_\_construct@{\_\_construct}}
+\index{\_\_construct@{\_\_construct}!App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController}}
+\doxysubsubsection{\texorpdfstring{\_\_construct()}{\_\_construct()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Http\textbackslash{}\+Controllers\textbackslash{}\+Auth\textbackslash{}\+Verification\+Controller\+::\+\_\+\+\_\+construct (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Créer une nouvelle instance de \mbox{\hyperlink{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller}{Verification\+Controller}}. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller_aed6f0c1916e45248a06ea870da996150}\label{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller_aed6f0c1916e45248a06ea870da996150}} 
+\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController}!resend@{resend}}
+\index{resend@{resend}!App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController}}
+\doxysubsubsection{\texorpdfstring{resend()}{resend()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Http\textbackslash{}\+Controllers\textbackslash{}\+Auth\textbackslash{}\+Verification\+Controller\+::resend (\begin{DoxyParamCaption}\item[{Request}]{\$request }\end{DoxyParamCaption})}
+
+Renvoi du lien de vérification par email.
+
+
+\begin{DoxyParams}[1]{Parameters}
+Request & {\em \$request} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Json\+Response 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller_ab7c7d5613fed76214e6bfd8754fe6ba7}\label{class_app_1_1_http_1_1_controllers_1_1_auth_1_1_verification_controller_ab7c7d5613fed76214e6bfd8754fe6ba7}} 
+\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController}!verify@{verify}}
+\index{verify@{verify}!App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Auth\textbackslash{}VerificationController}}
+\doxysubsubsection{\texorpdfstring{verify()}{verify()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Http\textbackslash{}\+Controllers\textbackslash{}\+Auth\textbackslash{}\+Verification\+Controller\+::verify (\begin{DoxyParamCaption}\item[{Request}]{\$request,  }\item[{}]{\$id }\end{DoxyParamCaption})}
+
+Vérifier l\textquotesingle{}email de l\textquotesingle{}utilisateur via l\textquotesingle{}API.
+
+
+\begin{DoxyParams}[1]{Parameters}
+Request & {\em \$request} & \\
+\hline
+ & {\em \$id} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Json\+Response 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+boardpxl-\/backend/app/\+Http/\+Controllers/\+Auth/\mbox{\hyperlink{_verification_controller_8php}{Verification\+Controller.\+php}}\end{DoxyCompactItemize}

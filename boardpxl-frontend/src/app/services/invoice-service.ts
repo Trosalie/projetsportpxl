@@ -7,6 +7,17 @@ import { environment } from '../../environments/environment.development';
 import { HttpHeadersService } from './http-headers.service';
 import { InvoiceCredit } from '../models/invoice-credit.model';
 
+/**
+ * @class InvoiceService
+ * @brief Service de gestion des factures
+ * 
+ * Gère toutes les opérations liées aux factures : récupération,
+ * création et insertion de factures de crédits et de versements.
+ * 
+ * @author SportPxl Team
+ * @version 1.0.0
+ * @date 2026-01-13
+ */
 @Injectable({
   providedIn: 'root',
 })

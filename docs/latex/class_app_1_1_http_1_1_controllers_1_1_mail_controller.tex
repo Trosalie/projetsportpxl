@@ -1,0 +1,125 @@
+\hypertarget{class_app_1_1_http_1_1_controllers_1_1_mail_controller}{}\doxysection{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Mail\+Controller Class Reference}
+\label{class_app_1_1_http_1_1_controllers_1_1_mail_controller}\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController}}
+
+
+Contrôleur de gestion des emails.  
+
+
+Inheritance diagram for App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}Mail\+Controller\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_app_1_1_http_1_1_controllers_1_1_mail_controller}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_app_1_1_http_1_1_controllers_1_1_mail_controller_a2109a211ddf1eed1dcc615d2b4df9244}{\+\_\+\+\_\+construct}} (\mbox{\hyperlink{class_app_1_1_services_1_1_log_service}{Log\+Service}} \$log\+Service)
+\begin{DoxyCompactList}\small\item\em Constructeur du contrôleur. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_app_1_1_http_1_1_controllers_1_1_mail_controller_a9b9a71a8eb35ca4672cae7d00ca81f28}{send\+Email}} (Request \$request, \mbox{\hyperlink{class_app_1_1_services_1_1_mail_service}{Mail\+Service}} \$mail\+Service)
+\begin{DoxyCompactList}\small\item\em Envoie un email via Mail\+Service. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_app_1_1_http_1_1_controllers_1_1_mail_controller_a9da771edbe418e4828d91c0c9ad9709b}{test\+Mail}} ()
+\begin{DoxyCompactList}\small\item\em Teste l\textquotesingle{}envoi d\textquotesingle{}un email simple. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_app_1_1_http_1_1_controllers_1_1_mail_controller_ace5bf789a1478270867aeb375136ab27}{get\+Logs}} (Request \$request, \$sender\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Récupère les logs d\textquotesingle{}emails d\textquotesingle{}un photographe. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Contrôleur de gestion des emails. 
+
+Gère l\textquotesingle{}envoi d\textquotesingle{}emails et la consultation des logs d\textquotesingle{}envoi. Utilise Mail\+Service pour l\textquotesingle{}envoi et enregistre tous les envois dans Mail\+Logs.
+
+\begin{DoxyAuthor}{Author}
+Sport\+Pxl Team 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\+0.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2026-\/01-\/13 
+\end{DoxyDate}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_app_1_1_http_1_1_controllers_1_1_mail_controller_a2109a211ddf1eed1dcc615d2b4df9244}\label{class_app_1_1_http_1_1_controllers_1_1_mail_controller_a2109a211ddf1eed1dcc615d2b4df9244}} 
+\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController}!\_\_construct@{\_\_construct}}
+\index{\_\_construct@{\_\_construct}!App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController}}
+\doxysubsubsection{\texorpdfstring{\_\_construct()}{\_\_construct()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Http\textbackslash{}\+Controllers\textbackslash{}\+Mail\+Controller\+::\+\_\+\+\_\+construct (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_app_1_1_services_1_1_log_service}{Log\+Service}}}]{\$log\+Service }\end{DoxyParamCaption})}
+
+
+
+Constructeur du contrôleur. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+Log\+Service & {\em \$log\+Service} & Injection du service de logs \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_app_1_1_http_1_1_controllers_1_1_mail_controller_ace5bf789a1478270867aeb375136ab27}\label{class_app_1_1_http_1_1_controllers_1_1_mail_controller_ace5bf789a1478270867aeb375136ab27}} 
+\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController}!getLogs@{getLogs}}
+\index{getLogs@{getLogs}!App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController}}
+\doxysubsubsection{\texorpdfstring{getLogs()}{getLogs()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Http\textbackslash{}\+Controllers\textbackslash{}\+Mail\+Controller\+::get\+Logs (\begin{DoxyParamCaption}\item[{Request}]{\$request,  }\item[{}]{\$sender\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+Récupère les logs d\textquotesingle{}emails d\textquotesingle{}un photographe. 
+
+Retourne l\textquotesingle{}historique des emails envoyés par un photographe spécifique, triés par date d\textquotesingle{}envoi décroissante. Valide l\textquotesingle{}existence du photographe.
+
+
+\begin{DoxyParams}[1]{Parameters}
+Request & {\em \$request} & Requête HTTP \\
+\hline
+int & {\em \$sender\+\_\+id} & Identifiant du photographe expéditeur \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\textbackslash{}\+Illuminate\textbackslash{}\+Http\textbackslash{}\+Json\+Response Liste des logs ou message d\textquotesingle{}erreur 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_app_1_1_http_1_1_controllers_1_1_mail_controller_a9b9a71a8eb35ca4672cae7d00ca81f28}\label{class_app_1_1_http_1_1_controllers_1_1_mail_controller_a9b9a71a8eb35ca4672cae7d00ca81f28}} 
+\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController}!sendEmail@{sendEmail}}
+\index{sendEmail@{sendEmail}!App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController}}
+\doxysubsubsection{\texorpdfstring{sendEmail()}{sendEmail()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Http\textbackslash{}\+Controllers\textbackslash{}\+Mail\+Controller\+::send\+Email (\begin{DoxyParamCaption}\item[{Request}]{\$request,  }\item[{\mbox{\hyperlink{class_app_1_1_services_1_1_mail_service}{Mail\+Service}}}]{\$mail\+Service }\end{DoxyParamCaption})}
+
+
+
+Envoie un email via Mail\+Service. 
+
+Valide les données de la requête, envoie l\textquotesingle{}email via Mail\+Service, et enregistre le statut de l\textquotesingle{}envoi dans les logs. Journalise aussi l\textquotesingle{}action via Log\+Service.
+
+
+\begin{DoxyParams}[1]{Parameters}
+Request & {\em \$request} & Requête contenant les données de l\textquotesingle{}email \\
+\hline
+Mail\+Service & {\em \$mail\+Service} & Service d\textquotesingle{}envoi d\textquotesingle{}emails \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\textbackslash{}\+Illuminate\textbackslash{}\+Http\textbackslash{}\+Json\+Response Résultat de l\textquotesingle{}envoi 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_app_1_1_http_1_1_controllers_1_1_mail_controller_a9da771edbe418e4828d91c0c9ad9709b}\label{class_app_1_1_http_1_1_controllers_1_1_mail_controller_a9da771edbe418e4828d91c0c9ad9709b}} 
+\index{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController}!testMail@{testMail}}
+\index{testMail@{testMail}!App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController@{App\textbackslash{}Http\textbackslash{}Controllers\textbackslash{}MailController}}
+\doxysubsubsection{\texorpdfstring{testMail()}{testMail()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Http\textbackslash{}\+Controllers\textbackslash{}\+Mail\+Controller\+::test\+Mail (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Teste l\textquotesingle{}envoi d\textquotesingle{}un email simple. 
+
+Envoie un email de test à \href{mailto:test@example.com}{\texttt{ test@example.\+com}} pour vérifier la configuration de l\textquotesingle{}envoi d\textquotesingle{}emails (utile avec Mailpit en Docker).
+
+\begin{DoxyReturn}{Returns}
+\textbackslash{}\+Illuminate\textbackslash{}\+Http\textbackslash{}\+Json\+Response Résultat du test 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+boardpxl-\/backend/app/\+Http/\+Controllers/\mbox{\hyperlink{_mail_controller_8php}{Mail\+Controller.\+php}}\end{DoxyCompactItemize}

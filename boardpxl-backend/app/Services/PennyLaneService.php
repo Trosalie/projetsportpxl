@@ -10,6 +10,18 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Models\Photographer;
 
+/**
+ * @class PennylaneService
+ * @brief Service de gestion de l'API Pennylane
+ * 
+ * Cette classe fournit une interface pour interagir avec l'API externe Pennylane.
+ * Elle gère la création de factures, la récupération des données clients et
+ * la synchronisation des factures entre Pennylane et la base de données locale.
+ * 
+ * @author SportPxl Team
+ * @version 1.0.0
+ * @date 2026-01-13
+ */
 class PennylaneService
 {
     /**
@@ -97,11 +109,14 @@ class PennylaneService
     }
 
     /**
-     * Get the invoice with a specific number
-     *
-     * @param string $invoiceNumber
-     * @return array
-     * */
+     * @brief Récupère une facture par son numéro
+     * 
+     * Recherche une facture spécifique dans l'ensemble des factures Pennylane
+     * en utilisant son numéro de facture unique.
+     * 
+     * @param string $invoiceNumber Numéro de la facture à rechercher
+     * @return array|null Données de la facture ou null si non trouvée
+     */
     public function getInvoiceByNumber(string $invoiceNumber): ?array
     {
         $allInvoices = $this->getInvoices();
@@ -376,8 +391,15 @@ class PennylaneService
     }
 
     /**
-     * update the credit invoices
-     * */
+     * @brief Synchronise les factures entre Pennylane et la base de données locale
+     * 
+     * Récupère toutes les factures depuis Pennylane et les synchronise avec
+     * la base de données locale. Distingue automatiquement les factures de crédit
+     * des factures de versement de CA et met à jour les entrées correspondantes.
+     * Les erreurs de synchronisation sont logées sans interrompre le processus.
+     * 
+     * @return void
+     */
     public function syncInvoices(): void
     {
         try {
