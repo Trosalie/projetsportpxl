@@ -32,7 +32,7 @@ jobs:
         run: |
           curl -o logo-sportpxl.svg https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg
       
-      - name: Génération de la documentation
+      - name: Génération de la documentation via Doxygen
         run: doxygen Doxyfile
       
       - name: Upload de l'artifact
