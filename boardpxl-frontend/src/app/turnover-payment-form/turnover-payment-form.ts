@@ -162,7 +162,6 @@ export class TurnoverPaymentForm implements OnDestroy {
         .subscribe({
         next: (response) => {
           this.popup.showNotification('Facture créée avec succès !');
-          this.creationFacture = false;
           this.insertTurnoverInvoice(response, startDate, endDate, chiffreAffaire, commission, TVA, this.today, dueDate, this.clientId);
           setTimeout(() => {
             this.router.navigate(['/photographers']);

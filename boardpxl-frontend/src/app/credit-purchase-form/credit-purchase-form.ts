@@ -159,7 +159,6 @@ export class CreditPurchaseForm implements OnDestroy {
       .subscribe({
       next: (response) => {
         this.popup.showNotification('Facture créée avec succès !');
-        this.creationFacture = false;
         this.insertCreditsInvoice( response, form['priceHT'].value, form['credits'].value, (form['tva'] as HTMLSelectElement).value, "À venir",this.today, dueDate, this.clientId);
         setTimeout(() => {
           this.router.navigate(['/photographers']);
