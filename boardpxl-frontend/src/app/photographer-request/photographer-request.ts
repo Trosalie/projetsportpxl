@@ -13,8 +13,10 @@ export class PhotographerRequest {
   @Input() requestType: 'versement' | 'crédits' = 'versement';
   protected requestMessage: string = '';
   protected isSending: boolean = false;
+  protected redirection: boolean = false;
   protected amount: string = '';
   private userName: string = '';
+
 
   constructor(private mailService: MailService, private authService: AuthService) {}
 
@@ -97,7 +99,7 @@ ${this.userName}`;
     const ta = document.querySelector('textarea') as HTMLTextAreaElement | null;
     const errorMessage = document.querySelector('.error-message') as HTMLElement | null;
 
-    const body = ta?.value || '';
+    const body = this.requestMessage;
 
     // Validation du montant
     const isValidAmount = this.requestType === 'crédits' 
@@ -179,6 +181,7 @@ ${this.userName}`;
     this.mailService.sendMail(to, from, subject, body, type).subscribe({
       next: (response) => {
         this.isSending = false;
+        this.redirection = true;
         this.popup.showNotification('Votre demande à bien été envoyée !');
         setTimeout(() => {
           window.location.assign('');
@@ -189,6 +192,7 @@ ${this.userName}`;
         console.error('Erreur lors de l\'envoi du mail:', error);
         console.error('Détails de l\'erreur:', error.error);
         this.isSending = false;
+        this.redirection = true;
         // Attendre 3 secondes avant de rediriger pour que l'utilisateur voie le message
         setTimeout(() => {
           window.location.assign('');
