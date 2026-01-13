@@ -2,7 +2,7 @@ name: Génération de la documentation
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, doc/majAuto ]
   workflow_dispatch:
 
 permissions:
