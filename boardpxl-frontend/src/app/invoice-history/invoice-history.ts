@@ -29,7 +29,6 @@ export class InvoiceHistory implements OnDestroy {
 
   
   ngOnInit() {
-    console.log("User ID in InvoiceHistory:", this.user);
     requestAnimationFrame(() => {
       this.adjustHeight();
     });
@@ -59,13 +58,11 @@ export class InvoiceHistory implements OnDestroy {
             break;
         }
         
-        console.log("Processing credit invoice:", invoice);
         allInvoices.push(new InvoiceCredit(invoice.number, invoice.issue_date, invoice.due_date, invoice.amount, invoice.tax, invoice.vat, invoice.total_due, invoice.credits, invoice.status, invoice.link_pdf, invoice.pdf_invoice_subject));
       }
 
       // Process payment invoices
       for (let invoice of paymentInvoices) {        
-        console.log("Processing payment invoice:", invoice);
         allInvoices.push(new InvoicePayment(invoice.number, invoice.issue_date, invoice.due_date, invoice.description, invoice.raw_value, invoice.commission, invoice.tax, invoice.vat, invoice.start_period, invoice.end_period, invoice.link_pdf, invoice.pdf_invoice_subject));
       }
 

@@ -34,8 +34,6 @@ export class InvoiceCard {
       // Unknown invoice type — treat as empty
       this.invoiceType = '';
     }
-
-    //console.log("InvoiceCard initialized with invoice:", this.invoice);
   }
 
   openInvoice(link_pdf: string) {
