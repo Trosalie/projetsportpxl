@@ -12,7 +12,6 @@ import { InvoiceCard } from './invoice-card/invoice-card';
 import { InvoiceFilter } from './invoice-filter/invoice-filter';
 import { LoginPage } from './login-page/login-page';
 import { PhotographerRequest } from './photographer-request/photographer-request';
-import { AutomaticResponse } from './automatic-response/automatic-response';
 import { MailRequestPage } from './mail-request-page/mail-request-page';
 import { FormsModule } from '@angular/forms';
 
@@ -49,7 +48,6 @@ registerLocaleData(localeFr);
     InvoiceCard,
     InvoiceFilter,
     PhotographerRequest,
-    AutomaticResponse,
     MailRequestPage,
     CreditPurchaseForm,
     ProfileInformation,
