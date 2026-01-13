@@ -22,5 +22,5 @@
         <p class="error-message"></p>
         <textarea id="message" name="message" placeholder="{{ requestType === 'versement' ? 'Veuillez indiquer les détails de votre demande de versement.' : 'Veuillez indiquer le nombre de crédits souhaités et les raisons de cette demande.' }}" required [disabled]="isSending" readonly>{{ requestMessage }}</textarea>
     </div>
-    <button type="button" (click)="submitRequest()" [disabled]="isSending">Envoyer</button>
+    <button type="button" (click)="submitRequest()" [disabled]="isSending || redirection">Envoyer</button>
 </div>
