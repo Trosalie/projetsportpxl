@@ -30,6 +30,24 @@
     }
 }
 
+.no-invoices-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    color: #999;
+    font-size: 18px;
+    min-height: 200px;
+
+    p {
+        margin: 0;
+        color: #999;
+        font-size: 18px;
+        font-family: 'FuturaLT-Bold';
+    }
+}
+
 .loading-overlay {
     position: absolute;
     top: 0;
