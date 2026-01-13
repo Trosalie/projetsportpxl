@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { MailService } from '../services/mail-service';
 import { AuthService } from '../services/auth-service';
+import { Popup } from '../popup/popup';
 
 @Component({
   selector: 'app-photographer-request',
@@ -16,6 +17,8 @@ export class PhotographerRequest {
   private userName: string = '';
 
   constructor(private mailService: MailService, private authService: AuthService) {}
+
+  @ViewChild('popup') popup!: Popup;
 
   ngOnInit() {
     requestAnimationFrame(() => {
@@ -203,15 +206,19 @@ ${this.userName}`;
     this.mailService.sendMail(to, from, subject, body, type).subscribe({
       next: (response) => {
         this.isSending = false;
-        window.location.assign('/request/success');
+        this.popup.showNotification('Votre demande a bien été envoyée !');
+        setTimeout(() => {
+          window.location.assign('');
+        }, 3000);
       },
       error: (error) => {
+        this.popup.showNotification('Erreur lors de l\'envoi du mail. Veuillez réessayer plus tard.');
         console.error('Erreur lors de l\'envoi du mail:', error);
         console.error('Détails de l\'erreur:', error.error);
         this.isSending = false;
         // Attendre 3 secondes avant de rediriger pour que l'utilisateur voie le message
         setTimeout(() => {
-          window.location.assign('/request/failure');
+          window.location.assign('');
         }, 3000);
       }
     });
