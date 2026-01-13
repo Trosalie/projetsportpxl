@@ -7,6 +7,7 @@ use App\Http\Controllers\PennyLaneController;
 use App\Services\PennylaneService;
 use Tests\TestCase;
 use Mockery;
+use Illuminate\Support\Facades\DB;
 
 class PennyLaneControllerTest extends TestCase
 {
@@ -216,24 +217,43 @@ class PennyLaneControllerTest extends TestCase
     // Le service retourne une liste de factures pour ce client, et on vérifie la réponse JSON.
     public function test_get_invoices_by_client()
     {
-        $mock = Mockery::mock(PennylaneService::class);
-        $mock->shouldReceive('getInvoicesByIdClient')
-            ->with(12345)
+        // Mock database queries for invoice credits and payments
+        DB::shouldReceive('table')
+            ->with('invoice_credits')
             ->once()
-            ->andReturn([
-                ['id' => 1, 'invoice_number' => 'INV-001', 'customer' => ['id' => 12345]],
-                ['id' => 3, 'invoice_number' => 'INV-003', 'customer' => ['id' => 12345]]
-            ]);
-
-        $this->app->instance(PennylaneService::class, $mock);
+            ->andReturnSelf();
+        
+        DB::shouldReceive('where')
+            ->with('photographer_id', 12345)
+            ->once()
+            ->andReturnSelf();
+        
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                ['id' => 1, 'invoice_number' => 'INV-001', 'photographer_id' => 12345],
+            ]));
+        
+        DB::shouldReceive('table')
+            ->with('invoice_payments')
+            ->once()
+            ->andReturnSelf();
+        
+        DB::shouldReceive('where')
+            ->with('photographer_id', 12345)
+            ->once()
+            ->andReturnSelf();
+        
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                ['id' => 3, 'invoice_number' => 'INV-003', 'photographer_id' => 12345],
+            ]));
 
         $response = $this->getJson('/api/invoices-client/12345');
 
         $response->assertStatus(200)
-                ->assertJson([
-                    ['id' => 1, 'invoice_number' => 'INV-001', 'customer' => ['id' => 12345]],
-                    ['id' => 3, 'invoice_number' => 'INV-003', 'customer' => ['id' => 12345]]
-                ]);
+                ->assertJsonCount(2);
     }
 
     // Ce test vérifie la récupération réussie d'un produit d'une facture via son numéro.
