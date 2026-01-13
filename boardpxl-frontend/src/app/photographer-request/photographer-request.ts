@@ -105,35 +105,8 @@ ${this.userName}`;
       : (!this.amount || this.amount === '' || Number(this.amount) <= 0);
     
     if (isValidAmount) {
-      if (errorMessage) {
-        const messageType = this.requestType === 'crédits' ? 'un nombre entier de crédits' : 'un montant du chiffre d\'affaires';
-        errorMessage.innerHTML = `Veuillez indiquer ${messageType} avant de soumettre la demande.`;
-        errorMessage.style.opacity = '1';
-
-        // animation
-        if (errorMessage.animate) {
-        errorMessage.animate(
-          [
-          { transform: 'translateY(8px)', opacity: '1' },
-          { transform: 'translateY(-8px)', opacity: '1' },
-          { transform: 'translateY(4px)', opacity: '1' },
-          { transform: 'translateY(0)', opacity: '1' }
-          ],
-          {
-          duration: 420,
-          easing: 'cubic-bezier(.2,.8,.2,1)',
-          iterations: 1,
-          fill: 'forwards'
-          }
-        );
-        } else {
-        errorMessage.style.transition = 'transform 0.14s cubic-bezier(.2,.8,.2,1)';
-        errorMessage.style.transform = 'translateY(8px)';
-        setTimeout(() => { errorMessage.style.transform = 'translateY(-8px)'; }, 140);
-        setTimeout(() => { errorMessage.style.transform = 'translateY(4px)'; }, 280);
-        setTimeout(() => { errorMessage.style.transform = 'translateY(0)'; }, 420);
-        }
-      }
+      const messageType = this.requestType === 'crédits' ? 'un nombre entier de crédits' : 'un montant du chiffre d\'affaires';
+      this.popup.showNotification(`Veuillez indiquer ${messageType} avant de soumettre la demande.`);
       return;
     }
 
