@@ -206,7 +206,7 @@ ${this.userName}`;
     this.mailService.sendMail(to, from, subject, body, type).subscribe({
       next: (response) => {
         this.isSending = false;
-        this.popup.showNotification('Votre demande a bien été envoyée !');
+        this.popup.showNotification('Votre demande à bien été envoyée !');
         setTimeout(() => {
           window.location.assign('');
         }, 3000);
