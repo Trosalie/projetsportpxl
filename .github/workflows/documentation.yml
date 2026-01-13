@@ -16,16 +16,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js (pour le filtre TS)
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
       - name: Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y doxygen graphviz
-          npm install -g doxygen-filter-ts
 
       - name: Run Doxygen
         # Doxygen va lire le Doxyfile et créer le dossier docs/html
