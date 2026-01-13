@@ -98,23 +98,23 @@ class MailController extends Controller
         return response()->json(['message' => 'Mail envoyé (si tout va bien) !']);
     }
 
-    public function getLogs(Request $request, $sender_id)
-    {
-        try {
-            // Valider l'ID du photographe passé en paramètre
-            $validated = validator(
-                ['sender_id' => $sender_id],
-                ['sender_id' => 'required|integer|exists:photographers,id']
-            )->validate();
+        public function getLogs(Request $request, $sender_id)
+        {
+            try {
+                // Valider l'ID du photographe passé en paramètre
+                $validated = validator(
+                    ['sender_id' => $sender_id],
+                    ['sender_id' => 'required|integer|exists:photographers,id']
+                )->validate();
 
-            // Récupérer les logs de mails depuis la base de données via l'id du photographe validé
-            $logs = MailLogs::where('sender_id', $validated['sender_id'])->get();
-            return response()->json($logs);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve logs: ' . $e->getMessage()
-            ], 500);
+                // Récupérer les logs de mails depuis la base de données via l'id du photographe validé
+                $logs = MailLogs::where('sender_id', $validated['sender_id'])->orderBy('created_at', 'desc')->get();
+                return response()->json($logs);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to retrieve logs: ' . $e->getMessage()
+                ], 500);
+            }
         }
-    }
 }
