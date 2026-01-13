@@ -154,7 +154,7 @@ export class TurnoverPaymentForm implements OnDestroy {
         dueDate: dueDate,
         idClient: this.pennylaneId,
         invoiceTitle: subject,
-        invoiceDescription: `Versement du chiffre d'affaire de ${chiffreAffaire}€ pour la période du ${startDate} au ${endDate}.`
+        invoiceDescription: `Versement du chiffre d'affaires de ${chiffreAffaire}€ pour la période du ${startDate} au ${endDate}.`
       }
       this.creationFacture = true;
       this.invoiceService.createTurnoverPaymentInvoice(body)
