@@ -1,0 +1,122 @@
+\hypertarget{class_app_1_1_models_1_1_invoice_payment}{}\doxysection{App\textbackslash{}Models\textbackslash{}Invoice\+Payment Class Reference}
+\label{class_app_1_1_models_1_1_invoice_payment}\index{App\textbackslash{}Models\textbackslash{}InvoicePayment@{App\textbackslash{}Models\textbackslash{}InvoicePayment}}
+
+
+Modèle représentant une facture de versement de chiffre d\textquotesingle{}affaires.  
+
+
+Inheritance diagram for App\textbackslash{}Models\textbackslash{}Invoice\+Payment\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_app_1_1_models_1_1_invoice_payment}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_app_1_1_models_1_1_invoice_payment_a12fcd8c79e3567cb05281842038b1c1f}{photographer}} ()
+\begin{DoxyCompactList}\small\item\em Relation Many-\/to-\/\+One avec \mbox{\hyperlink{class_app_1_1_models_1_1_photographer}{Photographer}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_app_1_1_models_1_1_invoice_payment_ab8fa0185614e6abe200e0b639d9180e2}{\$fillable}}
+\item 
+\mbox{\hyperlink{class_app_1_1_models_1_1_invoice_payment_a9006f37eb3080be4fe4187e07f4f0757}{\$dates}}
+\item 
+\mbox{\hyperlink{class_app_1_1_models_1_1_invoice_payment_a5eb369a00f060400785bc866eda7b84f}{\$casts}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Modèle représentant une facture de versement de chiffre d\textquotesingle{}affaires. 
+
+Cette classe gère les factures de versement émises pour payer les photographes suite à leur chiffre d\textquotesingle{}affaires généré sur la plateforme Sport\+Pxl.
+
+\begin{DoxyAuthor}{Author}
+Sport\+Pxl Team 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\+0.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2026-\/01-\/13 
+\end{DoxyDate}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_app_1_1_models_1_1_invoice_payment_a12fcd8c79e3567cb05281842038b1c1f}\label{class_app_1_1_models_1_1_invoice_payment_a12fcd8c79e3567cb05281842038b1c1f}} 
+\index{App\textbackslash{}Models\textbackslash{}InvoicePayment@{App\textbackslash{}Models\textbackslash{}InvoicePayment}!photographer@{photographer}}
+\index{photographer@{photographer}!App\textbackslash{}Models\textbackslash{}InvoicePayment@{App\textbackslash{}Models\textbackslash{}InvoicePayment}}
+\doxysubsubsection{\texorpdfstring{photographer()}{photographer()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Models\textbackslash{}\+Invoice\+Payment\+::photographer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Relation Many-\/to-\/\+One avec \mbox{\hyperlink{class_app_1_1_models_1_1_photographer}{Photographer}}. 
+
+Retourne le photographe bénéficiaire de cette facture de versement. Chaque facture de versement appartient à un seul photographe.
+
+\begin{DoxyReturn}{Returns}
+\textbackslash{}\+Illuminate\textbackslash{}\+Database\textbackslash{}\+Eloquent\textbackslash{}\+Relations\textbackslash{}\+Belongs\+To 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_app_1_1_models_1_1_invoice_payment_a5eb369a00f060400785bc866eda7b84f}\label{class_app_1_1_models_1_1_invoice_payment_a5eb369a00f060400785bc866eda7b84f}} 
+\index{App\textbackslash{}Models\textbackslash{}InvoicePayment@{App\textbackslash{}Models\textbackslash{}InvoicePayment}!\$casts@{\$casts}}
+\index{\$casts@{\$casts}!App\textbackslash{}Models\textbackslash{}InvoicePayment@{App\textbackslash{}Models\textbackslash{}InvoicePayment}}
+\doxysubsubsection{\texorpdfstring{\$casts}{$casts}}
+{\footnotesize\ttfamily App\textbackslash{}\+Models\textbackslash{}\+Invoice\+Payment\+::\$casts\hspace{0.3cm}{\ttfamily [protected]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= [}
+\DoxyCodeLine{        \textcolor{stringliteral}{'tax'} => \textcolor{stringliteral}{'decimal:2'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'vat'} => \textcolor{stringliteral}{'decimal:2'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'raw\_value'} => \textcolor{stringliteral}{'decimal:2'},}
+\DoxyCodeLine{    ]}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{class_app_1_1_models_1_1_invoice_payment_a9006f37eb3080be4fe4187e07f4f0757}\label{class_app_1_1_models_1_1_invoice_payment_a9006f37eb3080be4fe4187e07f4f0757}} 
+\index{App\textbackslash{}Models\textbackslash{}InvoicePayment@{App\textbackslash{}Models\textbackslash{}InvoicePayment}!\$dates@{\$dates}}
+\index{\$dates@{\$dates}!App\textbackslash{}Models\textbackslash{}InvoicePayment@{App\textbackslash{}Models\textbackslash{}InvoicePayment}}
+\doxysubsubsection{\texorpdfstring{\$dates}{$dates}}
+{\footnotesize\ttfamily App\textbackslash{}\+Models\textbackslash{}\+Invoice\+Payment\+::\$dates\hspace{0.3cm}{\ttfamily [protected]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= [}
+\DoxyCodeLine{        \textcolor{stringliteral}{'issue\_date'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'due\_date'},}
+\DoxyCodeLine{    ]}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{class_app_1_1_models_1_1_invoice_payment_ab8fa0185614e6abe200e0b639d9180e2}\label{class_app_1_1_models_1_1_invoice_payment_ab8fa0185614e6abe200e0b639d9180e2}} 
+\index{App\textbackslash{}Models\textbackslash{}InvoicePayment@{App\textbackslash{}Models\textbackslash{}InvoicePayment}!\$fillable@{\$fillable}}
+\index{\$fillable@{\$fillable}!App\textbackslash{}Models\textbackslash{}InvoicePayment@{App\textbackslash{}Models\textbackslash{}InvoicePayment}}
+\doxysubsubsection{\texorpdfstring{\$fillable}{$fillable}}
+{\footnotesize\ttfamily App\textbackslash{}\+Models\textbackslash{}\+Invoice\+Payment\+::\$fillable\hspace{0.3cm}{\ttfamily [protected]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= [}
+\DoxyCodeLine{        \textcolor{stringliteral}{'number'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'issue\_date'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'due\_date'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'description'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'raw\_value'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'commission'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'tax'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'vat'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'start\_period'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'end\_period'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'link\_pdf'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'pdf\_invoice\_subject'},}
+\DoxyCodeLine{    ]}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+boardpxl-\/backend/app/\+Models/\mbox{\hyperlink{_invoice_payment_8php}{Invoice\+Payment.\+php}}\end{DoxyCompactItemize}

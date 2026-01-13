@@ -1,0 +1,82 @@
+\hypertarget{class_app_1_1_models_1_1_logs}{}\doxysection{App\textbackslash{}Models\textbackslash{}Logs Class Reference}
+\label{class_app_1_1_models_1_1_logs}\index{App\textbackslash{}Models\textbackslash{}Logs@{App\textbackslash{}Models\textbackslash{}Logs}}
+
+
+Modèle pour la journalisation des actions utilisateurs.  
+
+
+Inheritance diagram for App\textbackslash{}Models\textbackslash{}Logs\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_app_1_1_models_1_1_logs}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_app_1_1_models_1_1_logs_a539a2b1bc86c5ca9892f81acfe003a11}{log\+Action}} ()
+\begin{DoxyCompactList}\small\item\em Relation Many-\/to-\/\+One avec \mbox{\hyperlink{class_app_1_1_models_1_1_log_actions}{Log\+Actions}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_app_1_1_models_1_1_logs_a8ef1be62e899f4add3a58e8f485a2107}{\$fillable}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Modèle pour la journalisation des actions utilisateurs. 
+
+Cette classe enregistre toutes les actions effectuées par les utilisateurs de la plateforme, incluant l\textquotesingle{}action, l\textquotesingle{}utilisateur, la table concernée et l\textquotesingle{}IP.
+
+\begin{DoxyAuthor}{Author}
+Sport\+Pxl Team 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\+0.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2026-\/01-\/13 
+\end{DoxyDate}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_app_1_1_models_1_1_logs_a539a2b1bc86c5ca9892f81acfe003a11}\label{class_app_1_1_models_1_1_logs_a539a2b1bc86c5ca9892f81acfe003a11}} 
+\index{App\textbackslash{}Models\textbackslash{}Logs@{App\textbackslash{}Models\textbackslash{}Logs}!logAction@{logAction}}
+\index{logAction@{logAction}!App\textbackslash{}Models\textbackslash{}Logs@{App\textbackslash{}Models\textbackslash{}Logs}}
+\doxysubsubsection{\texorpdfstring{logAction()}{logAction()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Models\textbackslash{}\+Logs\+::log\+Action (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Relation Many-\/to-\/\+One avec \mbox{\hyperlink{class_app_1_1_models_1_1_log_actions}{Log\+Actions}}. 
+
+Retourne le type d\textquotesingle{}action associé à ce log. Chaque log appartient à un type d\textquotesingle{}action spécifique.
+
+\begin{DoxyReturn}{Returns}
+\textbackslash{}\+Illuminate\textbackslash{}\+Database\textbackslash{}\+Eloquent\textbackslash{}\+Relations\textbackslash{}\+Belongs\+To 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_app_1_1_models_1_1_logs_a8ef1be62e899f4add3a58e8f485a2107}\label{class_app_1_1_models_1_1_logs_a8ef1be62e899f4add3a58e8f485a2107}} 
+\index{App\textbackslash{}Models\textbackslash{}Logs@{App\textbackslash{}Models\textbackslash{}Logs}!\$fillable@{\$fillable}}
+\index{\$fillable@{\$fillable}!App\textbackslash{}Models\textbackslash{}Logs@{App\textbackslash{}Models\textbackslash{}Logs}}
+\doxysubsubsection{\texorpdfstring{\$fillable}{$fillable}}
+{\footnotesize\ttfamily App\textbackslash{}\+Models\textbackslash{}\+Logs\+::\$fillable\hspace{0.3cm}{\ttfamily [protected]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= [}
+\DoxyCodeLine{        \textcolor{stringliteral}{'action\_id'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'user\_id'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'table\_name'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'ip\_address'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'details'},}
+\DoxyCodeLine{    ]}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+boardpxl-\/backend/app/\+Models/\mbox{\hyperlink{_logs_8php}{Logs.\+php}}\end{DoxyCompactItemize}

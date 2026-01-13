@@ -11,16 +11,42 @@ use App\Services\MailService;
 use Illuminate\Support\Facades\Mail;
 use App\Services\LogService;
 
+/**
+ * @class PhotographerController
+ * @brief Contrôleur de gestion des photographes
+ * 
+ * Gère toutes les opérations CRUD liées aux photographes,
+ * incluant la récupération des informations et des identifiants.
+ * 
+ * @author SportPxl Team
+ * @version 1.0.0
+ * @date 2026-01-13
+ */
 class PhotographerController extends Controller
 {
+    /**
+     * @var LogService $logService Service de journalisation
+     */
     private LogService $logService;
 
+    /**
+     * @brief Constructeur du contrôleur
+     * @param LogService $logService Injection du service de logs
+     */
     public function __construct(LogService $logService)
     {
         $this->logService = $logService;
     }
 
-    
+    /**
+     * @brief Récupère un photographe par son ID
+     * 
+     * Recherche et retourne les informations d'un photographe spécifique.
+     * Retourne une erreur 404 si le photographe n'existe pas.
+     * 
+     * @param int $id Identifiant du photographe
+     * @return \Illuminate\Http\JsonResponse Données du photographe ou message d'erreur
+     */
     public function getPhotographer($id)
     {
         $photographer = Photographer::find($id);
@@ -33,6 +59,14 @@ class PhotographerController extends Controller
         return response()->json($photographer);
     }
   
+    /**
+     * @brief Récupère la liste de tous les photographes
+     * 
+     * Retourne l'ensemble des photographes enregistrés dans la base de données.
+     * En cas d'erreur, retourne un message d'erreur avec le code 500.
+     * 
+     * @return \Illuminate\Http\JsonResponse Liste des photographes ou message d'erreur
+     */
     public function getPhotographers()
     {
         try {
@@ -47,6 +81,15 @@ class PhotographerController extends Controller
         }
     }
 
+    /**
+     * @brief Récupère les identifiants d'un photographe par son nom
+     * 
+     * Recherche un photographe par son nom et retourne ses différents identifiants :
+     * ID interne, client_id et pennylane_id.
+     * 
+     * @param string $name Nom du photographe à rechercher
+     * @return \Illuminate\Http\JsonResponse Identifiants du photographe ou message d'erreur
+     */
     public function getPhotographerIds($name)
     {   
         if (!$name) {

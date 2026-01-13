@@ -1,0 +1,83 @@
+\hypertarget{class_app_1_1_models_1_1_mail_logs}{}\doxysection{App\textbackslash{}Models\textbackslash{}Mail\+Logs Class Reference}
+\label{class_app_1_1_models_1_1_mail_logs}\index{App\textbackslash{}Models\textbackslash{}MailLogs@{App\textbackslash{}Models\textbackslash{}MailLogs}}
+
+
+Modèle pour la journalisation des emails envoyés.  
+
+
+Inheritance diagram for App\textbackslash{}Models\textbackslash{}Mail\+Logs\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_app_1_1_models_1_1_mail_logs}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_app_1_1_models_1_1_mail_logs_a55b4fde405a8c30856688b0652d91949}{photographer}} ()
+\begin{DoxyCompactList}\small\item\em Relation Many-\/to-\/\+One avec \mbox{\hyperlink{class_app_1_1_models_1_1_photographer}{Photographer}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_app_1_1_models_1_1_mail_logs_ab505494f4ba51e428577ee717a49a50d}{\$fillable}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Modèle pour la journalisation des emails envoyés. 
+
+Cette classe enregistre tous les emails envoyés via la plateforme, incluant l\textquotesingle{}expéditeur, le destinataire, le sujet et le statut de l\textquotesingle{}envoi.
+
+\begin{DoxyAuthor}{Author}
+Sport\+Pxl Team 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\+0.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2026-\/01-\/13 
+\end{DoxyDate}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_app_1_1_models_1_1_mail_logs_a55b4fde405a8c30856688b0652d91949}\label{class_app_1_1_models_1_1_mail_logs_a55b4fde405a8c30856688b0652d91949}} 
+\index{App\textbackslash{}Models\textbackslash{}MailLogs@{App\textbackslash{}Models\textbackslash{}MailLogs}!photographer@{photographer}}
+\index{photographer@{photographer}!App\textbackslash{}Models\textbackslash{}MailLogs@{App\textbackslash{}Models\textbackslash{}MailLogs}}
+\doxysubsubsection{\texorpdfstring{photographer()}{photographer()}}
+{\footnotesize\ttfamily App\textbackslash{}\+Models\textbackslash{}\+Mail\+Logs\+::photographer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Relation Many-\/to-\/\+One avec \mbox{\hyperlink{class_app_1_1_models_1_1_photographer}{Photographer}}. 
+
+Retourne le photographe qui a envoyé cet email. Chaque log d\textquotesingle{}email appartient à un photographe expéditeur.
+
+\begin{DoxyReturn}{Returns}
+\textbackslash{}\+Illuminate\textbackslash{}\+Database\textbackslash{}\+Eloquent\textbackslash{}\+Relations\textbackslash{}\+Belongs\+To 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_app_1_1_models_1_1_mail_logs_ab505494f4ba51e428577ee717a49a50d}\label{class_app_1_1_models_1_1_mail_logs_ab505494f4ba51e428577ee717a49a50d}} 
+\index{App\textbackslash{}Models\textbackslash{}MailLogs@{App\textbackslash{}Models\textbackslash{}MailLogs}!\$fillable@{\$fillable}}
+\index{\$fillable@{\$fillable}!App\textbackslash{}Models\textbackslash{}MailLogs@{App\textbackslash{}Models\textbackslash{}MailLogs}}
+\doxysubsubsection{\texorpdfstring{\$fillable}{$fillable}}
+{\footnotesize\ttfamily App\textbackslash{}\+Models\textbackslash{}\+Mail\+Logs\+::\$fillable\hspace{0.3cm}{\ttfamily [protected]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= [}
+\DoxyCodeLine{        \textcolor{stringliteral}{'sender\_id'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'recipient'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'subject'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'status'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'body'},}
+\DoxyCodeLine{        \textcolor{stringliteral}{'type'}}
+\DoxyCodeLine{    ]}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+boardpxl-\/backend/app/\+Models/\mbox{\hyperlink{_mail_logs_8php}{Mail\+Logs.\+php}}\end{DoxyCompactItemize}
