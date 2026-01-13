@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Invoice } from '../models/invoice.model';
 import { environment } from '../../environments/environment.development';
 import { HttpHeadersService } from './http-headers.service';
+import { InvoiceCredit } from '../models/invoice-credit.model';
 
 @Injectable({
   providedIn: 'root',
@@ -36,8 +37,8 @@ export class InvoiceService {
    * @param Invoice invoice
    * @return Observable<string[]>
    * */
-  getProductFromInvoice(invoice: Invoice): Observable<string[]> {
-    return this.http.get<string[]>(`${environment.apiUrl}/invoice-product/${invoice.invoice_number}`, this.headersService.getAuthHeaders());
+  getProductFromInvoice(invoice: InvoiceCredit): Observable<string[]> {
+    return this.http.get<string[]>(`${environment.apiUrl}/invoice-product/${invoice.number}`, this.headersService.getAuthHeaders());
   }
 
   /**
@@ -106,6 +107,13 @@ export class InvoiceService {
 
   getTurnoverFinancialInfo(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/invoice-turnover-financial-info`, this.headersService.getAuthHeaders());
+  }
+
+  downloadInvoice(formData: FormData): Observable<Blob> {
+    return this.http.post(`${environment.apiUrl}/download-invoice`, formData, {
+      headers: this.headersService.getAuthHeaders().headers,
+      responseType: 'blob'
+    });
   }
   
 }
