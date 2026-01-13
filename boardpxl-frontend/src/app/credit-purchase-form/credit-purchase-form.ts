@@ -155,8 +155,8 @@ export class CreditPurchaseForm implements OnDestroy {
       issueDate,
       subject,
       dueDate,
-      priceHT: parseFloat(form['priceHT'].value),
-      credits: parseInt(form['credits'].value),
+      priceHT: form['priceHT'].value,
+      credits: form['credits'].value,
       tva: (form['tva'] as HTMLSelectElement).value
     };
 
@@ -187,12 +187,15 @@ export class CreditPurchaseForm implements OnDestroy {
       invoiceTitle: subject
     };
     this.creationFacture = true;
+    this.showConfirmModal = false;
     this.invoiceService.createCreditsInvoice(body)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
       next: (response) => {
         this.popup.showNotification('Facture créée avec succès !');
         this.creationFacture = false;
+        this.pendingFormData = null;
+        this.modalData = null;
         this.insertCreditsInvoice( response, priceHT, credits, tva, "À venir", this.today, dueDate, this.clientId);
         setTimeout(() => {
           this.router.navigate(['/photographers']);
@@ -201,6 +204,7 @@ export class CreditPurchaseForm implements OnDestroy {
       error: () => {
         this.popup.showNotification("Erreur lors de la création de la facture");
         this.creationFacture = false;
+        this.showConfirmModal = true;
       }
     });
   }

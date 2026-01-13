@@ -158,8 +158,8 @@ export class TurnoverPaymentForm implements OnDestroy {
         startDate,
         endDate,
         subject,
-        commission: parseFloat(commission),
-        chiffreAffaire: parseFloat(chiffreAffaire),
+        commission,
+        chiffreAffaire,
         TVA,
         dueDate
       };
@@ -189,15 +189,18 @@ export class TurnoverPaymentForm implements OnDestroy {
       dueDate: dueDate,
       idClient: this.pennylaneId,
       invoiceTitle: subject,
-      invoiceDescription: `Versement du chiffre d'affaire de ${chiffreAffaire}€ pour la période du ${startDate} au ${endDate}.`
+      invoiceDescription: `Versement du chiffre d'affaires de ${chiffreAffaire}€ pour la période du ${startDate} au ${endDate}.`
     }
     this.creationFacture = true;
+    this.showConfirmModal = false;
     this.invoiceService.createTurnoverPaymentInvoice(body)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
       next: (response) => {
         this.popup.showNotification('Facture créée avec succès !');
         this.creationFacture = false;
+        this.pendingFormData = null;
+        this.modalData = null;
         this.insertTurnoverInvoice(response, startDate, endDate, chiffreAffaire, commission, TVA, this.today, dueDate, this.clientId);
         setTimeout(() => {
           this.router.navigate(['/photographers']);
@@ -206,6 +209,7 @@ export class TurnoverPaymentForm implements OnDestroy {
       error: () => {
         this.popup.showNotification("Erreur lors de la création de la facture."),
         this.creationFacture = false;
+        this.showConfirmModal = true;
       }
     });
   }
