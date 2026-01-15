@@ -6,9 +6,12 @@
     </div>
     <div class="photographers-list">
         <div class="photographer-item" *ngFor="let photographer of renderedList">
-                <app-photographer-card [photographer]="photographer"></app-photographer-card>
+                <app-photographer-card 
+                    [photographer]="photographer"
+                    [invoices]="invoicesMap[photographer.id]">
+                </app-photographer-card>
         </div>
     </div>
-    <app-pagination [numberOfItems]="itemsToShow" [fullList]="filterActive ? bufferedList : photographers" [renderedList]="renderedList"></app-pagination>
+    <app-pagination [numberOfItems]="itemsToShow" [fullList]="filterActive ? bufferedList : photographers" [renderedList]="renderedList" (pageChange)="onPageChange($event)"></app-pagination>
 </div>
 </main>

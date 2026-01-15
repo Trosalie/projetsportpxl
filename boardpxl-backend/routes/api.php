@@ -55,7 +55,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Récupérer les factures de crédit d’un photographe
     // Testé : Non couvert actuellement - test à ajouter (par exemple dans InvoiceControllerTest)
     Route::get('/invoices-credit/{photographer_id}', [InvoiceController::class, 'getInvoicesCreditByPhotographer']);
-
+    // Récupérer les factures de plusieurs photographes en une seule requête (optimisation)
+    Route::post('/invoices-bulk', [InvoiceController::class, 'getBulkInvoicesByPhotographers']);
     // Création d'une facture
     Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
 

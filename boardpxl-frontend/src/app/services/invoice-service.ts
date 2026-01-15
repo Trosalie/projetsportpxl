@@ -120,6 +120,20 @@ export class InvoiceService {
     return this.http.get(`${environment.apiUrl}/invoice-turnover-financial-info`, this.headersService.getAuthHeaders());
   }
 
+  /**
+   * Get invoices for multiple photographers in a single API call (optimized bulk endpoint)
+   *
+   * @param number[] photographerIds
+   * @return Observable<any>
+   * */
+  getBulkInvoicesByPhotographers(photographerIds: number[]): Observable<any> {
+    return this.http.post(
+      `${environment.apiUrl}/invoices-bulk`,
+      { photographer_ids: photographerIds },
+      this.headersService.getAuthHeaders()
+    );
+  }
+
   downloadInvoice(formData: FormData): Observable<Blob> {
     return this.http.post(`${environment.apiUrl}/download-invoice`, formData, {
       headers: this.headersService.getAuthHeaders().headers,
