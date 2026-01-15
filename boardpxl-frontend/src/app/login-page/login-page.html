@@ -3,6 +3,7 @@
     <img class="logo-sportpxl" src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" alt="logo_sportpxl">
     <img class="login-icon" src="assets/images/login_icon.png" alt="icône de connexion" />
     <h1>Connexion</h1>
+    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
     <form (ngSubmit)="onSubmit()">
       <div class="bloc_input">
         <label for="email">Email</label>
@@ -11,14 +12,14 @@
 
       <div class="bloc_input">
         <label for="password">Mot de passe</label>
-        <input id="password" type="password" placeholder="Mot de passe" [(ngModel)]="password" name="password" />
+        <input id="password" type="password" placeholder="Mot de passe" [(ngModel)]="password" name="password" [disabled]="isBlocked" />
       </div>
 
       <a href="https://www.app.sportpxl.com/forgot">Mot de passe oublié ?</a>
-      <button class="btn_login" type="submit" [disabled]="isLoading">
-        <span *ngIf="!isLoading">SE CONNECTER</span>
-        <span *ngIf="isLoading" class="spinner"></span>
-        <span *ngIf="isBlocked && !isLoading">BLOQUÉ ({{ remainingTime }})</span>
+      <button class="btn_login" type="submit" [disabled]="isLoading || isBlocked">
+        <span *ngIf="isBlocked">BLOQUÉ ({{ remainingTime }})</span>
+        <span *ngIf="!isBlocked && !isLoading">SE CONNECTER</span>
+        <span *ngIf="!isBlocked && isLoading" class="spinner"></span>
       </button>
     </form>
   </div>
