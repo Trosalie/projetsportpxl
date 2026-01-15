@@ -53,3 +53,5 @@ boardpxl-frontend/src/environments
 .env.production
 deploy.sh
 deploy.ps1
+# Documentation
+docs
