@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeadersService } from '../services/http-headers.service';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 
 interface Log {
   id: number;

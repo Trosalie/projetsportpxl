@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../services/auth-service';
 import { Router } from '@angular/router';
 import { RoleService } from '../services/role.service';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { LoginRateLimitService } from '../services/login-rate-limit.service';
 
 @Component({
