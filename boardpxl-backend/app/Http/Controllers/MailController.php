@@ -8,10 +8,28 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\MailLogs;
 use App\Services\LogService;
 
+/**
+ * @class MailController
+ * @brief Contrôleur de gestion des emails
+ * 
+ * Gère l'envoi d'emails et la consultation des logs d'envoi.
+ * Utilise MailService pour l'envoi et enregistre tous les envois dans MailLogs.
+ * 
+ * @author SportPxl Team
+ * @version 1.0.0
+ * @date 2026-01-13
+ */
 class MailController extends Controller
 {
+    /**
+     * @var LogService $logService Service de journalisation
+     */
     private LogService $logService;
 
+    /**
+     * @brief Constructeur du contrôleur
+     * @param LogService $logService Injection du service de logs
+     */
     public function __construct(LogService $logService)
     {
         $this->logService = $logService;
@@ -19,7 +37,15 @@ class MailController extends Controller
 
 
     /**
-     * Envoi de mail via MailService
+     * @brief Envoie un email via MailService
+     * 
+     * Valide les données de la requête, envoie l'email via MailService,
+     * et enregistre le statut de l'envoi dans les logs. Journalise aussi
+     * l'action via LogService.
+     * 
+     * @param Request $request Requête contenant les données de l'email
+     * @param MailService $mailService Service d'envoi d'emails
+     * @return \Illuminate\Http\JsonResponse Résultat de l'envoi
      */
     public function sendEmail(Request $request, MailService $mailService)
     {
@@ -82,7 +108,12 @@ class MailController extends Controller
     }
 
     /**
-     * Test d’envoi mail simple
+     * @brief Teste l'envoi d'un email simple
+     * 
+     * Envoie un email de test à test@example.com pour vérifier
+     * la configuration de l'envoi d'emails (utile avec Mailpit en Docker).
+     * 
+     * @return \Illuminate\Http\JsonResponse Résultat du test
      */
     public function testMail()
     {
@@ -98,6 +129,16 @@ class MailController extends Controller
         return response()->json(['message' => 'Mail envoyé (si tout va bien) !']);
     }
 
+        /**
+     * @brief Récupère les logs d'emails d'un photographe
+     * 
+     * Retourne l'historique des emails envoyés par un photographe spécifique,
+     * triés par date d'envoi décroissante. Valide l'existence du photographe.
+     * 
+     * @param Request $request Requête HTTP
+     * @param int $sender_id Identifiant du photographe expéditeur
+     * @return \Illuminate\Http\JsonResponse Liste des logs ou message d'erreur
+     */
         public function getLogs(Request $request, $sender_id)
         {
             try {

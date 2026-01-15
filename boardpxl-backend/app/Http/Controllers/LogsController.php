@@ -10,10 +10,29 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Services\LogService;
 
-
+/**
+ * @class LogsController
+ * @brief Contrôleur de consultation des logs d'actions
+ * 
+ * Permet de récupérer et consulter l'historique des actions
+ * effectuées par les utilisateurs de la plateforme.
+ * 
+ * @author SportPxl Team
+ * @version 1.0.0
+ * @date 2026-01-13
+ */
 class LogsController extends Controller
 {
-    // send logs from database
+    /**
+     * @brief Récupère tous les logs d'actions depuis la base de données
+     * 
+     * Effectue une jointure entre les tables logs, log_actions et photographers
+     * pour retourner l'historique complet des actions avec les informations
+     * des utilisateurs et types d'actions. Trié par date décroissante.
+     * 
+     * @param Request $request Requête HTTP
+     * @return \Illuminate\Http\JsonResponse Liste des logs ou message d'erreur
+     */
     public function getLogs(Request $request)
     {
         try {
