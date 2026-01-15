@@ -46,14 +46,11 @@ export class PhotographersList implements OnDestroy {
     const photographerIds = photoList.map(p => p.id);
     if (photographerIds.length === 0) return;
 
-    console.log('LOADING BULK INVOICES FOR IDS:', photographerIds);
     this.invoiceService.getBulkInvoicesByPhotographers(photographerIds)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         data => {
-          console.log('BULK INVOICES RESPONSE:', data);
           this.invoicesMap = data;
-          console.log('invoicesMap UPDATED:', this.invoicesMap);
         },
         error => {
           console.error('ERROR loading bulk invoices:', error);
@@ -80,6 +77,10 @@ export class PhotographersList implements OnDestroy {
     
     // Recharger les invoices pour la nouvelle liste affichée
     this.loadInvoicesForPhotographers(this.renderedList);
+  }
+
+  onPageChange(newList: any[]): void {
+    this.loadInvoicesForPhotographers(newList);
   }
 
   private matchesQuery(fieldValue: unknown, normalizedQuery: string): boolean {

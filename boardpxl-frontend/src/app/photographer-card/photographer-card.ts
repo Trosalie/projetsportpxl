@@ -88,7 +88,7 @@ export class PhotographerCard implements OnDestroy, OnChanges {
     this.paidInvoicesCount = 0;
     this.unpaidInvoicesCount = 0;
 
-    // Credits: use explicit status from DB
+    // Statuts basés uniquement sur les factures de crédits
     for (const invoice of this.creditsInvoices) {
       const status = (invoice.status || '').toLowerCase();
       if (status === 'late') {
@@ -99,9 +99,7 @@ export class PhotographerCard implements OnDestroy, OnChanges {
         this.unpaidInvoicesCount++;
       }
     }
-
-    // Payments: treat as paid (they represent versements)
-    this.paidInvoicesCount += this.paymentInvoices.length;
+    // Ne pas inclure les versements (payments) dans les statuts
   }
 
   getChiffreAffaires(): number {
