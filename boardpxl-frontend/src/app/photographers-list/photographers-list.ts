@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { PhotographerService } from '../services/photographer-service';
+import { InvoiceService } from '../services/invoice-service';
 import { AuthService } from '../services/auth-service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -16,9 +17,14 @@ export class PhotographersList implements OnDestroy {
   protected itemsToShow: number = 20;
   protected bufferedList: any[] = [];
   protected filterActive: boolean = false;
+  protected invoicesMap: any = {}; // Map des invoices par photographer_id
   private destroy$ = new Subject<void>();
 
-  constructor(private photographerService: PhotographerService, private authService: AuthService) {
+  constructor(
+    private photographerService: PhotographerService, 
+    private invoiceService: InvoiceService,
+    private authService: AuthService
+  ) {
     this.authService.logout$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.destroy$.next();
     });
@@ -30,7 +36,29 @@ export class PhotographersList implements OnDestroy {
       .subscribe(photographers => {
         this.photographers = photographers;
         this.renderedList = this.photographers.slice(0, this.itemsToShow);
+        
+        // Charger les invoices pour les 20 photographes en UNE SEULE requête
+        this.loadInvoicesForPhotographers(this.renderedList);
       });
+  }
+
+  private loadInvoicesForPhotographers(photoList: any[]): void {
+    const photographerIds = photoList.map(p => p.id);
+    if (photographerIds.length === 0) return;
+
+    console.log('LOADING BULK INVOICES FOR IDS:', photographerIds);
+    this.invoiceService.getBulkInvoicesByPhotographers(photographerIds)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        data => {
+          console.log('BULK INVOICES RESPONSE:', data);
+          this.invoicesMap = data;
+          console.log('invoicesMap UPDATED:', this.invoicesMap);
+        },
+        error => {
+          console.error('ERROR loading bulk invoices:', error);
+        }
+      );
   }
 
   onFilterChange(query: string) {
@@ -49,6 +77,9 @@ export class PhotographersList implements OnDestroy {
       this.renderedList = this.bufferedList.slice(0, this.itemsToShow);
       this.filterActive = true;
     }
+    
+    // Recharger les invoices pour la nouvelle liste affichée
+    this.loadInvoicesForPhotographers(this.renderedList);
   }
 
   private matchesQuery(fieldValue: unknown, normalizedQuery: string): boolean {

@@ -247,6 +247,52 @@ class InvoiceController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get invoices for multiple photographers in bulk
+     * Optimized endpoint to get all invoices with a single API call
+     *
+     * @param Request $request with 'photographer_ids' array
+     * @return JsonResponse
+     */
+    public function getBulkInvoicesByPhotographers(Request $request)
+    {
+        try {
+            $photographerIds = $request->input('photographer_ids', []);
+            
+            if (!is_array($photographerIds) || empty($photographerIds)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'photographer_ids array is required',
+                ], 422);
+            }
+
+            $invoiceCredits = DB::table('invoice_credits')
+                ->whereIn('photographer_id', $photographerIds)
+                ->get()
+                ->groupBy('photographer_id');
+            
+            $invoicePayments = DB::table('invoice_payments')
+                ->whereIn('photographer_id', $photographerIds)
+                ->get()
+                ->groupBy('photographer_id');
+            
+            $result = [];
+            foreach ($photographerIds as $id) {
+                $result[$id] = [
+                    'credits' => $invoiceCredits->get($id, collect())->values()->toArray(),
+                    'payments' => $invoicePayments->get($id, collect())->values()->toArray()
+                ];
+            }
+            
+            return response()->json($result);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
   
     public function getFinancialInfoCreditsInvoice(){
         try {
