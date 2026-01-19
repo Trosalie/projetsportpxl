@@ -20,7 +20,7 @@ class PhotographerController extends Controller
         $this->logService = $logService;
     }
 
-    
+
     public function getPhotographer($id)
     {
         $photographer = Photographer::find($id);
@@ -32,12 +32,12 @@ class PhotographerController extends Controller
 
         return response()->json($photographer);
     }
-  
+
     public function getPhotographers()
     {
         try {
             $photographers = DB::table('photographers')->get();
-            
+
             return response()->json($photographers);
         } catch (\Exception $e) {
             return response()->json([
@@ -48,7 +48,7 @@ class PhotographerController extends Controller
     }
 
     public function getPhotographerIds($name)
-    {   
+    {
         if (!$name) {
             return response()->json(['error' => 'Name parameter is required'], 400);
         }
@@ -56,7 +56,7 @@ class PhotographerController extends Controller
         $photographer = DB::table('photographers')
             ->where('name', $name)
             ->first();
-        
+
         if ($photographer) {
             return response()->json(['id' => $photographer->id, 'client_id' => $photographer->id, "pennylane_id" => $photographer->pennylane_id]);
         } else {
