@@ -106,4 +106,17 @@ class PhotographerController extends Controller
             return response()->json(['error' => 'Photographer not found'], 404);
         }
     }
+
+    public function createPhotographer(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:photographers',
+            'pennylane_id' => 'nullable|integer|unique:photographers',
+        ]);
+
+        $photographer = Photographer::create($data);
+
+        return response()->json($photographer, 201);
+    }
 }

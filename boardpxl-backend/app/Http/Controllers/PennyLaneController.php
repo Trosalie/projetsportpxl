@@ -291,4 +291,96 @@ class PennyLaneController extends Controller
             'clients' => $clients
         ]);
     }
+
+    public function createClient(Request $request, PennylaneService $service)
+    {
+        $validated = $request->validate([
+            'type' => 'required|string|in:individual,company',
+        ]);
+
+        if($validated['type'] === 'individual') {
+            $individualData = $request->validate([
+                'first_name' => 'required|string|max:100',
+                'last_name' => 'required|string|max:100',
+                'email' => 'required|email|max:255',
+                'phone' => 'nullable|string|max:20',
+                'address' => 'required|string|max:255',
+                'postal_code' => 'required|string|max:20',
+                'city' => 'required|string|max:100',
+                'country_alpha2' => 'required|string|size:2',
+                'billing_iban' => 'nullable|string|max:34',
+            ]);
+            $validated = array_merge($validated, $individualData);
+        } else if($validated['type'] === 'company') {
+            $companyData = $request->validate([
+                'name' => 'required|string|max:255',
+                'vat_number' => 'required|string|max:14',
+                'email' => 'required|email|max:255',
+                'phone' => 'nullable|string|max:20',
+                'address' => 'required|string|max:255',
+                'postal_code' => 'required|string|max:20',
+                'city' => 'required|string|max:100',
+                'country_alpha2' => 'required|string|size:2',
+                'billing_iban' => 'nullable|string|max:34',
+            ]);
+            $validated = array_merge($validated, $companyData);
+        }
+
+        try {
+            if($validated['type'] === 'individual') {
+                $client = $service->createClient([
+                    'type' => $validated['type'],
+                    'first_name' => $validated['first_name'],
+                    'last_name' => $validated['last_name'],
+                    'emails' => [$validated['email']],
+                    'phone' => $validated['phone'] ?? null,
+                    'billing_address' => [
+                        'address' => $validated['address'],
+                        'postal_code' => $validated['postal_code'],
+                        'city' => $validated['city'],
+                        'country_alpha2' => $validated['country_alpha2'],
+                    ],
+                    'billing_iban' => $validated['billing_iban'] ?? null
+                ]);
+            } else {
+                $client = $service->createClient([
+                    'type' => $validated['type'],
+                    'name' => $validated['name'],
+                    'vat_number' => $validated['vat_number'],
+                    'emails' => [$validated['email']],
+                    'phone' => $validated['phone'] ?? null,
+                    'billing_address' => [
+                        'address' => $validated['address'],
+                        'postal_code' => $validated['postal_code'],
+                        'city' => $validated['city'],
+                        'country_alpha2' => $validated['country_alpha2'],
+                    ],
+                    'billing_iban' => $validated['billing_iban'] ?? null
+                ]);
+            }
+
+            $this->logService->logAction($request, 'create_client', 'PHOTOGRAPHERS', [
+                'first_name' => $validated['first_name'] ?? null,
+                'last_name' => $validated['last_name'] ?? null,
+                'name' => $validated['name'] ?? null,
+                'email' => $validated['email'],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Client créé avec succès.',
+                'data' => $client
+            ]);
+
+        } catch (\Exception $e) {
+            $this->logService->logAction($request, 'create_client_failed', 'PHOTOGRAPHERS', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }      
+    }
 }

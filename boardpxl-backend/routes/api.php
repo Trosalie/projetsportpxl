@@ -38,6 +38,9 @@ Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 Route::get('/email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
+// Test (temp)
+Route::post('/client/create', [PennylaneController::class, 'createClient']);
+
 /*
 |--------------------------------------------------------------------------
 | Routes protégées par Sanctum (nécessitent un token)
