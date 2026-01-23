@@ -30,7 +30,7 @@ jobs:
 
       - name: Installation des dépendances
         working-directory: boardpxl-backend
-        run: composer install --no-interaction --prefer-dist --no-scripts
+        run: composer install --no-interaction --prefer-dist --no-scripts --ignore-platform-reqs
 
       - name: Copie du .env.example
         working-directory: boardpxl-backend
