@@ -472,7 +472,7 @@ class PennylaneService
                         );
                     }
                     else {
-                        $isTurnover = str_contains(strtolower($product['label'] ?? ''), 'chiffre');
+                        $isTurnover = str_contains(strtolower($product['label'] ?? ''), 'affaires');
 
                         if($isTurnover){
                             $match = [];
