@@ -504,7 +504,6 @@ class PennylaneService
                                 'due_date' => $invoice['deadline'] ?? null,
                                 'description' => $invoice['pdf_description'] ?? "N/A",
                                 'raw_value' => $rawValue ?? null,
-                                'commission' => $invoice['amount'] ?? null,
                                 'tax' => $invoice['tax'] ?? null,
                                 'vat' => $vat ?? null,
                                 'start_period' => $startPeriod,
