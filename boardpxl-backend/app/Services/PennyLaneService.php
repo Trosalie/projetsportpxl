@@ -255,8 +255,7 @@ class PennylaneService
                             "value" => "0"
                         ],
                         "vat_rate" => $labelTVA,
-                        "label" => "Versement du chiffre d'affaires",
-                        "description" => $invoiceDescription,
+                        "label" => "Versement",
                         "quantity" => 1,
                         "raw_currency_unit_price" => "0",
                         "unit" => "piece"
@@ -265,7 +264,8 @@ class PennylaneService
                 "date" => $issueDate,
                 "deadline" => $dueDate,
                 "customer_id" => $idClient,
-                "pdf_invoice_subject" => $invoiceTitle
+                "pdf_invoice_subject" => $invoiceTitle,
+                "pdf_description" => $invoiceDescription,
             ],
             'headers' => [
                 'Accept' => 'application/json',

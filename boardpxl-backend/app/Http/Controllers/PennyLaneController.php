@@ -83,7 +83,7 @@ class PennyLaneController extends Controller
                 'dueDate' => 'required|string',
                 'idClient' => 'required|integer',
                 'invoiceTitle' => 'required|string',
-                'invoiceDescription' => 'required|string',
+                'invoiceDescription' => 'nullable|string',
             ]);
 
             $facture = $service->createTurnoverInvoiceClient(
@@ -92,13 +92,13 @@ class PennyLaneController extends Controller
                 $validated['dueDate'],
                 (int) $validated['idClient'],
                 $validated['invoiceTitle'],
-                $validated['invoiceDescription']
+                $validated['invoiceDescription'] ?? ''
             );
 
             $this->logService->logAction($request, 'create_turnover_payment_invoice', 'INVOICE_PAYMENTS', [
                 'id_client' => (int) $validated['idClient'],
                 'invoice_title' => $validated['invoiceTitle'],
-                'invoice_description' => $validated['invoiceDescription'],
+                'invoice_description' => $validated['invoiceDescription'] ?? '',
             ]);
 
             return response()->json([
