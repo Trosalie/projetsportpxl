@@ -2,7 +2,6 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 export interface InvoiceData {
   title: string;
-  amount: number;
   items?: { label: string; value: any }[];
 }
 
