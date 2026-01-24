@@ -39,7 +39,7 @@ Route::get('/email/verify/{id}', [VerificationController::class, 'verify'])->nam
 Route::get('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
 // Test (temp)
-Route::post('/client/create', [PennylaneController::class, 'createClient']);
+Route::post('/photographer', [PhotographerController::class, 'createPhotographer']);
 
 /*
 |--------------------------------------------------------------------------

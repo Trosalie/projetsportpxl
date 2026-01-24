@@ -10,6 +10,7 @@ use App\Services\PennylaneService;
 use App\Services\MailService;
 use Illuminate\Support\Facades\Mail;
 use App\Services\LogService;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * @class PhotographerController
@@ -107,16 +108,171 @@ class PhotographerController extends Controller
         }
     }
 
-    public function createPhotographer(Request $request)
+    public function insertPhotographer(array $data)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:photographers',
-            'pennylane_id' => 'nullable|integer|unique:photographers',
-        ]);
+        try {
+            $photographer = Photographer::create($data);
+            return $photographer;
+        } catch (\Throwable $e) {
+            throw $e;
+        }
+    }
 
-        $photographer = Photographer::create($data);
+    public function createPhotographer(Request $request){
+        try {
+            $validated = $request->validate([
+                'type' => 'required|string|in:individual,company',
+                'aws_sub' => 'required|string|max:255|unique:photographers,aws_sub',
+                'customer_stripe_id' => 'required|string|max:255',
+                'fee_in_percent' => 'required|numeric|min:0|max:100',
+                'fix_fee' => 'required|numeric|min:0',
+                'email' => 'required|email|max:255',
+                'phone' => 'nullable|string|max:20',
+                'address' => 'required|string|max:255',
+                'postal_code' => 'required|string|max:20',
+                'city' => 'required|string|max:100',
+                'country_alpha2' => 'required|string|size:2',
+                'billing_iban' => 'nullable|string|max:34',
+                'given_name' => 'required_if:type,individual|string|max:100',
+                'family_name' => 'required_if:type,individual|string|max:100',
+                'name' => 'required_if:type,company|string|max:255',
+                'vat_number' => 'required_if:type,company|string|max:14',
+                'password' => 'required|string|min:8',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        }
 
-        return response()->json($photographer, 201);
+        $existingPhotographer = Photographer::where('email', $validated['email'])->first();
+        if ($existingPhotographer) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email already in use'
+            ], 409);
+        }
+
+        $ignoredKeys = [
+            'type', 'vat_number', 'password'
+        ];
+
+        $payload = [];
+        if ($validated['type'] === 'individual') {
+            $payload = [
+                'type' => $validated['type'],
+                'first_name' => $validated['given_name'],
+                'last_name' => $validated['family_name'],
+                'emails' => [$validated['email']],
+                'phone' => $validated['phone'] ?? null,
+                'billing_address' => [
+                    'address' => $validated['address'],
+                    'postal_code' => $validated['postal_code'],
+                    'city' => $validated['city'],
+                    'country_alpha2' => $validated['country_alpha2'],
+                ],
+                'billing_iban' => $validated['billing_iban'] ?? null,
+            ];
+        } else {
+            $payload = [
+                'type' => $validated['type'],
+                'name' => $validated['name'],
+                'vat_number' => $validated['vat_number'],
+                'emails' => [$validated['email']],
+                'phone' => $validated['phone'] ?? null,
+                'billing_address' => [
+                    'address' => $validated['address'],
+                    'postal_code' => $validated['postal_code'],
+                    'city' => $validated['city'],
+                    'country_alpha2' => $validated['country_alpha2'],
+                ],
+                'billing_iban' => $validated['billing_iban'] ?? null,
+            ];
+        }
+
+        $pennylaneService = new PennylaneService();
+
+        try {
+            $pennylaneResponse = $pennylaneService->createClient($payload);
+            if ($pennylaneResponse === null) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pennylane API did not create the customer.'
+                ], 400);
+            }
+
+            // Prepare data for insertion into the database
+            $forInsertion = $this->cleanForInsertion($validated, $ignoredKeys);
+            $forInsertion['pennylane_id'] = $pennylaneResponse['id'];
+            
+            try {
+                $photographer = $this->insertPhotographer($forInsertion);
+                
+                return response()->json([
+                    'success' => true,
+                    'photographer' => $photographer
+                ], 201);
+            } catch (\Throwable $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to create photographer',
+                    'error' => $e->getMessage(),
+                ], 500);
+            }
+
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $body = $e->getResponse() ? $e->getResponse()->getBody()->getContents() : $e->getMessage();
+            return response()->json([
+                'success' => false,
+                'message' => 'Pennylane API error',
+                'error' => $body,
+            ], 400);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unexpected error',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    
+
+    private function cleanForInsertion(array $data, array $ignoredKeys): array
+    {
+        $cleaned = [];
+        
+        
+        $cleaned['nb_imported_photos'] = 0;
+        $cleaned['total_limit'] = 100;
+        $cleaned['password'] = Hash::make($data['password']);
+
+        if($data['type'] === 'individual'){
+            $cleaned['name'] = $data['given_name'] . ' ' . $data['family_name'];
+        } else {
+            $cleaned['given_name'] = ' ';
+            $cleaned['family_name'] = ' ';
+        }
+
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $ignoredKeys)) {
+                switch ($key) {
+                    case 'address':
+                        $cleaned['street_address'] = $value;
+                        break;
+                    case 'city':
+                        $cleaned['locality'] = $value;
+                        break;
+                    case 'country_alpha2':
+                        $cleaned['country'] = $value;
+                        break;
+                    default:
+                        $cleaned[$key] = $value;
+                        break;
+                }
+            }
+        }
+        return $cleaned;
     }
 }
