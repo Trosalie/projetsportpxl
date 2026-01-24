@@ -325,4 +325,34 @@ class PennyLaneController extends Controller
             ], 500);
         }      
     }
+    
+    public function updateClient(Request $request, PennylaneService $service, $clientId)
+    {
+        $validated = $request->all();
+
+        try {
+            $client = $service->updateClient($clientId, $validated);
+
+            $this->logService->logAction($request, 'update_client', 'PHOTOGRAPHERS', [
+                'client_id' => $clientId,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Client mis à jour avec succès.',
+                'data' => $client
+            ]);
+
+        } catch (\Exception $e) {
+            $this->logService->logAction($request, 'update_client_failed', 'PHOTOGRAPHERS', [
+                'client_id' => $clientId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }      
+    }
 }
