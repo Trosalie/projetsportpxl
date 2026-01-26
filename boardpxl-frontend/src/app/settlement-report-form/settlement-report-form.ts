@@ -20,13 +20,14 @@ export class SettlementReportFormComponent implements OnInit {
   }
 
   initForm(): void {
+    const today = new Date().toISOString().split('T')[0];
     this.settlementForm = this.fb.group({
-      photographerId: ['', Validators.required],
-      amount: ['', [Validators.required, Validators.min(0)]],
+      photographer: ['', Validators.required],
+      totalSalesAmount: ['', [Validators.required, Validators.min(0)]],
       commission: ['', [Validators.required, Validators.min(0)]],
+      advancePayments: ['', Validators.min(0)],
       periodStartDate: ['', Validators.required],
-      periodEndDate: ['', Validators.required],
-      status: ['pending', Validators.required]
+      periodEndDate: [today, Validators.required]
     });
   }
 
@@ -40,8 +41,6 @@ export class SettlementReportFormComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.settlementForm.reset({
-      status: 'pending'
-    });
+    this.settlementForm.reset();
   }
 }
