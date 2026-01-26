@@ -67,7 +67,6 @@ class InvoiceAndPhotographerControllerTest extends TestCase
                 'issue_date',
                 'due_date',
                 'raw_value',
-                'commission',
                 'tax',
                 'vat',
                 'start_period',
