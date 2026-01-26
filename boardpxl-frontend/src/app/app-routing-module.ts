@@ -29,11 +29,11 @@ const routes: Routes = [
   { path: 'form/credits', component: CreditPurchaseForm, canActivate: [adminGuard]},
   { path: 'form/payout', component: TurnoverPaymentForm, canActivate: [adminGuard]},
   { path: 'photographer/:id', component: ProfileInformation, canActivate: [adminGuard]},
+  { path: 'photographer/:id/edit', component: EditPhotographerForm, canActivate: [adminGuard]},
   { path: 'general-graph', component: GeneralGraph, canActivate: [adminGuard]},
   { path: 'logs', component: Logs, canActivate: [adminGuard]},
   { path: 'about-us', component: AboutUs, canActivate: [photographerGuard]},
   { path: 'new/photographer', component: NewPhotographerForm, canActivate: [adminGuard]},
-  { path: 'edit/photographer/:id', component: EditPhotographerForm, canActivate: [adminGuard]},
   { path: '**', redirectTo: 'login' },
 ];
 

@@ -8,7 +8,7 @@
     <section class="card info-card">
       <div class="card_header">
         <h2 class="card_title">Informations générales</h2>
-        <button class="btn-modify" type="button" [routerLink]="['/edit/photographer', photographerId]" [disabled]="!photographerId">
+        <button class="btn-modify" type="button" [routerLink]="['/photographer', photographerId, 'edit']" [queryParams]="{name: name}" [disabled]="!photographerId">
           Modifier
         </button>
       </div>
