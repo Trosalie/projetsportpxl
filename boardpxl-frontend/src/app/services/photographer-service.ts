@@ -87,4 +87,20 @@ export class PhotographerService {
   getPhotographerIdsByName(name: string): Observable<any> {
     return this.http.get(`${environment.apiUrl}/photographer-ids/${encodeURIComponent(name)}`, this.headersService.getAuthHeaders());
   }
+
+  /**
+   * @brief Crée un nouveau photographe via l'API
+   * 
+   * Envoie une requête POST à l'API pour créer un nouveau photographe
+   * 
+   * @param payload Données du photographe à créer
+   * @returns Observable<any> Réponse de l'API
+   */
+  createPhotographer(payload: any): Observable<any> {
+    return this.http.post(
+      `${environment.apiUrl}/photographer`,
+      payload,
+      this.headersService.getAuthHeaders()
+    );
+  }
 }

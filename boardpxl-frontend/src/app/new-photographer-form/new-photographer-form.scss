@@ -1,0 +1,139 @@
+.photographer-form {
+  max-width: 95%;
+  width: calc(100% - 40px);
+  margin: 20px auto;
+  padding: 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  box-sizing: border-box;
+
+  h3 {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    margin-top: 8px;
+  }
+
+  .form-section {
+    margin-bottom: 16px;
+  }
+
+  .form-separator {
+    width: 100%;
+    height: 2px;
+    background: #adadad;
+    margin: 24px 0;
+    border-radius: 2px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      margin-bottom: 6px;
+      color: #4a5a6a;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    input, select {
+      padding: 10px 12px;
+      border: 1px solid #eeeeee;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: #eeeeee;
+      transition: border-color 0.2s, background 0.2s;
+      outline: none;
+      font-family: 'Segoe UI', Arial, sans-serif;
+
+      &:focus {
+        border-color: #f98524;
+        background: #fff;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 24px;
+  }
+
+  button[type="submit"] {
+    min-width: 200px;
+    padding: 12px 32px;
+    background: #f98524;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(249, 133, 36, 0.3);
+    transition: background 0.2s, transform 0.1s;
+
+    &:hover:not(:disabled) {
+      background: #e67619;
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .photographer-form {
+    padding: 16px;
+    width: calc(100% - 20px);
+
+    h3 {
+      font-size: 1.1rem;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+
+      label {
+        font-size: 0.85rem;
+      }
+
+      input, select {
+        padding: 8px 10px;
+        font-size: 0.95rem;
+      }
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      font-size: 1rem;
+    }
+  }
+}

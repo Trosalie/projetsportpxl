@@ -142,7 +142,7 @@ class PhotographerController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'Les données fournies sont invalides.',
                 'errors' => $e->errors()
             ], 422);
         }
@@ -151,7 +151,7 @@ class PhotographerController extends Controller
         if ($existingPhotographer) {
             return response()->json([
                 'success' => false,
-                'message' => 'Email already in use'
+                'message' => 'L\'email est déjà utilisé'
             ], 409);
         }
 
@@ -199,7 +199,7 @@ class PhotographerController extends Controller
             if ($pennylaneResponse === null) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Pennylane API did not create the customer.'
+                    'message' => 'L\'API Pennylane n\'a pas créé le client.'
                 ], 400);
             }
 
@@ -217,7 +217,7 @@ class PhotographerController extends Controller
             } catch (\Throwable $e) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Failed to create photographer',
+                    'message' => 'Échec de la création du photographe',
                     'error' => $e->getMessage(),
                 ], 500);
             }
@@ -226,13 +226,13 @@ class PhotographerController extends Controller
             $body = $e->getResponse() ? $e->getResponse()->getBody()->getContents() : $e->getMessage();
             return response()->json([
                 'success' => false,
-                'message' => 'Pennylane API error',
+                'message' => 'Erreur de l\'API Pennylane',
                 'error' => $body,
             ], 400);
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unexpected error',
+                'message' => 'Erreur inattendue',
                 'error' => $e->getMessage(),
             ], 500);
         }

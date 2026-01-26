@@ -30,9 +30,8 @@ const routes: Routes = [
   { path: 'photographer/:id', component: ProfileInformation, canActivate: [adminGuard]},
   { path: 'general-graph', component: GeneralGraph, canActivate: [adminGuard]},
   { path: 'logs', component: Logs, canActivate: [adminGuard]},
-  { path: 'photographer/:id', component: ProfileInformation, canActivate: [adminGuard]},
   { path: 'about-us', component: AboutUs, canActivate: [photographerGuard]},
-  { path: 'new-photographer', component: NewPhotographerForm, canActivate: [adminGuard]},
+  { path: 'new/photographer', component: NewPhotographerForm, canActivate: [adminGuard]},
   { path: '**', redirectTo: 'login' },
 ];
 
