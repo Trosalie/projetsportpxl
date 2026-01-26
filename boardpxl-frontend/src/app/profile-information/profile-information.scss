@@ -65,6 +65,35 @@
   color: #1f1f1f;
 }
 
+.card_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.btn-modify {
+  background: #f98524;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #f98524;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
 .info-card_content {
   display: flex;
   flex-direction: column;

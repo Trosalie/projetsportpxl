@@ -38,6 +38,7 @@ import { Logs } from './logs/logs';
 import { AboutUs } from './about-us/about-us';
 import { ConfirmModal } from './confirm-modal/confirm-modal';
 import { NewPhotographerForm } from './new-photographer-form/new-photographer-form';
+import { EditPhotographerForm } from './edit-photographer-form/edit-photographer-form';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -69,7 +70,8 @@ registerLocaleData(localeFr);
     Logs,
     AboutUs,
     ConfirmModal,
-    NewPhotographerForm
+    NewPhotographerForm,
+    EditPhotographerForm
   ],
   imports: [
     BrowserModule,
