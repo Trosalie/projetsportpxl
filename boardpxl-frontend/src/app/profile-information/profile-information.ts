@@ -1,21 +1,22 @@
-import { Component, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ClientService } from '../services/client-service.service';
 import { PhotographerService } from '../services/photographer-service';
 import { InvoiceService } from '../services/invoice-service';
-import { InvoicePayment } from '../models/invoice-payment.model';
-import { App } from '../app';
+import { Chart, ChartConfiguration, registerables } from 'chart.js';
 
-const app = new App();
+Chart.register(...registerables);
+
 @Component({
   selector: 'app-profile-information',
   standalone: false,
   templateUrl: './profile-information.html',
   styleUrl: './profile-information.scss',
 })
+export class ProfileInformation implements OnInit {
+  @ViewChild('lineChartCanvas') lineChartCanvas!: ElementRef<HTMLCanvasElement>;
 
-export class ProfileInformation
-{
+  // Données du profil
   protected remainingCredits: number = 0;
   protected turnover: number = 0;
   protected name: string = '';
@@ -26,14 +27,17 @@ export class ProfileInformation
   protected locality: string = '';
   protected postal_code: string = '';
   protected country: string = '';
-  protected numberSell: number = 0;
   protected isLoading: boolean = true;
   findPhotographer: boolean = false;
   photographerId: string | null = null;
 
-  // Filter properties
+  // Graphique
+  lineChart: Chart | null = null;
+  private rawInvoices: any[] = [];
+
+  // Filtres
   protected openDropdown: string | null = null;
-  protected activeFilters: string[] = [];
+  protected activeFilters: string[] = ['Chiffre d\'affaire'];
   protected dateFilters: Map<string, string> = new Map();
   protected readonly dataTypeFilters = ['Chiffre d\'affaire', 'Crédits vendus'];
   protected readonly periodFilters = ['Après le', 'Avant le'];
@@ -45,181 +49,170 @@ export class ProfileInformation
     private route: ActivatedRoute,
   ) {}
 
-  ngOnInit()
-  {
-    this.photographerId = this.route.snapshot.paramMap.get('id')
+  ngOnInit() {
+    this.photographerId = this.route.snapshot.paramMap.get('id');
 
-    if (!this.photographerId)
-    {
+    if (!this.photographerId) {
       this.findPhotographer = false;
+      this.isLoading = false;
       return;
     }
 
-    this.clientService.getPhotographer(this.photographerId).subscribe(
-      {
-        next: (data) => {
-          if (data && data.email)
-          {
-            this.findPhotographer = true;
-            this.email = data.email;
-            this.family_name = data.family_name;
-            this.given_name = data.given_name;
-            this.name = data.name;
-            this.remainingCredits = data.total_limit - data.nb_imported_photos;
-            this.street_address = data.street_address;
-            this.postal_code = data.postal_code;
-            this.locality = data.locality;
-            this.country = data.country;
-            this.loadTurnover();
-            this.isLoading = false;
-          }
-          else
-          {
-            this.findPhotographer = false;
-            this.isLoading = false;
-          }
-        },
-        error: (err) => {
-          console.error('Error fetch photographer :', err);
+    this.clientService.getPhotographer(this.photographerId).subscribe({
+      next: (data) => {
+        if (data && data.email) {
+          this.findPhotographer = true;
+          this.email = data.email;
+          this.family_name = data.family_name;
+          this.given_name = data.given_name;
+          this.name = data.name;
+          this.remainingCredits = data.total_limit - data.nb_imported_photos;
+          this.street_address = data.street_address;
+          this.postal_code = data.postal_code;
+          this.locality = data.locality;
+          this.country = data.country;
+          this.loadFinancialData();
+        } else {
           this.findPhotographer = false;
           this.isLoading = false;
         }
-      }
-    )
-  }
-
-  private loadTurnover()
-  {
-    if (!this.findPhotographer || !this.name)
-    {
-      return;
-    }
-
-    const body = { name: this.name };
-    this.photographerService.getPhotographerIdsByName(body.name).subscribe({
-      next: (data) =>
-      {
-        if (data && data.client_id)
-        {
-          this.invoiceService.getInvoicesPaymentByPhotographer(data.client_id).subscribe(invoices => {
-            const invoicesTemp = invoices;
-            this.turnover = 0;
-            for (const invoice of invoicesTemp) {
-              this.turnover += Number(invoice.raw_value);
-            }
-          })
-        }
-      }
-    })
-  }
-
-  // Filter Methods (Mock implementation)
-  toggleDropdown(dropdownType: string, event?: Event) {
-    if (event) {
-      event.stopPropagation();
-    }
-    this.openDropdown = this.openDropdown === dropdownType ? null : dropdownType;
-  }
-
-  toggleFilter(filterValue: string) {
-    if (this.activeFilters.includes(filterValue)) {
-      this.removeFilter(filterValue);
-    } else {
-      this.addFilter(filterValue);
-    }
-  }
-
-  addFilter(filterValue: string) {
-    if (!this.activeFilters.includes(filterValue)) {
-      this.activeFilters.push(filterValue);
-    }
-  }
-
-  removeFilter(filterValue: string) {
-    this.activeFilters = this.activeFilters.filter(f => f !== filterValue);
-    if (this.isDateFilter(filterValue)) {
-      this.dateFilters.delete(filterValue);
-    }
-  }
-
-  isFilterActive(filterValue: string): boolean {
-    return this.activeFilters.includes(filterValue);
-  }
-
-  isDateFilter(filterValue: string): boolean {
-    return this.periodFilters.includes(filterValue);
-  }
-
-  addDateFilter(filterValue: string) {
-    if (!this.activeFilters.includes(filterValue)) {
-      this.activeFilters.push(filterValue);
-      this.dateFilters.set(filterValue, '');
-    }
-
-    setTimeout(() => {
-      const input = document.querySelector(`.date-input[data-filter="${filterValue}"]`) as HTMLInputElement;
-      if (input) {
-        input.focus();
-        input.showPicker?.();
-      }
-    }, 100);
-  }
-
-  getDateValue(filterValue: string): string {
-    return this.dateFilters.get(filterValue) || '';
-  }
-
-  updateDateFilter(filterValue: string, event: Event) {
-    const input = event.target as HTMLInputElement;
-    const newValue = input.value;
-
-    if (this.isDateRangeValid(filterValue, newValue)) {
-      this.dateFilters.set(filterValue, newValue);
-    }
-  }
-
-  private isDateRangeValid(filterValue: string, newValue: string): boolean {
-    // Mock implementation - just allow any valid date
-    return newValue !== '';
-  }
-
-  hasActiveDataTypeFilters(): boolean {
-    return this.activeFilters.some(f => this.dataTypeFilters.includes(f));
-  }
-
-  hasActivePeriodFilters(): boolean {
-    return this.activeFilters.some(f => this.periodFilters.includes(f));
-  }
-
-  clearCategoryFilters(category: string, event: Event): void {
-    event.stopPropagation();
-
-    let filtersToRemove: string[] = [];
-
-    switch(category) {
-      case 'dataType':
-        filtersToRemove = this.dataTypeFilters;
-        break;
-      case 'period':
-        filtersToRemove = this.periodFilters;
-        break;
-    }
-
-    filtersToRemove.forEach(filter => {
-      if (this.activeFilters.includes(filter)) {
-        this.removeFilter(filter);
+      },
+      error: (err) => {
+        console.error('Error fetch photographer :', err);
+        this.findPhotographer = false;
+        this.isLoading = false;
       }
     });
   }
 
-  canApplyFilters(): boolean {
-    return this.hasActiveDataTypeFilters() || this.hasActivePeriodFilters();
+  private loadFinancialData() {
+    if (!this.name) return;
+
+    this.photographerService.getPhotographerIdsByName(this.name).subscribe({
+      next: (data) => {
+        if (data && data.client_id) {
+          // Correction de l'erreur TypeScript (string | null -> number)
+          const idAsNumber = Number(data.client_id);
+          
+          if (!isNaN(idAsNumber)) {
+            this.invoiceService.getInvoicesPaymentByPhotographer(idAsNumber).subscribe(invoices => {
+              this.rawInvoices = invoices || [];
+              this.calculateTotals();
+              // Un court délai permet à Angular d'afficher le canvas dans le DOM avant d'initialiser Chart.js
+              setTimeout(() => this.updateChart(), 200);
+              this.isLoading = false;
+            });
+          }
+        } else {
+          this.isLoading = false;
+        }
+      },
+      error: () => this.isLoading = false
+    });
   }
 
+  private calculateTotals() {
+    this.turnover = this.rawInvoices.reduce((sum, inv) => sum + Number(inv.raw_value || 0), 0);
+  }
+
+  private updateChart() {
+    if (!this.lineChartCanvas) return;
+
+    const filteredData = this.filterByDate(this.rawInvoices);
+    const grouped = this.groupByMonth(filteredData);
+    
+    const labels = grouped.map(g => g.month);
+    const values = grouped.map(g => g.amount);
+
+    if (this.lineChart) {
+      this.lineChart.destroy();
+    }
+
+    this.lineChart = new Chart(this.lineChartCanvas.nativeElement, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Chiffre d\'affaire (€)',
+          data: values,
+          borderColor: '#F98524',
+          backgroundColor: 'rgba(249, 133, 36, 0.1)',
+          fill: true,
+          tension: 0.4,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  private filterByDate(data: any[]) {
+    let filtered = [...data];
+    const after = this.dateFilters.get('Après le');
+    const before = this.dateFilters.get('Avant le');
+    if (after) filtered = filtered.filter(i => i.issue_date >= after);
+    if (before) filtered = filtered.filter(i => i.issue_date <= before);
+    return filtered;
+  }
+
+  private groupByMonth(data: any[]) {
+    const map: { [key: string]: number } = {};
+    data.forEach(item => {
+      const month = item.issue_date ? item.issue_date.slice(0, 7) : 'Inconnu';
+      map[month] = (map[month] || 0) + Number(item.raw_value || 0);
+    });
+    return Object.keys(map).sort().map(m => ({ month: m, amount: map[m] }));
+  }
+
+  // Méthodes de gestion des Filtres
+  toggleDropdown(dropdownType: string, event: Event) {
+    event.stopPropagation();
+    this.openDropdown = this.openDropdown === dropdownType ? null : dropdownType;
+  }
+
+  toggleFilter(filterValue: string) {
+    const index = this.activeFilters.indexOf(filterValue);
+    if (index > -1) {
+      this.activeFilters.splice(index, 1);
+    } else {
+      this.activeFilters.push(filterValue);
+    }
+  }
+
+  isFilterActive = (val: string) => this.activeFilters.includes(val);
+  hasActiveDataTypeFilters = () => this.activeFilters.some(f => this.dataTypeFilters.includes(f));
+  hasActivePeriodFilters = () => this.activeFilters.some(f => this.periodFilters.includes(f));
+
+  addDateFilter(filterValue: string) {
+    if (!this.activeFilters.includes(filterValue)) {
+      this.activeFilters.push(filterValue);
+    }
+  }
+
+  updateDateFilter(filterValue: string, event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.dateFilters.set(filterValue, input.value);
+  }
+
+  getDateValue = (filterValue: string) => this.dateFilters.get(filterValue) || '';
+
+  clearCategoryFilters(category: string, event: Event): void {
+    event.stopPropagation();
+    const targets = category === 'dataType' ? this.dataTypeFilters : this.periodFilters;
+    this.activeFilters = this.activeFilters.filter(f => !targets.includes(f));
+    if (category === 'period') this.dateFilters.clear();
+  }
+
+  canApplyFilters = () => this.activeFilters.length > 0;
+
   applyFilters(): void {
-    // Mock implementation - for now just log the filters
-    console.log('Applied filters:', this.activeFilters);
-    console.log('Date filters:', this.dateFilters);
-    // TODO: Implement actual filtering logic when graph is ready
+    this.updateChart();
+    this.openDropdown = null;
   }
 }

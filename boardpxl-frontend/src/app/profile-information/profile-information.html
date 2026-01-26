@@ -1,9 +1,11 @@
 <section class="profile">
   <app-title [title]="name" [icon]="''"></app-title>
+
   <div class="loading-overlay" *ngIf="isLoading">
     <div class="spinner"></div>
     <p>Chargement du profil...</p>
   </div>
+
   <div class="profile_layout" *ngIf="!isLoading">
     <section class="card info-card">
       <h2 class="card_title">Informations générales</h2>
@@ -63,7 +65,6 @@
           <div class="filter-label">Filtres</div>
 
           <div class="filter-buttons-vertical">
-            <!-- Type de données Button -->
             <div class="filter-dropdown-container">
               <button class="filter-button" [class.active]="hasActiveDataTypeFilters()" (click)="toggleDropdown('dataType', $event)">
                 <img src="assets/category_icon.png" alt="Type" class="filter-icon">
@@ -83,7 +84,6 @@
               </div>
             </div>
 
-            <!-- Période Button -->
             <div class="filter-dropdown-container">
               <button class="filter-button" [class.active]="hasActivePeriodFilters()" (click)="toggleDropdown('period', $event)">
                 <img src="assets/calendar_icon.png" alt="Période" class="filter-icon">
@@ -108,24 +108,20 @@
                     [attr.data-filter]="period"
                     [value]="getDateValue(period)" 
                     (change)="updateDateFilter(period, $event)"
-                    [min]="period === 'Avant le' ? getDateValue('Après le') : ''"
-                    [max]="period === 'Après le' ? getDateValue('Avant le') : ''"
                     (click)="$event.stopPropagation()">
                 </div>
               </div>
             </div>
 
-            <!-- Bouton Appliquer -->
             <button class="apply-button" (click)="applyFilters()" [disabled]="!canApplyFilters()">
               Appliquer
             </button>
           </div>
         </div>
-        <div class="chart-placeholder" aria-hidden="true">
-          <div class="chart-placeholder_grid"></div>
-          <div class="chart-placeholder_lines"></div>
+
+        <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
+          <canvas #lineChartCanvas></canvas>
         </div>
-      </div>
-    </section>
+      </div> </section>
   </div>
 </section>
