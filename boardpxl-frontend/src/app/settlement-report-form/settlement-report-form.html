@@ -1,7 +1,20 @@
 <form class="credit-purchase-form" [formGroup]="settlementForm" (ngSubmit)="onSubmit()">
   <div class="form-group">
     <label for="photographer">Photographe :</label>
-    <input type="text" id="photographer" formControlName="photographer" />
+    <input
+      type="text"
+      id="photographer"
+      formControlName="photographer"
+      [value]="photographerInput"
+      (input)="onPhotographerChange($event.target.value)"
+      [disabled]="isLoading"
+    />
+    <div *ngIf="isLoading" class="loading-indicator">Chargement du photographe...</div>
+    <ul *ngIf="filteredClients.length > 0" class="suggestions">
+      <li *ngFor="let name of filteredClients" (click)="selectPhotographer(name)">
+        {{ name }}
+      </li>
+    </ul>
   </div>
 
   <div class="form-group">
