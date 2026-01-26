@@ -66,48 +66,43 @@
 
           <div class="filter-buttons-vertical">
             <div class="filter-dropdown-container">
-              <button class="filter-button" [class.active]="hasActiveDataTypeFilters()" (click)="toggleDropdown('dataType', $event)">
+              <button class="filter-button" [class.active]="hasActiveDataTypeFilters()"
+                (click)="toggleDropdown('dataType', $event)">
                 <img src="assets/category_icon.png" alt="Type" class="filter-icon">
                 <span>Type de données</span>
-                <button *ngIf="hasActiveDataTypeFilters()" class="clear-category-btn" (click)="clearCategoryFilters('dataType', $event)">
+                <button *ngIf="hasActiveDataTypeFilters()" class="clear-category-btn"
+                  (click)="clearCategoryFilters('dataType', $event)">
                   <img src="assets/close_icon.png" alt="Clear">
                 </button>
               </button>
               <div class="dropdown-menu" *ngIf="openDropdown === 'dataType'" (click)="$event.stopPropagation()">
                 <label class="checkbox-item" *ngFor="let type of dataTypeFilters">
-                  <input 
-                    type="checkbox" 
-                    [checked]="isFilterActive(type)"
-                    (change)="toggleFilter(type)">
+                  <input type="checkbox" [checked]="isFilterActive(type)" (change)="toggleFilter(type)">
                   <span>{{ type }}</span>
                 </label>
               </div>
             </div>
 
             <div class="filter-dropdown-container">
-              <button class="filter-button" [class.active]="hasActivePeriodFilters()" (click)="toggleDropdown('period', $event)">
+              <button class="filter-button" [class.active]="hasActivePeriodFilters()"
+                (click)="toggleDropdown('period', $event)">
                 <img src="assets/calendar_icon.png" alt="Période" class="filter-icon">
                 <span>Période</span>
-                <button *ngIf="hasActivePeriodFilters()" class="clear-category-btn" (click)="clearCategoryFilters('period', $event)">
+                <button *ngIf="hasActivePeriodFilters()" class="clear-category-btn"
+                  (click)="clearCategoryFilters('period', $event)">
                   <img src="assets/close_icon.png" alt="Clear">
                 </button>
               </button>
-              <div class="dropdown-menu period-dropdown" *ngIf="openDropdown === 'period'" (click)="$event.stopPropagation()">
+              <div class="dropdown-menu period-dropdown" *ngIf="openDropdown === 'period'"
+                (click)="$event.stopPropagation()">
                 <div class="date-filter-item" *ngFor="let period of periodFilters">
                   <label class="checkbox-item">
-                    <input 
-                      type="checkbox" 
-                      [checked]="isFilterActive(period)"
+                    <input type="checkbox" [checked]="isFilterActive(period)"
                       (change)="toggleFilter(period); isFilterActive(period) && addDateFilter(period)">
                     <span>{{ period }}</span>
                   </label>
-                  <input 
-                    *ngIf="isFilterActive(period)"
-                    type="date" 
-                    class="date-input" 
-                    [attr.data-filter]="period"
-                    [value]="getDateValue(period)" 
-                    (change)="updateDateFilter(period, $event)"
+                  <input *ngIf="isFilterActive(period)" type="date" class="date-input" [attr.data-filter]="period"
+                    [value]="getDateValue(period)" (change)="updateDateFilter(period, $event)"
                     (click)="$event.stopPropagation()">
                 </div>
               </div>
@@ -119,9 +114,10 @@
           </div>
         </div>
 
-        <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
+        <div class="chart-container" style="height: 300px; width: 100%; position: relative;">
           <canvas #lineChartCanvas></canvas>
         </div>
-      </div> </section>
+      </div>
+    </section>
   </div>
 </section>

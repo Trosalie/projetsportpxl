@@ -3,7 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { ClientService } from '../services/client-service.service';
 import { PhotographerService } from '../services/photographer-service';
 import { InvoiceService } from '../services/invoice-service';
-import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import { Chart, registerables } from 'chart.js';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 
 Chart.register(...registerables);
 
@@ -16,9 +18,9 @@ Chart.register(...registerables);
 export class ProfileInformation implements OnInit {
   @ViewChild('lineChartCanvas') lineChartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  // Données du profil
-  protected remainingCredits: number = 0;
-  protected turnover: number = 0;
+  protected isLoading: boolean = true;
+  protected findPhotographer: boolean = false;
+
   protected name: string = '';
   protected family_name: string = '';
   protected given_name: string = '';
@@ -27,19 +29,19 @@ export class ProfileInformation implements OnInit {
   protected locality: string = '';
   protected postal_code: string = '';
   protected country: string = '';
-  protected isLoading: boolean = true;
-  findPhotographer: boolean = false;
-  photographerId: string | null = null;
+  protected remainingCredits: number = 0;
 
-  // Graphique
+  protected turnover: number = 0;
+  protected totalCreditsInvoiced: number = 0; 
+  private rawInvoices: any[] = []; 
+  private rawCredits: any[] = [];  
+
   lineChart: Chart | null = null;
-  private rawInvoices: any[] = [];
 
-  // Filtres
   protected openDropdown: string | null = null;
-  protected activeFilters: string[] = ['Chiffre d\'affaire'];
+  protected activeFilters: string[] = ['Chiffre d\'affaire', 'Crédits facturés'];
   protected dateFilters: Map<string, string> = new Map();
-  protected readonly dataTypeFilters = ['Chiffre d\'affaire', 'Crédits vendus'];
+  protected readonly dataTypeFilters = ['Chiffre d\'affaire', 'Crédits facturés'];
   protected readonly periodFilters = ['Après le', 'Avant le'];
 
   constructor(
@@ -50,59 +52,56 @@ export class ProfileInformation implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.photographerId = this.route.snapshot.paramMap.get('id');
-
-    if (!this.photographerId) {
-      this.findPhotographer = false;
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
       this.isLoading = false;
       return;
     }
 
-    this.clientService.getPhotographer(this.photographerId).subscribe({
+    this.clientService.getPhotographer(id).subscribe({
       next: (data) => {
-        if (data && data.email) {
+        if (data) {
           this.findPhotographer = true;
-          this.email = data.email;
-          this.family_name = data.family_name;
-          this.given_name = data.given_name;
-          this.name = data.name;
-          this.remainingCredits = data.total_limit - data.nb_imported_photos;
-          this.street_address = data.street_address;
-          this.postal_code = data.postal_code;
-          this.locality = data.locality;
-          this.country = data.country;
+          this.name = data.name || '';
+          this.family_name = data.family_name || '';
+          this.given_name = data.given_name || '';
+          this.email = data.email || '';
+          this.street_address = data.street_address || '';
+          this.locality = data.locality || '';
+          this.postal_code = data.postal_code || '';
+          this.country = data.country || '';
+          this.remainingCredits = (data.total_limit || 0) - (data.nb_imported_photos || 0);
           this.loadFinancialData();
         } else {
-          this.findPhotographer = false;
           this.isLoading = false;
         }
       },
-      error: (err) => {
-        console.error('Error fetch photographer :', err);
-        this.findPhotographer = false;
-        this.isLoading = false;
-      }
+      error: () => this.isLoading = false
     });
   }
 
   private loadFinancialData() {
-    if (!this.name) return;
+    if (!this.name) {
+      this.isLoading = false;
+      return;
+    }
 
     this.photographerService.getPhotographerIdsByName(this.name).subscribe({
-      next: (data) => {
-        if (data && data.client_id) {
-          // Correction de l'erreur TypeScript (string | null -> number)
-          const idAsNumber = Number(data.client_id);
-          
-          if (!isNaN(idAsNumber)) {
-            this.invoiceService.getInvoicesPaymentByPhotographer(idAsNumber).subscribe(invoices => {
-              this.rawInvoices = invoices || [];
-              this.calculateTotals();
-              // Un court délai permet à Angular d'afficher le canvas dans le DOM avant d'initialiser Chart.js
-              setTimeout(() => this.updateChart(), 200);
-              this.isLoading = false;
-            });
-          }
+      next: (ids) => {
+        const idNum = Number(ids?.client_id);
+        if (!isNaN(idNum) && idNum !== 0) {
+          forkJoin({
+            payments: this.invoiceService.getInvoicesPaymentByPhotographer(idNum).pipe(catchError(() => of([]))),
+            credits: this.invoiceService.getBulkInvoicesByPhotographers([idNum]).pipe(catchError(() => of([])))
+          }).pipe(
+            finalize(() => this.isLoading = false)
+          ).subscribe((res) => {
+            this.rawInvoices = Array.isArray(res.payments) ? res.payments : (res.payments ? [res.payments] : []);
+            this.rawCredits = Array.isArray(res.credits) ? res.credits : (res.credits ? [res.credits] : []);
+            
+            this.calculateTotals();
+            setTimeout(() => this.updateChart(), 500);
+          });
         } else {
           this.isLoading = false;
         }
@@ -112,17 +111,26 @@ export class ProfileInformation implements OnInit {
   }
 
   private calculateTotals() {
+    // CA classique
     this.turnover = this.rawInvoices.reduce((sum, inv) => sum + Number(inv.raw_value || 0), 0);
+    
+    // Crédits Facturés : Utilisation de 'total_due' comme vu sur ton image
+    this.totalCreditsInvoiced = this.rawCredits.reduce((sum, cr) => {
+      return sum + Number(cr.total_due || cr.amount || 0);
+    }, 0);
   }
 
   private updateChart() {
     if (!this.lineChartCanvas) return;
 
-    const filteredData = this.filterByDate(this.rawInvoices);
-    const grouped = this.groupByMonth(filteredData);
+    const filteredInvoices = this.filterByDate(this.rawInvoices);
+    const filteredCredits = this.filterByDate(this.rawCredits);
     
-    const labels = grouped.map(g => g.month);
-    const values = grouped.map(g => g.amount);
+    const groupedCA = this.groupByMonth(filteredInvoices, 'raw_value');
+    // On groupe les crédits par 'total_due' pour le graphique
+    const groupedCr = this.groupByMonth(filteredCredits, 'total_due'); 
+    
+    const allLabels = Array.from(new Set([...Object.keys(groupedCA), ...Object.keys(groupedCr)])).sort();
 
     if (this.lineChart) {
       this.lineChart.destroy();
@@ -131,88 +139,86 @@ export class ProfileInformation implements OnInit {
     this.lineChart = new Chart(this.lineChartCanvas.nativeElement, {
       type: 'line',
       data: {
-        labels: labels,
-        datasets: [{
-          label: 'Chiffre d\'affaire (€)',
-          data: values,
-          borderColor: '#F98524',
-          backgroundColor: 'rgba(249, 133, 36, 0.1)',
-          fill: true,
-          tension: 0.4,
-          borderWidth: 2
-        }]
+        labels: allLabels,
+        datasets: [
+          {
+            label: 'Chiffre d\'affaire (€)',
+            data: allLabels.map(m => groupedCA[m] || 0),
+            borderColor: '#F98524',
+            backgroundColor: 'rgba(249, 133, 36, 0.1)',
+            fill: true,
+            tension: 0.4,
+            hidden: !this.isFilterActive('Chiffre d\'affaire')
+          },
+          {
+            label: 'Crédits facturés (€)',
+            data: allLabels.map(m => groupedCr[m] || 0),
+            borderColor: '#4793DC',
+            backgroundColor: 'rgba(71, 147, 220, 0.1)',
+            fill: true,
+            tension: 0.4,
+            hidden: !this.isFilterActive('Crédits facturés')
+          }
+        ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        scales: {
-          y: { beginAtZero: true }
-        }
+        scales: { y: { beginAtZero: true } }
       }
     });
   }
 
   private filterByDate(data: any[]) {
-    let filtered = [...data];
+    if (!Array.isArray(data)) return [];
     const after = this.dateFilters.get('Après le');
     const before = this.dateFilters.get('Avant le');
-    if (after) filtered = filtered.filter(i => i.issue_date >= after);
-    if (before) filtered = filtered.filter(i => i.issue_date <= before);
-    return filtered;
-  }
-
-  private groupByMonth(data: any[]) {
-    const map: { [key: string]: number } = {};
-    data.forEach(item => {
-      const month = item.issue_date ? item.issue_date.slice(0, 7) : 'Inconnu';
-      map[month] = (map[month] || 0) + Number(item.raw_value || 0);
+    
+    return data.filter(i => {
+      const dateStr = i.issue_date; // Correspond à ta colonne image
+      if (!dateStr) return true;
+      if (after && dateStr < after) return false;
+      if (before && dateStr > before) return false;
+      return true;
     });
-    return Object.keys(map).sort().map(m => ({ month: m, amount: map[m] }));
   }
 
-  // Méthodes de gestion des Filtres
-  toggleDropdown(dropdownType: string, event: Event) {
+  private groupByMonth(data: any[], key: string) {
+    const map: { [key: string]: number } = {};
+    if (!Array.isArray(data)) return map;
+
+    data.forEach(item => {
+      const dateStr = item.issue_date; 
+      const month = dateStr ? dateStr.slice(0, 7) : 'Inconnu';
+      const value = item[key] || item.total_due || 0;
+      map[month] = (map[month] || 0) + Number(value);
+    });
+    return map;
+  }
+
+  // --- Méthodes de filtres inchangées ---
+  toggleDropdown(type: string, event: Event) {
     event.stopPropagation();
-    this.openDropdown = this.openDropdown === dropdownType ? null : dropdownType;
+    this.openDropdown = this.openDropdown === type ? null : type;
   }
-
-  toggleFilter(filterValue: string) {
-    const index = this.activeFilters.indexOf(filterValue);
-    if (index > -1) {
-      this.activeFilters.splice(index, 1);
-    } else {
-      this.activeFilters.push(filterValue);
-    }
+  toggleFilter(val: string) {
+    const i = this.activeFilters.indexOf(val);
+    i > -1 ? this.activeFilters.splice(i, 1) : this.activeFilters.push(val);
+    this.updateChart();
   }
-
   isFilterActive = (val: string) => this.activeFilters.includes(val);
   hasActiveDataTypeFilters = () => this.activeFilters.some(f => this.dataTypeFilters.includes(f));
   hasActivePeriodFilters = () => this.activeFilters.some(f => this.periodFilters.includes(f));
-
-  addDateFilter(filterValue: string) {
-    if (!this.activeFilters.includes(filterValue)) {
-      this.activeFilters.push(filterValue);
-    }
-  }
-
-  updateDateFilter(filterValue: string, event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.dateFilters.set(filterValue, input.value);
-  }
-
-  getDateValue = (filterValue: string) => this.dateFilters.get(filterValue) || '';
-
-  clearCategoryFilters(category: string, event: Event): void {
+  addDateFilter(v: string) { if (!this.activeFilters.includes(v)) this.activeFilters.push(v); }
+  updateDateFilter(v: string, event: any) { this.dateFilters.set(v, event.target.value); }
+  getDateValue = (v: string) => this.dateFilters.get(v) || '';
+  clearCategoryFilters(cat: string, event: Event) {
     event.stopPropagation();
-    const targets = category === 'dataType' ? this.dataTypeFilters : this.periodFilters;
+    const targets = cat === 'dataType' ? this.dataTypeFilters : this.periodFilters;
     this.activeFilters = this.activeFilters.filter(f => !targets.includes(f));
-    if (category === 'period') this.dateFilters.clear();
-  }
-
-  canApplyFilters = () => this.activeFilters.length > 0;
-
-  applyFilters(): void {
+    if (cat === 'period') this.dateFilters.clear();
     this.updateChart();
-    this.openDropdown = null;
   }
+  canApplyFilters = () => this.activeFilters.length > 0;
+  applyFilters() { this.updateChart(); this.openDropdown = null; }
 }
