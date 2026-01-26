@@ -37,6 +37,7 @@ import { GeneralGraph } from './general-graph/general-graph';
 import { Logs } from './logs/logs';
 import { AboutUs } from './about-us/about-us';
 import { ConfirmModal } from './confirm-modal/confirm-modal';
+import { NewPhotographerForm } from './new-photographer-form/new-photographer-form';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -67,7 +68,8 @@ registerLocaleData(localeFr);
     GeneralGraph,
     Logs,
     AboutUs,
-    ConfirmModal
+    ConfirmModal,
+    NewPhotographerForm
   ],
   imports: [
     BrowserModule,

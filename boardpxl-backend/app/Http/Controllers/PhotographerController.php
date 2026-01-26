@@ -237,7 +237,55 @@ class PhotographerController extends Controller
             ], 500);
         }
     }
-    
+
+    public function deletePhotographer($id){
+        try {
+            $photographer = Photographer::find($id);
+            if (!$photographer) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Photographer not found'
+                ], 404);
+            }
+
+            // Update on pennylane to set first name and last name to "deleted_client"
+            $pennylaneService = new PennylaneService();
+            if($photographer->family_name && $photographer->given_name){
+                $payload = [
+                    'type' => 'individual',
+                    'first_name' => 'deleted_client',
+                    'last_name' => 'deleted_client',
+                ];
+            } else {
+                $payload = [
+                    'type' => 'company',
+                    'name' => 'deleted_client',
+                ];
+            }
+
+            $pennylaneResponse = $pennylaneService->updateClient($photographer->pennylane_id, $payload);
+            
+            if ($pennylaneResponse === null) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pennylane API did not update the customer.'
+                ], 400);
+            }
+
+            $photographer->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Photographer deleted successfully'
+            ], 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete photographer',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
     private function cleanForInsertion(array $data, array $ignoredKeys, bool $isCreation = true): array
     {
@@ -274,6 +322,9 @@ class PhotographerController extends Controller
                         break;
                     case 'country_alpha2':
                         $cleaned['country'] = $value;
+                        break;
+                    case 'billing_iban':
+                        $cleaned['iban'] = $value;
                         break;
                     default:
                         $cleaned[$key] = $value;

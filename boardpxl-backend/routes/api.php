@@ -41,6 +41,7 @@ Route::get('/email/resend', [VerificationController::class, 'resend'])->name('ve
 // Photographes - CRUD
 Route::post('/photographer', [PhotographerController::class, 'createPhotographer']);
 Route::put('/photographer/{id}', [PhotographerController::class, 'updatePhotographer']);
+Route::delete('/photographer/{id}', [PhotographerController::class, 'deletePhotographer']);
 
 /*
 |--------------------------------------------------------------------------
