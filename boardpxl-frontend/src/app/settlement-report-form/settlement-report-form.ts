@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PhotographerService } from '../services/photographer-service';
+import { SettlementReportService } from '../services/settlement-report-service';
 import { jsPDF } from 'jspdf';
 
 @Component({
@@ -20,13 +21,20 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
   filteredClients: string[] = [];
   photographerInput = '';
   isLoading = false;
+  selectedPhotographerId: number | null = null;
+  private photographersMap: Map<string, number> = new Map(); // Map nom -> ID
   private destroy$ = new Subject<void>();
 
-  constructor(private fb: FormBuilder, private photographerService: PhotographerService) {}
+  constructor(
+    private fb: FormBuilder, 
+    private photographerService: PhotographerService,
+    private settlementReportService: SettlementReportService
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
     this.loadClients();
+    this.setupAdvancePaymentsCalculation();
   }
 
   initForm(): void {
@@ -35,12 +43,51 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
       photographer: ['', Validators.required],
       totalSalesAmount: ['', [Validators.required, Validators.min(0)]],
       commission: ['', [Validators.required, Validators.min(0)]],
-      advancePayments: ['', Validators.min(0)],
+      advancePayments: [{ value: '', disabled: true }, Validators.min(0)],
       periodStartDate: ['', Validators.required],
       periodEndDate: [today, Validators.required]
     });
   }
 
+  /**
+   * Configure le calcul automatique des acomptes versés
+   * Formule : acomptes = totalSalesAmount - commission
+   */
+  setupAdvancePaymentsCalculation(): void {
+    const totalSalesAmountControl = this.settlementForm.get('totalSalesAmount');
+    const commissionControl = this.settlementForm.get('commission');
+    const advancePaymentsControl = this.settlementForm.get('advancePayments');
+
+    // Surveiller les changements des deux champs et recalculer les acomptes
+    if (totalSalesAmountControl && commissionControl && advancePaymentsControl) {
+      totalSalesAmountControl.valueChanges
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.calculateAdvancePayments();
+        });
+
+      commissionControl.valueChanges
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.calculateAdvancePayments();
+        });
+    }
+  }
+
+  /**
+   * Calcule et met à jour le champ acomptes versés
+   */
+  private calculateAdvancePayments(): void {
+    const totalSalesAmount = this.settlementForm.get('totalSalesAmount')?.value;
+    const commission = this.settlementForm.get('commission')?.value;
+    const advancePaymentsControl = this.settlementForm.get('advancePayments');
+
+    if (totalSalesAmount && commission && advancePaymentsControl) {
+      const advance = Number(totalSalesAmount) - Number(commission);
+      // Utiliser patchValue sans emitEvent pour éviter une boucle infinie
+      advancePaymentsControl.patchValue(advance, { emitEvent: false });
+    }
+  }
   loadClients(): void {
     this.isLoading = true;
     this.photographerService.getPhotographers()
@@ -48,6 +95,10 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           this.clientsNames = res.map((c: any) => c.name);
+          // Créer une map pour associer nom -> ID
+          res.forEach((c: any) => {
+            this.photographersMap.set(c.name, c.id);
+          });
           this.isLoading = false;
         },
         error: () => {
@@ -69,12 +120,76 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
     this.photographerInput = name;
     this.filteredClients = [];
     this.settlementForm.get('photographer')?.setValue(name);
+    
+    // Récupérer l'ID du photographe
+    this.selectedPhotographerId = this.photographersMap.get(name) || null;
+    
+    // Charger le dernier relevé et calculer le CA
+    if (this.selectedPhotographerId) {
+      this.loadLastReportAndCalculateTurnover(this.selectedPhotographerId);
+    }
   }
 
   private matchesQuery(name: string, normalizedQuery: string): boolean {
     if (!normalizedQuery) return false;
     const normalizedName = name.toLowerCase();
     return normalizedName.startsWith(normalizedQuery) || normalizedName.includes(` ${normalizedQuery}`);
+  }
+
+  /**
+   * Charge le dernier relevé d'encaissement et calcule le CA depuis cette date
+   * Prérempli le champ totalSalesAmount
+   */
+  private loadLastReportAndCalculateTurnover(photographerId: number): void {
+    this.settlementReportService.getLastSettlementReport(photographerId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            // Il y a un relevé précédent
+            const lastReport = response.data;
+            const startDate = lastReport.period_end_date;
+            
+            // Mettre à jour la date de début avec la date de fin du dernier relevé
+            this.settlementForm.patchValue({
+              periodStartDate: startDate
+            });
+
+            // Calculer le CA depuis cette date
+            this.calculateAndFillTurnover(photographerId, startDate);
+          } else {
+            // Pas de relevé précédent, calculer depuis le début (première facture)
+            this.calculateAndFillTurnover(photographerId, '2020-01-01');
+          }
+        },
+        error: (err) => {
+          console.error('Erreur lors de la récupération du dernier relevé:', err);
+          // En cas d'erreur, calculer depuis le début
+          this.calculateAndFillTurnover(photographerId, '2020-01-01');
+        }
+      });
+  }
+
+  /**
+   * Calcule le CA et prérempli le champ totalSalesAmount
+   */
+  private calculateAndFillTurnover(photographerId: number, startDate: string): void {
+    this.settlementReportService.calculateTurnoverSinceDate(photographerId, startDate)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            const turnover = response.data.turnover;
+            // Préremplir le champ avec le CA calculé
+            this.settlementForm.patchValue({
+              totalSalesAmount: turnover
+            });
+          }
+        },
+        error: (err) => {
+          console.error('Erreur lors du calcul du CA:', err);
+        }
+      });
   }
 
   onSubmit(): void {
