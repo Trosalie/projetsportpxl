@@ -133,4 +133,19 @@ export class PhotographerService {
       this.headersService.getAuthHeaders()
     );
   }
+
+  /**
+   * @brief Supprime un photographe via l'API
+   *
+   * Envoie une requête DELETE à l'API pour supprimer un photographe existant
+   *
+   * @param id Identifiant du photographe
+   * @returns Observable<any> Réponse de l'API
+   */
+  deletePhotographer(id: number): Observable<any> {
+    return this.http.delete(
+      `${environment.apiUrl}/photographer/${id}`,
+      this.headersService.getAuthHeaders()
+    );
+  }
 }

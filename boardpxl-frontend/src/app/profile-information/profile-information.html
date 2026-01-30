@@ -1,5 +1,17 @@
 <section class="profile">
   <app-title [title]="name" [icon]="''"></app-title>
+  <app-popup #popup></app-popup>
+  <app-confirm-modal
+    [isVisible]="showDeleteModal"
+    [invoiceData]="deleteModalData"
+    [titleText]="'Confirmer la suppression'"
+    [checkboxLabel]="'Je confirme la suppression de ce photographe'"
+    [confirmLabel]="'Supprimer'"
+    [cancelLabel]="'Annuler'"
+    [showAmount]="false"
+    (confirm)="onConfirmDelete()"
+    (discard)="onCancelDelete()">
+  </app-confirm-modal>
   <div class="loading-overlay" *ngIf="isLoading">
     <div class="spinner"></div>
     <p>Chargement du profil...</p>
@@ -8,9 +20,15 @@
     <section class="card info-card">
       <div class="card_header">
         <h2 class="card_title">Informations générales</h2>
-        <button class="btn-modify" type="button" [routerLink]="['/photographer', photographerId, 'edit']" [queryParams]="{name: name}" [disabled]="!photographerId">
-          Modifier
-        </button>
+        <div class="card_actions">
+          <button class="btn-modify" type="button" [routerLink]="['/photographer', photographerId, 'edit']" [queryParams]="{name: name}" [disabled]="!photographerId">
+            Modifier
+          </button>
+          <button type="button" class="btn-delete-icon" (click)="openDeleteModal()" [disabled]="!photographerId || isDeleting" aria-label="Supprimer le photographe">
+            <img src="/assets/images/delete_icon.svg" alt="" aria-hidden="true" class="trash-icon">
+            <span class="sr-only">Supprimer le photographe</span>
+          </button>
+        </div>
       </div>
       <div class="info-card_content">
         <div class="identity">

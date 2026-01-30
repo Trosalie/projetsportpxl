@@ -1,10 +1,12 @@
-import { Component, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, Input, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ClientService } from '../services/client-service.service';
 import { PhotographerService } from '../services/photographer-service';
 import { InvoiceService } from '../services/invoice-service';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { App } from '../app';
+import { Popup } from '../popup/popup';
+import { type InvoiceData } from '../confirm-modal/confirm-modal';
 
 const app = new App();
 @Component({
@@ -16,6 +18,8 @@ const app = new App();
 
 export class ProfileInformation
 {
+  @ViewChild('popup') popup!: Popup;
+
   protected remainingCredits: number = 0;
   protected turnover: number = 0;
   protected name: string = '';
@@ -28,6 +32,10 @@ export class ProfileInformation
   protected country: string = '';
   protected numberSell: number = 0;
   protected isLoading: boolean = true;
+  protected isDeleting: boolean = false;
+  protected showDeleteModal: boolean = false;
+  protected deleteModalData: InvoiceData | null = null;
+  protected deleteTargetId: number | null = null;
   findPhotographer: boolean = false;
   photographerId: string | null = null;
 
@@ -43,6 +51,7 @@ export class ProfileInformation
     private clientService: ClientService,
     private invoiceService: InvoiceService,
     private route: ActivatedRoute,
+    private router: Router,
   ) {}
 
   ngOnInit()
@@ -221,5 +230,77 @@ export class ProfileInformation
     console.log('Applied filters:', this.activeFilters);
     console.log('Date filters:', this.dateFilters);
     // TODO: Implement actual filtering logic when graph is ready
+  }
+
+  openDeleteModal() {
+    if (this.isDeleting) {
+      return;
+    }
+
+    const rawId = this.photographerId;
+    const id = rawId ? Number(rawId) : NaN;
+
+    if (!rawId || Number.isNaN(id)) {
+      this.popup.showNotification('Aucun photographe à supprimer.');
+      return;
+    }
+
+    const photographerName = (this.family_name || this.name)
+      ? `${this.family_name || this.name} ${this.given_name || ''}`.trim()
+      : 'Photographe';
+
+    this.deleteModalData = {
+      title: photographerName,
+      amount: 0,
+      items: [
+        { label: 'Email', value: this.email || '-' },
+        { label: 'ID', value: id }
+      ]
+    };
+
+    this.deleteTargetId = id;
+    this.showDeleteModal = true;
+  }
+
+  onCancelDelete() {
+    this.showDeleteModal = false;
+    this.deleteTargetId = null;
+  }
+
+  onConfirmDelete() {
+    if (this.isDeleting || this.deleteTargetId === null) {
+      return;
+    }
+
+    const id = this.deleteTargetId;
+    this.isDeleting = true;
+    this.showDeleteModal = false;
+
+    this.photographerService.deletePhotographer(id).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          this.popup.showNotification('Photographe supprimé avec succès !');
+          setTimeout(() => {
+            this.router.navigate(['/photographers']);
+          }, 1000);
+        } else {
+          this.popup.showNotification(response.message || 'Erreur lors de la suppression du photographe.');
+          this.isDeleting = false;
+        }
+      },
+      error: (error) => {
+        console.error('Error deleting photographer:', error);
+        let errorMessage = 'Erreur lors de la suppression du photographe.';
+
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        } else if (error.status === 404) {
+          errorMessage = 'Photographe introuvable.';
+        }
+
+        this.popup.showNotification(errorMessage);
+        this.isDeleting = false;
+      }
+    });
   }
 }

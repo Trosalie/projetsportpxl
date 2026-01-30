@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { Popup } from '../popup/popup';
 import { PhotographerService } from '../services/photographer-service';
 
@@ -15,7 +16,8 @@ export class NewPhotographerForm {
   isSubmitting: boolean = false;
 
   constructor(
-    private photographerService: PhotographerService
+    private photographerService: PhotographerService,
+    private router: Router
   ) {}
 
   onTypeChange(type: string) {
@@ -70,12 +72,15 @@ export class NewPhotographerForm {
       next: (response: any) => {
         if (response.success) {
           this.popup.showNotification('Photographe créé avec succès !');
-          form.reset();
-          this.photographerType = 'individual';
+          const photographerId = response.photographer?.id;
+          const photographerName = response.photographer?.name || (response.photographer?.given_name ? `${response.photographer.given_name} ${response.photographer.family_name}` : 'Photographe');
+          setTimeout(() => {
+            this.router.navigate(['/photographer', photographerId], { queryParams: { name: photographerName } });
+          }, 1000);
         } else {
           this.popup.showNotification(response.message || 'Erreur lors de la création du photographe.');
+          this.isSubmitting = false;
         }
-        this.isSubmitting = false;
       },
       error: (error) => {
         console.error('Error creating photographer:', error);

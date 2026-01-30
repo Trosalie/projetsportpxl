@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Popup } from '../popup/popup';
 import { PhotographerService } from '../services/photographer-service';
 
@@ -32,7 +32,8 @@ export class EditPhotographerForm implements OnInit {
 
   constructor(
     private photographerService: PhotographerService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -141,10 +142,14 @@ export class EditPhotographerForm implements OnInit {
       next: (response: any) => {
         if (response.success) {
           this.popup.showNotification('Photographe mis à jour avec succès !');
+          const photographerName = response.photographer?.name || (response.photographer?.given_name ? `${response.photographer.given_name} ${response.photographer.family_name}` : 'Photographe');
+          setTimeout(() => {
+            this.router.navigate(['/photographer', id], { queryParams: { name: photographerName } });
+          }, 1000);
         } else {
           this.popup.showNotification(response.message || 'Erreur lors de la mise à jour du photographe.');
+          this.isSubmitting = false;
         }
-        this.isSubmitting = false;
       },
       error: (error) => {
         console.error('Error updating photographer:', error);
