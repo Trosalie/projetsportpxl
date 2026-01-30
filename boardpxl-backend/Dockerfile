@@ -25,8 +25,8 @@ WORKDIR /var/www/html
 # Copier le code Laravel
 COPY . .
 
-# Install Laravel dependencies
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
+# Install Laravel dependencies (without dev packages for production)
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
 # Donner les bons droits
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
