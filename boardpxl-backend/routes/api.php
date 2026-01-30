@@ -38,6 +38,11 @@ Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 Route::get('/email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
+// Photographes - CRUD
+Route::post('/photographer', [PhotographerController::class, 'createPhotographer']);
+Route::put('/photographer/{id}', [PhotographerController::class, 'updatePhotographer']);
+Route::delete('/photographer/{id}', [PhotographerController::class, 'deletePhotographer']);
+
 /*
 |--------------------------------------------------------------------------
 | Routes protégées par Sanctum (nécessitent un token)
