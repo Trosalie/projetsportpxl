@@ -66,7 +66,11 @@ class InvoiceSeeder extends Seeder
         $product = $service->getProductFromInvoice($invoice['invoice_number']);
         $photographerId = DB::table('photographers')->where('pennylane_id', $invoice['customer']['id'])->value('id');
 
-        $vat = $invoice['tax'] / $invoice['currency_amount_before_tax'] * 100;
+        if($invoice['currency_amount_before_tax'] == 0) {
+            $vat = 0;
+        } else {
+            $vat = $invoice['tax'] / $invoice['currency_amount_before_tax'] * 100;
+        }
 
         
         if(str_contains(strtolower($product['label'] ?? ''), 'crédits')) {
