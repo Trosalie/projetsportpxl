@@ -228,7 +228,6 @@ class PennylaneService
      * add a payment invoice for a client
      *
      * @param string $labelTVA
-     * @param string $amountEuro
      * @param string $issueDate
      * @param string $dueDate
      * @param int $idClient
@@ -236,7 +235,7 @@ class PennylaneService
      * @param string $invoiceDescription
      * @return json
      * */
-    public function createTurnoverInvoiceClient(string $labelTVA, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle, string $invoiceDescription)
+    public function createTurnoverInvoiceClient(string $labelTVA, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle, string $invoiceDescription)
     {
         $client = new \GuzzleHttp\Client();
 
@@ -256,17 +255,15 @@ class PennylaneService
                             "value" => "0"
                         ],
                         "vat_rate" => $labelTVA,
-                        "label" => "Commission SportPxl",
-                        "description" => "Le CA & la commission sont estimés. Ils seront ajustés en fin d'exercice.",
+                        "label" => "Versement",
                         "quantity" => 1,
-                        "raw_currency_unit_price" => $amountEuro,
+                        "raw_currency_unit_price" => "0",
                         "unit" => "piece"
                     ]
                 ],
                 "date" => $issueDate,
                 "deadline" => $dueDate,
                 "customer_id" => $idClient,
-                "customer_invoice_template_id" => 207554338,
                 "pdf_invoice_subject" => $invoiceTitle,
                 "pdf_description" => $invoiceDescription,
             ],
@@ -507,7 +504,6 @@ class PennylaneService
                                 'due_date' => $invoice['deadline'] ?? null,
                                 'description' => $invoice['pdf_description'] ?? "N/A",
                                 'raw_value' => $rawValue ?? null,
-                                'commission' => $invoice['amount'] ?? null,
                                 'tax' => $invoice['tax'] ?? null,
                                 'vat' => $vat ?? null,
                                 'start_period' => $startPeriod,
