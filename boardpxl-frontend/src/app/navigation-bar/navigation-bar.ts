@@ -31,11 +31,12 @@ export class NavigationBar implements OnDestroy {
   legalLinks: LegalLink[] = [];
   private destroy$ = new Subject<void>();
 
-  constructor(private authService: AuthService, private router: Router, private roleService: RoleService) {}
+  constructor(private authService: AuthService, private router: Router, private roleService: RoleService) {
+  }
 
   ngOnInit() {
     this.updateNavigation();
-    
+
     // Écouter les changements de route
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
@@ -67,16 +68,16 @@ export class NavigationBar implements OnDestroy {
   updateNavigation() {
     const currentUrl = this.router.url;
     const currentUrlWithoutParams = currentUrl.split('?')[0];
-    
+
     // Route par défaut
     this.pages = [];
-    
+
     if (this.roleService.getRole() === 'photographer') {
       this.pages.push({
         label: 'Tableau de bord',
         route: '/',
         icon: 'assets/images/liste_icon.svg'
-      },{
+      }, {
         label: 'Historique des emails',
         route: '/mails',
         icon: 'assets/images/mail_icon.svg'
@@ -106,6 +107,10 @@ export class NavigationBar implements OnDestroy {
         label: 'Formulaire d\'ajout de crédits',
         route: '/form/credits',
         icon: 'assets/images/form_icon.svg'
+      }, {
+        label: 'Formulaire d\'abonnement',
+        route: '/form/subscription',
+        icon: 'assets/images/form_icon.svg'
       });
 
       // Si on est sur la page profil ou factures d'un photographe
@@ -117,7 +122,7 @@ export class NavigationBar implements OnDestroy {
         const photographerName = new URLSearchParams(window.location.search).get('name') || 'Photographe';
         const profileRoute = `/photographer/${photographerId}`;
         const invoicesRoute = `/photographer/${photographerId}/invoices`;
-        const queryParams = photographerName ? { name: photographerName } : undefined;
+        const queryParams = photographerName ? {name: photographerName} : undefined;
 
         this.pages.push({
           label: photographerName,
@@ -171,22 +176,22 @@ export class NavigationBar implements OnDestroy {
   isActivePage(route: string): boolean {
     const currentUrl = this.router.url.split('?')[0]; // Enlever les query params
     const normalizedRoute = route.startsWith('/') ? route : '/' + route;
-    
+
     // Si c'est la route racine
     if (normalizedRoute === '/') {
       return currentUrl === '/' || currentUrl === '';
     }
-    
+
     // Vérifier si c'est une correspondance exacte
     if (currentUrl === normalizedRoute) {
       return true;
     }
-    
+
     // Pour /photographers, vérifier que l'URL est exactement /photographers (pas de sous-routes)
     if (normalizedRoute === '/photographers') {
       return currentUrl === '/photographers';
     }
-    
+
     // Pour les autres routes avec sous-chemins, vérifier correspondance exacte
     return currentUrl === normalizedRoute;
   }

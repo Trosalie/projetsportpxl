@@ -14,13 +14,16 @@ class InvoiceSubscription extends Model
         'issue_date',
         'due_date',
         'description',
-        'raw_value',
+        'amount',
         'tax',
         'vat',
+        'reduction',
+        'total_due',
         'start_period',
         'end_period',
         'link_pdf',
         'pdf_invoice_subject',
+        'status',
     ];
 
     /**
@@ -30,6 +33,8 @@ class InvoiceSubscription extends Model
     protected $dates = [
         'issue_date',
         'due_date',
+        'start_period',
+        'end_period',
     ];
 
     /**
@@ -37,9 +42,11 @@ class InvoiceSubscription extends Model
      * Définit les types decimal avec 2 décimales pour les montants
      */
     protected $casts = [
+        'amount' => 'decimal:2',
         'tax' => 'decimal:2',
         'vat' => 'decimal:2',
-        'raw_value' => 'decimal:2',
+        'reduction' => 'decimal:2',
+        'total_due' => 'decimal:2'
     ];
 
     /**

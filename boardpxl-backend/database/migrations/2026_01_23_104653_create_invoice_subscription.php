@@ -19,13 +19,16 @@ class CreateInvoiceSubscription extends Migration
             $table->date('issue_date');
             $table->date('due_date');
             $table->string('description');
-            $table->decimal('raw_value', 12, 2);
+            $table->decimal('amount', 12, 2);
             $table->decimal('tax', 9, 2);
             $table->decimal('vat', 5, 2);
+            $table->decimal('reduction', 5, 2);
+            $table->decimal('total_due', 5, 2);
             $table->date('start_period');
             $table->date('end_period');
             $table->string('link_pdf');
             $table->string('pdf_invoice_subject')->nullable();
+            $table->string('status');
             $table->foreignId('photographer_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

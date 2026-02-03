@@ -31,12 +31,13 @@ import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
-
+import { SubscriptionForm } from './subscription-form/subscription-form';
 
 import { GeneralGraph } from './general-graph/general-graph';
 import { Logs } from './logs/logs';
 import { AboutUs } from './about-us/about-us';
 import { ConfirmModal } from './confirm-modal/confirm-modal';
+import {Subscription} from 'rxjs';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -67,7 +68,8 @@ registerLocaleData(localeFr);
     GeneralGraph,
     Logs,
     AboutUs,
-    ConfirmModal
+    ConfirmModal,
+    SubscriptionForm
   ],
   imports: [
     BrowserModule,

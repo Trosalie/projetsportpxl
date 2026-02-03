@@ -281,6 +281,60 @@ class PennylaneService
     }
 
     /**
+     * add a payment invoice for a client
+     *
+     * @param string $labelTVA
+     * @param string $amountEuro
+     * @param string $issueDate
+     * @param string $dueDate
+     * @param int $idClient
+     * @param string $invoiceTitle
+     * @param string $invoiceDescription
+     * @return json
+     * */
+    public function createSubscriptionInvoiceClient(string $labelTVA, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle, string $invoiceDescription)
+    {
+        $client = new \GuzzleHttp\Client();
+
+        $response = $client->request('POST', 'https://app.pennylane.com/api/external/v2/customer_invoices', [
+            'json' => [
+                "currency" => "EUR",
+                "language" => "fr_FR",
+                "discount" => [
+                    "type" => "absolute",
+                    "value" => "0"
+                ],
+                "draft" => false,
+                "invoice_lines" => [
+                    [
+                        "discount" => [
+                            "type" => "absolute",
+                            "value" => "0"
+                        ],
+                        "vat_rate" => $labelTVA,
+                        "label" => "Achat d'abonnement",
+                        "description" => "Achat d'abonnement",
+                        "quantity" => 1,
+                        "raw_currency_unit_price" => $amountEuro,
+                        "unit" => "piece"
+                    ]
+                ],
+                "date" => $issueDate,
+                "deadline" => $dueDate,
+                "customer_id" => $idClient,
+                "pdf_invoice_subject" => $invoiceTitle,
+                "pdf_description" => $invoiceDescription,
+            ],
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . config('services.pennylane.token'),
+            ],
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
      * get all photographers
      *
      * @return array
@@ -525,7 +579,7 @@ class PennylaneService
                         else {
                             $match = [];
                             preg_match('/(\d+(?:[.,]\d{2})?)\s*€/', $invoice['pdf_description'] ?? '', $match);
-                            $rawValue = $match ? (float) str_replace(',', '.', $match[1]) : 0;
+                            $amount = $match ? (float) str_replace(',', '.', $match[1]) : 0;
 
                             $invoicePrev = InvoicePayment::find($invoice['id']);
 
@@ -558,14 +612,17 @@ class PennylaneService
                                     'issue_date' => $invoice['date'] ?? null,
                                     'due_date' => $invoice['deadline'] ?? null,
                                     'description' => $invoice['pdf_description'] ?? "N/A",
-                                    'raw_value' => $rawValue ?? null,
+                                    'amount' => $amount,
                                     'tax' => $invoice['tax'] ?? null,
                                     'vat' => $vat ?? null,
+                                    'reduction' => null, //find solution for reduction
+                                    'total_due' => $amount + $invoice['tax'],
                                     'start_period' => $startPeriod,
                                     'end_period' => $endPeriod,
                                     'link_pdf' => $invoice['public_file_url'] ?? null,
                                     'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null,
                                     'photographer_id' => $photographerId,
+                                    'status' => $invoice['status'] ?? null,
                                 ]
                             );
                         }

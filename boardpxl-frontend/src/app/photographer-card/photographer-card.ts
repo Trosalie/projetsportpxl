@@ -14,20 +14,21 @@ export class PhotographerCard implements OnDestroy, OnChanges {
   @Input() photographer!: any;
   @Input() index!: number;
   @Input() invoices?: any; // Données d'invoices passées en @Input
-  
+
   creditsInvoices: any[] = [];
   paymentInvoices: any[] = [];
+  subscriptionInvoices: any[] = [];
   isLoadingCredits: boolean = false;
   isLoadingPayments: boolean = false;
   isExpanded: boolean = false;
-  
+
   // Propriétés calculées
   chiffreAffaires: number = 0;
   totalCredits: number = 0;
   lateInvoicesCount: number = 0;
   paidInvoicesCount: number = 0;
   unpaidInvoicesCount: number = 0;
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(private invoiceService: InvoiceService, private authService: AuthService) {
@@ -47,7 +48,7 @@ export class PhotographerCard implements OnDestroy, OnChanges {
   ngOnInit(): void {
     // Calculer les crédits immédiatement
     this.totalCredits = this.photographer.total_limit - this.photographer.nb_imported_photos;
-    
+
     // Si les invoices sont déjà passés en @Input, les utiliser directement
     if (this.invoices) {
       console.log(`[${this.photographer.name}] INVOICES ALREADY SET ON INIT`);
@@ -61,16 +62,18 @@ export class PhotographerCard implements OnDestroy, OnChanges {
       console.log(`[${this.photographer.name}] NO INVOICES DATA`);
       return;
     }
-    
+
     this.creditsInvoices = this.invoices.credits || [];
     this.paymentInvoices = this.invoices.payments || [];
-    
+    this.subscriptionInvoices = this.invoices.subscriptions || [];
+
     console.log(`[${this.photographer.name}] Credits count:`, this.creditsInvoices.length);
     console.log(`[${this.photographer.name}] Payments count:`, this.paymentInvoices.length);
-    
+    console.log(`[${this.photographer.name}] Subscription count:`, this.subscriptionInvoices.length);
+
     this.calculateChiffreAffaires();
     this.calculateCreditStats();
-    
+
     console.log(`[${this.photographer.name}] RESULTS - CA: ${this.chiffreAffaires}, Late: ${this.lateInvoicesCount}, Paid: ${this.paidInvoicesCount}, Unpaid: ${this.unpaidInvoicesCount}`);
   }
 
@@ -90,6 +93,17 @@ export class PhotographerCard implements OnDestroy, OnChanges {
 
     // Statuts basés uniquement sur les factures de crédits
     for (const invoice of this.creditsInvoices) {
+      const status = (invoice.status || '').toLowerCase();
+      if (status === 'late') {
+        this.lateInvoicesCount++;
+      } else if (status === 'paid') {
+        this.paidInvoicesCount++;
+      } else if (status === 'upcoming' || status === 'unpaid') {
+        this.unpaidInvoicesCount++;
+      }
+    }
+
+    for (const invoice of this.subscriptionInvoices) {
       const status = (invoice.status || '').toLowerCase();
       if (status === 'late') {
         this.lateInvoicesCount++;

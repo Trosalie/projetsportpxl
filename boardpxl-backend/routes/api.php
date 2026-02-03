@@ -63,12 +63,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Création d'une facture de versement de CA
     Route::post('/create-turnover-invoice-client', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
 
+    Route::post('/create-subscription-invoice-client', [PennylaneController::class, 'createSubscriptionInvoiceClient']);
+
     // Insertion d'une facture de versement de CA
     Route::post('/insert-turnover-invoice', [InvoiceController::class, 'insertTurnoverInvoice']);
 
     // Insertion d'une facture de crédits
     Route::post('/insert-credits-invoice', [InvoiceController::class, 'insertCreditsInvoice']);
 
+    Route::post('/insert-subscription-invoice', [InvoiceController::class, 'insertSubscriptionInvoice']);
 
     // Récupérer la liste des clients
     // Testé : PennyLaneControllerTest::test_get_list_clients
@@ -97,6 +100,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Récupérer les factures de versement d’un photographe
     Route::get('/invoices-payment/{photographer_id}', [InvoiceController::class, 'getInvoicesPaymentByPhotographer']);
 
+    Route::get('/invoices-subscription/{photographer_id}', [InvoiceController::class, 'getInvoicesSubscriptionByPhotographer']);
+
 
     // Envoi de mail
     // Testé : MailControllerTest::test_send_email_success
@@ -113,7 +118,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/photographer-ids/{name}', [PhotographerController::class, 'getPhotographerIds']);
     Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
     Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
-    
+
     Route::get('/invoices-client/{idClient}', [InvoiceController::class, 'getInvoicesByClient']);
 
     // Routes Mail
@@ -135,5 +140,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //Récupérer les informations finaciere d'une facture de versement de CA
     Route::get('/invoice-turnover-financial-info', [InvoiceController::class, 'getFinancialInfoTurnoverInvoice']);
+
+    Route::get('/invoice-subscription-financial-info', [InvoiceController::class, 'getFinancialInfoSubscriptionInvoice']);
 
 });

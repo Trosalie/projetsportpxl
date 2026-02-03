@@ -15,6 +15,7 @@ import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/
 import { GeneralGraph } from './general-graph/general-graph';
 import { Logs } from './logs/logs';
 import { AboutUs } from './about-us/about-us'
+import { SubscriptionForm } from './subscription-form/subscription-form';
 
 const routes: Routes = [
   { path: 'login', component: LoginPage, canActivate: [loginGuard] },
@@ -26,6 +27,7 @@ const routes: Routes = [
   { path: 'mails', component: MailsLog, canActivate: [photographerGuard]},
   { path: 'form/credits', component: CreditPurchaseForm, canActivate: [adminGuard]},
   { path: 'form/payout', component: TurnoverPaymentForm, canActivate: [adminGuard]},
+  { path: 'form/subscription', component: SubscriptionForm, canActivate: [adminGuard]},
   { path: 'photographer/:id', component: ProfileInformation, canMatch: [adminGuard]},
   { path: 'general-graph', component: GeneralGraph, canActivate: [adminGuard]},
   { path: 'logs', component: Logs, canActivate: [adminGuard]},

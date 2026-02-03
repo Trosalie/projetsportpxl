@@ -1,0 +1,66 @@
+<app-title [title]="'ABONNEMENT'"></app-title>
+<app-popup #popup></app-popup>
+<app-confirm-modal
+  [isVisible]="showConfirmModal"
+  [invoiceData]="modalData"
+  (confirm)="onConfirmInvoice()"
+  (discard)="onCancelInvoice()">
+</app-confirm-modal>
+<form class="credit-purchase-form" (submit)="onSubmit($event)">
+  <div class="form-group">
+    <label for="photographer">Photographe :</label>
+    <input type="text" id="photographer" name="photographer" required [value]="photographerInput" (input)="onPhotographerChange($event.target.value)" [disabled]="isLoading"/>
+    <div *ngIf="isLoading" class="loading-indicator">Chargement du photographe...</div>
+    <ul *ngIf="filteredClients.length > 0" class="suggestions">
+      <li *ngFor="let name of filteredClients" (click)="selectPhotographer(name)">
+        {{ name }}
+      </li>
+    </ul>
+  </div>
+  <div class="form-group">
+    <label for="description">Type d'abonnement :</label>
+    <input type="text" id="description" name="description" required/>
+  </div>
+  <div class="form-group">
+    <label for="priceHT">Prix HT (€) :</label>
+    <input type="number" id="priceHT" name="priceHT" min="0" step="0.01" required>
+  </div>
+  <div class="form-group">
+    <label for="tva">TVA :</label>
+    <select id="tva" name="tva" required>
+      <option value="FR_1_05">FR_1_05</option>
+      <option value="FR_1_75">FR_1_75</option>
+      <option value="FR_09">FR_09</option>
+      <option value="FR_21">FR_21</option>
+      <option value="FR_40">FR_40</option>
+      <option value="FR_50">FR_50</option>
+      <option value="FR_55">FR_55</option>
+      <option value="FR_60">FR_60</option>
+      <option value="FR_65">FR_65</option>
+      <option value="FR_85">FR_85</option>
+      <option value="FR_92">FR_92</option>
+      <option value="FR_100">FR_100</option>
+      <option value="FR_130">FR_130</option>
+      <option value="FR_15_385">FR_15_385</option>
+      <option value="FR_160">FR_160</option>
+      <option value="FR_196">FR_196</option>
+      <option value="FR_200">FR_200</option>
+    </select>
+  </div>
+  <div class="date-row">
+    <div class="form-group">
+      <label for="startDate">Début :</label>
+      <input type="date" id="startDate" name="startDate" required>
+    </div>
+
+    <div class="form-group">
+      <label for="endDate">Fin :</label>
+      <input type="date" id="endDate" name="endDate" required [value]="today">
+    </div>
+  </div>
+  <div class="form-actions">
+    <button type="submit" [disabled]="creationFacture" [ngClass]="{'no-animation': creationFacture}">
+      Valider
+    </button>
+  </div>
+</form>
