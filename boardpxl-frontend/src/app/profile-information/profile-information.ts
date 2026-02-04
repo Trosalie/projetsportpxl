@@ -3,7 +3,7 @@ import { InvoicePayment } from '../models/invoice-payment.model';
 import { App } from '../app';
 import { Popup } from '../popup/popup';
 import { type InvoiceData } from '../confirm-modal/confirm-modal';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';☺
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ClientService } from '../services/client-service.service';
 import { PhotographerService } from '../services/photographer-service';
 import { InvoiceService } from '../services/invoice-service';
@@ -17,16 +17,15 @@ Chart.register(...registerables);
   selector: 'app-profile-information',
   standalone: false,
   templateUrl: './profile-information.html',
-  styleUrl: './profile-information.scss',
+  styleUrls: ['./profile-information.scss'],
 })
+
 export class ProfileInformation implements OnInit {
   @ViewChild('lineChartCanvas') lineChartCanvas!: ElementRef<HTMLCanvasElement>;
 
   protected isLoading: boolean = true;
   protected findPhotographer: boolean = false;
 
-export class ProfileInformation
-{
   @ViewChild('popup') popup!: Popup;
 
   protected name: string = '';
@@ -38,13 +37,11 @@ export class ProfileInformation
   protected postal_code: string = '';
   protected country: string = '';
   protected numberSell: number = 0;
-  protected isLoading: boolean = true;
   protected isDeleting: boolean = false;
   protected showDeleteModal: boolean = false;
   protected deleteModalData: InvoiceData | null = null;
   protected deleteTargetId: number | null = null;
-  findPhotographer: boolean = false;
-  photographerId: string | null = null;
+  protected id: string | null = null;
   protected remainingCredits: number = 0;
 
   protected turnover: number = 0;
@@ -89,6 +86,7 @@ export class ProfileInformation
           this.country = data.country || '';
           this.remainingCredits = (data.total_limit || 0) - (data.nb_imported_photos || 0);
           this.loadFinancialData();
+          this.id = id;
         } else {
           this.isLoading = false;
         }
@@ -263,7 +261,7 @@ export class ProfileInformation
       return;
     }
 
-    const rawId = this.photographerId;
+    const rawId = this.id;
     const id = rawId ? Number(rawId) : NaN;
 
     if (!rawId || Number.isNaN(id)) {

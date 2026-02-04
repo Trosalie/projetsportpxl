@@ -11,6 +11,7 @@ use App\Services\MailService;
 use Illuminate\Support\Facades\Mail;
 use App\Services\LogService;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\MailController;
 
 /**
  * @class PhotographerController
@@ -137,7 +138,6 @@ class PhotographerController extends Controller
                 'family_name' => 'required_if:type,individual|string|max:100',
                 'name' => 'required_if:type,company|string|max:255',
                 'vat_number' => 'required_if:type,company|string|max:14',
-                'password' => 'required|string|min:8',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -153,6 +153,19 @@ class PhotographerController extends Controller
                 'success' => false,
                 'message' => 'L\'email est déjà utilisé'
             ], 409);
+        }
+
+        $validated["password"] = bin2hex(random_bytes(8));
+
+        // Send the email with the generated password
+        try {
+            MailController::sendWelcomeMail($validated['email'], $validated['name'] ?? ($validated['given_name'] . ' ' . $validated['family_name']), $validated['password']);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Échec de l\'envoi de l\'email',
+                'error' => $e->getMessage(),
+            ], 500);
         }
 
         $ignoredKeys = [

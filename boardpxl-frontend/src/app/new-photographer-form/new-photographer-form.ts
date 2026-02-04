@@ -48,7 +48,6 @@ export class NewPhotographerForm {
       city: formData.get('city'),
       country_alpha2: formData.get('country_alpha2'),
       billing_iban: formData.get('billing_iban') || null,
-      password: formData.get('password'),
     };
 
     // Add type-specific fields
@@ -114,7 +113,7 @@ export class NewPhotographerForm {
     if (!payload.aws_sub || !payload.customer_stripe_id || 
         payload.fee_in_percent === undefined || payload.fix_fee === undefined ||
         !payload.email || !payload.address || !payload.postal_code || 
-        !payload.city || !payload.country_alpha2 || !payload.password) {
+        !payload.city || !payload.country_alpha2) {
       return false;
     }
 
@@ -132,11 +131,6 @@ export class NewPhotographerForm {
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(payload.email)) {
-      return false;
-    }
-
-    // Validate password length
-    if (payload.password.length < 8) {
       return false;
     }
 
