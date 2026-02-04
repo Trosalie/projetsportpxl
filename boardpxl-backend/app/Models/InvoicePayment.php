@@ -30,7 +30,6 @@ class InvoicePayment extends Model
         'due_date',
         'description',
         'raw_value',
-        'commission',
         'tax',
         'vat',
         'start_period',
