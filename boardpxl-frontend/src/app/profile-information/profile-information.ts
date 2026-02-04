@@ -32,16 +32,16 @@ export class ProfileInformation implements OnInit {
   protected remainingCredits: number = 0;
 
   protected turnover: number = 0;
-  protected totalCreditsInvoiced: number = 0; 
-  private rawInvoices: any[] = []; 
-  private rawCredits: any[] = [];  
+  protected totalCreditsInvoiced: number = 0;
+  private rawInvoices: any[] = [];
+  private rawCredits: any[] = [];
 
   lineChart: Chart | null = null;
 
   protected openDropdown: string | null = null;
-  protected activeFilters: string[] = ['Chiffre d\'affaire', 'Crédits facturés'];
+  protected activeFilters: string[] = ["Chiffre d'affaire", 'Crédits facturés'];
   protected dateFilters: Map<string, string> = new Map();
-  protected readonly dataTypeFilters = ['Chiffre d\'affaire', 'Crédits facturés'];
+  protected readonly dataTypeFilters = ["Chiffre d'affaire", 'Crédits facturés'];
   protected readonly periodFilters = ['Après le', 'Avant le'];
 
   constructor(
@@ -76,7 +76,7 @@ export class ProfileInformation implements OnInit {
           this.isLoading = false;
         }
       },
-      error: () => this.isLoading = false
+      error: () => (this.isLoading = false),
     });
   }
 
@@ -91,29 +91,39 @@ export class ProfileInformation implements OnInit {
         const idNum = Number(ids?.client_id);
         if (!isNaN(idNum) && idNum !== 0) {
           forkJoin({
-            payments: this.invoiceService.getInvoicesPaymentByPhotographer(idNum).pipe(catchError(() => of([]))),
-            credits: this.invoiceService.getBulkInvoicesByPhotographers([idNum]).pipe(catchError(() => of([])))
-          }).pipe(
-            finalize(() => this.isLoading = false)
-          ).subscribe((res) => {
-            this.rawInvoices = Array.isArray(res.payments) ? res.payments : (res.payments ? [res.payments] : []);
-            this.rawCredits = Array.isArray(res.credits) ? res.credits : (res.credits ? [res.credits] : []);
-            
-            this.calculateTotals();
-            setTimeout(() => this.updateChart(), 500);
-          });
+            payments: this.invoiceService
+              .getInvoicesPaymentByPhotographer(idNum)
+              .pipe(catchError(() => of([]))),
+            credits: this.invoiceService
+              .getBulkInvoicesByPhotographers([idNum])
+              .pipe(catchError(() => of([]))),
+          })
+            .pipe(finalize(() => (this.isLoading = false)))
+            .subscribe((res) => {
+              this.rawInvoices = Array.isArray(res.payments)
+                ? res.payments
+                : res.payments
+                  ? [res.payments]
+                  : [];
+
+              const bulkData = res.credits?.[idNum] || res.credits?.[String(idNum)] || {};
+              this.rawCredits = Array.isArray(bulkData.credits) ? bulkData.credits : [];
+
+              this.calculateTotals();
+              setTimeout(() => this.updateChart(), 500);
+            });
         } else {
           this.isLoading = false;
         }
       },
-      error: () => this.isLoading = false
+      error: () => (this.isLoading = false),
     });
   }
 
   private calculateTotals() {
     // CA classique
     this.turnover = this.rawInvoices.reduce((sum, inv) => sum + Number(inv.raw_value || 0), 0);
-    
+
     // Crédits Facturés : Utilisation de 'total_due' comme vu sur ton image
     this.totalCreditsInvoiced = this.rawCredits.reduce((sum, cr) => {
       return sum + Number(cr.total_due || cr.amount || 0);
@@ -125,12 +135,14 @@ export class ProfileInformation implements OnInit {
 
     const filteredInvoices = this.filterByDate(this.rawInvoices);
     const filteredCredits = this.filterByDate(this.rawCredits);
-    
+
     const groupedCA = this.groupByMonth(filteredInvoices, 'raw_value');
     // On groupe les crédits par 'total_due' pour le graphique
-    const groupedCr = this.groupByMonth(filteredCredits, 'total_due'); 
-    
-    const allLabels = Array.from(new Set([...Object.keys(groupedCA), ...Object.keys(groupedCr)])).sort();
+    const groupedCr = this.groupByMonth(filteredCredits, 'total_due');
+
+    const allLabels = Array.from(
+      new Set([...Object.keys(groupedCA), ...Object.keys(groupedCr)]),
+    ).sort();
 
     if (this.lineChart) {
       this.lineChart.destroy();
@@ -142,30 +154,30 @@ export class ProfileInformation implements OnInit {
         labels: allLabels,
         datasets: [
           {
-            label: 'Chiffre d\'affaire (€)',
-            data: allLabels.map(m => groupedCA[m] || 0),
+            label: "Chiffre d'affaire (€)",
+            data: allLabels.map((m) => groupedCA[m] || 0),
             borderColor: '#F98524',
             backgroundColor: 'rgba(249, 133, 36, 0.1)',
             fill: true,
             tension: 0.4,
-            hidden: !this.isFilterActive('Chiffre d\'affaire')
+            hidden: !this.isFilterActive("Chiffre d'affaire"),
           },
           {
             label: 'Crédits facturés (€)',
-            data: allLabels.map(m => groupedCr[m] || 0),
+            data: allLabels.map((m) => groupedCr[m] || 0),
             borderColor: '#4793DC',
             backgroundColor: 'rgba(71, 147, 220, 0.1)',
             fill: true,
             tension: 0.4,
-            hidden: !this.isFilterActive('Crédits facturés')
-          }
-        ]
+            hidden: !this.isFilterActive('Crédits facturés'),
+          },
+        ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        scales: { y: { beginAtZero: true } }
-      }
+        scales: { y: { beginAtZero: true } },
+      },
     });
   }
 
@@ -173,8 +185,8 @@ export class ProfileInformation implements OnInit {
     if (!Array.isArray(data)) return [];
     const after = this.dateFilters.get('Après le');
     const before = this.dateFilters.get('Avant le');
-    
-    return data.filter(i => {
+
+    return data.filter((i) => {
       const dateStr = i.issue_date; // Correspond à ta colonne image
       if (!dateStr) return true;
       if (after && dateStr < after) return false;
@@ -187,8 +199,8 @@ export class ProfileInformation implements OnInit {
     const map: { [key: string]: number } = {};
     if (!Array.isArray(data)) return map;
 
-    data.forEach(item => {
-      const dateStr = item.issue_date; 
+    data.forEach((item) => {
+      const dateStr = item.issue_date;
       const month = dateStr ? dateStr.slice(0, 7) : 'Inconnu';
       const value = item[key] || item.total_due || 0;
       map[month] = (map[month] || 0) + Number(value);
@@ -207,18 +219,25 @@ export class ProfileInformation implements OnInit {
     this.updateChart();
   }
   isFilterActive = (val: string) => this.activeFilters.includes(val);
-  hasActiveDataTypeFilters = () => this.activeFilters.some(f => this.dataTypeFilters.includes(f));
-  hasActivePeriodFilters = () => this.activeFilters.some(f => this.periodFilters.includes(f));
-  addDateFilter(v: string) { if (!this.activeFilters.includes(v)) this.activeFilters.push(v); }
-  updateDateFilter(v: string, event: any) { this.dateFilters.set(v, event.target.value); }
+  hasActiveDataTypeFilters = () => this.activeFilters.some((f) => this.dataTypeFilters.includes(f));
+  hasActivePeriodFilters = () => this.activeFilters.some((f) => this.periodFilters.includes(f));
+  addDateFilter(v: string) {
+    if (!this.activeFilters.includes(v)) this.activeFilters.push(v);
+  }
+  updateDateFilter(v: string, event: any) {
+    this.dateFilters.set(v, event.target.value);
+  }
   getDateValue = (v: string) => this.dateFilters.get(v) || '';
   clearCategoryFilters(cat: string, event: Event) {
     event.stopPropagation();
     const targets = cat === 'dataType' ? this.dataTypeFilters : this.periodFilters;
-    this.activeFilters = this.activeFilters.filter(f => !targets.includes(f));
+    this.activeFilters = this.activeFilters.filter((f) => !targets.includes(f));
     if (cat === 'period') this.dateFilters.clear();
     this.updateChart();
   }
   canApplyFilters = () => this.activeFilters.length > 0;
-  applyFilters() { this.updateChart(); this.openDropdown = null; }
+  applyFilters() {
+    this.updateChart();
+    this.openDropdown = null;
+  }
 }
