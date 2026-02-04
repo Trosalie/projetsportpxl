@@ -111,13 +111,11 @@ if ($beforeTax > 0) {
             echo "- Facture de paiement détectée pour la facture n° " . $invoice['invoice_number'] . PHP_EOL;
             echo "  - Libellé produit brut : " . ($product['label'] ?? 'N/A') . PHP_EOL;
             DB::table('invoice_payments')->insert([
-                'id' => $invoice['id'],
                 'number' => $invoice['invoice_number'],
                 'issue_date' => $invoice['date'],
                 'due_date' => $invoice['deadline'],
                 'description' => $invoice['pdf_description'] ?? 'N/A',
-                'raw_value' => floatval($rawvalue[1] ?? 0),
-                'commission' => $invoice['amount'],
+                'raw_value' => $rawValue,
                 'tax' => $invoice['tax'],
                 'vat' => $vat,
                 'start_period' => now(),

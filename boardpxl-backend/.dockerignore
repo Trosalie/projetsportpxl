@@ -1,0 +1,11 @@
+node_modules
+vendor
+bootstrap/cache/*.php
+storage/*.key
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+.gitattributes
+.editorconfig
