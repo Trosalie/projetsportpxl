@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -43,7 +43,7 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
       photographer: ['', Validators.required],
       totalSalesAmount: ['', [Validators.required, Validators.min(0)]],
       commission: ['', [Validators.required, Validators.min(0)]],
-      advancePayments: [{ value: '', disabled: true }, Validators.min(0)],
+      advancePayments: new FormControl({ value: '', disabled: true }, Validators.min(0)),
       periodStartDate: ['', Validators.required],
       periodEndDate: [today, Validators.required]
     });
@@ -148,7 +148,7 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
           if (response.success && response.data) {
             // Il y a un relevé précédent
             const lastReport = response.data;
-            const startDate = lastReport.period_end_date;
+            const startDate = this.formatDateForInput(lastReport.period_end_date);
             
             // Mettre à jour la date de début avec la date de fin du dernier relevé
             this.settlementForm.patchValue({
@@ -193,11 +193,38 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    if (this.settlementForm.valid) {
+    if (this.settlementForm.valid && this.selectedPhotographerId) {
       const formValue = this.settlementForm.value;
-      this.generatePdf(formValue);
+      
+      // Préparer les données pour la sauvegarde en BD
+      const settlementData = {
+        photographer_id: this.selectedPhotographerId,
+        amount: formValue.totalSalesAmount,
+        commission: formValue.commission,
+        period_start_date: formValue.periodStartDate,
+        period_end_date: formValue.periodEndDate,
+        status: 'pending'
+      };
+
+      // Sauvegarder en BD
+      this.settlementReportService.createSettlementReport(settlementData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response) => {
+            if (response.success) {
+              console.log('Relevé d\'encaissement enregistré:', response.data);
+              // Générer le PDF après la sauvegarde
+              this.generatePdf(formValue);
+              // Réinitialiser le formulaire
+              this.resetForm();
+            }
+          },
+          error: (err) => {
+            console.error('Erreur lors de la sauvegarde du relevé:', err);
+          }
+        });
     } else {
-      console.log('Form is invalid');
+      console.log('Form is invalid or photographer not selected');
     }
   }
 
@@ -277,6 +304,19 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
     if (!value) return '';
     const date = new Date(value);
     return date.toLocaleDateString('fr-FR');
+  }
+
+  /**
+   * Formate une date au format yyyy-MM-dd pour les input type="date"
+   * Gère les dates ISO et les formats de chaîne
+   */
+  private formatDateForInput(value: string): string {
+    if (!value) return '';
+    const date = new Date(value);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   private wrapText(doc: jsPDF, text: string, x: number, y: number, maxWidth: number, lineHeight: number): number {
