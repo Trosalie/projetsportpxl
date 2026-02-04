@@ -22,6 +22,7 @@ class CreateInvoiceCreditsTable extends Migration
             $table->decimal('tax', 9, 2);
             $table->decimal('vat', 5, 2);
             $table->decimal('total_due', 10, 2);
+            $table->decimal('discount', 5, 2)->default(0)->comment('Discount percentage as decimal (e.g., 0.5 for 50%)');
             $table->integer('credits');
             $table->string('status');
             $table->string('link_pdf');

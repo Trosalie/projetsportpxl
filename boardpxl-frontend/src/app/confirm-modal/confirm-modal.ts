@@ -3,6 +3,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 export interface InvoiceData {
   title: string;
   amount: number;
+  discount: number;
   items?: { label: string; value: any }[];
 }
 
@@ -20,14 +21,16 @@ export class ConfirmModal {
 
   isChecked: boolean = false;
 
+  
   onConfirm() {
     if (this.isChecked) {
       this.confirm.emit();
       this.reset();
     }
   }
-
+  
   onDiscard() {
+    console.log(this.invoiceData);
     this.discard.emit();
     this.reset();
   }

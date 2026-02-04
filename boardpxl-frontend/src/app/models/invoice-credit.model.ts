@@ -6,12 +6,13 @@ export class InvoiceCredit {
     tax!: number;
     vat!: number;
     totalDue!: number;
+    discount!: number;
     credits!: number;
     status!: string;
     link_pdf!: string;
     pdf_invoice_subject!: string;
 
-    constructor(number: string, issueDate: Date, dueDate: Date, amount: number, tax: number, vat: number, totalDue: number, credits: number, status: string, link_pdf: string, pdf_invoice_subject: string) {
+    constructor(number: string, issueDate: Date, dueDate: Date, amount: number, tax: number, vat: number, totalDue: number, discount: number, credits: number, status: string, link_pdf: string, pdf_invoice_subject: string) {
         this.number = number;
         this.issueDate = issueDate;
         this.dueDate = dueDate;
@@ -19,6 +20,7 @@ export class InvoiceCredit {
         this.tax = tax;
         this.vat = vat;
         this.totalDue = totalDue;
+        this.discount = discount;
         this.credits = credits;
         this.status = status;
         this.link_pdf = link_pdf;
