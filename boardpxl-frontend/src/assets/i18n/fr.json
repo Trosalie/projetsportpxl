@@ -37,5 +37,10 @@
     "PARTNER_6": "Logo partenaire 6",
     "PARTNER_7": "Logo partenaire 7",
     "PARTNER_8": "Logo partenaire 8"
+  },
+  "ADMIN_PHOTOGRAPHER_INVOICE_LIST": {
+    "TITLE_WITH_NAME": "FACTURES DE {{name}}",
+    "TITLE_DEFAULT": "FACTURES DU PHOTOGRAPHE",
+    "LOADING": "Chargement..."
   }
 }

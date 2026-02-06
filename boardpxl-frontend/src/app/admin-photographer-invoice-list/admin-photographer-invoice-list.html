@@ -1,5 +1,9 @@
-<app-title [title]="photographerName ? 'FACTURES DE ' + photographerName.toUpperCase() : 'FACTURES DU PHOTOGRAPHE'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
+<app-title [title]="
+    photographerName
+      ? ('ADMIN_PHOTOGRAPHER_INVOICE_LIST.TITLE_WITH_NAME' | translate:{ name: photographerName.toUpperCase() })
+      : ('ADMIN_PHOTOGRAPHER_INVOICE_LIST.TITLE_DEFAULT' | translate)
+  " [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
 <main>
     <app-invoice-history *ngIf="photographerId" [user]="photographerId"></app-invoice-history>
-    <p *ngIf="!photographerId" style="text-align: center; padding: 20px; color: #666;">Chargement...</p>
+    <p *ngIf="!photographerId" style="text-align: center; padding: 20px; color: #666;">{{ 'ADMIN_PHOTOGRAPHER_INVOICE_LIST.LOADING' | translate }}</p>
 </main>
