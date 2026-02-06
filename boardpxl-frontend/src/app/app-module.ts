@@ -1,6 +1,6 @@
 import {DEFAULT_CURRENCY_CODE, NgModule, provideBrowserGlobalErrorListeners} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
@@ -32,6 +32,13 @@ import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-fo
 import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
 
+// if it doesnt work, npm install @ngx-translate/core @ngx-translate/http-loader
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader  {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 import { GeneralGraph } from './general-graph/general-graph';
 import { Logs } from './logs/logs';
@@ -74,7 +81,14 @@ registerLocaleData(localeFr);
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    CommonModule
+    CommonModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
