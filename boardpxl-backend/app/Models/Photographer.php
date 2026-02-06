@@ -9,6 +9,8 @@ use Ramsey\Collection\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 
 /**
  * @class Photographer
@@ -24,7 +26,7 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class Photographer extends Authenticatable
 {
-    use HasFactory, HasApiTokens;
+    use HasFactory, HasApiTokens, Notifiable, CanResetPassword;
 
     /**
      * @var array $fillable Attributs assignables en masse
@@ -47,7 +49,8 @@ class Photographer extends Authenticatable
         'country',
         'iban',
         'password',
-        'pennylane_id'
+        'pennylane_id',
+        'first_login_at',
     ];
 
     /**
@@ -64,7 +67,7 @@ class Photographer extends Authenticatable
      * Définit les types de données pour la conversion automatique
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'first_login_at' => 'date',
     ];
 
     /**
@@ -132,7 +135,7 @@ class Photographer extends Authenticatable
     public function findProfilData(string $email)
     {
         return DB::table('photographers')
-            ->select('email', 'family_name', 'given_name', 'name', 'nb_imported_photos', 'total_limit', 'street_address', 'postal_code', 'locality', 'country')
+            ->select('email', 'family_name', 'given_name', 'name', 'nb_imported_photos', 'total_limit', 'street_address', 'postal_code', 'locality', 'country', 'first_login_at')
             ->where('email', $email)
             ->first();
     }

@@ -39,6 +39,8 @@ import { AboutUs } from './about-us/about-us';
 import { ConfirmModal } from './confirm-modal/confirm-modal';
 import { NewPhotographerForm } from './new-photographer-form/new-photographer-form';
 import { EditPhotographerForm } from './edit-photographer-form/edit-photographer-form';
+import { FirstLoginModalComponent } from './first-login-modal/first-login-modal';
+import { ResetPasswordPageComponent } from './reset-password-page/reset-password-page';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -71,14 +73,16 @@ registerLocaleData(localeFr);
     AboutUs,
     ConfirmModal,
     NewPhotographerForm,
-    EditPhotographerForm
+    EditPhotographerForm,
+    FirstLoginModalComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    CommonModule
+    CommonModule,
+    ResetPasswordPageComponent
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

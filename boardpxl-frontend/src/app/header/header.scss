@@ -49,3 +49,12 @@ nav > div {
     display: none !important;
   }
 }
+.user-name-link {
+  cursor: pointer;
+  transition: color 0.3s ease;
+  user-select: none;
+
+  &:hover {
+    color: #F98524;
+  }
+}

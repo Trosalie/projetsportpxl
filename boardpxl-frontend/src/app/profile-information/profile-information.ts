@@ -7,6 +7,9 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ClientService } from '../services/client-service.service';
 import { PhotographerService } from '../services/photographer-service';
 import { InvoiceService } from '../services/invoice-service';
+import { AuthService } from '../services/auth-service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { Chart, registerables } from 'chart.js';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
@@ -39,6 +42,15 @@ export class ProfileInformation implements OnInit {
   protected numberSell: number = 0;
   protected isDeleting: boolean = false;
   protected showDeleteModal: boolean = false;
+  protected showPasswordModal: boolean = false;
+  protected passwordModalData = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  };
+  protected passwordModalLoading: boolean = false;
+  protected passwordModalError: string = '';
+  protected passwordModalSuccess: string = '';
   protected deleteModalData: InvoiceData | null = null;
   protected deleteTargetId: number | null = null;
   protected id: string | null = null;
@@ -63,15 +75,29 @@ export class ProfileInformation implements OnInit {
     private invoiceService: InvoiceService,
     private route: ActivatedRoute,
     private router: Router,
+    private authService: AuthService,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
+    
+    // Si aucun ID n'est fourni, charger l'utilisateur authentifié (route /my-profile)
     if (!id) {
-      this.isLoading = false;
+      const user = this.authService.getUser();
+      if (user && user.id) {
+        this.loadPhotographerProfile(user.id.toString());
+      } else {
+        this.isLoading = false;
+      }
       return;
     }
 
+    // Sinon, charger le photographe avec l'ID fourni
+    this.loadPhotographerProfile(id);
+  }
+
+  private loadPhotographerProfile(id: string) {
     this.clientService.getPhotographer(id).subscribe({
       next: (data) => {
         if (data) {
@@ -327,4 +353,84 @@ export class ProfileInformation implements OnInit {
       }
     });
   }
+
+  openPasswordModal() {
+    this.showPasswordModal = true;
+    this.passwordModalData = {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    };
+    this.passwordModalError = '';
+    this.passwordModalSuccess = '';
+  }
+
+  closePasswordModal() {
+    this.showPasswordModal = false;
+  }
+
+  changePassword() {
+    this.passwordModalError = '';
+    this.passwordModalSuccess = '';
+
+    // Validation
+    if (!this.passwordModalData.currentPassword || !this.passwordModalData.newPassword || !this.passwordModalData.confirmPassword) {
+      this.passwordModalError = 'Veuillez remplir tous les champs.';
+      return;
+    }
+
+    if (this.passwordModalData.newPassword.length < 8) {
+      this.passwordModalError = 'Le nouveau mot de passe doit contenir au moins 8 caractères.';
+      return;
+    }
+
+    if (this.passwordModalData.newPassword !== this.passwordModalData.confirmPassword) {
+      this.passwordModalError = 'Les mots de passe ne correspondent pas.';
+      return;
+    }
+
+    if (this.passwordModalData.currentPassword === this.passwordModalData.newPassword) {
+      this.passwordModalError = 'Le nouveau mot de passe doit être différent de l\'ancien.';
+      return;
+    }
+
+    this.passwordModalLoading = true;
+
+    const payload = {
+      current_password: this.passwordModalData.currentPassword,
+      password: this.passwordModalData.newPassword,
+      password_confirmation: this.passwordModalData.confirmPassword,
+    };
+
+    const token = this.authService.getToken();
+    this.http.post(
+      `${environment.apiUrl}/change-password`,
+      payload,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      }
+    ).subscribe({
+      next: () => {
+        this.passwordModalSuccess = 'Mot de passe changé avec succès !';
+        this.passwordModalLoading = false;
+        setTimeout(() => {
+          this.closePasswordModal();
+        }, 1500);
+      },
+      error: (err) => {
+        this.passwordModalLoading = false;
+        if (err.status === 422) {
+          this.passwordModalError = 'Le mot de passe actuel est incorrect.';
+        } else if (err.error?.message) {
+          this.passwordModalError = err.error.message;
+        } else {
+          this.passwordModalError = 'Une erreur est survenue. Veuillez réessayer.';
+        }
+      }
+    });
+  }
 }
+
