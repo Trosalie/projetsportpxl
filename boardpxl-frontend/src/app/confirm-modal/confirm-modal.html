@@ -1,34 +1,34 @@
 <div class="modal-overlay" *ngIf="isVisible" (click)="onDiscard()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>Confirmer la facture</h2>
+      <h2>{{ 'CONFIRM_MODAL.HEADER' | translate }}</h2>
     </div>
-    
+
     <div class="modal-body" *ngIf="invoiceData">
       <h3>{{ invoiceData.title }}</h3>
-      
+
       <div class="invoice-details" *ngIf="invoiceData.items && invoiceData.items.length > 0">
         <div class="detail-row" *ngFor="let item of invoiceData.items">
           <span class="label">{{ item.label }}</span>
           <span class="value">{{ item.value }}</span>
         </div>
       </div>
-      
+
       <div class="amount-section">
-        <span class="label">Montant total :</span>
+        <span class="label">{{ 'CONFIRM_MODAL.AMOUNT' | translate }}</span>
         <span class="amount"><strong>{{ invoiceData.amount | currency }}</strong></span>
       </div>
-      
+
       <div class="checkbox-section">
         <input type="checkbox" id="confirm-check" [(ngModel)]="isChecked" />
-        <label for="confirm-check">Je confirme la création de cette facture</label>
+        <label for="confirm-check">{{ 'CONFIRM_MODAL.CONFIRM_CHECK' | translate }}</label>
       </div>
     </div>
-    
+
     <div class="modal-footer">
-      <button class="btn-discard" (click)="onDiscard()">Annuler</button>
+      <button class="btn-discard" (click)="onDiscard()">{{ 'CONFIRM_MODAL.BTN_DISCARD' | translate }}</button>
       <button class="btn-confirm" (click)="onConfirm()" [disabled]="!isChecked">
-        Confirmer
+        {{ 'CONFIRM_MODAL.BTN_DISCARD' | translate }}
       </button>
     </div>
   </div>

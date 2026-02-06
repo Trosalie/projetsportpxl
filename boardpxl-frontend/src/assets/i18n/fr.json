@@ -42,5 +42,12 @@
     "TITLE_WITH_NAME": "FACTURES DE {{name}}",
     "TITLE_DEFAULT": "FACTURES DU PHOTOGRAPHE",
     "LOADING": "Chargement..."
+  },
+  "CONFIRM_MODAL": {
+    "HEADER": "Confirmer la facture",
+    "AMOUNT": "Montant total : ",
+    "CONFIRM_CHECK": "Je confirme la création de cette facture",
+    "BTN_DISCARD": "Annuler",
+    "BTN_CONFIRM": "Confirmer"
   }
 }
