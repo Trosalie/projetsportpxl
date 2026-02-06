@@ -32,15 +32,18 @@ class PennyLaneController extends Controller
                 'dueDate' => 'required|string',
                 'idClient' => 'required|integer',
                 'invoiceTitle' => 'required|string',
+                'discount' => 'nullable|numeric|min:0|max:1',
             ]);
 
             $description = $validated['description'] ?? "";
+            $discount = isset($validated['discount']) ? strval(floatval($validated['discount']) * 100) : "0";
 
             $facture = $service->createCreditsInvoiceClient(
                 $validated['labelTVA'],
                 $validated['labelProduct'],
                 $description,
                 $validated['amountEuro'],
+                $discount,
                 $validated['issueDate'],
                 $validated['dueDate'],
                 (int) $validated['idClient'],
