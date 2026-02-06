@@ -4,6 +4,7 @@
     <img class="login-icon" src="assets/images/login_icon.png" alt="icône de connexion" />
     <h1>Connexion</h1>
     <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+    <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
     <form (ngSubmit)="onSubmit()">
       <div class="bloc_input">
         <label for="email">Email</label>
@@ -15,7 +16,7 @@
         <input id="password" type="password" placeholder="Mot de passe" [(ngModel)]="password" name="password" [disabled]="isBlocked" />
       </div>
 
-      <a href="https://www.app.sportpxl.com/forgot">Mot de passe oublié ?</a>
+      <button type="button" class="forgot-password-btn" (click)="onForgotPassword()">Mot de passe oublié ?</button>
       <button class="btn_login" type="submit" [disabled]="isLoading || isBlocked">
         <span *ngIf="isBlocked">BLOQUÉ ({{ remainingTime }})</span>
         <span *ngIf="!isBlocked && !isLoading">SE CONNECTER</span>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\MailService;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use App\Models\MailLogs;
 use App\Services\LogService;
 
@@ -139,23 +140,146 @@ class MailController extends Controller
      * @param int $sender_id Identifiant du photographe expéditeur
      * @return \Illuminate\Http\JsonResponse Liste des logs ou message d'erreur
      */
-        public function getLogs(Request $request, $sender_id)
-        {
-            try {
-                // Valider l'ID du photographe passé en paramètre
-                $validated = validator(
-                    ['sender_id' => $sender_id],
-                    ['sender_id' => 'required|integer|exists:photographers,id']
-                )->validate();
+    public function getLogs(Request $request, $sender_id)
+    {
+        try {
+            // Valider l'ID du photographe passé en paramètre
+            $validated = validator(
+                ['sender_id' => $sender_id],
+                ['sender_id' => 'required|integer|exists:photographers,id']
+            )->validate();
 
-                // Récupérer les logs de mails depuis la base de données via l'id du photographe validé
-                $logs = MailLogs::where('sender_id', $validated['sender_id'])->orderBy('created_at', 'desc')->get();
-                return response()->json($logs);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to retrieve logs: ' . $e->getMessage()
-                ], 500);
-            }
+            // Récupérer les logs de mails depuis la base de données via l'id du photographe validé
+            $logs = MailLogs::where('sender_id', $validated['sender_id'])->orderBy('created_at', 'desc')->get();
+            return response()->json($logs);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve logs: ' . $e->getMessage()
+            ], 500);
         }
+    }
+
+    public static function sendWelcomeMail($toEmail, $photographerName, $password)
+    {
+        $subject = 'Bienvenue sur BoardPXL, ' . $photographerName . ' !';
+        $htmlBody = "<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <title>Bienvenue sur BoardPXL</title>
+            <style>
+                body {
+                    margin: 0;
+                    padding: 0;
+                    background-color: #E8EAF6;
+                    font-family: 'Segoe UI', Arial, sans-serif;
+                }
+                .email-container {
+                    max-width: 600px;
+                    margin: 40px auto;
+                    background-color: #FFFFFF;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    overflow: hidden;
+                }
+                .email-header {
+                    background-color: #F98524;
+                    padding: 30px 20px;
+                    text-align: center;
+                }
+                .email-header h1 {
+                    color: #FFFFFF;
+                    margin: 0;
+                    font-size: 28px;
+                    font-weight: bold;
+                }
+                .email-body {
+                    padding: 40px 30px;
+                    color: #333333;
+                    line-height: 1.8;
+                }
+                .email-body p {
+                    margin: 0 0 20px 0;
+                    font-size: 16px;
+                }
+                .greeting {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #1f1f1f;
+                }
+                .password-box {
+                    background-color: #FFF8F2;
+                    border-left: 4px solid #F98524;
+                    padding: 15px 20px;
+                    margin: 25px 0;
+                    border-radius: 4px;
+                }
+                .password-box p {
+                    margin: 0;
+                }
+                .password-label {
+                    font-size: 14px;
+                    color: #666666;
+                    margin-bottom: 8px;
+                }
+                .password-value {
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: #F98524;
+                    font-family: 'Courier New', monospace;
+                    letter-spacing: 1px;
+                }
+                .footer {
+                    margin-top: 30px;
+                    padding-top: 20px;
+                    border-top: 1px solid #E8EAF6;
+                    color: #666666;
+                    font-size: 14px;
+                }
+                .signature {
+                    font-weight: 600;
+                    color: #F98524;
+                }
+            </style>
+        </head>
+        <body>
+            <div class='email-container'>
+                <div class='email-header'>
+                    <h1>🎉 Bienvenue sur BoardPXL</h1>
+                </div>
+                <div class='email-body'>
+                    <p class='greeting'>Bonjour $photographerName,</p>
+                    <p>Nous sommes ravis de vous compter parmi nos photographes ! BoardPXL est votre nouvelle plateforme pour gérer vos factures liées à votre activité de photographe sur <a href=\"https://www.app.sportpxl.com/\" target=\"_blank\">SportPXL</a>.</p>
+                    <p>Pour vous connecter à votre espace, utilisez vos identifiants :</p>
+                    <div class='password-box'>
+                        <p class='password-label'>Votre mot de passe temporaire :</p>
+                        <p class='password-value'>$password</p>
+                    </div>
+                    <p><strong>Important :</strong> Pour votre sécurité, nous vous recommandons de modifier ce mot de passe lors de votre première connexion.</p>
+                    <div class='footer'>
+                        <p>N'hésitez pas à explorer notre plateforme et à nous contacter si vous avez des questions.</p>
+                        <p class='signature'>Cordialement,<br>L'équipe SportPXL</p>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>";
+
+
+        try {
+            Mail::send([], [], function ($message) use ($toEmail, $subject, $htmlBody) {
+                $message->to($toEmail)
+                        ->subject($subject)
+                        ->html($htmlBody);
+            });
+
+            if (Mail::failures()) {
+                throw new \Exception('Échec de l\'envoi du mail de bienvenue.');
+            }
+        } catch (\Exception $e) {
+            // Log the error or handle it as needed
+            Log::error('Failed to send welcome email: ' . $e->getMessage());
+        }
+    }
 }

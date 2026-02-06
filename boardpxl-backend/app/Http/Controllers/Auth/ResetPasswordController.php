@@ -5,60 +5,56 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Photographer;
 
 class ResetPasswordController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Password Reset Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller is responsible for handling password reset requests
-    | and uses a simple trait to include this behavior. You're free to
-    | explore this trait and override any methods you wish to tweak.
-    |
-    */
-
     /**
      * Réinitialiser le mot de passe via l'API.
      *
      * @param Request $request
      * @return JsonResponse
-     * @throws ValidationException
      */
-    public function reset(Request $request)
+    public function reset(Request $request): JsonResponse
     {
         // Validation des données d'entrée
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'token' => 'required|string',
             'email' => 'required|email',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // Si la validation échoue, renvoyer une erreur
-        if ($validator->fails()) {
-            throw ValidationException::withMessages($validator->errors()->toArray());
+        // Vérifier que l'utilisateur existe
+        $photographer = Photographer::where('email', $validated['email'])->first();
+        
+        if (!$photographer) {
+            return response()->json(['message' => 'Email invalide.'], 400);
         }
 
-        // Tentative de réinitialisation du mot de passe
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => bcrypt($password),
-                ])->save();
-            }
-        );
+        // Vérifier que le token existe et est valide
+        $reset = DB::table('password_resets')
+            ->where('email', $validated['email'])
+            ->first();
 
-        // Vérifier si la réinitialisation a réussi
-        if ($status === Password::PASSWORD_RESET) {
-            return response()->json(['message' => 'Mot de passe réinitialisé avec succès.']);
+        if (!$reset || !Hash::check($validated['token'], $reset->token)) {
+            return response()->json(['message' => 'Token invalide ou expiré.'], 400);
         }
 
-        // En cas d'échec de la réinitialisation
-        return response()->json(['message' => 'Le token de réinitialisation est invalide ou expiré.'], 400);
+        // Vérifier que le token n'a pas expiré (60 minutes)
+        if (now()->diffInMinutes($reset->created_at) > 60) {
+            return response()->json(['message' => 'Le lien a expiré.'], 400);
+        }
+
+        // Mettre à jour le mot de passe
+        $photographer->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        // Supprimer le token après utilisation
+        DB::table('password_resets')->where('email', $validated['email'])->delete();
+
+        return response()->json(['message' => 'Mot de passe réinitialisé avec succès.']);
     }
 }

@@ -1,0 +1,82 @@
+<div class="modal-overlay" *ngIf="isVisible">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Bienvenue {{ userName }} !</h2>
+      <p class="subtitle">C'est votre première connexion</p>
+    </div>
+
+    <div class="modal-body">
+      <p class="welcome-message">
+        Nous vous recommandons de changer votre mot de passe pour sécuriser votre compte.
+      </p>
+
+      <form (ngSubmit)="changePassword()" *ngIf="!successMessage">
+        <div class="form-group">
+          <label for="currentPassword">Mot de passe actuel</label>
+          <input
+            type="password"
+            id="currentPassword"
+            [(ngModel)]="currentPassword"
+            name="currentPassword"
+            placeholder="Entrez votre mot de passe"
+            [disabled]="isLoading"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="newPassword">Nouveau mot de passe</label>
+          <input
+            type="password"
+            id="newPassword"
+            [(ngModel)]="newPassword"
+            name="newPassword"
+            placeholder="Entrez un nouveau mot de passe"
+            [disabled]="isLoading"
+            required
+          />
+          <small>Minimum 8 caractères</small>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirmer le mot de passe</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            placeholder="Confirmez le mot de passe"
+            [disabled]="isLoading"
+            required
+          />
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+      </form>
+
+      <div class="success-message" *ngIf="successMessage">
+        ✓ {{ successMessage }}
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button
+        class="btn-skip"
+        (click)="skipPasswordChange()"
+        [disabled]="isLoading || !!successMessage"
+      >
+        Passer
+      </button>
+      <button
+        class="btn-confirm"
+        (click)="changePassword()"
+        [disabled]="isLoading || !!successMessage"
+      >
+        <span *ngIf="!isLoading">Changer le mot de passe</span>
+        <span *ngIf="isLoading">Traitement...</span>
+      </button>
+    </div>
+  </div>
+</div>

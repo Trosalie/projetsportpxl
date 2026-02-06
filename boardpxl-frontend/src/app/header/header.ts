@@ -41,6 +41,10 @@ export class Header implements OnDestroy {
     this.navBarToggled.emit();
   }
 
+  goToProfile() {
+    this.router.navigate(['/my-profile']);
+  }
+
   ngOnInit() {
     this.updateUserName();
     this.updateHomeRoute();

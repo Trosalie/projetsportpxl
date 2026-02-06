@@ -19,7 +19,9 @@ export class LoginPage implements OnInit, OnDestroy
   isLoading = false;
   isBlocked = false;
   errorMessage = "";
+  successMessage = "";
   remainingTime = "";
+  is_first_login = false;
   private countdownInterval: any;
 
   constructor(
@@ -66,6 +68,22 @@ export class LoginPage implements OnInit, OnDestroy
     this.errorMessage = `Trop de tentatives échouées (${data.attempts}). Réessayez dans ${this.remainingTime}.`;
   }
 
+  onForgotPassword(): void {
+    if (this.email) {
+      this.auth.sendPasswordResetEmail(this.email).subscribe({
+        next: () => {
+          console.log('Email de réinitialisation envoyé');
+          this.successMessage = "Un email de réinitialisation a été envoyé si l'adresse existe.";
+          this.errorMessage = "";
+        }
+      });
+    } else {
+      console.warn('Email non fourni pour la réinitialisation de mot de passe');
+      this.errorMessage = "Veuillez entrer votre adresse email pour réinitialiser votre mot de passe.";
+      this.successMessage = "";
+    }
+  }
+
   onSubmit()
   {
     // Vérifier si l'utilisateur est bloqué
@@ -85,7 +103,7 @@ export class LoginPage implements OnInit, OnDestroy
         // Connexion réussie, effacer le blocage
         this.rateLimitService.clearBlock();
         
-        this.auth.saveToken(response.token, response.user);
+        this.auth.saveToken(response.token, response.user, response.is_first_login);
         
         if (environment.adminEmail.includes(response.user.email))
         {

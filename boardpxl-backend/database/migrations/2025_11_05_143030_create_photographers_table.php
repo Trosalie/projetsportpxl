@@ -33,6 +33,7 @@ class CreatePhotographersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->integer('pennylane_id')->nullable();
+            $table->date('first_login_at')->nullable();
             $table->timestamps();
         });
     }

@@ -1,0 +1,88 @@
+<app-title [title]="'MODIFICATION D\'UN PHOTOGRAPHE'"></app-title>
+<app-popup #popup></app-popup>
+
+<form class="photographer-form" (submit)="onSubmit($event)">
+	<!-- Type Selection -->
+	<div class="form-group">
+		<label for="type">Type de photographe :</label>
+		<select id="type" name="type" [(ngModel)]="photographerType" (change)="onTypeChange(photographerType)" [disabled]="typeLocked" required>
+			<option value="individual">Particulier</option>
+			<option value="company">Entreprise</option>
+		</select>
+	</div>
+
+	<!-- Individual Fields -->
+	<div *ngIf="photographerType === 'individual'" class="form-section">
+		<h3>Informations personnelles</h3>
+		<div class="form-group">
+			<label for="given_name">Prénom :</label>
+			<input type="text" id="given_name" name="given_name" maxlength="100" [(ngModel)]="givenName" />
+		</div>
+		<div class="form-group">
+			<label for="family_name">Nom :</label>
+			<input type="text" id="family_name" name="family_name" maxlength="100" [(ngModel)]="familyName" />
+		</div>
+	</div>
+
+	<!-- Company Fields -->
+	<div *ngIf="photographerType === 'company'" class="form-section">
+		<h3>Informations de l'entreprise</h3>
+		<div class="form-group">
+			<label for="name">Nom de l'entreprise :</label>
+			<input type="text" id="name" name="name" maxlength="255" [(ngModel)]="companyName" />
+		</div>
+	</div>
+
+	<div class="form-separator"></div>
+
+	<!-- Contact Information -->
+	<h3>Informations de contact</h3>
+	<div class="form-group">
+		<label for="email">Email :</label>
+		<input type="email" id="email" name="email" maxlength="255" [(ngModel)]="email" />
+	</div>
+
+	<div class="form-separator"></div>
+
+	<!-- Address Information -->
+	<h3>Adresse</h3>
+	<div class="form-group">
+		<label for="address">Adresse :</label>
+		<input type="text" id="address" name="address" maxlength="255" [(ngModel)]="address" />
+	</div>
+	<div class="form-group">
+		<label for="postal_code">Code postal :</label>
+		<input type="text" id="postal_code" name="postal_code" maxlength="20" [(ngModel)]="postalCode" />
+	</div>
+	<div class="form-group">
+		<label for="city">Ville :</label>
+		<input type="text" id="city" name="city" maxlength="100" [(ngModel)]="city" />
+	</div>
+	<div class="form-group">
+		<label for="country_alpha2">Code pays (ISO 3166-1 alpha-2) :</label>
+		<input type="text" id="country_alpha2" name="country_alpha2" maxlength="2" minlength="2" placeholder="FR" [(ngModel)]="countryAlpha2" />
+	</div>
+
+	<div class="form-separator"></div>
+
+	<!-- Billing Information -->
+	<h3>Informations de facturation</h3>
+	<div class="form-group">
+		<label for="billing_iban">IBAN :</label>
+		<input type="text" id="billing_iban" name="billing_iban" maxlength="34" [(ngModel)]="billingIban" />
+	</div>
+	<div class="form-group">
+		<label for="fee_in_percent">Commission (%) :</label>
+		<input type="number" id="fee_in_percent" name="fee_in_percent" min="0" max="100" step="0.01" [(ngModel)]="feeInPercent" />
+	</div>
+	<div class="form-group">
+		<label for="fix_fee">Frais fixes :</label>
+		<input type="number" id="fix_fee" name="fix_fee" min="0" step="0.01" [(ngModel)]="fixFee" />
+	</div>
+
+	<div class="form-actions">
+		<button type="submit" [disabled]="isSubmitting">
+			{{ isSubmitting ? 'Mise à jour en cours...' : 'Mettre à jour le photographe' }}
+		</button>
+	</div>
+</form>

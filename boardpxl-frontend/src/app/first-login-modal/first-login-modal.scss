@@ -1,0 +1,231 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  background-color: #F98524;
+  color: white;
+  padding: 25px;
+  border-radius: 10px 10px 0 0;
+  text-align: center;
+  font-family: 'FuturaLT-Bold';
+
+  h2 {
+    margin: 0 0 8px 0;
+    font-size: 22px;
+    font-weight: 600;
+    font-family: 'FuturaLT-Bold';
+  }
+
+  .subtitle {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.95;
+    font-family: 'FuturaLT';
+  }
+}
+
+.modal-body {
+  padding: 25px;
+
+  .welcome-message {
+    text-align: center;
+    color: #555;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    font-family: 'FuturaLT';
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    label {
+      font-weight: 500;
+      color: #333;
+      font-size: 13px;
+      font-family: 'FuturaLT-Bold';
+    }
+
+    input {
+      padding: 10px 12px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'FuturaLT';
+      transition: all 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #F98524;
+        box-shadow: 0 0 0 3px rgba(249, 133, 36, 0.1);
+      }
+
+      &:disabled {
+        background-color: #f5f5f5;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    }
+
+    small {
+      color: #888;
+      font-size: 12px;
+      font-family: 'FuturaLT';
+    }
+  }
+
+  .error-message {
+    background-color: #fce4ec;
+    color: #c2185b;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    text-align: center;
+    border-left: 4px solid #c2185b;
+    font-family: 'FuturaLT';
+  }
+
+  .success-message {
+    background-color: #c8e6c9;
+    color: #2e7d32;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: center;
+    border-left: 4px solid #2e7d32;
+    font-weight: 500;
+    font-family: 'FuturaLT-Bold';
+  }
+}
+
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  padding: 15px 25px;
+  border-top: 1px solid #e0e0e0;
+  justify-content: flex-end;
+}
+
+.btn-skip,
+.btn-confirm {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'FuturaLT-Bold';
+
+  &:hover:not(:disabled) {
+    filter: brightness(0.90);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-skip {
+  background-color: #e0e0e0;
+  color: #666;
+  border: 2px solid #ccc;
+
+  &:hover:not(:disabled) {
+    background-color: #d0d0d0;
+  }
+}
+
+.btn-confirm {
+  background-color: #F98524;
+  color: white;
+  border: 3px solid #e67a1a;
+  min-width: 150px;
+
+  &:hover:not(:disabled) {
+    background-color: #e67a1a;
+  }
+}
+
+@media (max-width: 600px) {
+  .modal-content {
+    width: 95%;
+    max-width: none;
+  }
+
+  .modal-header {
+    padding: 20px;
+
+    h2 {
+      font-size: 18px;
+    }
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .modal-footer {
+    padding: 12px 20px;
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+

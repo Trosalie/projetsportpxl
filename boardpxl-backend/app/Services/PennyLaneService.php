@@ -387,6 +387,37 @@ class PennylaneService
         return null; // Facture non trouvée
     }
 
+    public function createClient(array $clientData): ?array
+    {
+        $clientType = $clientData['type'];
+        unset($clientData['type']);
+        $response = $this->client->post("{$clientType}_customers", [
+            'json' => $clientData,
+        ]);
+
+        if ($response->getStatusCode() === 201) {
+            return json_decode($response->getBody()->getContents(), true);
+        }
+
+        return null;
+    }
+
+    public function updateClient(int $clientId, array $clientData): ?array
+    {
+        $clientType = $clientData['type'];
+        unset($clientData['type']);
+
+        $response = $this->client->put("{$clientType}_customers/{$clientId}", [
+            'json' => $clientData,
+        ]);
+
+        if ($response->getStatusCode() === 200) {
+            return json_decode($response->getBody()->getContents(), true);
+        }
+
+        return null;
+    }
+
     /**
      * @brief Synchronise les factures entre Pennylane et la base de données locale
      * 
