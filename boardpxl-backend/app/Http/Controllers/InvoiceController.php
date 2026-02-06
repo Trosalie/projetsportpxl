@@ -19,7 +19,7 @@ class InvoiceController extends Controller
     {
         $this->logService = $logService;
     }
-  
+
       /**
      * add to the db a turnover invoice with specific information
      *
@@ -125,7 +125,7 @@ class InvoiceController extends Controller
                 'amount' => $validated['amount'],
                 'tax' => $validated['tax'],
                 'vat' => $validated['vat'],
-                'total_due' => $validated['total_due'], 
+                'total_due' => $validated['total_due'],
                 'credits' => $validated['credits'],
                 'status' => $validated['status'],
                 'link_pdf' => $validated['link_pdf'],
@@ -163,7 +163,7 @@ class InvoiceController extends Controller
      *
      * @param int $photographer_id
      * @return JsonResponse
-     */    
+     */
     public function getInvoicesPaymentByPhotographer(Request $request, $photographer_id)
     {
         try {
@@ -177,7 +177,7 @@ class InvoiceController extends Controller
             $invoices = DB::table('invoice_payments')
                 ->where('photographer_id', $photographer_id)
                 ->get();
-            
+
             return response()->json($invoices);
         } catch (\Exception $e) {
             return response()->json([
@@ -206,8 +206,31 @@ class InvoiceController extends Controller
         $invoices = DB::table('invoice_credits')
             ->where('photographer_id', $photographer_id)
             ->get();
-        
+
         return response()->json($invoices);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getInvoicesSubscriptionByPhotographer(Request $request, $photographer_id)
+    {
+        try {
+            if (!is_numeric($photographer_id)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid photographer id',
+                ], 422);
+            }
+
+            $invoices = DB::table('invoice_subscription')
+                ->where('photographer_id', $photographer_id)
+                ->get();
+
+            return response()->json($invoices);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -232,14 +255,19 @@ class InvoiceController extends Controller
             $invoiceCredits = DB::table('invoice_credits')
                 ->where('photographer_id', $idClient)
                 ->get();
-            
+
             $invoicePayments = DB::table('invoice_payments')
                 ->where('photographer_id', $idClient)
                 ->get();
-            
+
+            $invoiceSubscription = DB::table('invoice_subscription')
+                ->where('photographer_id', $idClient)
+                ->get();
+
             return response()->json(array_merge(
                 $invoiceCredits->toArray(),
-                $invoicePayments->toArray()
+                $invoicePayments->toArray(),
+                $invoiceSubscription->toArray()
             ));
           } catch (\Exception $e) {
             return response()->json([
@@ -260,7 +288,7 @@ class InvoiceController extends Controller
     {
         try {
             $photographerIds = $request->input('photographer_ids', []);
-            
+
             if (!is_array($photographerIds) || empty($photographerIds)) {
                 return response()->json([
                     'success' => false,
@@ -272,20 +300,26 @@ class InvoiceController extends Controller
                 ->whereIn('photographer_id', $photographerIds)
                 ->get()
                 ->groupBy('photographer_id');
-            
+
             $invoicePayments = DB::table('invoice_payments')
                 ->whereIn('photographer_id', $photographerIds)
                 ->get()
                 ->groupBy('photographer_id');
-            
+
+            $invoiceSubscription = DB::table('invoice_subscription')
+                ->whereIn('photographer_id', $photographerIds)
+                ->get()
+                ->groupBy('photographer_id');
+
             $result = [];
             foreach ($photographerIds as $id) {
                 $result[$id] = [
                     'credits' => $invoiceCredits->get($id, collect())->values()->toArray(),
-                    'payments' => $invoicePayments->get($id, collect())->values()->toArray()
+                    'payments' => $invoicePayments->get($id, collect())->values()->toArray(),
+                    'subscription' => $invoiceSubscription->get($id, collect())->values()->toArray()
                 ];
             }
-            
+
             return response()->json($result);
         } catch (\Exception $e) {
             return response()->json([
@@ -294,7 +328,7 @@ class InvoiceController extends Controller
             ], 500);
         }
     }
-  
+
     public function getFinancialInfoCreditsInvoice(){
         try {
             $invoices = DB::table('invoice_credits')
@@ -337,9 +371,15 @@ class InvoiceController extends Controller
         $invoice = DB::table('invoice_credits')
             ->where('id', $id)
             ->first();
-        
+
         if (! $invoice) {
             $invoice = DB::table('invoice_payments')
+                ->where('id', $id)
+                ->first();
+        }
+
+        if (!$invoice) {
+            $invoice = DB::table('invoice_subscription')
                 ->where('id', $id)
                 ->first();
         }
@@ -350,7 +390,7 @@ class InvoiceController extends Controller
 
         return response()->json($invoice);
     }
-  
+
     public function getFinancialInfoTurnoverInvoice(){
         try {
             $invoices = DB::table('invoice_payments')
@@ -361,6 +401,73 @@ class InvoiceController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function insertSubscriptionInvoice(Request $request)
+    {
+        // Validation des données entrantes
+        $validated = $request->validate([
+            'id'=> 'required|numeric',
+            'number'=> 'required|string',
+            'issue_date'=> 'required|date',
+            'due_date'=> 'required|date',
+            'description'=> 'nullable|string',
+            'amount'=> 'required|numeric',
+            'tax'=> 'required|numeric',
+            'vat'=> 'required|numeric',
+            'reduction'=> 'required|numeric',
+            'total_due'=> 'required|numeric',
+            'start_period'=> 'required|date',
+            'end_period'=> 'required|date',
+            'link_pdf'=> 'required|string',
+            'photographer_id'=> 'required|numeric',
+            'pdf_invoice_subject'=> 'required|string',
+            'status' => 'required|string',
+        ]);
+
+        try {
+            // Insertion directe dans la base de données
+            DB::table('invoice_subscription')->insert([
+                'id' => $validated['id'],
+                'number' => $validated['number'],
+                'issue_date' => $validated['issue_date'],
+                'due_date' => $validated['due_date'],
+                'description' => $validated['description'],
+                'amount' => $validated['amount'],
+                'tax' => $validated['tax'],
+                'vat' => $validated['vat'],
+                'reduction' => $validated['reduction'],
+                'total_due' => $validated['total_due'],
+                'start_period' => $validated['start_period'],
+                'end_period' => $validated['end_period'],
+                'link_pdf' => $validated['link_pdf'],
+                'photographer_id' => $validated['photographer_id'],
+                'pdf_invoice_subject' => $validated['pdf_invoice_subject'],
+                'status' => $validated['status'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $this->logService->logAction($request, 'insert_subscription_invoice', 'INVOICE_SUBSCRIPTION', [
+                'invoice_id' => $validated['id'],
+                'photographer_id' => $validated['photographer_id'],
+                'number' => $validated['number'],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Invoice stored successfully.',
+            ], 201);
+        } catch (\Exception $e) {
+            $this->logService->logAction($request, 'insert_subscription_invoice_failed', 'INVOICE_SUBSCRIPTION', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
             ], 500);
         }
     }

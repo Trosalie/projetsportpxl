@@ -23,7 +23,7 @@ export class InvoiceFilter {
   protected dateFilters: Map<string, string> = new Map();
 
   protected readonly statusFilters = ['Payée', 'Non payée', 'En retard'];
-  protected readonly typeFilters = ['Achat de crédits', 'Versement'];
+  protected readonly typeFilters = ['Achat de crédits', 'Versement', 'Abonnement'];
   protected readonly periodFilters = ['Après le', 'Avant le'];
 
   toggleDropdown(dropdownType: string, event?: Event) {
@@ -69,7 +69,7 @@ export class InvoiceFilter {
       this.activeFilters.push(filterValue);
       this.dateFilters.set(filterValue, '');
     }
-    
+
     // Focus on the specific date input that was just added
     setTimeout(() => {
       const input = document.querySelector(`.date-input[data-filter="${filterValue}"]`) as HTMLInputElement;
@@ -89,7 +89,7 @@ export class InvoiceFilter {
   updateDateFilter(filterValue: string, event: Event) {
     const input = event.target as HTMLInputElement;
     const newValue = input.value;
-    
+
     // Validate date range
     if (this.isDateRangeValid(filterValue, newValue)) {
       this.dateFilters.set(filterValue, newValue);
@@ -148,9 +148,9 @@ export class InvoiceFilter {
 
   clearCategoryFilters(category: string, event: Event): void {
     event.stopPropagation();
-    
+
     let filtersToRemove: string[] = [];
-    
+
     switch(category) {
       case 'status':
         filtersToRemove = this.statusFilters;
@@ -162,7 +162,7 @@ export class InvoiceFilter {
         filtersToRemove = this.periodFilters;
         break;
     }
-    
+
     filtersToRemove.forEach(filter => {
       if (this.activeFilters.includes(filter)) {
         this.removeFilter(filter);
