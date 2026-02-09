@@ -58,7 +58,7 @@ export class InvoiceHistory implements OnDestroy {
             break;
         }
         
-        allInvoices.push(new InvoiceCredit(invoice.number, invoice.issue_date, invoice.due_date, invoice.amount, invoice.tax, invoice.vat, invoice.total_due, invoice.credits, invoice.status, invoice.link_pdf, invoice.pdf_invoice_subject));
+        allInvoices.push(new InvoiceCredit(invoice.number, invoice.issue_date, invoice.due_date, invoice.amount, invoice.tax, invoice.vat, invoice.total_due, invoice.discount || 0, invoice.credits, invoice.status, invoice.link_pdf, invoice.pdf_invoice_subject));
       }
 
       // Process payment invoices
