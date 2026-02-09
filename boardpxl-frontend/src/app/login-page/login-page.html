@@ -1,24 +1,24 @@
 <div class="all">
   <div class="card">
-    <img class="logo-sportpxl" src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" alt="logo_sportpxl">
-    <img class="login-icon" src="assets/images/login_icon.png" alt="icône de connexion" />
-    <h1>Connexion</h1>
+    <img class="logo-sportpxl" src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" [alt]="('LOGIN_PAGE.IMG_LOGO_SPORTPXL_ALT' | translate)">
+    <img class="login-icon" src="assets/images/login_icon.png" [alt]="('LOGIN_PAGE.IMG_LOGIN_ICON_ALT' | translate)" />
+    <h1>{{ 'LOGIN_PAGE.TITLE' | translate }}</h1>
     <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
     <form (ngSubmit)="onSubmit()">
       <div class="bloc_input">
-        <label for="email">Email</label>
+        <label for="email">{{ 'LOGIN_PAGE.LABEL_EMAIL' | translate }}</label>
         <input id="email" type="text" placeholder="Email" [(ngModel)]="email" name="email" [disabled]="isBlocked" />
       </div>
 
       <div class="bloc_input">
-        <label for="password">Mot de passe</label>
+        <label for="password">{{ 'LOGIN_PAGE.LABEL_PASSWORD' | translate }}</label>
         <input id="password" type="password" placeholder="Mot de passe" [(ngModel)]="password" name="password" [disabled]="isBlocked" />
       </div>
 
-      <a href="https://www.app.sportpxl.com/forgot">Mot de passe oublié ?</a>
+      <a href="https://www.app.sportpxl.com/forgot">{{ 'LOGIN_PAGE.FORGOT' | translate }}</a>
       <button class="btn_login" type="submit" [disabled]="isLoading || isBlocked">
-        <span *ngIf="isBlocked">BLOQUÉ ({{ remainingTime }})</span>
-        <span *ngIf="!isBlocked && !isLoading">SE CONNECTER</span>
+        <span *ngIf="isBlocked">{{ 'LOGIN_PAGE.BTN_BLOCKED' | translate }}({{ remainingTime }})</span>
+        <span *ngIf="!isBlocked && !isLoading">{{ 'LOGIN_PAGE.BTN_LOGIN' | translate }}</span>
         <span *ngIf="!isBlocked && isLoading" class="spinner"></span>
       </button>
     </form>

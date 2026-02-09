@@ -109,5 +109,19 @@
     "HEADER": "Historique des factures",
     "LOADING_INVOICES": "Chargement des factures...",
     "NO_INVOICES": "Ce photographe ne possède aucune facture"
+  },
+  "LOGIN_PAGE": {
+    "IMG_LOGO_SPORTPXL_ALT": "logo_sportpxl",
+    "IMG_LOGIN_ICON_ALT": "icône de connexion",
+    "TITLE": "Connexion",
+    "LABEL_EMAIL": "Email",
+    "LABEL_PASSWORD": "Mot de passe",
+    "FORGOT": "Mot de passe oublié ?",
+    "BTN_BLOCKED": "BLOQUÉ ",
+    "BTN_LOGIN": "SE CONNECTER",
+    "TOO_MANY_ATTEMPTS": "Trop de tentatives échouées ({{attempts}}). Réessayez dans {{time}}.",
+    "INCORRECT_EMAIL_OR_PASSWORD_WITH_ATTEMPTS": "Email ou mot de passe incorrect. {{remainingAttempts}} tentative(s) restante(s) avant blocage.",
+    "INCORRECT_EMAIL_OR_PASSWORD": "Email ou mot de passe incorrect.",
+    "OTHER_ERROR": "Une erreur est survenue. Veuillez réessayer."
   }
 }

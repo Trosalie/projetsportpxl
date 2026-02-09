@@ -23,8 +23,8 @@ export class LoginPage implements OnInit, OnDestroy
   private countdownInterval: any;
 
   constructor(
-    private auth: AuthService, 
-    private router: Router, 
+    private auth: AuthService,
+    private router: Router,
     private role: RoleService,
     private rateLimitService: LoginRateLimitService
   ) { }
@@ -63,7 +63,13 @@ export class LoginPage implements OnInit, OnDestroy
   updateRemainingTime(): void {
     this.remainingTime = this.rateLimitService.getFormattedRemainingTime();
     const data = this.rateLimitService.getStoredData();
-    this.errorMessage = `Trop de tentatives échouées (${data.attempts}). Réessayez dans ${this.remainingTime}.`;
+    this.errorMessage = this.translate.instant(
+      'LOGIN_PAGE.TOO_MANY_ATTEMPTS',
+      {
+        attempts: data.attempts,
+        time: this.remainingTime
+      }
+    );
   }
 
   onSubmit()
@@ -77,16 +83,16 @@ export class LoginPage implements OnInit, OnDestroy
 
     this.isLoading = true;
     this.errorMessage = "";
-    
+
     this.auth.login(this.email, this.password).subscribe(
     {
       next: (response) =>
       {
         // Connexion réussie, effacer le blocage
         this.rateLimitService.clearBlock();
-        
+
         this.auth.saveToken(response.token, response.user);
-        
+
         if (environment.adminEmail.includes(response.user.email))
         {
           this.role.setRole("admin");
@@ -114,23 +120,28 @@ export class LoginPage implements OnInit, OnDestroy
             err.error.block_duration
           );
           this.startCountdown();
-        } 
+        }
         // Gérer les erreurs d'authentification normales (status 401)
         else if (err.status === 401 && err.error) {
           const attempts = err.error.attempts || 0;
           const remainingAttempts = err.error.remaining_attempts || 0;
-          
+
           this.rateLimitService.updateAttempts(attempts);
-          
+
           if (remainingAttempts > 0) {
-            this.errorMessage = `Email ou mot de passe incorrect. ${remainingAttempts} tentative(s) restante(s) avant blocage.`;
+            this.errorMessage = this.translate.instant(
+              'LOGIN_PAGE.INCORRECT_EMAIL_OR_PASSWORD_WITH_ATTEMPTS',
+              {
+                remainingAttempts: remainingAttempts
+              }
+            );
           } else {
-            this.errorMessage = "Email ou mot de passe incorrect.";
+            this.errorMessage = this.translate.instant('LOGIN_PAGE.INCORRECT_EMAIL_OR_PASSWORD');
           }
-        } 
+        }
         // Autres erreurs
         else {
-          this.errorMessage = "Une erreur est survenue. Veuillez réessayer.";
+          this.errorMessage = this.translate.instant('LOGIN_PAGE.OTHER_ERROR');
         }
       }
     });
