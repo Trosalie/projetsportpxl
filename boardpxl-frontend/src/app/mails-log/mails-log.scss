@@ -1,8 +1,23 @@
+main {
+    display: flex;
+    flex-direction: column;
+    margin: 13px;
+    background-color: white;
+    padding-bottom: 13px;
+    border-radius: 8px;
+}
+
 .container {
-    margin: 0 13px 13px 13px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     padding: 1.5rem;
     background: white;
     border-radius: 10px;
+
+    @media (max-width: 768px) {
+        padding: 1rem;
+    }
 }
 
 .header {
@@ -12,12 +27,18 @@
     margin-bottom: 13px;
 
     app-search-bar {
-        flex-shrink: 0;
+        flex-shrink: 1;
+        min-width: 0;
+        width: 100%;
+        max-width: 400px;
+
+        @media (max-width: 768px) {
+            max-width: 100%;
+        }
     }
 }
 
 .mails-list {
-    position: relative;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -47,6 +68,8 @@
 }
 
 .mail-item {
+    width: 100%;
+
     .card {
         background: white;
         border-radius: 8px;
@@ -55,13 +78,11 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+        transition: box-shadow 0.3s ease, border-color 0.3s ease;
         cursor: pointer;
-        position: relative;
 
         &:hover {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transform: translateY(-2px);
         }
 
         &.expanded {
@@ -111,6 +132,7 @@
 
     .mail-info {
         flex: 1;
+        min-width: 0;
 
         .main-info {
             .recipient {
@@ -118,6 +140,9 @@
                 font-weight: 600;
                 color: #333;
                 margin: 0 0 0.5rem 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             .subject {
@@ -134,8 +159,9 @@
     .mail-details {
         display: flex;
         gap: 0.75rem;
-        margin: 0 2rem;
+        margin: 0 1rem;
         flex-shrink: 0;
+        flex-wrap: nowrap;
 
         .type-badge {
             background: #FFF3E0;
@@ -233,6 +259,24 @@
             flex-direction: column;
             align-items: flex-start;
             padding: 1rem;
+        }
+
+        .mail-info {
+            width: 100%;
+            
+            .main-info {
+                .recipient {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .subject {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+            }
         }
 
         .mail-details {

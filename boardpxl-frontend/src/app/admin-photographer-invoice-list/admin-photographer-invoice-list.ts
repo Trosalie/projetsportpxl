@@ -34,19 +34,6 @@ export class AdminPhotographerInvoiceList implements OnInit, OnDestroy {
       this.router.navigate(['/photographers']);
       return;
     }
-
-    // Récupérer le photographe pour obtenir son pennylane_id
-    this.photographerService.getPhotographers()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(photographers => {
-        const photographer = photographers.find(p => p.id.toString() === this.photographerId);
-        if (photographer) {
-          this.pennylaneId = photographer.pennylane_id;
-          if (!this.photographerName) {
-            this.photographerName = photographer.name;
-          }
-        }
-      });
   }
 
   ngOnDestroy() {

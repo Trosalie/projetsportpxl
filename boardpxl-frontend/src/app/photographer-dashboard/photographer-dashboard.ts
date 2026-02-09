@@ -12,9 +12,12 @@ export class PhotographerDashboard {
   constructor(private authService: AuthService) {}
 
   protected remainingCredits = 0;
+  protected userId: number = 0;
 
   ngOnInit() {
     const user = this.authService.getUser();
+    this.userId = user ? user.id : 0;
+    
     if (user) {
       this.remainingCredits = user.total_limit - user.nb_imported_photos;
     }

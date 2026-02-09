@@ -1,8 +1,12 @@
-<app-title [title]="'TABLEAU DE BORD'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
+<app-title [title]="'VERSEMENT DE CHIFFRE D\'AFFAIRES'"></app-title>
 <app-popup #popup></app-popup>
+<app-confirm-modal 
+  [isVisible]="showConfirmModal" 
+  [invoiceData]="modalData"
+  (confirm)="onConfirmInvoice()"
+  (discard)="onCancelInvoice()">
+</app-confirm-modal>
 <form class="credit-purchase-form" (submit)="onSubmit($event)">
-  <h2 class="form-title">Versement de chiffre d'affaire</h2>
-  <div class="form-separator"></div>
   <div class="form-group">
     <label for="photographer">Photographe :</label>
     <input type="text" id="photographer" name="photographer" required [value]="photographerInput" (input)="onPhotographerChange($event.target.value)" [disabled]="isLoading"/>
@@ -14,12 +18,8 @@
     </ul>
   </div>
   <div class="form-group">
-     <label for="CA">Chiffre d'affaire sur la période :</label>
+     <label for="CA">Chiffre d'affaires sur la période :</label>
     <input type="text" id="CA" name="CA" maxlength="7" required/>
-  </div>
-  <div class="form-group">
-    <label for="commission">Commission SportPxl :</label>
-    <input type="number" id="commission" name="commission" min="1" required>
   </div>
   <div class="form-group">
      <label for="Subject">Sujet de la facture :</label>

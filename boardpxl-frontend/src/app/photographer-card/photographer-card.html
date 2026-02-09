@@ -1,5 +1,9 @@
-<div class="card">
-    <div>
+<div class="card" [class.expanded]="isExpanded">
+    <button type="button" class="expand-btn" (click)="toggleExpand()">
+        <span class="material-symbols-outlined">{{ isExpanded ? 'expand_less' : 'expand_more' }}</span>
+    </button>
+
+    <div class="photographer-info">
         <a [routerLink]="['/photographer', photographer.id]" 
            [queryParams]="{name: photographer.name}">
             <p>Photographer : {{ photographer.name }}</p>
@@ -7,7 +11,8 @@
         <p *ngIf="photographer.email">Email : {{ photographer.email }}</p>
         <p *ngIf="!photographer.email">Pas d'email</p>
     </div>
-    <div>
+    
+    <div class="revenue-section">
         <p>Chiffre d'affaires</p>
         <div class="value-button-pair chiffre-affaires">
             <p class="tag" *ngIf="!isLoadingPayments">{{ getChiffreAffaires() | currency:'EUR'}}</p>
@@ -17,14 +22,16 @@
             <button routerLink="/form/payout" [queryParams]="{ clientName: photographer.name }"><span class="material-symbols-outlined">note_add</span></button>
         </div>
     </div>
-    <div>
+
+    <div class="credits-section">
         <p>Nombre de crédits</p>
         <div class="value-button-pair credits">
             <p class="tag">{{ getTotalCredits() }} cr</p>
             <button routerLink="/form/credits" [queryParams]="{ clientName: photographer.name }"><span class="material-symbols-outlined">note_add</span></button>
         </div>
     </div>
-    <div>
+
+    <div class="status-section">
         <p class="status">Statut des factures</p>
         <div class="statuts">
             <p>Payées</p>

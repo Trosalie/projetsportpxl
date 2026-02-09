@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api;
 
+use App\Http\Controllers\InvoiceController;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 use Illuminate\Support\Facades\DB;
@@ -66,7 +67,6 @@ class InvoiceAndPhotographerControllerTest extends TestCase
                 'issue_date',
                 'due_date',
                 'raw_value',
-                'commission',
                 'tax',
                 'vat',
                 'start_period',
@@ -165,6 +165,83 @@ class InvoiceAndPhotographerControllerTest extends TestCase
                 ['id' => 1, 'number' => 'INV-001'],
                 ['id' => 2, 'number' => 'INV-002'],
             ]);
+    }
+
+    // Ce test vérifie le cas où une facture n'est pas trouvée par son ID.
+    // Le contrôleur interroge d'abord invoice_credits puis invoice_payments, et les deux retournent null.
+    // On s'attend à une réponse 404 avec un message d'erreur.
+    public function test_get_invoice_by_id_not_found()
+    {
+        // Mock pour invoice_credits - pas trouvé
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_credits')
+            ->andReturnSelf();
+
+        DB::shouldReceive('where')
+            ->once()
+            ->with('id', 999)
+            ->andReturnSelf();
+
+        DB::shouldReceive('first')
+            ->once()
+            ->andReturn(null);
+
+        // Mock pour invoice_payments - pas trouvé non plus
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_payments')
+            ->andReturnSelf();
+
+        DB::shouldReceive('where')
+            ->once()
+            ->with('id', 999)
+            ->andReturnSelf();
+
+        DB::shouldReceive('first')
+            ->once()
+            ->andReturn(null);
+
+        $response = $this->getJson('/api/invoices/999');
+
+        $response->assertStatus(404)
+                ->assertJson([
+                    'message' => 'Facture non trouvée'
+                ]);
+    }
+
+    // Ce test vérifie la récupération réussie d'une facture spécifique par son ID.
+    // Le contrôleur interroge d'abord invoice_credits et trouve la facture.
+    // On s'attend à une réponse 200 avec les détails de la facture.
+    public function test_get_invoice_by_id_success()
+    {
+        // Mock pour invoice_credits - facture trouvée
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_credits')
+            ->andReturnSelf();
+
+        DB::shouldReceive('where')
+            ->once()
+            ->with('id', 123)
+            ->andReturnSelf();
+
+        DB::shouldReceive('first')
+            ->once()
+            ->andReturn((object)[
+                'id' => 123,
+                'number' => 'INV-123',
+                'amount' => 100.00
+            ]);
+
+        $response = $this->getJson('/api/invoices/123');
+
+        $response->assertStatus(200)
+                ->assertJson([
+                    'id' => 123,
+                    'number' => 'INV-123',
+                    'amount' => 100.00
+                ]);
     }
 
 }

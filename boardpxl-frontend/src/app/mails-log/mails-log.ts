@@ -27,14 +27,6 @@ export class MailsLog implements OnDestroy {
   ngOnInit() {
     this.isLoading = true;
 
-    requestAnimationFrame(() => {
-      const el = document.querySelector('.mails-list') as HTMLElement | null;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const y = rect.top + window.scrollY;
-      el.style.height = `calc(100vh - ${y}px - 10px)`;
-    });
-
     this.mailService.getMailLogs(this.authService.getUser()?.id || 0)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -42,6 +34,19 @@ export class MailsLog implements OnDestroy {
           this.mails = mails;
           this.filteredMails = this.mails;
           this.isLoading = false;
+          
+          requestAnimationFrame(() => {
+            const el = document.querySelector('.mails-list') as HTMLElement | null;
+            if (!el) return;
+            const rect = el.getBoundingClientRect();
+            const y = rect.top + window.scrollY;
+            const calculatedHeight = window.innerHeight - y - 10;
+            const currentHeight = el.scrollHeight;
+            
+            if (currentHeight < calculatedHeight) {
+              el.style.height = `calc(100vh - ${y}px - 10px)`;
+            }
+          });
         },
         error: error => {
           console.error('Failed to load mail logs', error);

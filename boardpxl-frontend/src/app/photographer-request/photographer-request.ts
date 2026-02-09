@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { MailService } from '../services/mail-service';
 import { AuthService } from '../services/auth-service';
+import { Popup } from '../popup/popup';
 
 @Component({
   selector: 'app-photographer-request',
@@ -12,8 +13,14 @@ export class PhotographerRequest {
   @Input() requestType: 'versement' | 'crédits' = 'versement';
   protected requestMessage: string = '';
   protected isSending: boolean = false;
+  protected redirection: boolean = false;
+  protected amount: string = '';
+  private userName: string = '';
+
 
   constructor(private mailService: MailService, private authService: AuthService) {}
+
+  @ViewChild('popup') popup!: Popup;
 
   ngOnInit() {
     requestAnimationFrame(() => {
@@ -23,23 +30,10 @@ export class PhotographerRequest {
       let y = rect.top + window.scrollY;
       el.style.height = `calc(100vh - ${y}px - 120px)`;
 
-      if (this.requestType === 'versement') {
-        this.requestMessage = `Bonjour,
+      const user = this.authService.getUser();
+      this.userName = user ? user.name : '[Prénom Nom]';
 
-Je vous contacte pour vous demander de bien vouloir procéder au versement de mon chiffre d'affaires, qui s'élève à [insérer le montant].
-Merci d’avance pour le traitement de ma demande.
-
-Cordialement,
-[Prénom Nom]`;
-      } else if (this.requestType === 'crédits') {
-      this.requestMessage = `Bonjour,
-
-Je vous contacte afin de solliciter l'envoi d'un devis pour [insérer le montant] crédits.
-Merci de bien vouloir me transmettre le devis détaillé ainsi que les conditions et les délais.
-
-Cordialement,
-[Prénom Nom]`;
-      }
+      this.updateMessage();
     });
 
     const textareas = Array.from(document.querySelectorAll('textarea')) as HTMLTextAreaElement[];
@@ -66,12 +60,57 @@ Cordialement,
 
   }
 
+  updateMessage() {
+    let amountText = '[insérer le montant]';
+    if (this.amount && this.amount !== '') {
+      const amountValue = Number(this.amount);
+      if (this.requestType === 'crédits') {
+        amountText = Math.floor(amountValue).toString();
+      } else {
+        amountText = amountValue.toString();
+      }
+    }
+
+    if (this.requestType === 'versement') {
+      this.requestMessage = `Bonjour,
+
+Je vous contacte pour vous demander de bien vouloir procéder au versement de mon chiffre d'affaires, qui s'élève à ${amountText} €.
+Merci d'avance pour le traitement de ma demande.
+
+Cordialement,
+${this.userName}`;
+    } else if (this.requestType === 'crédits') {
+      this.requestMessage = `Bonjour,
+
+Je vous contacte afin de solliciter l'envoi d'un devis pour ${amountText} crédits.
+Merci de bien vouloir me transmettre le devis détaillé ainsi que les conditions et les délais.
+
+Cordialement,
+${this.userName}`;
+    }
+  }
+
+  onAmountChange() {
+    this.updateMessage();
+  }
+
   submitRequest() {
     // Validate form
     const ta = document.querySelector('textarea') as HTMLTextAreaElement | null;
     const errorMessage = document.querySelector('.error-message') as HTMLElement | null;
 
-    const body = ta?.value || '';
+    const body = this.requestMessage;
+
+    // Validation du montant
+    const isValidAmount = this.requestType === 'crédits' 
+      ? (!this.amount || this.amount === '' || Number(this.amount) <= 0 || !Number.isInteger(Number(this.amount)))
+      : (!this.amount || this.amount === '' || Number(this.amount) <= 0);
+    
+    if (isValidAmount) {
+      const messageType = this.requestType === 'crédits' ? 'un nombre entier de crédits' : 'un montant du chiffre d\'affaires';
+      this.popup.showNotification(`Veuillez indiquer ${messageType} avant de soumettre la demande.`);
+      return;
+    }
 
     if (ta) {
       const clearError = () => {
@@ -141,17 +180,22 @@ Cordialement,
     this.isSending = true;
     this.mailService.sendMail(to, from, subject, body, type).subscribe({
       next: (response) => {
-        console.log('Mail envoyé avec succès:', response);
         this.isSending = false;
-        window.location.assign('/request/success');
+        this.redirection = true;
+        this.popup.showNotification('Votre demande à bien été envoyée !');
+        setTimeout(() => {
+          window.location.assign('');
+        }, 3000);
       },
       error: (error) => {
+        this.popup.showNotification('Erreur lors de l\'envoi du mail. Veuillez réessayer plus tard.');
         console.error('Erreur lors de l\'envoi du mail:', error);
         console.error('Détails de l\'erreur:', error.error);
         this.isSending = false;
+        this.redirection = true;
         // Attendre 3 secondes avant de rediriger pour que l'utilisateur voie le message
         setTimeout(() => {
-          window.location.assign('/request/failure');
+          window.location.assign('');
         }, 3000);
       }
     });

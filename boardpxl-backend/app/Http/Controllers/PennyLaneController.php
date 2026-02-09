@@ -32,15 +32,18 @@ class PennyLaneController extends Controller
                 'dueDate' => 'required|string',
                 'idClient' => 'required|integer',
                 'invoiceTitle' => 'required|string',
+                'discount' => 'nullable|numeric|min:0|max:1',
             ]);
 
             $description = $validated['description'] ?? "";
+            $discount = isset($validated['discount']) ? strval(floatval($validated['discount']) * 100) : "0";
 
             $facture = $service->createCreditsInvoiceClient(
                 $validated['labelTVA'],
                 $validated['labelProduct'],
                 $description,
                 $validated['amountEuro'],
+                $discount,
                 $validated['issueDate'],
                 $validated['dueDate'],
                 (int) $validated['idClient'],
@@ -79,28 +82,26 @@ class PennyLaneController extends Controller
         try {
             $validated = $request->validate([
                 'labelTVA' => 'required|string',
-                'amountEuro' => 'required|string',
                 'issueDate' => 'required|string',
                 'dueDate' => 'required|string',
                 'idClient' => 'required|integer',
                 'invoiceTitle' => 'required|string',
-                'invoiceDescription' => 'string',
+                'invoiceDescription' => 'nullable|string',
             ]);
 
             $facture = $service->createTurnoverInvoiceClient(
                 $validated['labelTVA'],
-                $validated['amountEuro'],
                 $validated['issueDate'],
                 $validated['dueDate'],
                 (int) $validated['idClient'],
                 $validated['invoiceTitle'],
-                $validated['invoiceDescription']
+                $validated['invoiceDescription'] ?? ''
             );
 
             $this->logService->logAction($request, 'create_turnover_payment_invoice', 'INVOICE_PAYMENTS', [
                 'id_client' => (int) $validated['idClient'],
                 'invoice_title' => $validated['invoiceTitle'],
-                'amount_euro' => $validated['amountEuro'],
+                'invoice_description' => $validated['invoiceDescription'] ?? '',
             ]);
 
             return response()->json([
@@ -291,16 +292,4 @@ class PennyLaneController extends Controller
             'clients' => $clients
         ]);
     }
-
-    public function getInvoiceById($id, PennylaneService $service)
-    {
-        $invoice = $service->getInvoiceById((int)$id);
-
-        if (!$invoice) {
-            return response()->json(['message' => 'Facture non trouvée'], 404);
-        }
-
-        return response()->json($invoice);
-    }
-
 }

@@ -12,7 +12,6 @@ import { InvoiceCard } from './invoice-card/invoice-card';
 import { InvoiceFilter } from './invoice-filter/invoice-filter';
 import { LoginPage } from './login-page/login-page';
 import { PhotographerRequest } from './photographer-request/photographer-request';
-import { AutomaticResponse } from './automatic-response/automatic-response';
 import { MailRequestPage } from './mail-request-page/mail-request-page';
 import { FormsModule } from '@angular/forms';
 
@@ -21,7 +20,6 @@ import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 
 import localeFr from '@angular/common/locales/fr';
-// import {FormsModule} from "@angular/forms";
 import { NavigationBar } from './navigation-bar/navigation-bar';
 import { PhotographersList } from './photographers-list/photographers-list';
 import { PhotographerCard } from './photographer-card/photographer-card';
@@ -33,7 +31,12 @@ import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
+
+
+import { GeneralGraph } from './general-graph/general-graph';
 import { Logs } from './logs/logs';
+import { AboutUs } from './about-us/about-us';
+import { ConfirmModal } from './confirm-modal/confirm-modal';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -46,7 +49,6 @@ registerLocaleData(localeFr);
     InvoiceCard,
     InvoiceFilter,
     PhotographerRequest,
-    AutomaticResponse,
     MailRequestPage,
     CreditPurchaseForm,
     ProfileInformation,
@@ -62,15 +64,17 @@ registerLocaleData(localeFr);
     TurnoverPaymentForm,
     MailsLog,
     AdminPhotographerInvoiceList,
-    Logs
+    GeneralGraph,
+    Logs,
+    AboutUs,
+    ConfirmModal
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    CommonModule,
-    //NgChartsModule
+    CommonModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

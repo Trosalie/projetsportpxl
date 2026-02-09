@@ -1,23 +1,25 @@
 <div class="all">
   <div class="card">
     <img class="logo-sportpxl" src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" alt="logo_sportpxl">
-    <img class="login-icon" src="assets/images/login_icon.png" alt="login_icon" />
-    <h1>Log In</h1>
+    <img class="login-icon" src="assets/images/login_icon.png" alt="icône de connexion" />
+    <h1>Connexion</h1>
+    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
     <form (ngSubmit)="onSubmit()">
       <div class="bloc_input">
         <label for="email">Email</label>
-        <input id="email" type="text" placeholder="Email" [(ngModel)]="email" name="email" />
+        <input id="email" type="text" placeholder="Email" [(ngModel)]="email" name="email" [disabled]="isBlocked" />
       </div>
 
       <div class="bloc_input">
-        <label for="password">Password</label>
-        <input id="password" type="password" placeholder="Password" [(ngModel)]="password" name="password" />
+        <label for="password">Mot de passe</label>
+        <input id="password" type="password" placeholder="Mot de passe" [(ngModel)]="password" name="password" [disabled]="isBlocked" />
       </div>
 
-      <a href="https://www.app.sportpxl.com/forgot">Forget Password?</a>
-      <button class="btn_login" type="submit" [disabled]="isLoading">
-        <span *ngIf="!isLoading">LOG IN</span>
-        <span *ngIf="isLoading" class="spinner"></span>
+      <a href="https://www.app.sportpxl.com/forgot">Mot de passe oublié ?</a>
+      <button class="btn_login" type="submit" [disabled]="isLoading || isBlocked">
+        <span *ngIf="isBlocked">BLOQUÉ ({{ remainingTime }})</span>
+        <span *ngIf="!isBlocked && !isLoading">SE CONNECTER</span>
+        <span *ngIf="!isBlocked && isLoading" class="spinner"></span>
       </button>
     </form>
   </div>
