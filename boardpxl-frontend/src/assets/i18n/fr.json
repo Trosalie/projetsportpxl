@@ -144,5 +144,11 @@
   "MAIL_REQUEST_PAGE": {
     "TITLE_TURNOVER": "DEMANDE DE VERSEMENT DE CHIFFRE D'AFFAIRES",
     "TITLE_CREDIT": "DEMANDE D'AJOUT DE CRÉDITS"
+  },
+  "MAILS_LOG": {
+    "TITLE": "HISTORIQUE DES EMAILS",
+    "SEARCH_BAR_PLACEHOLDER": "Rechercher un email...",
+    "LOADING_MAIL": "Chargement des emails...",
+    "NO_MAILS": "Aucun email trouvé"
   }
 }
