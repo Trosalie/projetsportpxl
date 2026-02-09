@@ -1,20 +1,20 @@
 <app-title
-  [title]="'GRAPHIQUE GÉNÉRAL'"
+  [title]="('GENERAL_GRAPH.TITLE' | translate)"
   [icon]="'assets/images/logo-tableau-de-bord.png'">
 </app-title>
 
 <div class="mobile-only-message">
   <div class="message-card">
-    <span class="material-symbols-outlined">desktop_windows</span>
-    <h2>Page non disponible sur mobile</h2>
-    <p>Cette page est uniquement accessible depuis un ordinateur pour une meilleure expérience de visualisation des graphiques.</p>
+    <span class="material-symbols-outlined">desktop_windows</span><!--vas?-->
+    <h2>{{ 'GENERAL_GRAPH.MOBILE_ONLY_TITLE' | translate }}</h2>
+    <p>{{ 'GENERAL_GRAPH.MOBILE_ONLY_TEXT' | translate }}</p>
   </div>
 </div>
 
 <div class="graph-container">
 
   <div *ngIf="loading" class="loading">
-    <p>Chargement des données...</p>
+    <p>{{ 'GENERAL_GRAPH.LOADING' | translate }}</p>
   </div>
 
   <div *ngIf="error" class="error">
@@ -27,22 +27,22 @@
     <div class="sidebar">
       <!-- Filters Section -->
       <div class="filter-section-sidebar">
-        <div class="filter-label">Filtres</div>
+        <div class="filter-label">{{ 'GENERAL_GRAPH.FILTER_LABEL' | translate }}</div>
 
         <div class="filter-buttons-vertical">
           <!-- Type de données Button -->
           <div class="filter-dropdown-container">
             <button class="filter-button" [class.active]="hasActiveDataTypeFilters()" (click)="toggleDropdown('dataType', $event)">
-              <img src="assets/category_icon.png" alt="Type" class="filter-icon">
-              <span>Type de données</span>
+              <img src="assets/category_icon.png" [alt]="('GENERAL_GRAPH.IMG_FILTER_ICON_ALT' | translate)" class="filter-icon">
+              <span>{{ 'GENERAL_GRAPH.DATA_TYPE' | translate }}</span>
               <button *ngIf="hasActiveDataTypeFilters()" class="clear-category-btn" (click)="clearCategoryFilters('dataType', $event)">
-                <img src="assets/close_icon.png" alt="Clear">
+                <img src="assets/close_icon.png" [alt]="('GENERAL_GRAPH.IMG_CLOSE_ICON_ALT' | translate)">
               </button>
             </button>
             <div class="dropdown-menu" *ngIf="openDropdown === 'dataType'" (click)="$event.stopPropagation()">
               <label class="checkbox-item" *ngFor="let type of dataTypeFilters">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   [checked]="isFilterActive(type)"
                   (change)="toggleFilter(type)">
                 <span>{{ type }}</span>
@@ -53,27 +53,27 @@
           <!-- Période Button -->
           <div class="filter-dropdown-container">
             <button class="filter-button" [class.active]="hasActivePeriodFilters()" (click)="toggleDropdown('period', $event)">
-              <img src="assets/calendar_icon.png" alt="Période" class="filter-icon">
-              <span>Période</span>
+              <img src="assets/calendar_icon.png" [alt]="('GENERAL_GRAPH.CALENDAR' | translate)" class="filter-icon">
+              <span>{{ 'GENERAL_GRAPH.CALENDAR' | translate }}</span>
               <button *ngIf="hasActivePeriodFilters()" class="clear-category-btn" (click)="clearCategoryFilters('period', $event)">
-                <img src="assets/close_icon.png" alt="Clear">
+                <img src="assets/close_icon.png" [alt]="('GENERAL_GRAPH.IMG_CLOSE_ICON_ALT' | translate)">
               </button>
             </button>
             <div class="dropdown-menu period-dropdown" *ngIf="openDropdown === 'period'" (click)="$event.stopPropagation()">
               <div class="date-filter-item" *ngFor="let period of periodFilters">
                 <label class="checkbox-item">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     [checked]="isFilterActive(period)"
                     (change)="toggleFilter(period); isFilterActive(period) && addDateFilter(period)">
                   <span>{{ period }}</span>
                 </label>
-                <input 
+                <input
                   *ngIf="isFilterActive(period)"
-                  type="date" 
-                  class="date-input" 
+                  type="date"
+                  class="date-input"
                   [attr.data-filter]="period"
-                  [value]="getDateValue(period)" 
+                  [value]="getDateValue(period)"
                   (change)="updateDateFilter(period, $event)"
                   [min]="period === 'Avant le' ? getDateValue('Après le') : ''"
                   [max]="period === 'Après le' ? getDateValue('Avant le') : ''"
@@ -85,28 +85,28 @@
 
         <!-- Bouton Appliquer -->
         <button class="apply-button" (click)="applyFilters()" [disabled]="!canApplyFilters()">
-          Appliquer
+          {{ 'GENERAL_GRAPH.APPLY' | translate }}
         </button>
       </div>
 
       <div class="bottom-squares">
 
         <div class="square-card">
-          <div class="square-label">Chiffre d'Affaires Total</div>
+          <div class="square-label">{{ 'GENERAL_GRAPH.LABEL_TOTAL_TURNOVER' | translate }}</div>
           <div class="square-value">
             {{ getTotalRevenue() | currency:'EUR':'symbol':'1.0-0':'fr' }}
           </div>
         </div>
 
         <div class="square-card">
-          <div class="square-label">Crédits vendus (€)</div>
+          <div class="square-label">{{ 'GENERAL_GRAPH.LABEL_CREDIT_SOLD' | translate }}</div>
           <div class="square-value">
             {{ getTotalCreditsAmount() | currency:'EUR':'symbol':'1.0-0':'fr' }}
           </div>
         </div>
 
         <div class="square-card">
-          <div class="square-label">Commission Totale</div>
+          <div class="square-label">{{ 'GENERAL_GRAPH.LABEL_CREDIT_SOLD' | translate }}</div>
           <div class="square-value">
             {{ getTotalCommission() | currency:'EUR':'symbol':'1.0-0':'fr' }}
           </div>

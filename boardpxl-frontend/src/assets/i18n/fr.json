@@ -65,5 +65,24 @@
     "PRODUCT_CREDITS": "{{count}} crédits",
     "SUCCEED": "Facture créée avec succès !",
     "ERROR_CREATE": "Erreur lors de la création de la facture"
+  },
+  "GENERAL_GRAPH": {
+    "TITLE": "GRAPHIQUE GÉNÉRAL",
+    "MOBILE_ONLY_TITLE": "Page non disponible sur mobile",
+    "MOBILE_ONLY_TEXT": "Cette page est uniquement accessible depuis un ordinateur pour une meilleure expérience de visualisation des graphiques.",
+    "LOADING": "Chargement des données...",
+    "FILTER_LABEL": "Filtres",
+    "IMG_FILTER_ICON_ALT": "Type",
+    "DATA_TYPE": "Type de données",
+    "IMG_CLOSE_ICON_ALT": "Clear",
+    "CALENDAR": "Période",
+    "APPLY": "Appliquer",
+    "LABEL_TOTAL_TURNOVER": "Chiffre d'Affaires Total",
+    "LABEL_CREDIT_SOLD": "Crédits vendus (€)",
+    "LABEL_TOTAL_COMMISSION": "Commission Totale",
+    "LABEL_GRAPH_CREDIT": "Ventes de Crédits (€)",
+    "LABEL_GRAPH_TURNOVER": "Chiffre d'Affaires (€)",
+    "ALERT_UPDATE_DATE_FILTER": "La date \"Après le\" doit être antérieure à la date \"Avant le\".",
+    "ALERT_APPLY_FILTERS": "Veuillez cocher au moins un filtre avant d'appliquer."
   }
 }

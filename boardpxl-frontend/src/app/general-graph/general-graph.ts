@@ -19,8 +19,8 @@ export class GeneralGraph implements OnInit {
     labelsMonthsGraph: any = [];
     graphData1: any = [];
     graphData2: any = [];
-    labelData1: string = 'Ventes de Crédits (€)';
-    labelData2: string = 'Chiffre d\'Affaires (€)';
+    labelData1: string = this.translate.instant('GENERAL_GRAPH.LABEL_GRAPH_CREDIT');
+    labelData2: string = this.translate.instant('GENERAL_GRAPH.LABEL_GRAPH_TURNOVER');
 
 
     lineChartConfig: ChartConfiguration = {
@@ -88,7 +88,7 @@ export class GeneralGraph implements OnInit {
     protected openDropdown: string | null = null;
     protected activeFilters: string[] = ['Crédits vendus', 'Commission'];
     protected dateFilters: Map<string, string> = new Map();
-    
+
     protected readonly dataTypeFilters = ['Crédits vendus', 'Chiffre d\'affaires', 'Commission'];
     protected readonly periodFilters = ['Après le', 'Avant le'];
 
@@ -99,7 +99,7 @@ export class GeneralGraph implements OnInit {
     private originalCreditsInfo: any[] = [];
     private originalTurnoverInfo: any[] = [];
 
-    
+
 
     constructor(private invoiceService: InvoiceService) {}
 
@@ -209,7 +209,7 @@ export class GeneralGraph implements OnInit {
         //this.computeMonthlyData();
         this.graphInfoCreditsInvoice = this.groupByMonth(this.creditsFinancialInfo, 'amount');
         this.graphInfoTurnoverInvoice = this.groupByMonth(this.turnoverFinancialInfo, 'commission');
-  
+
     }
 
 
@@ -236,14 +236,14 @@ export class GeneralGraph implements OnInit {
         let newInvoicesList: any = [];
         for (let invoice of invoices) {
             const yearMonth = invoice.issue_date.slice(0, 7);
-            
+
             //parse float sert à convertir une chaîne de caractères en nombre à virgule flottante
             const amount = Math.round(parseFloat(invoice[nameField]) || 0);
-            
+
             if (newInvoicesList.find((item: any) => item[0] === yearMonth) === undefined) {
                 newInvoicesList.push([invoice.issue_date.slice(0, 7), amount]);
             }
-            else {                
+            else {
                 for (let item of newInvoicesList) {
                     if (item[0] === invoice.issue_date.slice(0, 7)) {
                         item[1] += amount;
@@ -269,7 +269,7 @@ export class GeneralGraph implements OnInit {
             }
         }
 
-        // Trier les deux tableaux par date croissante 
+        // Trier les deux tableaux par date croissante
         const sortByDate = (a: [string, number], b: [string, number]) => {
             const dateA = new Date(a[0] + '-01');
             const dateB = new Date(b[0] + '-01');
@@ -283,7 +283,7 @@ export class GeneralGraph implements OnInit {
         for (let item of this.graphInfoCreditsInvoice) {
             this.labelsMonthsGraph.push(item[0]);
             this.graphData1.push(item[1]);
-            
+
         }
 
         // remplie les datas de la deuxième courbe et ajoute les mois manquants dans les labels
@@ -303,12 +303,12 @@ export class GeneralGraph implements OnInit {
             else {
                 maxValue = Math.max(...this.graphData2);
             }
-            const yAxisMax = Math.ceil(maxValue * 1.1); 
+            const yAxisMax = Math.ceil(maxValue * 1.1);
 
             this.lineChartConfig.options!.scales!['y']!.max = yAxisMax;
         }
     }
-    
+
     // Gestion des filtres
     toggleDropdown(dropdownType: string, event?: Event) {
         if (event) {
@@ -351,7 +351,7 @@ export class GeneralGraph implements OnInit {
             this.activeFilters.push(filterValue);
             this.dateFilters.set(filterValue, '');
         }
-        
+
         setTimeout(() => {
             const input = document.querySelector(`.date-input[data-filter="${filterValue}"]`) as HTMLInputElement;
             if (input) {
@@ -368,12 +368,12 @@ export class GeneralGraph implements OnInit {
     updateDateFilter(filterValue: string, event: Event) {
         const input = event.target as HTMLInputElement;
         const newValue = input.value;
-        
+
         if (this.isDateRangeValid(filterValue, newValue)) {
             this.dateFilters.set(filterValue, newValue);
         } else {
             input.value = this.dateFilters.get(filterValue) || '';
-            alert('La date "Après le" doit être antérieure à la date "Avant le".');
+            alert(this.translate.instant('GENERAL_GRAPH.ALERT_UPDATE_DATE_FILTER'));
         }
     }
 
@@ -406,9 +406,9 @@ export class GeneralGraph implements OnInit {
 
     clearCategoryFilters(category: string, event: Event): void {
         event.stopPropagation();
-        
+
         let filtersToRemove: string[] = [];
-        
+
         switch(category) {
             case 'dataType':
                 filtersToRemove = this.dataTypeFilters;
@@ -417,7 +417,7 @@ export class GeneralGraph implements OnInit {
                 filtersToRemove = this.periodFilters;
                 break;
         }
-        
+
         filtersToRemove.forEach(filter => {
             if (this.activeFilters.includes(filter)) {
                 this.removeFilter(filter);
@@ -428,7 +428,7 @@ export class GeneralGraph implements OnInit {
     applyFilters(): void {
         // Empêcher l'application si aucun filtre n'est coché
         if (!this.canApplyFilters()) {
-            alert('Veuillez cocher au moins un filtre avant d\'appliquer.');
+            alert(this.translate.instant('GENERAL_GRAPH.ALERT_APPLY_FILTERS'));
             return;
         }
         // 1) Préparer les données filtrées (par date)
