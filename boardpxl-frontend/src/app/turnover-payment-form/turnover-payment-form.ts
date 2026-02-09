@@ -141,14 +141,13 @@ export class TurnoverPaymentForm implements OnDestroy {
       const startDate = form['startDate'].value;
       const endDate = form['endDate'].value;
       const subject = form['Subject'].value;
-      const commission = form['commission'].value;
       const chiffreAffaire = form['CA'].value
       const TVA = (form['tva'] as HTMLSelectElement).value;
       const issue = new Date(this.today);
       const due = new Date(issue);
       due.setMonth(due.getMonth() + 1);
       const dueDate = due.toISOString().slice(0, 10);
-      if (!subject || !startDate || !endDate || !commission || !chiffreAffaire || !TVA || !this.findClient) {
+      if (!subject || !startDate || !endDate || !chiffreAffaire || !TVA || !this.findClient) {
         this.popup.showNotification("Merci de remplir tous les champs du formulaire.");
         return;
       }
@@ -158,15 +157,15 @@ export class TurnoverPaymentForm implements OnDestroy {
         startDate,
         endDate,
         subject,
-        commission,
         chiffreAffaire,
         TVA,
         dueDate
       };
 
       this.modalData = {
-        title: subject,
-        amount: parseFloat(commission),
+        title: subject, 
+        amount: 0,
+        discount: 0,
         items: [
           { label: 'Photographe', value: this.photographerInput },
           { label: 'Chiffre d\'affaire', value: `${chiffreAffaire}€` },
@@ -181,10 +180,9 @@ export class TurnoverPaymentForm implements OnDestroy {
   onConfirmInvoice() {
     if (!this.pendingFormData) return;
 
-    const { startDate, endDate, subject, commission, chiffreAffaire, TVA, dueDate } = this.pendingFormData;
+    const { startDate, endDate, subject, chiffreAffaire, TVA, dueDate } = this.pendingFormData;
     const body = {
       labelTVA: TVA,
-      amountEuro: commission,
       issueDate: this.today,
       dueDate: dueDate,
       idClient: this.pennylaneId,
@@ -201,7 +199,7 @@ export class TurnoverPaymentForm implements OnDestroy {
         this.creationFacture = false;
         this.pendingFormData = null;
         this.modalData = null;
-        this.insertTurnoverInvoice(response, startDate, endDate, chiffreAffaire, commission, TVA, this.today, dueDate, this.clientId);
+        this.insertTurnoverInvoice(response, startDate, endDate, chiffreAffaire, TVA, this.today, dueDate, this.clientId);
         setTimeout(() => {
           this.router.navigate(['/photographers']);
         }, 2000);
@@ -221,7 +219,7 @@ export class TurnoverPaymentForm implements OnDestroy {
   }
   
 
-  insertTurnoverInvoice(reponse: any, startDate: string, endDate: string, chiffreAffaire: number, commission: number, tva: string, issueDate: string, dueDate: string, clientId: number) {
+  insertTurnoverInvoice(reponse: any, startDate: string, endDate: string, chiffreAffaire: number, tva: string, issueDate: string, dueDate: string, clientId: number) {
 
     const invoice = reponse.data;
     const vatValue = this.convertTvaCodeToPercent(tva);
@@ -234,7 +232,7 @@ export class TurnoverPaymentForm implements OnDestroy {
       description: invoice.pdf_description,
       turnover: chiffreAffaire,
       raw_value: invoice.currency_amount_before_tax, // montant HT
-      commission: commission,
+      montant: 0,
       tax: invoice.tax,
       vat: vatValue,
       start_period: startDate,

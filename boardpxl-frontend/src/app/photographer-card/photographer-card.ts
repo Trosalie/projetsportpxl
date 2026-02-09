@@ -40,7 +40,6 @@ export class PhotographerCard implements OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // Détecte quand les @Input changent
     if (changes['invoices'] && this.invoices) {
-      console.log(`[${this.photographer.name}] INVOICES RECEIVED:`, this.invoices);
       this.processInvoices();
     }
   }
@@ -51,15 +50,12 @@ export class PhotographerCard implements OnDestroy, OnChanges {
 
     // Si les invoices sont déjà passés en @Input, les utiliser directement
     if (this.invoices) {
-      console.log(`[${this.photographer.name}] INVOICES ALREADY SET ON INIT`);
       this.processInvoices();
     }
   }
 
   private processInvoices(): void {
-    console.log(`[${this.photographer.name}] PROCESSING INVOICES`);
     if (!this.invoices) {
-      console.log(`[${this.photographer.name}] NO INVOICES DATA`);
       return;
     }
 

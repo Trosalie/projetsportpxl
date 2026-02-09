@@ -184,7 +184,7 @@ class PennylaneService
      * @param string $invoiceTitle
      * @return json
      * */
-    public function createCreditsInvoiceClient(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle)
+    public function createCreditsInvoiceClient(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $discount, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle)
     {
         $client = new \GuzzleHttp\Client();
 
@@ -193,15 +193,15 @@ class PennylaneService
                 "currency" => "EUR",
                 "language" => "fr_FR",
                 "discount" => [
-                    "type" => "absolute",
+                    "type" => "relative",
                     "value" => "0"
                 ],
                 "draft" => false,
                 "invoice_lines" => [
                     [
                         "discount" => [
-                            "type" => "absolute",
-                            "value" => "0"
+                            "type" => "relative",
+                            "value" => $discount
                         ],
                         "vat_rate" => $labelTVA,
                         "label" => $labelProduct,
@@ -229,7 +229,6 @@ class PennylaneService
      * add a payment invoice for a client
      *
      * @param string $labelTVA
-     * @param string $amountEuro
      * @param string $issueDate
      * @param string $dueDate
      * @param int $idClient
@@ -237,7 +236,7 @@ class PennylaneService
      * @param string $invoiceDescription
      * @return json
      * */
-    public function createTurnoverInvoiceClient(string $labelTVA, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle, string $invoiceDescription)
+    public function createTurnoverInvoiceClient(string $labelTVA, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle, string $invoiceDescription)
     {
         $client = new \GuzzleHttp\Client();
 
@@ -257,17 +256,15 @@ class PennylaneService
                             "value" => "0"
                         ],
                         "vat_rate" => $labelTVA,
-                        "label" => "Commission SportPxl",
-                        "description" => "Le CA & la commission sont estimés. Ils seront ajustés en fin d'exercice.",
+                        "label" => "Versement",
                         "quantity" => 1,
-                        "raw_currency_unit_price" => $amountEuro,
+                        "raw_currency_unit_price" => "0",
                         "unit" => "piece"
                     ]
                 ],
                 "date" => $issueDate,
                 "deadline" => $dueDate,
                 "customer_id" => $idClient,
-                "customer_invoice_template_id" => 207554338,
                 "pdf_invoice_subject" => $invoiceTitle,
                 "pdf_description" => $invoiceDescription,
             ],
@@ -517,6 +514,7 @@ class PennylaneService
                                 'tax' => $invoice['tax'] ?? null,
                                 'vat' => $vat ?? null,
                                 'total_due' => $invoice['remaining_amount_with_tax'] ?? null,
+                                'discount' => $invoice['discount']['value'] ?? 0,
                                 'credits' => $creditAmount ?? null,
                                 'status' => $invoice['status'] ?? null,
                                 'link_pdf' => $invoice['public_file_url'] ?? null,
