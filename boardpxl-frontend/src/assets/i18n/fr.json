@@ -104,5 +104,10 @@
     "IMG_CATEGORY_ICON_ALT": "Type",
     "IMG_CALENDAR_ICON_ALT": "Période",
     "ALERT_UPDATE_DATE_FILTER": "La date \"Après le\" doit être antérieure à la date \"Avant le\"."
+  },
+  "INVOICE_HISTORY": {
+    "HEADER": "Historique des factures",
+    "LOADING_INVOICES": "Chargement des factures...",
+    "NO_INVOICES": "Ce photographe ne possède aucune facture"
   }
 }

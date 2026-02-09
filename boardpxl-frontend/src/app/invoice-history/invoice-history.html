@@ -1,15 +1,15 @@
 <div class="container">
     <div class="header">
-        <p>Historique des factures</p>
+        <p>{{ 'INVOICE_HISTORY.HEADER' | translate }}</p>
         <app-invoice-filter (filtersChanged)="onFilterChanged($event)"></app-invoice-filter>
     </div>
     <div class="invoice-list">
         <div class="loading-overlay" *ngIf="isLoading">
             <div class="spinner"></div>
-            <p>Chargement des factures...</p>
+            <p>{{ 'INVOICE_HISTORY.LOADING_INVOICES' | translate }}</p>
         </div>
         <div *ngIf="!isLoading && filteredInvoices.length === 0" class="no-invoices-message">
-            <p>Ce photographe ne possède aucune facture</p>
+            <p>{{ 'INVOICE_HISTORY.NO_INVOICES' | translate }}</p>
         </div>
         <div class="invoice-item" *ngFor="let invoice of filteredInvoices">
             <app-invoice-card [invoice]="invoice"></app-invoice-card>
