@@ -123,5 +123,22 @@
     "INCORRECT_EMAIL_OR_PASSWORD_WITH_ATTEMPTS": "Email ou mot de passe incorrect. {{remainingAttempts}} tentative(s) restante(s) avant blocage.",
     "INCORRECT_EMAIL_OR_PASSWORD": "Email ou mot de passe incorrect.",
     "OTHER_ERROR": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "LOGS": {
+    "TITLE": "HISTORIQUE DES ACTIONS",
+    "LABEL_FILTERED_LOGS": "Logs filtrés",
+    "LABEL_UNIQUE_ACTIONS": "Actions uniques",
+    "FILTER_PLACEHOLDER": "Rechercher (action, table, IP)",
+    "OPTION_ALL": "Toutes les actions",
+    "LOADING_LOGS": "Chargement des logs...",
+    "NO_LOGS": "Aucun log trouvé",
+    "LABEL_USER": "Utilisateur",
+    "LABEL_IP": "IP",
+    "LABEL_ID_LOG": "ID Log",
+    "LABEL_DETAILS": "Détails",
+    "BTN_PREVIOUS": "Précédent",
+    "BTN_NEXT": "Suivant",
+    "PAGE_INFO_CURRENT": "Page ",
+    "PAGE_INFO_TOTAL": " sur "
   }
 }
