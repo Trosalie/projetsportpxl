@@ -150,5 +150,22 @@
     "SEARCH_BAR_PLACEHOLDER": "Rechercher un email...",
     "LOADING_MAIL": "Chargement des emails...",
     "NO_MAILS": "Aucun email trouvé"
+  },
+  "NAVIGATION_BAR": {
+    "IMG_LOGO_ALT": "App Logo",
+    "IMG_LOGOUT_ICON_ALT": "Déconnexion",
+    "BTN_DISCONNECT": "Se déconnecter",
+    "LEGAL_LINKS_LEGAL": "Mentions légales",
+    "LEGAL_LINKS_TERMS_CONDITION": "Conditions générales d'utilisation",
+    "LEGAL_LINKS_PRIVACY_POLICY": "Politique de confidentialité",
+    "ROUTE_DASHBOARD": "Tableau de bord",
+    "ROUTE_MAILS": "Historique des emails",
+    "ROUTE_PHOTOGRAPHERS": "Liste des photographes",
+    "ROUTE_GENERAL_GRAPH": "Graphique général",
+    "ROUTE_LOGS": "Logs",
+    "ROUTE_FORM_PAYOUT": "Formulaire de versement",
+    "ROUTE_FORM_CREDITS": "Formulaire d'ajout de crédits",
+    "ROUTE_PROFILE": "Profil",
+    "ROUTE_INVOICES": "Historique des factures"
   }
 }

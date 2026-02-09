@@ -35,7 +35,7 @@ export class NavigationBar implements OnDestroy {
 
   ngOnInit() {
     this.updateNavigation();
-    
+
     // Écouter les changements de route
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
@@ -46,15 +46,15 @@ export class NavigationBar implements OnDestroy {
 
     this.legalLinks = [
       {
-        label: 'Mentions légales',
+        label: this.translate.instant('NAVIGATION_BAR.LEGAL_LINKS_LEGAL'),
         url: 'https://www.app.sportpxl.com/legal'
       },
       {
-        label: "Conditions générales d'utilisation",
+        label: this.translate.instant('NAVIGATION_BAR.LEGAL_LINKS_TERMS_CONDITION'),
         url: 'https://www.app.sportpxl.com/terms-conditions'
       },
       {
-        label: 'Politique de confidentialité',
+        label: this.translate.instant('NAVIGATION_BAR.LEGAL_LINKS_PRIVACY_POLICY'),
         url: 'https://sportpxl.com/politique-de-confidentialite/'
       },
       // {
@@ -67,17 +67,17 @@ export class NavigationBar implements OnDestroy {
   updateNavigation() {
     const currentUrl = this.router.url;
     const currentUrlWithoutParams = currentUrl.split('?')[0];
-    
+
     // Route par défaut
     this.pages = [];
-    
+
     if (this.roleService.getRole() === 'photographer') {
       this.pages.push({
-        label: 'Tableau de bord',
+        label: this.translate.instant('NAVIGATION_BAR.ROUTE_DASHBOARD'),
         route: '/',
         icon: 'assets/images/liste_icon.svg'
       },{
-        label: 'Historique des emails',
+        label: this.translate.instant('NAVIGATION_BAR.ROUTE_MAILS'),
         route: '/mails',
         icon: 'assets/images/mail_icon.svg'
       });
@@ -87,23 +87,23 @@ export class NavigationBar implements OnDestroy {
     if (this.roleService.getRole() === 'admin') {
 
       this.pages.push({
-        label: 'Liste des photographes',
+        label: this.translate.instant('NAVIGATION_BAR.ROUTE_PHOTOGRAPHERS'),
         route: '/photographers',
         icon: 'assets/images/liste_icon.svg'
       }, {
-        label: 'Graphique général',
+        label: this.translate.instant('NAVIGATION_BAR.ROUTE_GENERAL_GRAPH'),
         route: '/general-graph',
         icon: 'assets/images/graphic_icon.svg'
       }, {
-        label: 'Logs',
+        label: this.translate.instant('NAVIGATION_BAR.ROUTE_LOGS'),
         route: '/logs',
         icon: 'assets/images/logs_icon.svg'
       }, {
-        label: 'Formulaire de versement',
+        label: this.translate.instant('NAVIGATION_BAR.ROUTE_FORM_PAYOUT'),
         route: '/form/payout',
         icon: 'assets/images/form_icon.svg'
       }, {
-        label: 'Formulaire d\'ajout de crédits',
+        label: this.translate.instant('NAVIGATION_BAR.ROUTE_FORM_CREDITS'),
         route: '/form/credits',
         icon: 'assets/images/form_icon.svg'
       });
@@ -125,13 +125,13 @@ export class NavigationBar implements OnDestroy {
           icon: 'assets/images/photographer_icon.svg',
           subPages: [
             {
-              label: 'Profil',
+              label: this.translate.instant('NAVIGATION_BAR.ROUTE_PROFILE'),
               route: profileRoute,
               icon: 'assets/images/profile_info_icon.svg',
               queryParams
             },
             {
-              label: 'Historique des factures',
+              label: this.translate.instant('NAVIGATION_BAR.ROUTE_INVOICES'),
               route: invoicesRoute,
               icon: 'assets/images/histofacture_icon.svg',
               queryParams
@@ -171,22 +171,22 @@ export class NavigationBar implements OnDestroy {
   isActivePage(route: string): boolean {
     const currentUrl = this.router.url.split('?')[0]; // Enlever les query params
     const normalizedRoute = route.startsWith('/') ? route : '/' + route;
-    
+
     // Si c'est la route racine
     if (normalizedRoute === '/') {
       return currentUrl === '/' || currentUrl === '';
     }
-    
+
     // Vérifier si c'est une correspondance exacte
     if (currentUrl === normalizedRoute) {
       return true;
     }
-    
+
     // Pour /photographers, vérifier que l'URL est exactement /photographers (pas de sous-routes)
     if (normalizedRoute === '/photographers') {
       return currentUrl === '/photographers';
     }
-    
+
     // Pour les autres routes avec sous-chemins, vérifier correspondance exacte
     return currentUrl === normalizedRoute;
   }

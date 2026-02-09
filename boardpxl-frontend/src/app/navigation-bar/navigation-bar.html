@@ -1,7 +1,7 @@
 <div [class.hide]="isLoginPage()">
    <nav [class.open]="isOpen">
       <div class="nav-logo-mobile">
-         <img src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" alt="App Logo" class="logo">
+         <img src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" [alt]="('NAVIGATION_BAR.IMG_LOGO_ALT' | translate)" class="logo">
       </div>
       <ul>
          <li *ngFor="let page of pages">
@@ -28,8 +28,8 @@
       </ul>
       <div class="disconnect-container">
          <button class="disconnect" aria-label="Disconnect" (click)="disconnect()">
-            <img src="assets/images/logout_icon.svg" class="navbar-icon" alt="Déconnexion">
-            Se déconnecter
+            <img src="assets/images/logout_icon.svg" class="navbar-icon" [alt]="('NAVIGATION_BAR.IMG_LOGOUT_ICON_ALT' | translate)">
+           {{ 'NAVIGATION_BAR.BTN_DISCONNECT' | translate }}
          </button>
       </div>
       <div class="legal-links">
