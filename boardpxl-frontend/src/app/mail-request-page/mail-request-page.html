@@ -1,4 +1,8 @@
-<app-title [title]="requestType === 'versement' ? 'DEMANDE DE VERSEMENT DE CHIFFRE D\'AFFAIRES' : 'DEMANDE D\'AJOUT DE CRÉDITS'"></app-title>
+<app-title [title]="
+    requestType === 'versement'
+        ? ('MAIL_REQUEST_PAGE.TITLE_TURNOVER' | translate)
+        : ('MAIL_REQUEST_PAGE.TITLE_CREDIT' | translate)
+    "></app-title>
 <div class="container">
     <app-photographer-request [requestType]="requestType"></app-photographer-request>
 </div>
