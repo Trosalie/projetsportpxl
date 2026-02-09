@@ -10,40 +10,11 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Models\Photographer;
 
-/**
- * @class PennylaneService
- * @brief Service de gestion de l'API Pennylane
- * 
- * Cette classe fournit une interface pour interagir avec l'API externe Pennylane.
- * Elle gère la création de factures, la récupération des données clients et
- * la synchronisation des factures entre Pennylane et la base de données locale.
- * 
- * @author SportPxl Team
- * @version 1.0.0
- * @date 2026-01-13
- */
 class PennylaneService
 {
-    /**
-     * HTTP client used to communicate with the Pennylane external API.
-     *
-     * @var Client
-     */
     protected $client;
-
-    /**
-     * API authentication token used for Pennylane requests.
-     *
-     * @var string|null
-     */
     protected $token;
 
-    /**
-     * Create a new PennylaneService instance and configure the HTTP client.
-     *
-     * The HTTP client is initialised with the base URI and authorization
-     * headers required to communicate with the Pennylane external API.
-     */
     public function __construct()
     {
         $this->token = config('services.pennylane.token');
@@ -58,21 +29,11 @@ class PennylaneService
         ]);
     }
 
-    /**
-     *
-     *
-     * @return Client
-     * */
     public function getHttpClient(): Client
     {
         return $this->client;
     }
 
-    /**
-     * Get all invoices from database (credits and payments)
-     *
-     * @return array
-     * */
     public function getInvoices()
     {
         $allInvoices = [];
@@ -98,9 +59,8 @@ class PennylaneService
             $cursor = $data['next_cursor'] ?? null;
             $hasMore = $data['has_more'] ?? false;
 
-            // Add delay to avoid rate limiting
             if ($hasMore) {
-                usleep(500000); // 0.5 second delay between requests
+                usleep(500000);
             }
 
         } while ($hasMore);
@@ -108,15 +68,6 @@ class PennylaneService
         return $allInvoices;
     }
 
-    /**
-     * @brief Récupère une facture par son numéro
-     * 
-     * Recherche une facture spécifique dans l'ensemble des factures Pennylane
-     * en utilisant son numéro de facture unique.
-     * 
-     * @param string $invoiceNumber Numéro de la facture à rechercher
-     * @return array|null Données de la facture ou null si non trouvée
-     */
     public function getInvoiceByNumber(string $invoiceNumber): ?array
     {
         $allInvoices = $this->getInvoices();
@@ -127,15 +78,9 @@ class PennylaneService
             }
         }
 
-        return null; // Facture non trouvée
+        return null;
     }
 
-    /**
-     * Get all the invoices of a specific Client
-     *
-     * @param int $idClient
-     * @return array
-     * */
     public function getInvoicesByIdClient(int $idClient): array
     {
         $allInvoices = $this->getInvoices();
@@ -144,21 +89,13 @@ class PennylaneService
             return isset($invoice['customer']['id']) && $invoice['customer']['id'] == $idClient;
         });
 
-        return array_values($clientInvoices); // Ré-indexe le tableau
+        return array_values($clientInvoices);
     }
 
-    /**
-     * Get the id of a specific client name
-     *
-     * @param string $name
-     * @return int
-     * */
     public function getClientIdByName(string $name): ?int
     {
-        // Récupérer tous les clients
         $clients = $this->getListClients();
 
-        // Filtrer le client par nom et prénom (insensible à la casse)
         foreach ($clients as $client) {
             $clientName = $client['name'] ?? '';
 
@@ -167,22 +104,9 @@ class PennylaneService
             }
         }
 
-        return null; // Aucun client trouvé
+        return null;
     }
 
-    /**
-     * add a credit invoice for a client
-     *
-     * @param string $labelTVA
-     * @param string $labelProduct
-     * @param string $description
-     * @param string $amountEuro
-     * @param string $issueDate
-     * @param string $dueDate
-     * @param int $idClient
-     * @param string $invoiceTitle
-     * @return json
-     * */
     public function createCreditsInvoiceClient(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $discount, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle)
     {
         $client = new \GuzzleHttp\Client();
@@ -224,17 +148,6 @@ class PennylaneService
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    /**
-     * add a payment invoice for a client
-     *
-     * @param string $labelTVA
-     * @param string $issueDate
-     * @param string $dueDate
-     * @param int $idClient
-     * @param string $invoiceTitle
-     * @param string $invoiceDescription
-     * @return json
-     * */
     public function createTurnoverInvoiceClient(string $labelTVA, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle, string $invoiceDescription)
     {
         $client = new \GuzzleHttp\Client();
@@ -276,11 +189,6 @@ class PennylaneService
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    /**
-     * get all photographers
-     *
-     * @return array
-     * */
     public function getPhotographers()
     {
         $response = $this->client->get('customers?sort=-id');
@@ -289,12 +197,6 @@ class PennylaneService
         return $data['items'] ?? [];
     }
 
-    /**
-     * get ... from a specific invoice
-     *
-     * @param string $invoiceNumber
-     * @return array
-     * */
     public function getProductFromInvoice(string $invoiceNumber): ?array
     {
         $invoice = $this->getInvoiceByNumber($invoiceNumber);
@@ -334,11 +236,6 @@ class PennylaneService
         return null; // Produit non trouvé
     }
 
-    /**
-     * get the 100 first clients
-     *
-     * @return array
-     * */
     public function getListClients(): array
     {
         $allClients = [];
@@ -347,8 +244,8 @@ class PennylaneService
         do {
             $response = $this->client->get('customers', [
                 'query' => array_filter([
-                    'limit' => 100,           // max PennyLane
-                    'cursor' => $cursor,      // null pour la 1ère page
+                    'limit' => 100,
+                    'cursor' => $cursor,
                     'sort' => '-id',
                 ])
             ]);
@@ -356,12 +253,11 @@ class PennylaneService
             $data = json_decode($response->getBody()->getContents(), true);
 
             if (!isset($data['items'])) {
-                break; // sécurité
+                break;
             }
 
             $allClients = array_merge($allClients, $data['items']);
 
-            // valeurs de pagination
             $cursor = $data['next_cursor'] ?? null;
             $hasMore = $data['has_more'] ?? false;
 
@@ -370,12 +266,6 @@ class PennylaneService
         return $allClients;
     }
 
-    /**
-     * get the invoice with a specific id
-     *
-     * @param int $id
-     * @return array
-     * */
     public function getInvoiceById(int $id): ?array
     {
         $response = $this->client->get("customer_invoices/{$id}");
@@ -387,16 +277,6 @@ class PennylaneService
         return null; // Facture non trouvée
     }
 
-    /**
-     * @brief Synchronise les factures entre Pennylane et la base de données locale
-     * 
-     * Récupère toutes les factures depuis Pennylane et les synchronise avec
-     * la base de données locale. Distingue automatiquement les factures de crédit
-     * des factures de versement de CA et met à jour les entrées correspondantes.
-     * Les erreurs de synchronisation sont logées sans interrompre le processus.
-     * 
-     * @return void
-     */
     public function syncInvoices(): void
     {
         try {
@@ -407,14 +287,13 @@ class PennylaneService
                     if (!isset($invoice['id'])) {
                         continue;
                     }
-                    echo "Synchronisation de la facture ID " . $invoice['id'] . PHP_EOL;
-                    
+
                     $product = $this->getProductFromInvoice($invoice['invoice_number']);
                     if (!$product) {
                         Log::warning('Could not get product for invoice: ' . $invoice['invoice_number']);
                         continue;
                     }
-                    
+
                     $isCredit = str_contains(strtolower($product['label'] ?? ''), 'crédits');
                     $vat = isset($invoice['tax'], $invoice['currency_amount_before_tax']) && $invoice['currency_amount_before_tax'] != 0
                         ? $invoice['tax'] / $invoice['currency_amount_before_tax'] * 100
@@ -423,14 +302,13 @@ class PennylaneService
                     if($isCredit){
                         $raw = $product['label'] ?? '';
                         $clean = preg_replace('/crédits/i', '', $raw);
-                        $clean = preg_replace('/\s+/', '', $clean);
+                        $clean = preg_replace('/\\s+/', '', $clean);
                         $clean = str_replace(',', '.', $clean);
-                        $clean = preg_replace('/[^\d\.-]/', '', $clean);
+                        $clean = preg_replace('/[^\\d\\.-]/', '', $clean);
                         $creditAmount = empty($clean) ? $product['quantity'] ?? 0 : (float) $clean;
-                        
+
                         $invoicePrev = InvoiceCredit::find($invoice['id']);
-                        
-                        // Determine photographer_id
+
                         $photographerId = null;
                         if ($invoicePrev) {
                             $photographerId = $invoicePrev->photographer_id;
@@ -470,12 +348,11 @@ class PennylaneService
                     }
                     else {
                         $match = [];
-                        preg_match('/(\d+(?:[.,]\d{2})?)\s*€/', $invoice['pdf_description'] ?? '', $match);
+                        preg_match('/(\\d+(?:[.,]\\d{2})?)\\s*€/', $invoice['pdf_description'] ?? '', $match);
                         $rawValue = $match ? (float) str_replace(',', '.', $match[1]) : 0;
 
                         $invoicePrev = InvoicePayment::find($invoice['id']);
-                        
-                        // Determine photographer_id
+
                         $photographerId = null;
                         if ($invoicePrev) {
                             $photographerId = $invoicePrev->photographer_id;
@@ -490,8 +367,7 @@ class PennylaneService
                             Log::warning('Photographer not found for invoice: ' . $invoice['invoice_number']);
                             continue;
                         }
-                        
-                        // Get period dates
+
                         $startPeriod = $invoicePrev ? $invoicePrev->start_period : now()->startOfMonth();
                         $endPeriod = $invoicePrev ? $invoicePrev->end_period : now()->endOfMonth();
 
@@ -529,4 +405,3 @@ class PennylaneService
         }
     }
 }
-
