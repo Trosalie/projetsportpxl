@@ -25,10 +25,10 @@
             <p class="payée status" *ngIf="invoiceType === 'Payment'">{{ 'INVOICE_CARD.STATUS_PAYED' | translate }}</p>
             <p *ngIf="invoiceType === 'Credit'" class="{{ (invoiceCredit.status | lowercase).split(' ').join('-') }} status">{{ invoiceCredit.status }}</p>
             <button class="open" (click)="openInvoice(invoice.link_pdf)">
-                <span class="material-symbols-outlined">{{ 'INVOICE_CARD.OPEN' | translate }}</span>
+                <span class="material-symbols-outlined">open_in_new</span>
             </button>
             <button class="download" (click)="downloadInvoice(invoice.link_pdf, invoice.pdf_invoice_subject)">
-                <span class="material-symbols-outlined">{{ 'INVOICE_CARD.DOWNLOAD' | translate }}</span>
+                <span class="material-symbols-outlined">download</span>
             </button>
         </div>
         <p>

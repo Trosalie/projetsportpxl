@@ -93,8 +93,6 @@
     "CREDIT_PURCHASED": "Achat de crédits",
     "TURNOVER_PAYMENT": "Versement de chiffre d'affaires",
     "STATUS_PAYED": "Payée",
-    "OPEN": "open_in_new",
-    "DOWNLOAD": "download",
     "DUE": "Echéance "
   },
   "INVOICE_FILTER": {
@@ -167,5 +165,8 @@
     "ROUTE_FORM_CREDITS": "Formulaire d'ajout de crédits",
     "ROUTE_PROFILE": "Profil",
     "ROUTE_INVOICES": "Historique des factures"
+  },
+  "PAGINATION": {
+    "INFO": "Page "
   }
 }
