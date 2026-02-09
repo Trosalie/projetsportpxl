@@ -96,5 +96,13 @@
     "OPEN": "open_in_new",
     "DOWNLOAD": "download",
     "DUE": "Echéance "
+  },
+  "INVOICE_FILTER": {
+    "FILTER_LABEL": "Filtres",
+    "IMG_PRICE_TAG_ICON_ALT": "Statut",
+    "IMG_CLOSE_ICON_ALT": "Clear",
+    "IMG_CATEGORY_ICON_ALT": "Type",
+    "IMG_CALENDAR_ICON_ALT": "Période",
+    "ALERT_UPDATE_DATE_FILTER": "La date \"Après le\" doit être antérieure à la date \"Avant le\"."
   }
 }

@@ -1,21 +1,21 @@
 <div class="filter-section">
-  <div class="filter-label">Filtres</div>
+  <div class="filter-label">{{ 'INVOICE_FILTER.FILTER_LABEL' | translate }}</div>
 
   <!-- Filter Buttons -->
   <div class="filter-buttons">
     <!-- Statut Button -->
     <div class="filter-dropdown-container">
       <button class="filter-button" [class.active]="hasActiveStatusFilters()" (click)="toggleDropdown('status', $event)">
-        <img src="assets/price-tag_icon.png" alt="Statut" class="filter-icon">
+        <img src="assets/price-tag_icon.png" [alt]="('INVOICE_FILTER.IMG_PRICE_TAG_ICON_ALT' | translate)" class="filter-icon">
         <span>Statut</span>
         <button *ngIf="hasActiveStatusFilters()" class="clear-category-btn" (click)="clearCategoryFilters('status', $event)">
-          <img src="assets/close_icon.png" alt="Clear">
+          <img src="assets/close_icon.png" [alt]="('INVOICE_FILTER.IMG_CLOSE_ICON_ALT' | translate)">
         </button>
       </button>
       <div class="dropdown-menu" *ngIf="openDropdown === 'status'" (click)="$event.stopPropagation()">
         <label class="checkbox-item" *ngFor="let status of statusFilters">
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             [checked]="isFilterActive(status)"
             (change)="toggleFilter(status)">
           <span>{{ status }}</span>
@@ -26,16 +26,16 @@
     <!-- Type Button -->
     <div class="filter-dropdown-container">
       <button class="filter-button" [class.active]="hasActiveTypeFilters()" (click)="toggleDropdown('type', $event)">
-        <img src="assets/category_icon.png" alt="Type" class="filter-icon">
+        <img src="assets/category_icon.png" [alt]="('INVOICE_FILTER.IMG_CATEGORY_ICON_ALT' | translate)" class="filter-icon">
         <span>Type</span>
         <button *ngIf="hasActiveTypeFilters()" class="clear-category-btn" (click)="clearCategoryFilters('type', $event)">
-          <img src="assets/close_icon.png" alt="Clear">
+          <img src="assets/close_icon.png" [alt]="('INVOICE_FILTER.IMG_CLOSE_ICON_ALT' | translate)">
         </button>
       </button>
       <div class="dropdown-menu" *ngIf="openDropdown === 'type'" (click)="$event.stopPropagation()">
         <label class="checkbox-item" *ngFor="let type of typeFilters">
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             [checked]="isFilterActive(type)"
             (change)="toggleFilter(type)">
           <span>{{ type }}</span>
@@ -46,27 +46,27 @@
     <!-- Période Button -->
     <div class="filter-dropdown-container">
       <button class="filter-button" [class.active]="hasActivePeriodFilters()" (click)="toggleDropdown('period', $event)">
-        <img src="assets/calendar_icon.png" alt="Période" class="filter-icon">
+        <img src="assets/calendar_icon.png" [alt]="('INVOICE_FILTER.IMG_CALENDAR_ICON_ALT' | translate)" class="filter-icon">
         <span>Période</span>
         <button *ngIf="hasActivePeriodFilters()" class="clear-category-btn" (click)="clearCategoryFilters('period', $event)">
-          <img src="assets/close_icon.png" alt="Clear">
+          <img src="assets/close_icon.png" [alt]="('INVOICE_FILTER.IMG_CLOSE_ICON_ALT' | translate)">
         </button>
       </button>
       <div class="dropdown-menu period-dropdown" *ngIf="openDropdown === 'period'" (click)="$event.stopPropagation()">
         <div class="date-filter-item" *ngFor="let period of periodFilters">
           <label class="checkbox-item">
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               [checked]="isFilterActive(period)"
               (change)="toggleFilter(period); isFilterActive(period) && addDateFilter(period)">
             <span>{{ period }}</span>
           </label>
-          <input 
+          <input
             *ngIf="isFilterActive(period)"
-            type="date" 
-            class="date-input" 
+            type="date"
+            class="date-input"
             [attr.data-filter]="period"
-            [value]="getDateValue(period)" 
+            [value]="getDateValue(period)"
             (change)="updateDateFilter(period, $event)"
             [min]="period === 'Avant le' ? getDateValue('Après le') : ''"
             [max]="period === 'Après le' ? getDateValue('Avant le') : ''"

@@ -69,7 +69,7 @@ export class InvoiceFilter {
       this.activeFilters.push(filterValue);
       this.dateFilters.set(filterValue, '');
     }
-    
+
     // Focus on the specific date input that was just added
     setTimeout(() => {
       const input = document.querySelector(`.date-input[data-filter="${filterValue}"]`) as HTMLInputElement;
@@ -89,7 +89,7 @@ export class InvoiceFilter {
   updateDateFilter(filterValue: string, event: Event) {
     const input = event.target as HTMLInputElement;
     const newValue = input.value;
-    
+
     // Validate date range
     if (this.isDateRangeValid(filterValue, newValue)) {
       this.dateFilters.set(filterValue, newValue);
@@ -98,7 +98,7 @@ export class InvoiceFilter {
       // Reset to previous value if invalid
       input.value = this.dateFilters.get(filterValue) || '';
       // Show error message
-      alert('La date "Après le" doit être antérieure à la date "Avant le".');
+      alert(this.translate.instant('INVOICE_FILTER.ALERT_UPDATE_DATE_FILTER'));
     }
   }
 
@@ -148,9 +148,9 @@ export class InvoiceFilter {
 
   clearCategoryFilters(category: string, event: Event): void {
     event.stopPropagation();
-    
+
     let filtersToRemove: string[] = [];
-    
+
     switch(category) {
       case 'status':
         filtersToRemove = this.statusFilters;
@@ -162,7 +162,7 @@ export class InvoiceFilter {
         filtersToRemove = this.periodFilters;
         break;
     }
-    
+
     filtersToRemove.forEach(filter => {
       if (this.activeFilters.includes(filter)) {
         this.removeFilter(filter);
