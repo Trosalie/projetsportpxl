@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PhotographerService } from '../services/photographer-service';
 import { SettlementReportService } from '../services/settlement-report-service';
 import { Photographer } from '../models/photographer.model';
+import { Popup } from '../popup/popup';
 import { jsPDF } from 'jspdf';
 import { Router } from '@angular/router';
 
@@ -25,6 +26,7 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
   selectedPhotographer: Photographer | null = null;
   private photographersMap: Map<string, any> = new Map(); // Map nom -> objet photographe
   private destroy$ = new Subject<void>();
+  @ViewChild('popup') popup!: Popup;
 
   constructor(
     private fb: FormBuilder, 
@@ -298,10 +300,13 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
               console.log('Relevé d\'encaissement enregistré:', response.data);
               // Générer le PDF après la sauvegarde
               this.generatePdf(formValue, this.selectedPhotographer);
+              this.popup.showNotification("Le relevé a bien été généré");
               // Réinitialiser le formulaire
               this.resetForm();
-              // Rediriger vers la liste des relevés
-              this.router.navigate(['/settlement-reports']);
+              // Rediriger vers la liste des relevés après un délai
+              setTimeout(() => {
+                this.router.navigate(['/settlement-reports']);
+              }, 2000);
             }
           },
           error: (err) => {
