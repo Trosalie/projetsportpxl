@@ -168,5 +168,9 @@
   },
   "PAGINATION": {
     "INFO": "Page "
+  },
+  "PHOTOGRAPHER_CARD": {
+    "INFO_NAME": "Photographer : ",
+    "": ""
   }
 }
