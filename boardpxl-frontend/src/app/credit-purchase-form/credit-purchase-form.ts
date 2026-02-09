@@ -45,7 +45,7 @@ export class CreditPurchaseForm implements OnDestroy {
     // Récupère le nom du client depuis les query params
     this.route.queryParams.subscribe(params => {
       this.clientName = params['clientName'] || '';
-      
+
       // Cherche le client par nom/prénom
       if (this.clientName) {
         this.isLoading = true;
@@ -68,7 +68,7 @@ export class CreditPurchaseForm implements OnDestroy {
             console.error('Erreur fetch client ID :', err);
             this.isLoading = false;
             this.findClient = false;
-            this.popup.showNotification("Le photographe n'a pas été trouvé !");
+            this.popup.showNotification(this.translate.instant('CREDIT_PURCHASE_FORM.PHOTOGRAPHER_NOT_FOUND'));
             this.loadClients();
           }
         });
@@ -125,10 +125,10 @@ export class CreditPurchaseForm implements OnDestroy {
           this.clientId = data.client_id;
           this.pennylaneId = data.pennylane_id;
         } else {
-          this.popup.showNotification('Client non trouvé !');
+          this.popup.showNotification(this.translate.instant('CREDIT_PURCHASE_FORM.PHOTOGRAPHER_NOT_FOUND'));
         }
         this.isLoading = false;
-      }, 
+      },
       error: (err) => {
         console.error('Erreur fetch client ID après sélection :', err);
         this.isLoading = false;
@@ -146,7 +146,7 @@ export class CreditPurchaseForm implements OnDestroy {
     due.setMonth(due.getMonth() + 1);
     const dueDate = due.toISOString().slice(0, 10);
     if (!subject || !dueDate || !form['priceHT'].value || !form['credits'].value || !(form['tva'] as HTMLSelectElement).value || !this.findClient) {
-      this.popup.showNotification("Merci de remplir tous les champs du formulaire.");
+      this.popup.showNotification(this.translate.instant('CREDIT_PURCHASE_FORM.FORM_NOT_FINISHED'));
       return;
     }
 
@@ -164,9 +164,9 @@ export class CreditPurchaseForm implements OnDestroy {
       title: subject,
       amount: parseFloat(form['priceHT'].value),
       items: [
-        { label: 'Photographe', value: this.photographerInput },
-        { label: 'Crédits', value: `${form['credits'].value} crédits` },
-        { label: 'TVA', value: (form['tva'] as HTMLSelectElement).value }
+        { label: this.translate.instant("CREDIT_PURCHASE_FORM.LABEL_PHOTOGRAPHER"), value: this.photographerInput },
+        { label: this.translate.instant("CREDIT_PURCHASE_FORM.LABEL_CREDITS"), value: `${form['credits'].value} crédits` },
+        { label: this.translate.instant("CREDIT_PURCHASE_FORM.LABEL_TVA"), value: (form['tva'] as HTMLSelectElement).value }
       ]
     };
 
@@ -179,7 +179,9 @@ export class CreditPurchaseForm implements OnDestroy {
     const { issueDate, subject, dueDate, priceHT, credits, tva } = this.pendingFormData;
     const body = {
       labelTVA: tva,
-      labelProduct: `${credits} crédits`,
+      labelProduct: this.translate.instant('CREDIT_PURCHASE_FORM.PRODUCT_CREDITS', {
+        count: credits
+      }),
       amountEuro: priceHT,
       issueDate: issueDate,
       dueDate: dueDate,
@@ -192,7 +194,7 @@ export class CreditPurchaseForm implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
       next: (response) => {
-        this.popup.showNotification('Facture créée avec succès !');
+        this.popup.showNotification(this.translate.instant('CREDIT_PURCHASE_FORM.SUCCEED'));
         this.creationFacture = false;
         this.pendingFormData = null;
         this.modalData = null;
@@ -202,7 +204,7 @@ export class CreditPurchaseForm implements OnDestroy {
         }, 2000);
       },
       error: () => {
-        this.popup.showNotification("Erreur lors de la création de la facture");
+        this.popup.showNotification(this.translate.instant('CREDIT_PURCHASE_FORM.ERROR_CREATE'));
         this.creationFacture = false;
         this.showConfirmModal = true;
       }
@@ -215,7 +217,7 @@ export class CreditPurchaseForm implements OnDestroy {
     this.showConfirmModal = false;
   }
 
-  insertCreditsInvoice( reponse: any, amount: number, credits: number, tva: string, status: string, issueDate: string, dueDate: string, clientId: number) 
+  insertCreditsInvoice( reponse: any, amount: number, credits: number, tva: string, status: string, issueDate: string, dueDate: string, clientId: number)
   {
     const invoice = reponse.data;
     const vatValue = this.convertTvaCodeToPercent(tva);
@@ -228,7 +230,7 @@ export class CreditPurchaseForm implements OnDestroy {
       amount: amount,
       tax: invoice.tax,
       vat: vatValue,
-      total_due: amount + invoice.tax, 
+      total_due: amount + invoice.tax,
       credits: credits,
       status: status,
       link_pdf: invoice.public_file_url,

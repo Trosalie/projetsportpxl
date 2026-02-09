@@ -49,5 +49,21 @@
     "CONFIRM_CHECK": "Je confirme la création de cette facture",
     "BTN_DISCARD": "Annuler",
     "BTN_CONFIRM": "Confirmer"
+  },
+  "CREDIT_PURCHASE_FORM": {
+    "TITLE": "ACHAT DE CRÉDITS",
+    "LABEL_PHOTOGRAPHER": "Photographe : ",
+    "LOADING_PHOTOGRAPHER": "Chargement du photographe...",
+    "LABEL_SUBJECT": "Sujet de la facture : ",
+    "LABEL_CREDITS": "Crédits ajoutés : ",
+    "LABEL_PRICE_HT": "Prix HT (€) : ",
+    "LABEL_TVA": "TVA : ",
+    "LABEL_DATE": "Date : ",
+    "BTN_SUBMIT": "Valider",
+    "PHOTOGRAPHER_NOT_FOUND": "Le photographe n'a pas été trouvé !",
+    "FORM_NOT_FINISHED": "Merci de remplir tous les champs du formulaire.",
+    "PRODUCT_CREDITS": "{{count}} crédits",
+    "SUCCEED": "Facture créée avec succès !",
+    "ERROR_CREATE": "Erreur lors de la création de la facture"
   }
 }
