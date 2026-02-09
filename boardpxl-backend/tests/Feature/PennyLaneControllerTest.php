@@ -26,7 +26,11 @@ class PennyLaneControllerTest extends TestCase
 
         $request = Request::create('/', 'POST', $payload);
 
-        $service = $this->createMock(PennylaneService::class);
+        $service = $this->getMockBuilder(PennylaneService::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['createCreditsInvoiceClient'])
+            ->getMock();
+
         $service->method('createCreditsInvoiceClient')->willReturn(['ok' => true]);
 
         $controller = new PennyLaneController(new LogService());
@@ -51,7 +55,11 @@ class PennyLaneControllerTest extends TestCase
 
         $request = Request::create('/', 'POST', $payload);
 
-        $service = $this->createMock(PennylaneService::class);
+        $service = $this->getMockBuilder(PennylaneService::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['createTurnoverInvoiceClient'])
+            ->getMock();
+
         $service->method('createTurnoverInvoiceClient')->willReturn(['turnover' => true]);
 
         $controller = new PennyLaneController(new LogService());
@@ -68,7 +76,11 @@ class PennyLaneControllerTest extends TestCase
     {
         $request = Request::create('/', 'POST', ['name' => 'Alice']);
 
-        $service = $this->createMock(PennylaneService::class);
+        $service = $this->getMockBuilder(PennylaneService::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getClientIdByName'])
+            ->getMock();
+
         $service->method('getClientIdByName')->willReturnOnConsecutiveCalls(123, null);
 
         $controller = new PennyLaneController(new LogService());
@@ -79,7 +91,6 @@ class PennyLaneControllerTest extends TestCase
         $this->assertTrue($dataFound['success']);
         $this->assertEquals(123, $dataFound['client_id']);
 
-        // second call -> not found
         $respNotFound = $controller->getClientId($request, $service);
         $this->assertEquals(404, $respNotFound->getStatusCode());
         $dataNotFound = $respNotFound->getData(true);
@@ -88,7 +99,11 @@ class PennyLaneControllerTest extends TestCase
 
     public function test_get_product_from_invoice_found_and_not_found()
     {
-        $service = $this->createMock(PennylaneService::class);
+        $service = $this->getMockBuilder(PennylaneService::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getProductFromInvoice'])
+            ->getMock();
+
         $service->method('getProductFromInvoice')->willReturnOnConsecutiveCalls(['product' => 'P'], null);
 
         $controller = new PennyLaneController(new LogService());
