@@ -41,8 +41,8 @@ class PennyLaneControllerTest extends TestCase
             'labelTVA'      => 'FR_200',
             'labelProduct'  => '40 000 crédits',
             'amountEuro'    => '100',
-            'issueDate'     => now()->toDateString(), 
-            'dueDate'       => now()->addDays(30)->toDateString(), 
+            'issueDate'     => now()->toDateString(),
+            'dueDate'       => now()->addDays(30)->toDateString(),
             'idClient'      => 208474147,
             'invoiceTitle'  => 'Facture crédits'
         ]);
@@ -71,8 +71,8 @@ class PennyLaneControllerTest extends TestCase
             'labelTVA'      => 'FR_200',
             'labelProduct'  => '40 000 crédits',
             'amountEuro'    => '100',
-            'issueDate'     => now()->toDateString(), 
-            'dueDate'       => now()->addDays(30)->toDateString(), 
+            'issueDate'     => now()->toDateString(),
+            'dueDate'       => now()->addDays(30)->toDateString(),
             'idClient'      => 0,
             'invoiceTitle'  => 'Facture crédits'
         ]);
@@ -222,38 +222,54 @@ class PennyLaneControllerTest extends TestCase
             ->with('invoice_credits')
             ->once()
             ->andReturnSelf();
-        
+
         DB::shouldReceive('where')
             ->with('photographer_id', 12345)
             ->once()
             ->andReturnSelf();
-        
+
         DB::shouldReceive('get')
             ->once()
             ->andReturn(collect([
                 ['id' => 1, 'invoice_number' => 'INV-001', 'photographer_id' => 12345],
             ]));
-        
+
         DB::shouldReceive('table')
             ->with('invoice_payments')
             ->once()
             ->andReturnSelf();
-        
+
         DB::shouldReceive('where')
             ->with('photographer_id', 12345)
             ->once()
             ->andReturnSelf();
-        
+
         DB::shouldReceive('get')
             ->once()
             ->andReturn(collect([
                 ['id' => 3, 'invoice_number' => 'INV-003', 'photographer_id' => 12345],
             ]));
 
+        DB::shouldReceive('table')
+            ->with('invoice_subscription')
+            ->once()
+            ->andReturnSelf();
+
+        DB::shouldReceive('where')
+            ->with('photographer_id', 12345)
+            ->once()
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                ['id' => 5, 'invoice_number' => 'INV-SUB-001', 'photographer_id' => 12345],
+            ]));
+
         $response = $this->getJson('/api/invoices-client/12345');
 
         $response->assertStatus(200)
-                ->assertJsonCount(2);
+                ->assertJsonCount(3);
     }
 
     // Ce test vérifie la récupération réussie d'un produit d'une facture via son numéro.

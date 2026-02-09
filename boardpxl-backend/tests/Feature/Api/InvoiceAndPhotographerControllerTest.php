@@ -203,6 +203,18 @@ class InvoiceAndPhotographerControllerTest extends TestCase
             ->once()
             ->andReturn(null);
 
+        // Mock pour invoice_subscription - pas trouvé non plus
+        DB::shouldReceive('table')
+            ->with('invoice_subscription')
+            ->andReturnSelf();
+
+        DB::shouldReceive('where')
+            ->with('id', Mockery::any())
+            ->andReturnSelf();
+
+        DB::shouldReceive('first')
+            ->andReturn(null);
+
         $response = $this->getJson('/api/invoices/999');
 
         $response->assertStatus(404)
