@@ -1,11 +1,11 @@
 <div *ngIf="invoiceType !== ''" class="card">
     <div>
-        <p>Emission {{ invoice.issueDate | date: 'mediumDate' }}</p>
+        <p>{{ 'INVOICE_CARD.SENT' | translate }}{{ invoice.issueDate | date: 'mediumDate' }}</p>
         <p style="font-size: larger;">{{ invoice.number }}</p>
     </div>
     <div class="middle" *ngIf="invoiceType === 'Credit'">
         <div>
-            <p style="font-size: larger;">Achat de crédits</p>
+            <p style="font-size: larger;">{{ 'INVOICE_CARD.CREDIT_PURCHASED' | translate }}</p>
         </div>
         <div class="values">
             <p class="amount">{{ invoiceCredit.amount | currency }}</p>
@@ -14,7 +14,7 @@
     </div>
     <div class="middle" *ngIf="invoiceType === 'Payment'">
         <div>
-            <p style="font-size: larger;">Versement de chiffre d'affaires</p>
+            <p style="font-size: larger;">{{ 'INVOICE_CARD.TURNOVER_PAYMENT' | translate }}</p>
             <div class="values">
                 <p class="amount">{{ getTurnover() | currency }}</p>
             </div>
@@ -22,17 +22,17 @@
     </div>
     <div>
         <div class="actions">
-            <p class="payée status" *ngIf="invoiceType === 'Payment'">Payée</p>
+            <p class="payée status" *ngIf="invoiceType === 'Payment'">{{ 'INVOICE_CARD.STATUS_PAYED' | translate }}</p>
             <p *ngIf="invoiceType === 'Credit'" class="{{ (invoiceCredit.status | lowercase).split(' ').join('-') }} status">{{ invoiceCredit.status }}</p>
             <button class="open" (click)="openInvoice(invoice.link_pdf)">
-                <span class="material-symbols-outlined">open_in_new</span>
+                <span class="material-symbols-outlined">{{ 'INVOICE_CARD.OPEN' | translate }}</span>
             </button>
             <button class="download" (click)="downloadInvoice(invoice.link_pdf, invoice.pdf_invoice_subject)">
-                <span class="material-symbols-outlined">download</span>
+                <span class="material-symbols-outlined">{{ 'INVOICE_CARD.DOWNLOAD' | translate }}</span>
             </button>
         </div>
         <p>
-            Echéance {{ invoice.dueDate | date: 'mediumDate' }}
+          {{ 'INVOICE_CARD.DUE' | translate }}{{ invoice.dueDate | date: 'mediumDate' }}
         </p>
     </div>
 </div>

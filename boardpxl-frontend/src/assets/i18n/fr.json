@@ -84,5 +84,17 @@
     "LABEL_GRAPH_TURNOVER": "Chiffre d'Affaires (€)",
     "ALERT_UPDATE_DATE_FILTER": "La date \"Après le\" doit être antérieure à la date \"Avant le\".",
     "ALERT_APPLY_FILTERS": "Veuillez cocher au moins un filtre avant d'appliquer."
+  },
+  "HEADER": {
+    "IMG_LOGO_ALT": "App Logo"
+  },
+  "INVOICE_CARD": {
+    "SENT": "Emission ",
+    "CREDIT_PURCHASED": "Achat de crédits",
+    "TURNOVER_PAYMENT": "Versement de chiffre d'affaires",
+    "STATUS_PAYED": "Payée",
+    "OPEN": "open_in_new",
+    "DOWNLOAD": "download",
+    "DUE": "Echéance "
   }
 }
