@@ -9,6 +9,7 @@ use Ramsey\Collection\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * @class Photographer
@@ -24,7 +25,7 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class Photographer extends Authenticatable
 {
-    use HasFactory, HasApiTokens;
+    use HasFactory, HasApiTokens, Notifiable;
 
     /**
      * @var array $fillable Attributs assignables en masse
