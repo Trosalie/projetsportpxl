@@ -141,5 +141,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/settlement-report/last', [SettlementReportController::class, 'getLastSettlementReport']);
     Route::post('/settlement-report/calculate-turnover', [SettlementReportController::class, 'calculateTurnoverSinceDate']);
     Route::post('/settlement-report/create', [SettlementReportController::class, 'createSettlementReport']);
+    Route::get('/settlement-report/all', [SettlementReportController::class, 'getAllSettlementReports']);
 
 });

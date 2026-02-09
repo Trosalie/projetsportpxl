@@ -136,7 +136,6 @@ class SettlementReportController extends Controller
                 'commission' => 'required|numeric|min:0',
                 'period_start_date' => 'required|date',
                 'period_end_date' => 'required|date',
-                'status' => 'string|in:pending,validated,rejected',
             ]);
 
             $report = SettlementReport::create($validated);
@@ -154,6 +153,38 @@ class SettlementReportController extends Controller
 
         } catch (\Exception $e) {
             $this->logService->logAction($request, 'create_settlement_report_failed', 'SETTLEMENT_REPORTS', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Get all settlement reports
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAllSettlementReports(Request $request): JsonResponse
+    {
+        try {
+            $reports = SettlementReport::orderBy('created_at', 'desc')->get();
+
+            $this->logService->logAction($request, 'get_all_settlement_reports', 'SETTLEMENT_REPORTS', [
+                'count' => $reports->count(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $reports
+            ]);
+
+        } catch (\Exception $e) {
+            $this->logService->logAction($request, 'get_all_settlement_reports_failed', 'SETTLEMENT_REPORTS', [
                 'error' => $e->getMessage(),
             ]);
 

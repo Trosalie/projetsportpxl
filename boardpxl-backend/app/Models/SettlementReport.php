@@ -32,7 +32,6 @@ class SettlementReport extends Model
     protected $fillable = [
         'photographer_id',
         'pdf',
-        'status',
         'amount',
         'commission',
         'period_start_date',

@@ -1,17 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PhotographerService } from '../services/photographer-service';
 import { SettlementReportService } from '../services/settlement-report-service';
+import { Photographer } from '../models/photographer.model';
 import { jsPDF } from 'jspdf';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-settlement-report-form',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  standalone: false,
   templateUrl: './settlement-report-form.html',
   styleUrls: ['./settlement-report-form.scss']
 })
@@ -21,20 +20,23 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
   filteredClients: string[] = [];
   photographerInput = '';
   isLoading = false;
+  isLoadingTurnover = false;
   selectedPhotographerId: number | null = null;
-  private photographersMap: Map<string, number> = new Map(); // Map nom -> ID
+  selectedPhotographer: Photographer | null = null;
+  private photographersMap: Map<string, any> = new Map(); // Map nom -> objet photographe
   private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder, 
     private photographerService: PhotographerService,
-    private settlementReportService: SettlementReportService
+    private settlementReportService: SettlementReportService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.initForm();
-    this.loadClients();
     this.setupAdvancePaymentsCalculation();
+    this.loadClients();
   }
 
   initForm(): void {
@@ -46,8 +48,76 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
       advancePayments: new FormControl({ value: '', disabled: true }, Validators.min(0)),
       periodStartDate: ['', Validators.required],
       periodEndDate: [today, Validators.required]
+    }, {
+      validators: [this.dateValidator.bind(this), this.commissionValidator.bind(this)]
     });
   }
+
+  /**
+   * Validateur personnalisé pour les dates
+   * - La date de fin ne peut pas être avant la date de début
+   * - La date de fin ne peut pas être dans le futur
+   */
+  private dateValidator(form: AbstractControl): ValidationErrors | null {
+    const periodStartDate = form.get('periodStartDate')?.value;
+    const periodEndDate = form.get('periodEndDate')?.value;
+
+    if (!periodStartDate || !periodEndDate) {
+      return null;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+
+    // Vérifier que la date de fin n'est pas après aujourd'hui
+    if (periodEndDate > today) {
+      form.get('periodEndDate')?.setErrors({ futureDate: true });
+      return { futureDate: true };
+    }
+
+    // Vérifier que la date de fin n'est pas avant la date de début
+    if (periodEndDate < periodStartDate) {
+      form.get('periodEndDate')?.setErrors({ endBeforeStart: true });
+      return { endBeforeStart: true };
+    }
+
+    // Effacer les erreurs si les validations passent
+    const endDateControl = form.get('periodEndDate');
+    if (endDateControl?.hasError('futureDate') || endDateControl?.hasError('endBeforeStart')) {
+      endDateControl.setErrors(null);
+    }
+
+    return null;
+  }
+
+  /**
+   * Validateur personnalisé pour la commission
+   * - La commission ne peut pas dépasser le montant total des ventes
+   */
+  private commissionValidator(form: AbstractControl): ValidationErrors | null {
+    const totalSalesAmount = form.get('totalSalesAmount')?.value;
+    const commission = form.get('commission')?.value;
+
+    if (!totalSalesAmount || !commission) {
+      return null;
+    }
+
+    const amountNum = Number(totalSalesAmount);
+    const commissionNum = Number(commission);
+
+    if (commissionNum > amountNum) {
+      form.get('commission')?.setErrors({ commissionTooHigh: true });
+      return { commissionTooHigh: true };
+    }
+
+    // Effacer l'erreur si la validation passe
+    const commissionControl = form.get('commission');
+    if (commissionControl?.hasError('commissionTooHigh')) {
+      commissionControl.setErrors(null);
+    }
+
+    return null;
+  }
+
 
   /**
    * Configure le calcul automatique des acomptes versés
@@ -88,21 +158,25 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
       advancePaymentsControl.patchValue(advance, { emitEvent: false });
     }
   }
+
   loadClients(): void {
     this.isLoading = true;
+    this.settlementForm.get('photographer')?.disable();
     this.photographerService.getPhotographers()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
           this.clientsNames = res.map((c: any) => c.name);
-          // Créer une map pour associer nom -> ID
+          // Créer une map pour associer nom -> objet photographe
           res.forEach((c: any) => {
-            this.photographersMap.set(c.name, c.id);
+            this.photographersMap.set(c.name, c);
           });
           this.isLoading = false;
+          this.settlementForm.get('photographer')?.enable();
         },
         error: () => {
           this.isLoading = false;
+          this.settlementForm.get('photographer')?.enable();
         }
       });
   }
@@ -121,12 +195,14 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
     this.filteredClients = [];
     this.settlementForm.get('photographer')?.setValue(name);
     
-    // Récupérer l'ID du photographe
-    this.selectedPhotographerId = this.photographersMap.get(name) || null;
-    
-    // Charger le dernier relevé et calculer le CA
-    if (this.selectedPhotographerId) {
-      this.loadLastReportAndCalculateTurnover(this.selectedPhotographerId);
+    // Récupérer l'objet photographe complet
+    const photographer = this.photographersMap.get(name);
+    if (photographer && photographer.id) {
+      this.selectedPhotographer = photographer;
+      this.selectedPhotographerId = photographer.id;
+      
+      // Charger le dernier relevé et calculer le CA
+      this.loadLastReportAndCalculateTurnover(photographer.id);
     }
   }
 
@@ -141,6 +217,8 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
    * Prérempli le champ totalSalesAmount
    */
   private loadLastReportAndCalculateTurnover(photographerId: number): void {
+    this.isLoadingTurnover = true;
+    this.settlementForm.get('totalSalesAmount')?.disable();
     this.settlementReportService.getLastSettlementReport(photographerId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -164,6 +242,8 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Erreur lors de la récupération du dernier relevé:', err);
+          this.isLoadingTurnover = false;
+          this.settlementForm.get('totalSalesAmount')?.enable();
           // En cas d'erreur, calculer depuis le début
           this.calculateAndFillTurnover(photographerId, '2020-01-01');
         }
@@ -185,9 +265,13 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
               totalSalesAmount: turnover
             });
           }
+          this.isLoadingTurnover = false;
+          this.settlementForm.get('totalSalesAmount')?.enable();
         },
         error: (err) => {
           console.error('Erreur lors du calcul du CA:', err);
+          this.isLoadingTurnover = false;
+          this.settlementForm.get('totalSalesAmount')?.enable();
         }
       });
   }
@@ -202,8 +286,7 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
         amount: formValue.totalSalesAmount,
         commission: formValue.commission,
         period_start_date: formValue.periodStartDate,
-        period_end_date: formValue.periodEndDate,
-        status: 'pending'
+        period_end_date: formValue.periodEndDate
       };
 
       // Sauvegarder en BD
@@ -214,9 +297,11 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
             if (response.success) {
               console.log('Relevé d\'encaissement enregistré:', response.data);
               // Générer le PDF après la sauvegarde
-              this.generatePdf(formValue);
+              this.generatePdf(formValue, this.selectedPhotographer);
               // Réinitialiser le formulaire
               this.resetForm();
+              // Rediriger vers la liste des relevés
+              this.router.navigate(['/settlement-reports']);
             }
           },
           error: (err) => {
@@ -230,18 +315,21 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
 
   resetForm(): void {
     this.settlementForm.reset();
+    this.selectedPhotographer = null;
+    this.selectedPhotographerId = null;
+    this.photographerInput = '';
   }
 
-  private generatePdf(form: any): void {
+  private generatePdf(form: any, photographer: Photographer | null): void {
     const doc = new jsPDF();
     const title = "Relevé d'encaissement – Mandat de gestion des ventes";
     const startDate = this.formatDate(form.periodStartDate);
     const endDate = this.formatDate(form.periodEndDate);
     const amount = this.formatCurrency(form.totalSalesAmount);
     const commission = this.formatCurrency(form.commission);
-    const advances = this.formatCurrency(form.advancePayments);
+    const advances = this.formatCurrency(form.totalSalesAmount - form.commission);
     const today = this.formatDate(new Date().toISOString().split('T')[0]);
-    const photographer = form.photographer || 'Photographe';
+    const photographerName = form.photographer || 'Photographe';
 
     // Title
     doc.setTextColor(0, 92, 141);
@@ -257,11 +345,18 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
     doc.text('100 Avenue de l\'Adour', 10, 44);
     doc.text('64600 ANGLET', 10, 50);
 
-    // Photographer placeholder address (right)
-    doc.text(photographer, 200, 32, { align: 'right' });
-    doc.text('Adresse photographe', 200, 38, { align: 'right' });
-    doc.text('Ville - Code postal', 200, 44, { align: 'right' });
-    doc.text('Email photographe', 200, 50, { align: 'right' });
+    // Photographer address (right)
+    doc.text(photographerName, 200, 32, { align: 'right' });
+    if (photographer) {
+      doc.text(photographer.street_address || '', 200, 38, { align: 'right' });
+      const cityPostal = `${photographer.locality || ''} - ${photographer.postal_code || ''}`;
+      doc.text(cityPostal, 200, 44, { align: 'right' });
+      doc.text(photographer.email || '', 200, 50, { align: 'right' });
+    } else {
+      doc.text('Adresse non renseignée', 200, 38, { align: 'right' });
+      doc.text('Ville - Code postal', 200, 44, { align: 'right' });
+      doc.text('Email non renseigné', 200, 50, { align: 'right' });
+    }
 
     let y = 70;
     doc.setFont('helvetica', 'bold');
@@ -291,7 +386,7 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
     doc.text('Signature SPORTPXL', 10, y);
     doc.text('Signature du photographe', 200, y, { align: 'right' });
 
-    const fileName = `releve-encaissement-${photographer.replace(/\s+/g, '_')}-${form.periodEndDate || today}.pdf`;
+    const fileName = `releve-encaissement-${photographerName.replace(/\s+/g, '_')}-${form.periodEndDate || today}.pdf`;
     doc.save(fileName);
   }
 

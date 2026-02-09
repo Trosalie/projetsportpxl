@@ -17,8 +17,8 @@ class CreateSettlementReportsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('photographer_id');
             $table->string('status')->default('pending'); // pending, validated, rejected
-            $table->decimal('amount', 10, 2);
-            $table->decimal('commission', 10, 2);
+            $table->decimal('amount', 15, 2);
+            $table->decimal('commission', 15, 2);
             $table->date('period_start_date');
             $table->date('period_end_date');
             $table->timestamps();

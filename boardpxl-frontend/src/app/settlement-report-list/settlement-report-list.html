@@ -1,0 +1,74 @@
+<app-title [title]="'LISTE DES RELEVÉS D\'ENCAISSEMENT'"></app-title>
+<main>
+  <div class="container">
+    <div class="header">
+      <app-search-bar (filter)="onFilterChange($event)"></app-search-bar>
+      <button class="btn-create" (click)="createNewReport()">
+        + Nouveau relevé
+      </button>
+    </div>
+
+    <div *ngIf="isLoading" class="loading">
+      <p>Chargement des relevés d'encaissement...</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error">
+      <p>{{ errorMessage }}</p>
+    </div>
+
+    <div *ngIf="!isLoading && !errorMessage && settlementReports.length === 0" class="no-data">
+      <p>Aucun relevé d'encaissement trouvé.</p>
+      <button class="btn-create" (click)="createNewReport()">
+        Créer le premier relevé
+      </button>
+    </div>
+
+    <div *ngIf="!isLoading && settlementReports.length > 0" class="settlement-reports-list">
+      <div class="settlement-item" *ngFor="let report of renderedList">
+        <div class="report-card">
+          <div class="photographer-info">
+            <h3>{{ getPhotographerName(report.photographer_id) }}</h3>
+            <p class="period">{{ formatDate(report.period_start_date) }} - {{ formatDate(report.period_end_date) }}</p>
+          </div>
+          
+          <div class="amount-section">
+            <p>Montant</p>
+            <div class="value-tag">
+              <p class="tag">{{ formatCurrency(report.amount) }}</p>
+            </div>
+          </div>
+          
+          <div class="commission-section">
+            <p>Commission</p>
+            <div class="value-tag">
+              <p class="tag">{{ formatCurrency(report.commission) }}</p>
+            </div>
+          </div>
+          
+          <div class="advance-section">
+            <p>Acomptes</p>
+            <div class="value-tag">
+              <p class="tag">{{ formatCurrency(report.amount - report.commission) }}</p>
+            </div>
+          </div>
+
+          <div class="regenerate-pdf-section">
+            <button class="btn-regenerate-pdf" (click)="regeneratePdf(report)" [disabled]="report.isGeneratingPdf" title="Télécharger le PDF">
+              <span class="material-symbols-outlined" *ngIf="!report.isGeneratingPdf">download</span>
+              <span *ngIf="report.isGeneratingPdf" class="loading-text">...</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <app-pagination 
+      *ngIf="!isLoading && settlementReports.length > 0"
+      [numberOfItems]="itemsToShow" 
+      [fullList]="filterActive ? bufferedList : settlementReports" 
+      [renderedList]="renderedList" 
+      (pageChange)="onPageChange($event)">
+    </app-pagination>
+  </div>
+</main>
+

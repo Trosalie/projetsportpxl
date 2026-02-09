@@ -99,4 +99,16 @@ export class SettlementReportService {
       this.headersService.getAuthHeaders()
     );
   }
+
+  /**
+   * @brief Récupère tous les relevés d'encaissement
+   * 
+   * @returns Observable avec la liste de tous les relevés
+   */
+  getAllSettlementReports(): Observable<any> {
+    return this.http.get(
+      `${environment.apiUrl}/settlement-report/all`,
+      this.headersService.getAuthHeaders()
+    );
+  }
 }
