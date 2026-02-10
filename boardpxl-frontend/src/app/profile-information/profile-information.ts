@@ -13,6 +13,7 @@ import { environment } from '../../environments/environment';
 import { Chart, registerables } from 'chart.js';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
+import { RoleService } from '../services/role.service';
 
 Chart.register(...registerables);
 
@@ -28,6 +29,7 @@ export class ProfileInformation implements OnInit {
 
   protected isLoading: boolean = true;
   protected findPhotographer: boolean = false;
+  protected role: string | null = null;
 
   @ViewChild('popup') popup!: Popup;
 
@@ -76,11 +78,14 @@ export class ProfileInformation implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private roleService: RoleService,
   ) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
+    const role = this.roleService.getRole();
+    this.role = role;
     
     // Si aucun ID n'est fourni, charger l'utilisateur authentifié (route /my-profile)
     if (!id) {
