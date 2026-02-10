@@ -89,7 +89,7 @@ class PennyLaneControllerTest extends TestCase
         $this->assertEquals(200, $respFound->getStatusCode());
         $dataFound = $respFound->getData(true);
         $this->assertTrue($dataFound['success']);
-        $this->assertEquals(123, $dataFound['photographer_id']);
+        $this->assertEquals(123, $dataFound['photographerId']);
 
         $respNotFound = $controller->getPhotographerId($request, $service);
         $this->assertEquals(404, $respNotFound->getStatusCode());
