@@ -78,10 +78,10 @@ class PennyLaneControllerTest extends TestCase
 
         $service = $this->getMockBuilder(PennylaneService::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getPhotographerIdByNameIdByName'])
+            ->onlyMethods(['getPhotographerIdByName'])
             ->getMock();
 
-        $service->method('getPhotographerIdByNameIdByName')->willReturnOnConsecutiveCalls(123, null);
+        $service->method('getPhotographerIdByName')->willReturnOnConsecutiveCalls(123, null);
 
         $controller = new PennyLaneController(new LogService());
 
