@@ -141,7 +141,7 @@ class PennyLaneController extends Controller
 
             return response()->json([
                 'success' => true,
-                'photographer_id' => $photographerId
+                'photographerId' => $photographerId
             ]);
         }
 
