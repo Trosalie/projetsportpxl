@@ -177,6 +177,18 @@ export class ProfileInformation implements OnInit {
         responsive: true,
         maintainAspectRatio: false,
         scales: { y: { beginAtZero: true } },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              boxWidth: 12,
+              padding: 8,
+              font: {
+                size: window.innerWidth < 640 ? 10 : 12,
+              },
+            },
+          },
+        },
       },
     });
   }

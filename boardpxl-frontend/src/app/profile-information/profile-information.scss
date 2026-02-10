@@ -564,6 +564,7 @@
 
   .card {
     padding: 12px 14px 14px;
+    overflow: hidden;
   }
 
   .card_title {
@@ -603,6 +604,10 @@
     font-size: 18px;
   }
 
+  .filter-section-sidebar {
+    overflow: hidden;
+  }
+
   .filter-buttons-vertical {
     flex-direction: column;
     align-items: stretch;
@@ -617,6 +622,7 @@
     justify-content: flex-start;
     height: 38px;
     font-size: 14px;
+    box-sizing: border-box;
 
     span {
       flex: 1;
@@ -630,6 +636,7 @@
     height: 40px;
     margin-left: 0;
     margin-top: 4px;
+    box-sizing: border-box;
   }
 
   .dropdown-menu {
@@ -650,11 +657,13 @@
 
   .chart-container {
     height: 220px;
+    overflow: hidden;
   }
 
   .chart-card {
     padding: 10px;
     gap: 10px;
+    overflow: hidden;
   }
 
   .loading-overlay {
