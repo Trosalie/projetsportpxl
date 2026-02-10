@@ -99,7 +99,7 @@ class PennyLaneController extends Controller
             );
 
             $this->logService->logAction($request, 'create_turnover_payment_invoice', 'INVOICE_PAYMENTS', [
-                'id_photographer' => (int) $validated['idPhotographer'],
+                'idPhotographer' => (int) $validated['idPhotographer'],
                 'invoice_title' => $validated['invoiceTitle'],
                 'invoice_description' => $validated['invoiceDescription'] ?? '',
             ]);
