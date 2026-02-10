@@ -50,8 +50,8 @@ class PennyLaneController extends Controller
                 $validated['invoiceTitle']
             );
 
-            $this->logService->logAction($request, 'create_credits_invoice_client', 'INVOICE_CREDITS', [
-                'id_client' => (int) $validated['idClient'],
+            $this->logService->logAction($request, 'create_credits_invoice_photographer', 'INVOICE_CREDITS', [
+                'id_photographer' => (int) $validated['idPhotographer'],
                 'invoice_title' => $validated['invoiceTitle'],
                 'amount_euro' => $validated['amountEuro'],
             ]);
@@ -63,7 +63,7 @@ class PennyLaneController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            $this->logService->logAction($request, 'create_credits_invoice_client_failed', 'INVOICE_CREDITS', [
+            $this->logService->logAction($request, 'create_credits_invoice_photographer_failed', 'INVOICE_CREDITS', [
                 'error' => $e->getMessage(),
             ]);
 
@@ -99,7 +99,7 @@ class PennyLaneController extends Controller
             );
 
             $this->logService->logAction($request, 'create_turnover_payment_invoice', 'INVOICE_PAYMENTS', [
-                'id_client' => (int) $validated['idClient'],
+                'id_photographer' => (int) $validated['idPhotographer'],
                 'invoice_title' => $validated['invoiceTitle'],
                 'invoice_description' => $validated['invoiceDescription'] ?? '',
             ]);
@@ -134,7 +134,7 @@ class PennyLaneController extends Controller
         $photographerId = $service->getPhotographerIdByName($validated['name']);
 
         if ($photographerId) {
-            $this->logService->logAction($request, 'lookup_client_id', 'PHOTOGRAPHERS', [
+            $this->logService->logAction($request, 'lookup_photographer_id', 'PHOTOGRAPHERS', [
                 'name' => $validated['name'],
                 'photographerId' => $photographerId,
             ]);
@@ -145,7 +145,7 @@ class PennyLaneController extends Controller
             ]);
         }
 
-        $this->logService->logAction($request, 'lookup_client_id_not_found', 'PHOTOGRAPHERS', [
+        $this->logService->logAction($request, 'lookup_photographer_id_not_found', 'PHOTOGRAPHERS', [
             'name' => $validated['name'],
         ]);
 
@@ -170,7 +170,7 @@ class PennyLaneController extends Controller
      */
     public function getInvoicesByPhotographer($idPhotographer, PennylaneService $service)
     {
-        $invoices = $service->getInvoicesByIdClient($idPhotographer);
+        $invoices = $service->getInvoicesByIdPhotographer($idPhotographer);
 
         return response()->json($invoices);
     }
@@ -283,7 +283,7 @@ class PennyLaneController extends Controller
     {
         $photographers = $service->getListPhotographers();
 
-        $this->logService->logAction(request(), 'list_clients', 'PHOTOGRAPHERS', [
+        $this->logService->logAction(request(), 'list_photographers', 'PHOTOGRAPHERS', [
             'count' => is_countable($photographers) ? count($photographers) : null,
         ]);
 

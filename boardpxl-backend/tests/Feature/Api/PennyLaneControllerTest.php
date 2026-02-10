@@ -22,7 +22,7 @@ class PennyLaneControllerTest extends TestCase
     // Il simule un appel au service PennyLane qui retourne une facture créée avec succès.
     // La requête POST contient les paramètres nécessaires comme labelTVA, amountEuro, etc.
     // On s'attend à une réponse HTTP 200 avec un JSON indiquant le succès.
-    public function test_create_credits_invoice_photogrpher_success()
+    public function test_create_credits_invoice_photographer_success()
     {
         // Mock du service Pennylane
         $mock = Mockery::mock(PennylaneService::class);
