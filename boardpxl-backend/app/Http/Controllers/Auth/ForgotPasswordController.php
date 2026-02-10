@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+// trait removed: project uses explicit implementation of sendResetLinkEmail
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -46,5 +46,5 @@ class ForgotPasswordController extends Controller
         return response()->json(['message' => 'Echec de l\'envoi du lien.'], 400);
     }
 
-    use SendsPasswordResetEmails;
+    // SendsPasswordResetEmails trait removed because unavailable in current vendor
 }
