@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AutomaticResponse } from './automatic-response';
+import { GeneralGraph } from './general-graph';
 
-describe('AutomaticResponse', () => {
-  let component: AutomaticResponse;
-  let fixture: ComponentFixture<AutomaticResponse>;
+describe('GeneralGraph', () => {
+  let component: GeneralGraph;
+  let fixture: ComponentFixture<GeneralGraph>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AutomaticResponse]
+      declarations: [GeneralGraph]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AutomaticResponse);
+    fixture = TestBed.createComponent(GeneralGraph);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -6,10 +6,17 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Services\PennylaneService;
 use App\Services\MailService;
-use Illuminate\Support\Facades\Mail;
+use App\Services\LogService;
 
 class PennyLaneController extends Controller
 {
+    private LogService $logService;
+
+    public function __construct(LogService $logService)
+    {
+        $this->logService = $logService;
+    }
+
     /**
      * Création d'une facture d'achat de crédit Pennylane
      */
@@ -25,20 +32,29 @@ class PennyLaneController extends Controller
                 'dueDate' => 'required|string',
                 'idPhotographer' => 'required|integer',
                 'invoiceTitle' => 'required|string',
+                'discount' => 'nullable|numeric|min:0|max:1',
             ]);
 
             $description = $validated['description'] ?? "";
+            $discount = isset($validated['discount']) ? strval(floatval($validated['discount']) * 100) : "0";
 
             $facture = $service->createCreditsInvoicePhotographer(
                 $validated['labelTVA'],
                 $validated['labelProduct'],
                 $description,
                 $validated['amountEuro'],
+                $discount,
                 $validated['issueDate'],
                 $validated['dueDate'],
                 (int) $validated['idPhotographer'],
                 $validated['invoiceTitle']
             );
+
+            $this->logService->logAction($request, 'create_credits_invoice_client', 'INVOICE_CREDITS', [
+                'id_client' => (int) $validated['idClient'],
+                'invoice_title' => $validated['invoiceTitle'],
+                'amount_euro' => $validated['amountEuro'],
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -47,6 +63,10 @@ class PennyLaneController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            $this->logService->logAction($request, 'create_credits_invoice_client_failed', 'INVOICE_CREDITS', [
+                'error' => $e->getMessage(),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur : ' . $e->getMessage(),
@@ -62,23 +82,27 @@ class PennyLaneController extends Controller
         try {
             $validated = $request->validate([
                 'labelTVA' => 'required|string',
-                'amountEuro' => 'required|string',
                 'issueDate' => 'required|string',
                 'dueDate' => 'required|string',
                 'idPhotographer' => 'required|integer',
                 'invoiceTitle' => 'required|string',
-                'invoiceDescription' => 'string',
+                'invoiceDescription' => 'nullable|string',
             ]);
 
             $facture = $service->createTurnoverInvoicePhotographer(
                 $validated['labelTVA'],
-                $validated['amountEuro'],
                 $validated['issueDate'],
                 $validated['dueDate'],
                 (int) $validated['idPhotographer'],
                 $validated['invoiceTitle'],
-                $validated['invoiceDescription']
+                $validated['invoiceDescription'] ?? ''
             );
+
+            $this->logService->logAction($request, 'create_turnover_payment_invoice', 'INVOICE_PAYMENTS', [
+                'id_client' => (int) $validated['idClient'],
+                'invoice_title' => $validated['invoiceTitle'],
+                'invoice_description' => $validated['invoiceDescription'] ?? '',
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -87,6 +111,10 @@ class PennyLaneController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            $this->logService->logAction($request, 'create_turnover_payment_invoice_failed', 'INVOICE_PAYMENTS', [
+                'error' => $e->getMessage(),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur : ' . $e->getMessage(),
@@ -106,11 +134,20 @@ class PennyLaneController extends Controller
         $photographerId = $service->getPhotographerIdByName($validated['name']);
 
         if ($photographerId) {
+            $this->logService->logAction($request, 'lookup_client_id', 'PHOTOGRAPHERS', [
+                'name' => $validated['name'],
+                'photographerId' => $photographerId,
+            ]);
+
             return response()->json([
                 'success' => true,
                 'photographer_id' => $photographerId
             ]);
         }
+
+        $this->logService->logAction($request, 'lookup_client_id_not_found', 'PHOTOGRAPHERS', [
+            'name' => $validated['name'],
+        ]);
 
         return response()->json([
             'success' => false,
@@ -123,7 +160,9 @@ class PennyLaneController extends Controller
      */
     public function getInvoices(PennylaneService $service)
     {
-        return response()->json($service->getInvoices());
+        $invoices = $service->getInvoices();
+
+        return response()->json($invoices);
     }
 
     /**
@@ -131,7 +170,9 @@ class PennyLaneController extends Controller
      */
     public function getInvoicesByPhotographer($idPhotographer, PennylaneService $service)
     {
-        return response()->json($service->getInvoicesByIdPhotographer($idPhotographer));
+        $invoices = $service->getInvoicesByIdClient($idPhotographer);
+
+        return response()->json($invoices);
     }
 
     /**
@@ -171,12 +212,23 @@ class PennyLaneController extends Controller
                 $validated['body']
             );
 
+            $this->logService->logAction($request, 'send_email', 'MAIL_LOGS', [
+                'to' => $validated['to'],
+                'subject' => $validated['subject'],
+            ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Email sent successfully.'
             ]);
 
         } catch (\Exception $e) {
+            $this->logService->logAction($request, 'send_email_failed', 'MAIL_LOGS', [
+                'to' => $validated['to'],
+                'subject' => $validated['subject'],
+                'error' => $e->getMessage(),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to send email: ' . $e->getMessage()
@@ -192,6 +244,7 @@ class PennyLaneController extends Controller
         $fileUrl = $request->input('file_url');
 
         if (!$fileUrl) {
+            $this->logService->logAction($request, 'download_invoice_proxy_missing_url', 'INVOICE_CREDITS | INVOICE_PAYMENTS', []);
             return response('Aucun fichier spécifié.', 400);
         }
 
@@ -200,6 +253,10 @@ class PennyLaneController extends Controller
 
         // Déterminer le nom du fichier
         $fileName = 'facture.pdf';
+
+        $this->logService->logAction($request, 'download_invoice_proxy', 'INVOICE_CREDITS | INVOICE_PAYMENTS', [
+            'file_url' => $fileUrl,
+        ]);
 
         // Retourner le fichier en réponse avec les headers
         return response($fileContent, 200)
@@ -210,6 +267,10 @@ class PennyLaneController extends Controller
     public function getPhotographers(PennylaneService $service)
     {
         $photographers = $service->getPhotographers();
+
+        $this->logService->logAction(request(), 'list_photographers', 'PHOTOGRAPHERS', [
+            'count' => is_countable($photographers) ? count($photographers) : null,
+        ]);
 
         return response()->json([
             $photographers
@@ -222,20 +283,13 @@ class PennyLaneController extends Controller
     {
         $photographers = $service->getListPhotographers();
 
+        $this->logService->logAction(request(), 'list_clients', 'PHOTOGRAPHERS', [
+            'count' => is_countable($photographers) ? count($photographers) : null,
+        ]);
+
         return response()->json([
             'success' => true,
             'photographers' => $photographers
         ]);
-    }
-
-    public function getInvoiceById($id, PennylaneService $service)
-    {
-        $invoice = $service->getInvoiceById((int)$id);
-
-        if (!$invoice) {
-            return response()->json(['message' => 'Facture non trouvée'], 404);
-        }
-
-        return response()->json($invoice);
     }
 }

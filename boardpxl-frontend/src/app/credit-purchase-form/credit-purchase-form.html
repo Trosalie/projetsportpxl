@@ -1,8 +1,12 @@
-<app-title [title]="'TABLEAU DE BORD'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
+<app-title [title]="'ACHAT DE CRÉDITS'"></app-title>
 <app-popup #popup></app-popup>
+<app-confirm-modal 
+  [isVisible]="showConfirmModal" 
+  [invoiceData]="modalData"
+  (confirm)="onConfirmInvoice()"
+  (discard)="onCancelInvoice()">
+</app-confirm-modal>
 <form class="credit-purchase-form" (submit)="onSubmit($event)">
-  <h2 class="form-title">Achat de crédits</h2>
-  <div class="form-separator"></div>
   <div class="form-group">
     <label for="photographer">Photographe :</label>
     <input type="text" id="photographer" name="photographer" required [value]="photographerInput" (input)="onPhotographerChange($event.target.value)" [disabled]="isLoading"/>
@@ -46,6 +50,10 @@
       <option value="FR_196">FR_196</option>
       <option value="FR_200">FR_200</option>
     </select>
+  </div>
+  <div class="form-group">
+    <label for="discount">Réduction (%) :</label>
+    <input type="number" id="discount" name="discount" min="0" max="100" step="1" value="0" required>
   </div>
   <div class="form-group">
     <label for="date">Date :</label>

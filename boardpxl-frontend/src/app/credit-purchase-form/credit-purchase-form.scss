@@ -1,6 +1,6 @@
 .credit-purchase-form {
   max-width: 95%;
-  width: 100%;
+  width: calc(100% - 40px);
   margin: 20px auto;
   padding: 0.5% 24px;
   background: #fff;
@@ -9,13 +9,7 @@
   font-family: 'Segoe UI', Arial, sans-serif;
   overflow-y: auto;
   max-height: 90vh;
-
-  h2 {
-    text-align: left;
-    color: #2d3a4b;
-    font-size: 1.3rem;
-    font-weight: 600;
-  }
+  box-sizing: border-box;
 
   .form-separator {
     width: 100%;
@@ -30,6 +24,7 @@
     margin-bottom: 7px;
     display: flex;
     flex-direction: column;
+    margin-top: 10px;
 
     label {
       margin-bottom: 6px;
@@ -138,4 +133,78 @@
   pointer-events: none;         
   background-color: rgba(249, 133, 36, 0.6) !important; 
 
+}
+
+@media (max-width: 768px) {
+  .credit-purchase-form {
+    max-width: 100%;
+    width: calc(100% - 16px);
+    margin: 8px;
+    padding: 16px;
+    max-height: none;
+
+    h2 {
+      font-size: 1.1rem;
+    }
+
+    .form-separator {
+      margin: 12px 0 16px 0;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+
+      label {
+        font-size: 0.85rem;
+      }
+
+      input, select {
+        font-size: 0.9rem;
+        padding: 10px;
+      }
+    }
+
+    .form-actions {
+      justify-content: center;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      min-width: 0;
+      font-size: 1rem;
+    }
+  }
+
+  .suggestions {
+    font-size: 13px;
+    max-height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .credit-purchase-form {
+    width: calc(100% - 8px);
+    margin: 4px;
+    padding: 12px;
+
+    h2 {
+      font-size: 1rem;
+    }
+
+    .form-group {
+      label {
+        font-size: 0.8rem;
+      }
+
+      input, select {
+        font-size: 0.85rem;
+        padding: 8px;
+      }
+    }
+
+    button[type="submit"] {
+      padding: 10px 24px;
+      font-size: 0.95rem;
+    }
+  }
 }

@@ -1,0 +1,80 @@
+<app-title [title]="'HISTORIQUE DES ACTIONS'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
+
+<div class="logs-shell">
+  <div class="hero">
+    <div class="stats">
+      <div class="stat-card">
+        <p class="label">Logs filtrés</p>
+        <p class="value">{{ filteredLogs.length }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="label">Actions uniques</p>
+        <p class="value">{{ uniqueActions.length }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="filters">
+    <div class="input-group search">
+      <input type="text" placeholder="Rechercher (action, table, IP)" [(ngModel)]="searchTerm" (input)="filterLogs()">
+    </div>
+    <div class="input-group">
+      <select [(ngModel)]="selectedAction" (change)="filterLogs()">
+        <option value="">Toutes les actions</option>
+        <option *ngFor="let action of uniqueActions" [value]="action">{{ action }}</option>
+      </select>
+    </div>
+    <div class="date-range">
+      <input type="date" [(ngModel)]="startDate" (change)="filterLogs()">
+      <span class="dash">—</span>
+      <input type="date" [(ngModel)]="endDate" (change)="filterLogs()">
+    </div>
+  </div>
+
+  <div class="logs-list">
+    <div class="loading-overlay" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Chargement des logs...</p>
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoading && filteredLogs.length === 0">
+      <p>Aucun log trouvé</p>
+    </div>
+
+    <div class="log-card" *ngFor="let log of pagedLogs">
+      <div class="log-header">
+        <div class="left">
+          <span class="pill">{{ log.table_name || 'N/A' }}</span>
+          <span class="log-action">{{ log.action }}</span>
+        </div>
+        <span class="log-date">{{ log.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+
+      <div class="log-meta">
+        <div>
+          <span class="label">Utilisateur</span>
+          <span class="value">{{ log.photographer_name || log.user_id }}</span>
+        </div>
+        <div>
+          <span class="label">IP</span>
+          <span class="value">{{ log.ip_address }}</span>
+        </div>
+        <div>
+          <span class="label">ID Log</span>
+          <span class="value muted">#{{ log.id }}</span>
+        </div>
+      </div>
+
+      <div class="log-details-json" *ngIf="log.details">
+        <span class="label">Détails</span>
+        <pre>{{ formatDetails(log.details) }}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">Précédent</button>
+    <span class="page-info">Page {{ currentPage }} sur {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Suivant</button>
+  </div>
+</div>

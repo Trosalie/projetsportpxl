@@ -25,6 +25,11 @@
     &::-webkit-scrollbar { display: none; }
 }
 
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
 body {
     background-color: #E8EAF6;
     margin: 0;
