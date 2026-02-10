@@ -100,7 +100,6 @@ class PennyLaneControllerTest extends TestCase
 
         $response = $this->postJson('/api/create-turnover-invoice-photographer', [
             'labelTVA' => 'FR_200',
-            'amountEuro' => '500',
             'issueDate' => now()->toDateString(),
             'dueDate' => now()->addDays(30)->toDateString(),
             'idPhotographer' => 208474147,
