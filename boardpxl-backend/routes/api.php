@@ -22,6 +22,7 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 
 use App\Http\Controllers\LogsController;
+use App\Http\Controllers\SettlementReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -135,5 +136,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //Récupérer les informations finaciere d'une facture de versement de CA
     Route::get('/invoice-turnover-financial-info', [InvoiceController::class, 'getFinancialInfoTurnoverInvoice']);
+
+    // Settlement Reports
+    Route::post('/settlement-report/last', [SettlementReportController::class, 'getLastSettlementReport']);
+    Route::post('/settlement-report/calculate-turnover', [SettlementReportController::class, 'calculateTurnoverSinceDate']);
+    Route::post('/settlement-report/create', [SettlementReportController::class, 'createSettlementReport']);
+    Route::get('/settlement-report/all', [SettlementReportController::class, 'getAllSettlementReports']);
 
 });

@@ -1,6 +1,11 @@
 nav {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin: 4px 0;
+    padding: 0;
     gap: 10px; 
+}
+
+.pagination__btn {
+    margin: 12px 0;
 }

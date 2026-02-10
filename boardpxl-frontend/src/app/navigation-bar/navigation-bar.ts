@@ -106,6 +106,14 @@ export class NavigationBar implements OnDestroy {
         label: 'Formulaire d\'ajout de crédits',
         route: '/form/credits',
         icon: 'assets/images/form_icon.svg'
+      }, {
+        label: 'Nouveau relevé d\'encaissement',
+        route: '/settlement-report',
+        icon: 'assets/images/form_icon.svg'
+      }, {
+        label: 'Liste des relevés',
+        route: '/settlement-reports',
+        icon: 'assets/images/liste_icon.svg'
       });
 
       // Si on est sur la page profil ou factures d'un photographe
