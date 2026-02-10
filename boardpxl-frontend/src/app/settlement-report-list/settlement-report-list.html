@@ -18,9 +18,6 @@
 
     <div *ngIf="!isLoading && !errorMessage && settlementReports.length === 0" class="no-data">
       <p>Aucun relevé d'encaissement trouvé.</p>
-      <button class="btn-create" (click)="createNewReport()">
-        Créer le premier relevé
-      </button>
     </div>
 
     <div *ngIf="!isLoading && settlementReports.length > 0" class="settlement-reports-list">
