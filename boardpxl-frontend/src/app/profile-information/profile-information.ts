@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ClientService } from '../services/client-service.service';
 import { PhotographerService } from '../services/photographer-service';
@@ -50,6 +50,14 @@ export class ProfileInformation implements OnInit {
     private invoiceService: InvoiceService,
     private route: ActivatedRoute,
   ) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.filter-dropdown-container')) {
+      this.openDropdown = null;
+    }
+  }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
