@@ -58,17 +58,17 @@ class PennylaneServiceTest extends TestCase
         }
     }
 
-    public function test_get_client_id_by_name_is_case_insensitive()
+    public function test_get_photographer_id_by_name_is_case_insensitive()
     {
         try {
-            $this->service->shouldReceive('getListClients')->andReturn([
+            $this->service->shouldReceive('getListPhotographers')->andReturn([
                 ['id' => 10, 'name' => 'Acme Studio'],
                 ['id' => 20, 'name' => 'John Doe'],
             ]);
 
-            $this->assertEquals(10, $this->service->getClientIdByName('acme studio'));
-            $this->assertEquals(20, $this->service->getClientIdByName('JOHN DOE'));
-            $this->assertNull($this->service->getClientIdByName('Unknown'));
+            $this->assertEquals(10, $this->service->getphotographerIdByName('acme studio'));
+            $this->assertEquals(20, $this->service->getphotographerIdByName('JOHN DOE'));
+            $this->assertNull($this->service->getphotographerIdByName('Unknown'));
         } catch (\Throwable $e) {
             $this->assertTrue(true);
         }

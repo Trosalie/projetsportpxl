@@ -11,7 +11,7 @@ use App\Services\LogService;
 
 class PennyLaneControllerTest extends TestCase
 {
-    public function test_create_credits_invoice_client_success()
+    public function test_create_credits_invoice_photographer_success()
     {
         $payload = [
             'labelTVA' => 'TVA',
@@ -20,7 +20,7 @@ class PennyLaneControllerTest extends TestCase
             'amountEuro' => '100',
             'issueDate' => '2025-01-01',
             'dueDate' => '2025-01-15',
-            'idClient' => 42,
+            'idPhotographer' => 42,
             'invoiceTitle' => 'Title'
         ];
 
@@ -28,14 +28,14 @@ class PennyLaneControllerTest extends TestCase
 
         $service = $this->getMockBuilder(PennylaneService::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['createCreditsInvoiceClient'])
+            ->onlyMethods(['createCreditsInvoicePhotographer'])
             ->getMock();
 
-        $service->method('createCreditsInvoiceClient')->willReturn(['ok' => true]);
+        $service->method('createCreditsInvoicePhotographer')->willReturn(['ok' => true]);
 
         $controller = new PennyLaneController(new LogService());
 
-        $response = $controller->createCreditsInvoiceClient($request, $service);
+        $response = $controller->createCreditsInvoicePhotographer($request, $service);
 
         $this->assertEquals(200, $response->getStatusCode());
         $data = $response->getData(true);
@@ -49,7 +49,7 @@ class PennyLaneControllerTest extends TestCase
             'labelTVA' => 'TVA',
             'issueDate' => '2025-01-01',
             'dueDate' => '2025-01-15',
-            'idClient' => 7,
+            'idPhotographer' => 7,
             'invoiceTitle' => 'Turnover',
         ];
 
@@ -57,10 +57,10 @@ class PennyLaneControllerTest extends TestCase
 
         $service = $this->getMockBuilder(PennylaneService::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['createTurnoverInvoiceClient'])
+            ->onlyMethods(['createTurnoverInvoicePhotographer'])
             ->getMock();
 
-        $service->method('createTurnoverInvoiceClient')->willReturn(['turnover' => true]);
+        $service->method('createTurnoverInvoicePhotographer')->willReturn(['turnover' => true]);
 
         $controller = new PennyLaneController(new LogService());
 
@@ -72,26 +72,26 @@ class PennyLaneControllerTest extends TestCase
         $this->assertSame(['turnover' => true], $data['data']);
     }
 
-    public function test_get_client_id_found_and_not_found()
+    public function test_get_photographer_id_found_and_not_found()
     {
         $request = Request::create('/', 'POST', ['name' => 'Alice']);
 
         $service = $this->getMockBuilder(PennylaneService::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getClientIdByName'])
+            ->onlyMethods(['getPhotographerIdByNameIdByName'])
             ->getMock();
 
-        $service->method('getClientIdByName')->willReturnOnConsecutiveCalls(123, null);
+        $service->method('getPhotographerIdByNameIdByName')->willReturnOnConsecutiveCalls(123, null);
 
         $controller = new PennyLaneController(new LogService());
 
-        $respFound = $controller->getClientId($request, $service);
+        $respFound = $controller->getPhotographerId($request, $service);
         $this->assertEquals(200, $respFound->getStatusCode());
         $dataFound = $respFound->getData(true);
         $this->assertTrue($dataFound['success']);
-        $this->assertEquals(123, $dataFound['client_id']);
+        $this->assertEquals(123, $dataFound['photographer_id']);
 
-        $respNotFound = $controller->getClientId($request, $service);
+        $respNotFound = $controller->getPhotographerId($request, $service);
         $this->assertEquals(404, $respNotFound->getStatusCode());
         $dataNotFound = $respNotFound->getData(true);
         $this->assertFalse($dataNotFound['success']);
