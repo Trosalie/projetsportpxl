@@ -307,6 +307,7 @@ export class ProfileInformation implements OnInit {
     this.deleteModalData = {
       title: photographerName,
       amount: 0,
+      discount: 0,
       items: [
         { label: 'Email', value: this.email || '-' },
         { label: 'ID', value: id }
