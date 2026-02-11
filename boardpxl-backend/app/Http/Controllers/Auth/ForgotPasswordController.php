@@ -52,5 +52,5 @@ class ForgotPasswordController extends Controller
         return response()->json(['message' => 'Si cet email existe, un lien de réinitialisation a été envoyé.']);
     }
 
-    use SendsPasswordResetEmails;
+    // SendsPasswordResetEmails trait removed because unavailable in current vendor
 }
