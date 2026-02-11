@@ -110,6 +110,14 @@ export class NavigationBar implements OnDestroy {
         label: 'Création d\'un photographe',
         route: '/new/photographer',
         icon: 'assets/images/new_photographer_icon.svg'
+      }, {
+        label: 'Nouveau relevé d\'encaissement',
+        route: '/settlement-report',
+        icon: 'assets/images/form_icon.svg'
+      }, {
+        label: 'Liste des relevés',
+        route: '/settlement-reports',
+        icon: 'assets/images/liste_icon.svg'
       });
 
       // Si on est sur la page profil ou factures d'un photographe

@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-bookworm
+FROM php:8.4-fpm-bookworm
 
 # Install required system dependencies
 RUN apt-get update && apt-get install -y \
@@ -15,6 +15,9 @@ RUN apt-get update && apt-get install -y \
 # Installer les extensions PHP requises par Laravel 11
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install gd pdo_mysql pdo_pgsql mbstring zip exif pcntl bcmath opcache
+
+# Installer PCOV pour la couverture de code
+RUN pecl install pcov && docker-php-ext-enable pcov
 
 # Installer Composer depuis l'image officielle
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

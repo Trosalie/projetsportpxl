@@ -2,6 +2,8 @@
   transition: margin-left 0.3s ease;
   margin-left: 20px;
   margin-top: 96px;
+  position: relative;
+  z-index: 1;
 
   &.nav-open {
     margin-left: 270px;

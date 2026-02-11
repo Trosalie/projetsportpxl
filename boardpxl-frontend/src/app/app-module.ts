@@ -13,7 +13,7 @@ import { InvoiceFilter } from './invoice-filter/invoice-filter';
 import { LoginPage } from './login-page/login-page';
 import { PhotographerRequest } from './photographer-request/photographer-request';
 import { MailRequestPage } from './mail-request-page/mail-request-page';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 import { LOCALE_ID } from '@angular/core';
@@ -41,6 +41,8 @@ import { NewPhotographerForm } from './new-photographer-form/new-photographer-fo
 import { EditPhotographerForm } from './edit-photographer-form/edit-photographer-form';
 import { FirstLoginModalComponent } from './first-login-modal/first-login-modal';
 import { ResetPasswordPageComponent } from './reset-password-page/reset-password-page';
+import { SettlementReportListComponent } from './settlement-report-list/settlement-report-list';
+import { SettlementReportFormComponent } from './settlement-report-form/settlement-report-form';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -74,7 +76,9 @@ registerLocaleData(localeFr);
     ConfirmModal,
     NewPhotographerForm,
     EditPhotographerForm,
-    FirstLoginModalComponent
+    FirstLoginModalComponent,
+    SettlementReportListComponent,
+    SettlementReportFormComponent
   ],
   imports: [
     BrowserModule,
@@ -82,7 +86,8 @@ registerLocaleData(localeFr);
     HttpClientModule,
     FormsModule,
     CommonModule,
-    ResetPasswordPageComponent
+    ResetPasswordPageComponent,
+    ReactiveFormsModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

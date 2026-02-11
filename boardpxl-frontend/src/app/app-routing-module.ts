@@ -18,6 +18,8 @@ import { AboutUs } from './about-us/about-us';
 import { NewPhotographerForm } from './new-photographer-form/new-photographer-form';
 import { EditPhotographerForm } from './edit-photographer-form/edit-photographer-form';
 import { ResetPasswordPageComponent } from './reset-password-page/reset-password-page';
+import { SettlementReportFormComponent } from './settlement-report-form/settlement-report-form';
+import { SettlementReportListComponent } from './settlement-report-list/settlement-report-list';
 
 const routes: Routes = [
   { path: 'login', component: LoginPage, canActivate: [loginGuard] },
@@ -33,6 +35,8 @@ const routes: Routes = [
   { path: 'form/payout', component: TurnoverPaymentForm, canActivate: [adminGuard]},
   { path: 'photographer/:id', component: ProfileInformation, canActivate: [adminGuard]},
   { path: 'photographer/:id/edit', component: EditPhotographerForm, canActivate: [adminGuard]},
+  { path: 'settlement-report', component: SettlementReportFormComponent, canActivate: [adminGuard]},
+  { path: 'settlement-reports', component: SettlementReportListComponent, canActivate: [adminGuard]},
   { path: 'general-graph', component: GeneralGraph, canActivate: [adminGuard]},
   { path: 'logs', component: Logs, canActivate: [adminGuard]},
   { path: 'about-us', component: AboutUs, canActivate: [photographerGuard]},
