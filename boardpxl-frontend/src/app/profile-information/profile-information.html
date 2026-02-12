@@ -103,14 +103,13 @@
                   </label>
                   <input *ngIf="isFilterActive(period)" type="date" class="date-input" [attr.data-filter]="period"
                     [value]="getDateValue(period)" (change)="updateDateFilter(period, $event)"
+                    [max]="period === 'Après le' ? getMaxDateForAfter() : getMaxDate()"
+                    [min]="period === 'Avant le' ? getMinDateForBefore() : ''"
                     (click)="$event.stopPropagation()">
                 </div>
+                <div class="date-error" *ngIf="dateError">{{ dateError }}</div>
               </div>
             </div>
-
-            <button class="apply-button" (click)="applyFilters()" [disabled]="!canApplyFilters()">
-              Appliquer
-            </button>
           </div>
         </div>
 

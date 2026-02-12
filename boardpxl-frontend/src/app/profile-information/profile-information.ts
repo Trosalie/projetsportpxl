@@ -43,6 +43,7 @@ export class ProfileInformation implements OnInit {
   protected dateFilters: Map<string, string> = new Map();
   protected readonly dataTypeFilters = ["Chiffre d'affaire", 'Crédits facturés'];
   protected readonly periodFilters = ['Après le', 'Avant le'];
+  protected dateError: string = '';
 
   constructor(
     private photographerService: PhotographerService,
@@ -245,7 +246,42 @@ export class ProfileInformation implements OnInit {
     if (!this.activeFilters.includes(v)) this.activeFilters.push(v);
   }
   updateDateFilter(v: string, event: any) {
-    this.dateFilters.set(v, event.target.value);
+    const value = event.target.value;
+    this.dateFilters.set(v, value);
+    this.validateDates();
+    if (!this.dateError) {
+      this.updateChart();
+    }
+  }
+  private validateDates() {
+    this.dateError = '';
+    const today = new Date().toISOString().split('T')[0];
+    const afterDate = this.dateFilters.get('Après le');
+    const beforeDate = this.dateFilters.get('Avant le');
+
+    if (afterDate && afterDate > today) {
+      this.dateError = 'La date "Après le" ne peut pas être dans le futur';
+      return;
+    }
+    if (beforeDate && beforeDate > today) {
+      this.dateError = 'La date "Avant le" ne peut pas être dans le futur';
+      return;
+    }
+    if (afterDate && beforeDate && afterDate > beforeDate) {
+      this.dateError = 'La date "Après le" doit être antérieure à "Avant le"';
+      return;
+    }
+  }
+  getMaxDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+  getMinDateForBefore(): string {
+    return this.dateFilters.get('Après le') || '';
+  }
+  getMaxDateForAfter(): string {
+    const beforeDate = this.dateFilters.get('Avant le');
+    const today = new Date().toISOString().split('T')[0];
+    return beforeDate && beforeDate < today ? beforeDate : today;
   }
   getDateValue = (v: string) => this.dateFilters.get(v) || '';
   clearCategoryFilters(cat: string, event: Event) {
