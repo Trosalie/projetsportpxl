@@ -296,13 +296,13 @@ class InvoiceTest extends TestCase
     {
         // credits
         DB::shouldReceive('table')
-            ->once()
             ->with('invoice_credits')
+            ->once()
             ->andReturnSelf();
 
         DB::shouldReceive('where')
-            ->once()
             ->with('photographer_id', 30)
+            ->once()
             ->andReturnSelf();
 
         DB::shouldReceive('get')
@@ -313,13 +313,13 @@ class InvoiceTest extends TestCase
 
         // payments
         DB::shouldReceive('table')
-            ->once()
             ->with('invoice_payments')
+            ->once()
             ->andReturnSelf();
 
         DB::shouldReceive('where')
-            ->once()
             ->with('photographer_id', 30)
+            ->once()
             ->andReturnSelf();
 
         DB::shouldReceive('get')
@@ -348,13 +348,13 @@ class InvoiceTest extends TestCase
         $payload = ['photographer_ids' => [1,2]];
 
         DB::shouldReceive('table')
-            ->once()
             ->with('invoice_credits')
+            ->once()
             ->andReturnSelf();
 
         DB::shouldReceive('whereIn')
-            ->once()
             ->with('photographer_id', $payload['photographer_ids'])
+            ->once()
             ->andReturnSelf();
 
         DB::shouldReceive('get')
@@ -365,13 +365,13 @@ class InvoiceTest extends TestCase
             ]));
 
         DB::shouldReceive('table')
-            ->once()
             ->with('invoice_payments')
+            ->once()
             ->andReturnSelf();
 
         DB::shouldReceive('whereIn')
-            ->once()
             ->with('photographer_id', $payload['photographer_ids'])
+            ->once()
             ->andReturnSelf();
 
         DB::shouldReceive('get')
