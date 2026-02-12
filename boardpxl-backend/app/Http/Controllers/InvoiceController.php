@@ -263,7 +263,7 @@ class InvoiceController extends Controller
                 ->get();
 
             $invoiceSubscription = DB::table('invoice_subscription')
-                ->where('photographer_id', $idClient)
+                ->where('photographer_id', $idPhotographer)
                 ->get();
 
             return response()->json(array_merge(
