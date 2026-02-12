@@ -296,22 +296,49 @@ class InvoiceTest extends TestCase
 
     public function test_get_invoices_by_client_success()
     {
-        InvoiceCredit::factory()->create([
-            'photographer_id' => 30,
-            'number' => 'C-11',
-        ]);
+        DB::shouldReceive('table')
+            ->with('invoice_credits')
+            ->once()
+            ->andReturn(
+                Mockery::mock()
+                    ->shouldReceive('where')
+                    ->with('photographer_id', 30)
+                    ->once()
+                    ->andReturnSelf()
+                    ->getMock()
+                    ->shouldReceive('get')
+                    ->once()
+                    ->andReturn(collect([
+                        (object)['id' => 11, 'number' => 'C-11']
+                    ]))
+                    ->getMock()
+            );
 
-        InvoicePayment::factory()->create([
-            'photographer_id' => 30,
-            'number' => 'P-21',
-        ]);
+        DB::shouldReceive('table')
+            ->with('invoice_payments')
+            ->once()
+            ->andReturn(
+                Mockery::mock()
+                    ->shouldReceive('where')
+                    ->with('photographer_id', 30)
+                    ->once()
+                    ->andReturnSelf()
+                    ->getMock()
+                    ->shouldReceive('get')
+                    ->once()
+                    ->andReturn(collect([
+                        (object)['id' => 21, 'number' => 'P-21']
+                    ]))
+                    ->getMock()
+            );
 
         $response = $this->getJson('/api/invoices-client/30');
 
-        $response->assertStatus(200)->assertJson([
-            ['id' => 11, 'number' => 'C-11'],
-            ['id' => 21, 'number' => 'P-21'],
-        ]);
+        $response->assertStatus(200)
+            ->assertJson([
+                ['id' => 11, 'number' => 'C-11'],
+                ['id' => 21, 'number' => 'P-21'],
+            ]);
     }
 
     public function test_get_invoices_by_client_invalid()
@@ -323,28 +350,53 @@ class InvoiceTest extends TestCase
 
     public function test_get_bulk_invoices_by_photographers_success()
     {
-        $payload = ['photographer_ids' => [1,2]];
+        $payload = ['photographer_ids' => [1, 2]];
 
-        InvoiceCredit::factory()->create([
-            'photographer_id' => 1,
-        ]);
-        InvoiceCredit::factory()->create([
-            'photographer_id' => 2,
-        ]);
+        DB::shouldReceive('table')
+            ->with('invoice_credits')
+            ->once()
+            ->andReturn(
+                Mockery::mock()
+                    ->shouldReceive('whereIn')
+                    ->with('photographer_id', $payload['photographer_ids'])
+                    ->once()
+                    ->andReturnSelf()
+                    ->getMock()
+                    ->shouldReceive('get')
+                    ->once()
+                    ->andReturn(collect([
+                        (object)['photographer_id' => 1, 'id' => 101],
+                        (object)['photographer_id' => 2, 'id' => 102],
+                    ]))
+                    ->getMock()
+            );
 
-        InvoicePayment::factory()->create([
-            'photographer_id' => 1,
-        ]);
-        InvoicePayment::factory()->create([
-            'photographer_id' => 2,
-        ]);
+        DB::shouldReceive('table')
+            ->with('invoice_payments')
+            ->once()
+            ->andReturn(
+                Mockery::mock()
+                    ->shouldReceive('whereIn')
+                    ->with('photographer_id', $payload['photographer_ids'])
+                    ->once()
+                    ->andReturnSelf()
+                    ->getMock()
+                    ->shouldReceive('get')
+                    ->once()
+                    ->andReturn(collect([
+                        (object)['photographer_id' => 1, 'id' => 201],
+                        (object)['photographer_id' => 2, 'id' => 202],
+                    ]))
+                    ->getMock()
+            );
 
         $response = $this->postJson('/api/invoices-bulk', $payload);
 
-        $response->assertStatus(200)->assertJsonStructure([
-            '1' => ['credits','payments'],
-            '2' => ['credits','payments']
-        ]);
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                '1' => ['credits', 'payments'],
+                '2' => ['credits', 'payments'],
+            ]);
     }
 
     public function test_get_financial_info_credits_invoice()
