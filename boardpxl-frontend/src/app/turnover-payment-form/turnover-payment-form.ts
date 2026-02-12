@@ -199,6 +199,7 @@ export class TurnoverPaymentForm implements OnDestroy {
         this.creationFacture = false;
         this.pendingFormData = null;
         this.modalData = null;
+        console.log("insertion facture de chiffre d'affaires", response);
         this.insertTurnoverInvoice(response, startDate, endDate, chiffreAffaire, TVA, this.today, dueDate, this.clientId);
         setTimeout(() => {
           this.router.navigate(['/photographers']);
@@ -230,9 +231,9 @@ export class TurnoverPaymentForm implements OnDestroy {
       issue_date: invoice.date,
       due_date: invoice.deadline,
       description: invoice.pdf_description,
-      turnover: chiffreAffaire,
-      raw_value: invoice.currency_amount_before_tax, // montant HT
-      montant: 0,
+      //turnover: chiffreAffaire,
+      raw_value: chiffreAffaire, // montant HT
+      //montant: 0,
       tax: invoice.tax,
       vat: vatValue,
       start_period: startDate,
