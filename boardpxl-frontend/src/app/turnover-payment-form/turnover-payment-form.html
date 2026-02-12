@@ -11,8 +11,8 @@
     <label for="photographer">Photographe :</label>
     <input type="text" id="photographer" name="photographer" required [value]="photographerInput" (input)="onPhotographerChange($event.target.value)" [disabled]="isLoading"/>
     <div *ngIf="isLoading" class="loading-indicator">Chargement du photographe...</div>
-    <ul *ngIf="filteredClients.length > 0" class="suggestions">
-      <li *ngFor="let name of filteredClients" (click)="selectPhotographer(name)">
+    <ul *ngIf="filteredPhotographers.length > 0" class="suggestions">
+      <li *ngFor="let name of filteredPhotographers" (click)="selectPhotographer(name)">
         {{ name }}
       </li>
     </ul>
