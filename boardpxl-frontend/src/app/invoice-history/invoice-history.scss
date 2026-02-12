@@ -3,7 +3,7 @@
     border-radius: 10px;
     padding-left: 13px;
     padding-right: 13px;
-    padding-top: 1px;
+    padding-bottom: 13px;
     display: flex;
     flex-direction: column;
 
@@ -20,14 +20,7 @@
 }
 
 .invoice-list {
-    overflow-y: auto;
-    margin-bottom: 13px;
-    position: relative;
-    
     @media (max-width: 768px) {
-        overflow-y: visible;
-        max-height: none !important;
-        height: auto !important;
         min-height: 300px;
     }
 }
@@ -92,7 +85,7 @@
     100% { transform: rotate(360deg); }
 }
 
-p {
+.header p {
     font-family: 'FuturaLT-Bold';
     font-size: 24px;
 }
@@ -100,8 +93,6 @@ p {
 app-pagination {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
 }
 
 /* === RESPONSIVE === */
