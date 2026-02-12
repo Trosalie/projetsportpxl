@@ -12,7 +12,7 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'app-credit-purchase-form',
   standalone: false,
   templateUrl: './credit-purchase-form.html',
-  styleUrls: ['./credit-purchase-form.scss'],
+  styleUrls: ['./credit-purchase-form.scss']
 })
 export class CreditPurchaseForm implements OnDestroy {
   today: string = new Date().toISOString().slice(0, 10);
@@ -98,7 +98,7 @@ export class CreditPurchaseForm implements OnDestroy {
 
     // Filtrer les suggestions en fonction du texte saisi
     const normalizedQuery = value.trim().toLowerCase();
-    this.filteredClients = this.clientsNames.filter(name => this.matchesQuery(name, normalizedQuery));
+    this.filteredPhotographers = this.clientsNames.filter(name => this.matchesQuery(name, normalizedQuery));
   }
 
   private matchesQuery(name: string, normalizedQuery: string): boolean {
