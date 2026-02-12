@@ -4,7 +4,6 @@ import { App } from '../app';
 import { Popup } from '../popup/popup';
 import { type InvoiceData } from '../confirm-modal/confirm-modal';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { PhotographerService } from '../services/photographer-service';
 import { InvoiceService } from '../services/invoice-service';
 import { AuthService } from '../services/auth-service';
@@ -102,7 +101,7 @@ export class ProfileInformation implements OnInit {
   }
 
   private loadPhotographerProfile(id: string) {
-    this.clientService.getPhotographer(id).subscribe({
+    this.photographerService.getPhotographer(id).subscribe({
       next: (data) => {
         if (data) {
           this.findPhotographer = true;
