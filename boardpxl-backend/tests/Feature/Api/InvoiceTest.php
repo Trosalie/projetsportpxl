@@ -296,49 +296,64 @@ class InvoiceTest extends TestCase
 
     public function test_get_invoices_by_client_success()
     {
+        // credits
         DB::shouldReceive('table')
+            ->once()
             ->with('invoice_credits')
-            ->once()
-            ->andReturn(
-                Mockery::mock()
-                    ->shouldReceive('where')
-                    ->with('photographer_id', 30)
-                    ->once()
-                    ->andReturnSelf()
-                    ->getMock()
-                    ->shouldReceive('get')
-                    ->once()
-                    ->andReturn(collect([
-                        (object)['id' => 11, 'number' => 'C-11']
-                    ]))
-                    ->getMock()
-            );
+            ->andReturnSelf();
 
-        DB::shouldReceive('table')
-            ->with('invoice_payments')
+        DB::shouldReceive('where')
             ->once()
-            ->andReturn(
-                Mockery::mock()
-                    ->shouldReceive('where')
-                    ->with('photographer_id', 30)
-                    ->once()
-                    ->andReturnSelf()
-                    ->getMock()
-                    ->shouldReceive('get')
-                    ->once()
-                    ->andReturn(collect([
-                        (object)['id' => 21, 'number' => 'P-21']
-                    ]))
-                    ->getMock()
-            );
+            ->with('photographer_id', 30)
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                    (object)['id' => 11, 'number' => 'C-11']
+                ]));
+
+        // payments
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_payments')
+            ->andReturnSelf();
+
+        DB::shouldReceive('where')
+            ->once()
+            ->with('photographer_id', 30)
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                (object)['id' => 21, 'number' => 'P-21']
+            ]));
+
+        // subscription
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_subscription')
+            ->andReturnSelf();
+
+        DB::shouldReceive('where')
+            ->once()
+            ->with('photographer_id', 30)
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                (object)['id' => 31, 'number' => 'S-31']
+            ]));
 
         $response = $this->getJson('/api/invoices-client/30');
 
-        $response->assertStatus(200)
-            ->assertJson([
-                ['id' => 11, 'number' => 'C-11'],
-                ['id' => 21, 'number' => 'P-21'],
-            ]);
+        $response->assertStatus(200)->assertJson([
+            ['id' => 11, 'number' => 'C-11'],
+            ['id' => 21, 'number' => 'P-21'],
+            ['id' => 31, 'number' => 'S-31'],
+        ]);
     }
 
     public function test_get_invoices_by_client_invalid()
@@ -350,53 +365,65 @@ class InvoiceTest extends TestCase
 
     public function test_get_bulk_invoices_by_photographers_success()
     {
-        $payload = ['photographer_ids' => [1, 2]];
+        $payload = ['photographer_ids' => [1,2]];
 
         DB::shouldReceive('table')
+            ->once()
             ->with('invoice_credits')
+            ->andReturnSelf();
+
+        DB::shouldReceive('whereIn')
             ->once()
-            ->andReturn(
-                Mockery::mock()
-                    ->shouldReceive('whereIn')
-                    ->with('photographer_id', $payload['photographer_ids'])
-                    ->once()
-                    ->andReturnSelf()
-                    ->getMock()
-                    ->shouldReceive('get')
-                    ->once()
-                    ->andReturn(collect([
-                        (object)['photographer_id' => 1, 'id' => 101],
-                        (object)['photographer_id' => 2, 'id' => 102],
-                    ]))
-                    ->getMock()
-            );
+            ->with('photographer_id', $payload['photographer_ids'])
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                (object)['photographer_id' => 1, 'id' => 101],
+                (object)['photographer_id' => 2, 'id' => 102],
+            ]));
 
         DB::shouldReceive('table')
-            ->with('invoice_payments')
             ->once()
-            ->andReturn(
-                Mockery::mock()
-                    ->shouldReceive('whereIn')
-                    ->with('photographer_id', $payload['photographer_ids'])
-                    ->once()
-                    ->andReturnSelf()
-                    ->getMock()
-                    ->shouldReceive('get')
-                    ->once()
-                    ->andReturn(collect([
-                        (object)['photographer_id' => 1, 'id' => 201],
-                        (object)['photographer_id' => 2, 'id' => 202],
-                    ]))
-                    ->getMock()
-            );
+            ->with('invoice_payments')
+            ->andReturnSelf();
+
+        DB::shouldReceive('whereIn')
+            ->once()
+            ->with('photographer_id', $payload['photographer_ids'])
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                (object)['photographer_id' => 1, 'id' => 201],
+                (object)['photographer_id' => 2, 'id' => 202],
+            ]));
+
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_subscription')
+            ->andReturnSelf();
+
+        DB::shouldReceive('whereIn')
+            ->once()
+            ->with('photographer_id', $payload['photographer_ids'])
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                (object)['photographer_id' => 1, 'id' => 301],
+                (object)['photographer_id' => 2, 'id' => 302],
+            ]));
 
         $response = $this->postJson('/api/invoices-bulk', $payload);
 
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                '1' => ['credits', 'payments'],
-                '2' => ['credits', 'payments'],
-            ]);
+        $response->assertStatus(200)->assertJsonStructure([
+            '1' => ['credits','payments', 'subscription'],
+            '2' => ['credits','payments', 'subscription']
+        ]);
     }
 
     public function test_get_financial_info_credits_invoice()
