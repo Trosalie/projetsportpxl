@@ -3,6 +3,8 @@
 namespace Tests\Feature\Api;
 
 use App\Http\Controllers\InvoiceController;
+use App\Models\InvoiceCredit;
+use App\Models\InvoicePayment;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 use Illuminate\Support\Facades\DB;
@@ -294,39 +296,15 @@ class InvoiceTest extends TestCase
 
     public function test_get_invoices_by_client_success()
     {
-        // credits
-        DB::shouldReceive('table')
-            ->with('invoice_credits')
-            ->once()
-            ->andReturnSelf();
+        InvoiceCredit::factory()->create([
+            'photographer_id' => 30,
+            'number' => 'C-11',
+        ]);
 
-        DB::shouldReceive('where')
-            ->with('photographer_id', 30)
-            ->once()
-            ->andReturnSelf();
-
-        DB::shouldReceive('get')
-            ->once()
-            ->andReturn(collect([
-                (object)['id' => 11, 'number' => 'C-11']
-            ]));
-
-        // payments
-        DB::shouldReceive('table')
-            ->with('invoice_payments')
-            ->once()
-            ->andReturnSelf();
-
-        DB::shouldReceive('where')
-            ->with('photographer_id', 30)
-            ->once()
-            ->andReturnSelf();
-
-        DB::shouldReceive('get')
-            ->once()
-            ->andReturn(collect([
-                (object)['id' => 21, 'number' => 'P-21']
-            ]));
+        InvoicePayment::factory()->create([
+            'photographer_id' => 30,
+            'number' => 'P-21',
+        ]);
 
         $response = $this->getJson('/api/invoices-client/30');
 
@@ -347,39 +325,19 @@ class InvoiceTest extends TestCase
     {
         $payload = ['photographer_ids' => [1,2]];
 
-        DB::shouldReceive('table')
-            ->with('invoice_credits')
-            ->once()
-            ->andReturnSelf();
+        InvoiceCredit::factory()->create([
+            'photographer_id' => 1,
+        ]);
+        InvoiceCredit::factory()->create([
+            'photographer_id' => 2,
+        ]);
 
-        DB::shouldReceive('whereIn')
-            ->with('photographer_id', $payload['photographer_ids'])
-            ->once()
-            ->andReturnSelf();
-
-        DB::shouldReceive('get')
-            ->once()
-            ->andReturn(collect([
-                (object)['photographer_id' => 1, 'id' => 101],
-                (object)['photographer_id' => 2, 'id' => 102],
-            ]));
-
-        DB::shouldReceive('table')
-            ->with('invoice_payments')
-            ->once()
-            ->andReturnSelf();
-
-        DB::shouldReceive('whereIn')
-            ->with('photographer_id', $payload['photographer_ids'])
-            ->once()
-            ->andReturnSelf();
-
-        DB::shouldReceive('get')
-            ->once()
-            ->andReturn(collect([
-                (object)['photographer_id' => 1, 'id' => 201],
-                (object)['photographer_id' => 2, 'id' => 202],
-            ]));
+        InvoicePayment::factory()->create([
+            'photographer_id' => 1,
+        ]);
+        InvoicePayment::factory()->create([
+            'photographer_id' => 2,
+        ]);
 
         $response = $this->postJson('/api/invoices-bulk', $payload);
 
