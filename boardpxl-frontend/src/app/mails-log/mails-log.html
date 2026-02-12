@@ -1,37 +1,39 @@
 <app-title [title]="'HISTORIQUE DES EMAILS'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
-<div class="container">
-    <div class="header">
-        <app-search-bar [placeholder]="'Rechercher un email...'" (filter)="onSearch($event)"></app-search-bar>
-    </div>
-    <div class="mails-list">
-        <div class="loading-overlay" *ngIf="isLoading">
-            <div class="spinner"></div>
-            <p>Chargement des emails...</p>
+<main>
+    <div class="container">
+        <div class="header">
+            <app-search-bar [placeholder]="'Rechercher un email...'" (filter)="onSearch($event)"></app-search-bar>
         </div>
-        <div class="mail-item" *ngFor="let mail of filteredMails">
-            <div class="card" (click)="toggleMailBody(mail.id)" [class.expanded]="isExpanded(mail.id)">
-                <div class="mail-info">
-                    <div class="main-info">
-                        <p class="recipient">{{ mail.recipient }}</p>
-                        <p class="subject">{{ mail.subject }}</p>
+        <div class="mails-list">
+            <div class="loading-overlay" *ngIf="isLoading">
+                <div class="spinner"></div>
+                <p>Chargement des emails...</p>
+            </div>
+            <div class="mail-item" *ngFor="let mail of filteredMails">
+                <div class="card" (click)="toggleMailBody(mail.id)" [class.expanded]="isExpanded(mail.id)">
+                    <div class="mail-info">
+                        <div class="main-info">
+                            <p class="recipient">{{ mail.recipient }}</p>
+                            <p class="subject">{{ mail.subject }}</p>
+                        </div>
+                    </div>
+                    <div class="mail-details">
+                        <div class="type-badge">{{ getTypeLabel(mail.type) }}</div>
+                        <div class="status-badge" [ngClass]="'status-' + mail.status.toLowerCase()">
+                            {{ getStatusLabel(mail.status) }}
+                        </div>
+                    </div>
+                    <div class="date-info">
+                        <p class="date">{{ mail.created_at | date: 'mediumDate' }}</p>
                     </div>
                 </div>
-                <div class="mail-details">
-                    <div class="type-badge">{{ getTypeLabel(mail.type) }}</div>
-                    <div class="status-badge" [ngClass]="'status-' + mail.status.toLowerCase()">
-                        {{ getStatusLabel(mail.status) }}
-                    </div>
-                </div>
-                <div class="date-info">
-                    <p class="date">{{ mail.created_at | date: 'mediumDate' }}</p>
+                <div class="mail-body" [class.show]="isExpanded(mail.id)">
+                    <div class="body-content" [innerHTML]="mail.body"></div>
                 </div>
             </div>
-            <div class="mail-body" [class.show]="isExpanded(mail.id)">
-                <div class="body-content" [innerHTML]="mail.body"></div>
+            <div class="no-results" *ngIf="!isLoading && filteredMails.length === 0">
+                <p>Aucun email trouvé</p>
             </div>
-        </div>
-        <div class="no-results" *ngIf="!isLoading && filteredMails.length === 0">
-            <p>Aucun email trouvé</p>
         </div>
     </div>
-</div>
+</main>

@@ -8,6 +8,9 @@
             <div class="spinner"></div>
             <p>Chargement des factures...</p>
         </div>
+        <div *ngIf="!isLoading && filteredInvoices.length === 0" class="no-invoices-message">
+            <p>Ce photographe ne possède aucune facture</p>
+        </div>
         <div class="invoice-item" *ngFor="let invoice of filteredInvoices">
             <app-invoice-card [invoice]="invoice"></app-invoice-card>
         </div>

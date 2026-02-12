@@ -1,0 +1,162 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  .modal-content {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 500px;
+    animation: slideIn 0.3s ease-out;
+
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+      
+      h2 {
+        margin: 0;
+        font-size: 20px;
+        color: #333;
+      }
+    }
+
+    .modal-body {
+      padding: 20px;
+
+      h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #555;
+        font-size: 16px;
+      }
+
+      .invoice-details {
+        margin-bottom: 20px;
+        background-color: #f5f5f5;
+        padding: 15px;
+        border-radius: 6px;
+
+        .detail-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
+          font-size: 14px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .label {
+            font-weight: 500;
+            color: #666;
+          }
+
+          .value {
+            color: #333;
+          }
+        }
+      }
+
+      .amount-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background-color: #fff3cd;
+        border-radius: 6px;
+        margin-bottom: 20px;
+
+        .label {
+          font-weight: 600;
+          color: #333;
+        }
+
+        .amount {
+          font-size: 18px;
+          color: #d9534f;
+          font-weight: bold;
+        }
+      }
+
+      .checkbox-section {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        input[type="checkbox"] {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+          accent-color: #F98524;
+        }
+
+        label {
+          margin: 0;
+          cursor: pointer;
+          color: #555;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .modal-footer {
+      padding: 15px 20px;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &.btn-discard {
+          background-color: #e9ecef;
+          color: #333;
+
+          &:hover {
+            background-color: #dee2e6;
+          }
+        }
+
+        &.btn-confirm {
+          background-color: #F98524;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background-color: #F98524;
+          }
+
+          &:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

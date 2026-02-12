@@ -31,6 +31,13 @@ export class ProfileInformation
   findPhotographer: boolean = false;
   photographerId: string | null = null;
 
+  // Filter properties
+  protected openDropdown: string | null = null;
+  protected activeFilters: string[] = [];
+  protected dateFilters: Map<string, string> = new Map();
+  protected readonly dataTypeFilters = ['Chiffre d\'affaire', 'Crédits vendus'];
+  protected readonly periodFilters = ['Après le', 'Avant le'];
+
   constructor(
     private photographerService: PhotographerService,
     private clientService: ClientService,
@@ -94,18 +101,125 @@ export class ProfileInformation
       {
         if (data && data.client_id)
         {
-          this.invoiceService.getInvoicesByClient(data.client_id).subscribe(invoices => {
+          this.invoiceService.getInvoicesPaymentByPhotographer(data.client_id).subscribe(invoices => {
             const invoicesTemp = invoices;
             this.turnover = 0;
             for (const invoice of invoicesTemp) {
-              if (invoice instanceof InvoicePayment)
-              {
-                this.turnover += invoice.turnover;
-              }
+              this.turnover += Number(invoice.raw_value);
             }
           })
         }
       }
     })
+  }
+
+  // Filter Methods (Mock implementation)
+  toggleDropdown(dropdownType: string, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.openDropdown = this.openDropdown === dropdownType ? null : dropdownType;
+  }
+
+  toggleFilter(filterValue: string) {
+    if (this.activeFilters.includes(filterValue)) {
+      this.removeFilter(filterValue);
+    } else {
+      this.addFilter(filterValue);
+    }
+  }
+
+  addFilter(filterValue: string) {
+    if (!this.activeFilters.includes(filterValue)) {
+      this.activeFilters.push(filterValue);
+    }
+  }
+
+  removeFilter(filterValue: string) {
+    this.activeFilters = this.activeFilters.filter(f => f !== filterValue);
+    if (this.isDateFilter(filterValue)) {
+      this.dateFilters.delete(filterValue);
+    }
+  }
+
+  isFilterActive(filterValue: string): boolean {
+    return this.activeFilters.includes(filterValue);
+  }
+
+  isDateFilter(filterValue: string): boolean {
+    return this.periodFilters.includes(filterValue);
+  }
+
+  addDateFilter(filterValue: string) {
+    if (!this.activeFilters.includes(filterValue)) {
+      this.activeFilters.push(filterValue);
+      this.dateFilters.set(filterValue, '');
+    }
+
+    setTimeout(() => {
+      const input = document.querySelector(`.date-input[data-filter="${filterValue}"]`) as HTMLInputElement;
+      if (input) {
+        input.focus();
+        input.showPicker?.();
+      }
+    }, 100);
+  }
+
+  getDateValue(filterValue: string): string {
+    return this.dateFilters.get(filterValue) || '';
+  }
+
+  updateDateFilter(filterValue: string, event: Event) {
+    const input = event.target as HTMLInputElement;
+    const newValue = input.value;
+
+    if (this.isDateRangeValid(filterValue, newValue)) {
+      this.dateFilters.set(filterValue, newValue);
+    }
+  }
+
+  private isDateRangeValid(filterValue: string, newValue: string): boolean {
+    // Mock implementation - just allow any valid date
+    return newValue !== '';
+  }
+
+  hasActiveDataTypeFilters(): boolean {
+    return this.activeFilters.some(f => this.dataTypeFilters.includes(f));
+  }
+
+  hasActivePeriodFilters(): boolean {
+    return this.activeFilters.some(f => this.periodFilters.includes(f));
+  }
+
+  clearCategoryFilters(category: string, event: Event): void {
+    event.stopPropagation();
+
+    let filtersToRemove: string[] = [];
+
+    switch(category) {
+      case 'dataType':
+        filtersToRemove = this.dataTypeFilters;
+        break;
+      case 'period':
+        filtersToRemove = this.periodFilters;
+        break;
+    }
+
+    filtersToRemove.forEach(filter => {
+      if (this.activeFilters.includes(filter)) {
+        this.removeFilter(filter);
+      }
+    });
+  }
+
+  canApplyFilters(): boolean {
+    return this.hasActiveDataTypeFilters() || this.hasActivePeriodFilters();
+  }
+
+  applyFilters(): void {
+    // Mock implementation - for now just log the filters
+    console.log('Applied filters:', this.activeFilters);
+    console.log('Date filters:', this.dateFilters);
+    // TODO: Implement actual filtering logic when graph is ready
   }
 }

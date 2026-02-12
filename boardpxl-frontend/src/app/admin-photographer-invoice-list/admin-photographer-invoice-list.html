@@ -1,5 +1,5 @@
 <app-title [title]="photographerName ? 'FACTURES DE ' + photographerName.toUpperCase() : 'FACTURES DU PHOTOGRAPHE'" [icon]="'assets/images/logo-tableau-de-bord.png'"></app-title>
 <main>
-    <app-invoice-history *ngIf="pennylaneId" [user]="pennylaneId"></app-invoice-history>
-    <p *ngIf="!pennylaneId" style="text-align: center; padding: 20px; color: #666;">Chargement...</p>
+    <app-invoice-history *ngIf="photographerId" [user]="photographerId"></app-invoice-history>
+    <p *ngIf="!photographerId" style="text-align: center; padding: 20px; color: #666;">Chargement...</p>
 </main>

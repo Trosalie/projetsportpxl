@@ -24,10 +24,6 @@
           <span class="info-row_label">email</span>
           <span class="info-row_value">{{ email }}</span>
         </div>
-        <div class="info-row">
-          <span class="info-row_label">Nombre de ventes totales</span>
-          <span class="info-row_value">{{ numberSell || '—' }} ventes</span>
-        </div>
 
         <div class="address-card">
           <div class="address-card_item">
@@ -54,7 +50,7 @@
       <div class="metrics">
         <div class="metric metric--turnover">
           <div class="metric_label">Chiffre d'affaire</div>
-          <div class="metric_value">{{ turnover }} €</div>
+          <div class="metric_value">{{ turnover | number:'1.0-9':'fr-FR' }} €</div>
         </div>
         <div class="metric metric--credits">
           <div class="metric_label">Crédits restants</div>
@@ -63,23 +59,67 @@
       </div>
 
       <div class="chart-card">
-        <div class="chart-card_header">
-          <div class="chart-card_title">Filtres</div>
-          <button class="chart-card_toggle" type="button" aria-label="Ouvrir les filtres">
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </div>
-        <div class="chips">
-          <button class="chip" type="button">
-            <span class="chip_close">×</span>
-            <span>Chiffre d'affaire</span>
-          </button>
-          <button class="chip" type="button">
-            <span class="chip_close">×</span>
-            <span>Total crédit</span>
-          </button>
+        <div class="filter-section-sidebar">
+          <div class="filter-label">Filtres</div>
+
+          <div class="filter-buttons-vertical">
+            <!-- Type de données Button -->
+            <div class="filter-dropdown-container">
+              <button class="filter-button" [class.active]="hasActiveDataTypeFilters()" (click)="toggleDropdown('dataType', $event)">
+                <img src="assets/category_icon.png" alt="Type" class="filter-icon">
+                <span>Type de données</span>
+                <button *ngIf="hasActiveDataTypeFilters()" class="clear-category-btn" (click)="clearCategoryFilters('dataType', $event)">
+                  <img src="assets/close_icon.png" alt="Clear">
+                </button>
+              </button>
+              <div class="dropdown-menu" *ngIf="openDropdown === 'dataType'" (click)="$event.stopPropagation()">
+                <label class="checkbox-item" *ngFor="let type of dataTypeFilters">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isFilterActive(type)"
+                    (change)="toggleFilter(type)">
+                  <span>{{ type }}</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Période Button -->
+            <div class="filter-dropdown-container">
+              <button class="filter-button" [class.active]="hasActivePeriodFilters()" (click)="toggleDropdown('period', $event)">
+                <img src="assets/calendar_icon.png" alt="Période" class="filter-icon">
+                <span>Période</span>
+                <button *ngIf="hasActivePeriodFilters()" class="clear-category-btn" (click)="clearCategoryFilters('period', $event)">
+                  <img src="assets/close_icon.png" alt="Clear">
+                </button>
+              </button>
+              <div class="dropdown-menu period-dropdown" *ngIf="openDropdown === 'period'" (click)="$event.stopPropagation()">
+                <div class="date-filter-item" *ngFor="let period of periodFilters">
+                  <label class="checkbox-item">
+                    <input 
+                      type="checkbox" 
+                      [checked]="isFilterActive(period)"
+                      (change)="toggleFilter(period); isFilterActive(period) && addDateFilter(period)">
+                    <span>{{ period }}</span>
+                  </label>
+                  <input 
+                    *ngIf="isFilterActive(period)"
+                    type="date" 
+                    class="date-input" 
+                    [attr.data-filter]="period"
+                    [value]="getDateValue(period)" 
+                    (change)="updateDateFilter(period, $event)"
+                    [min]="period === 'Avant le' ? getDateValue('Après le') : ''"
+                    [max]="period === 'Après le' ? getDateValue('Avant le') : ''"
+                    (click)="$event.stopPropagation()">
+                </div>
+              </div>
+            </div>
+
+            <!-- Bouton Appliquer -->
+            <button class="apply-button" (click)="applyFilters()" [disabled]="!canApplyFilters()">
+              Appliquer
+            </button>
+          </div>
         </div>
         <div class="chart-placeholder" aria-hidden="true">
           <div class="chart-placeholder_grid"></div>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { HttpHeadersService } from './http-headers.service';
 import { Mail } from '../models/mail.model';
 
@@ -21,7 +21,6 @@ export class MailService {
       body: body,
       type: type
     };
-    console.log('Tentative d\'envoi de mail:', payload);
     return this.http.post(`${environment.apiUrl}/send-email`, payload, this.headersService.getAuthHeaders());
   }
 
