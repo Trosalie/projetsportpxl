@@ -22,6 +22,7 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 
 use App\Http\Controllers\LogsController;
+use App\Http\Controllers\SettlementReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,8 +50,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Récupérer toutes les factures Pennylane pour sync
     Route::get('/pennylane-invoices', [PennylaneController::class, 'getInvoices']);
 
-    // Récupérer l'ID d’un client
-    Route::post('/client-id', [PennylaneController::class, 'getClientId']);
+    // Récupérer l'ID d’un photographe
+    Route::post('/photographer-id', [PennylaneController::class, 'getPhotographerId']);
 
     // Récupérer les factures de crédit d’un photographe
     // Testé : Non couvert actuellement - test à ajouter (par exemple dans InvoiceControllerTest)
@@ -58,10 +59,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Récupérer les factures de plusieurs photographes en une seule requête (optimisation)
     Route::post('/invoices-bulk', [InvoiceController::class, 'getBulkInvoicesByPhotographers']);
     // Création d'une facture
-    Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
+    Route::post('/create-credits-invoice-photographer', [PennylaneController::class, 'createCreditsInvoicePhotographer']);
 
     // Création d'une facture de versement de CA
-    Route::post('/create-turnover-invoice-client', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
+    Route::post('/create-turnover-invoice-photographer', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
 
     // Insertion d'une facture de versement de CA
     Route::post('/insert-turnover-invoice', [InvoiceController::class, 'insertTurnoverInvoice']);
@@ -70,16 +71,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/insert-credits-invoice', [InvoiceController::class, 'insertCreditsInvoice']);
 
 
-    // Récupérer la liste des clients
-    // Testé : PennyLaneControllerTest::test_get_list_clients
-    Route::get('/list-clients', [PennylaneController::class, 'getListClients']);
+    // Récupérer la liste des photographes
+    // Testé : PennyLaneControllerTest::test_get_list_photogrpahers
+    Route::get('/list-photographers', [PennylaneController::class, 'getListPhotographers']);
     //Récupérer les informations finaciere d'une facture de crédit
     Route::get('/invoice-credits-financial-info', [InvoiceController::class, 'getFinancialInfoCreditsInvoice']);
 
     //Récupérer les informations finaciere d'une facture de versement de CA
     Route::get('/invoice-turnover-financial-info', [InvoiceController::class, 'getFinancialInfoTurnoverInvoice']);
     // Création d'une facture
-    Route::post('/create-credits-invoice-client', [PennylaneController::class, 'createCreditsInvoiceClient']);
+    Route::post('/create-credits-invoice-photographer', [PennylaneController::class, 'createCreditsInvoicePhotographer']);
 
     // Afficher une facture spécifique
     // Testé : InvoiceAndPhotographerControllerTest::test_get_invoice_by_id_success et test_get_invoice_by_id_not_found
@@ -113,18 +114,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/photographer-ids/{name}', [PhotographerController::class, 'getPhotographerIds']);
     Route::get('/invoice-product/{invoiceNumber}', [PennylaneController::class, 'getProductFromInvoice']);
     Route::post('/download-invoice', [PennylaneController::class, 'downloadInvoice']);
-    
-    Route::get('/invoices-client/{idClient}', [InvoiceController::class, 'getInvoicesByClient']);
+
+    Route::get('/invoices-photographer/{idPhotographer}', [InvoiceController::class, 'getInvoicesByPhotographer']);
 
     // Routes Mail
     Route::post('/send-email', [MailController::class, 'sendEmail']);
     Route::get('/test-mail', [MailController::class, 'testMail']);
     Route::get('/mail-logs/{sender_id}', [MailController::class, 'getLogs']);
 
-    // Récupérer tous les clients
+    // Récupérer tous les photographes
     Route::get('/photographers', [PhotographerController::class, 'getPhotographers']);
 
-    //un client
+    //un photographe
     Route::get('photographer/{id}', [PhotographerController::class, 'getPhotographer']);
 
     // Logs
@@ -135,5 +136,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //Récupérer les informations finaciere d'une facture de versement de CA
     Route::get('/invoice-turnover-financial-info', [InvoiceController::class, 'getFinancialInfoTurnoverInvoice']);
+
+    // Settlement Reports
+    Route::post('/settlement-report/last', [SettlementReportController::class, 'getLastSettlementReport']);
+    Route::post('/settlement-report/calculate-turnover', [SettlementReportController::class, 'calculateTurnoverSinceDate']);
+    Route::post('/settlement-report/create', [SettlementReportController::class, 'createSettlementReport']);
+    Route::get('/settlement-report/all', [SettlementReportController::class, 'getAllSettlementReports']);
 
 });

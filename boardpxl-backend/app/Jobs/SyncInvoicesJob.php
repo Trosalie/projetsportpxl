@@ -3,9 +3,16 @@
 namespace App\Jobs;
 
 use App\Services\PennyLaneService;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class SyncInvoicesJob extends Job
+class SyncInvoicesJob implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     protected $service;
 
     public function __construct(PennyLaneService $service)
