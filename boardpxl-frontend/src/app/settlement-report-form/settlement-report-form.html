@@ -14,8 +14,8 @@
      <div *ngIf="settlementForm.get('photographer')?.hasError('required') && settlementForm.get('photographer')?.touched" class="error-message">
        Un photographe doit être sélectionné
      </div>
-     <ul *ngIf="filteredClients.length > 0" class="suggestions">
-      <li *ngFor="let name of filteredClients" (click)="selectPhotographer(name)">
+     <ul *ngIf="filteredPhotographer.length > 0" class="suggestions">
+      <li *ngFor="let name of filteredPhotographer" (click)="selectPhotographer(name)">
         {{ name }}
       </li>
     </ul>

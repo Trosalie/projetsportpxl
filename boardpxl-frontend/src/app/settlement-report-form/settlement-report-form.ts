@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 export class SettlementReportFormComponent implements OnInit, OnDestroy {
   settlementForm!: FormGroup;
   clientsNames: string[] = [];
-  filteredClients: string[] = [];
+  filteredPhotographer: string[] = [];
   photographerInput = '';
   isLoading = false;
   isLoadingTurnover = false;
@@ -29,7 +29,7 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
   @ViewChild('popup') popup!: Popup;
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private photographerService: PhotographerService,
     private settlementReportService: SettlementReportService,
     private router: Router
@@ -189,20 +189,20 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
     this.settlementForm.get('photographer')?.setValue(value, { emitEvent: false });
 
     const normalizedQuery = value.trim().toLowerCase();
-    this.filteredClients = this.clientsNames.filter(name => this.matchesQuery(name, normalizedQuery));
+    this.filteredPhotographer = this.clientsNames.filter(name => this.matchesQuery(name, normalizedQuery));
   }
 
   selectPhotographer(name: string): void {
     this.photographerInput = name;
-    this.filteredClients = [];
+    this.filteredPhotographer = [];
     this.settlementForm.get('photographer')?.setValue(name);
-    
+
     // Récupérer l'objet photographe complet
     const photographer = this.photographersMap.get(name);
     if (photographer && photographer.id) {
       this.selectedPhotographer = photographer;
       this.selectedPhotographerId = photographer.id;
-      
+
       // Charger le dernier relevé et calculer le CA
       this.loadLastReportAndCalculateTurnover(photographer.id);
     }
@@ -229,7 +229,7 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
             // Il y a un relevé précédent
             const lastReport = response.data;
             const startDate = this.formatDateForInput(lastReport.period_end_date);
-            
+
             // Mettre à jour la date de début avec la date de fin du dernier relevé
             this.settlementForm.patchValue({
               periodStartDate: startDate
@@ -281,7 +281,7 @@ export class SettlementReportFormComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     if (this.settlementForm.valid && this.selectedPhotographerId) {
       const formValue = this.settlementForm.value;
-      
+
       // Préparer les données pour la sauvegarde en BD
       const settlementData = {
         photographer_id: this.selectedPhotographerId,
