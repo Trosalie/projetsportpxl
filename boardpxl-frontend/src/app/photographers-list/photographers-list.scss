@@ -5,6 +5,11 @@ main {
     border-radius: 8px;
 }
 
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
 .header {
     display: flex;
     justify-content: flex-end;
@@ -30,6 +35,13 @@ main {
         flex: 1;
         max-width: 400px;
     }
+}
+
+app-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {

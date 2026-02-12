@@ -66,13 +66,13 @@ class InvoiceSeeder extends Seeder
         $product = $service->getProductFromInvoice($invoice['invoice_number']);
         $photographerId = DB::table('photographers')->where('pennylane_id', $invoice['customer']['id'])->value('id');
 
-$beforeTax = $invoice['currency_amount_before_tax'] ?? 0;
+        $beforeTax = $invoice['currency_amount_before_tax'] ?? 0;
 
-if ($beforeTax > 0) {
-    $vat = ($invoice['tax'] / $beforeTax) * 100;
-} else {
-    $vat = 0;
-}
+        if ($beforeTax > 0) {
+            $vat = ($invoice['tax'] / $beforeTax) * 100;
+        } else {
+            $vat = 0;
+        }
 
 
         if(str_contains(strtolower($product['label'] ?? ''), 'crédits')) {
@@ -94,7 +94,7 @@ if ($beforeTax > 0) {
             'amount' => $invoice['amount'],
             'tax' => $invoice['tax'],
             'vat' => $vat,
-            'total_due' => $invoice['remaining_amount_with_tax']  ?? 0,
+            'total_due' => $invoice['remaining_amount_with_tax'] ?? 0,
             'credits' => $creditAmount,
             'status' => $invoice['status'],
             'link_pdf' => $invoice['public_file_url'],

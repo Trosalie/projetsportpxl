@@ -14,6 +14,7 @@ import { Photographer } from '../models/photographer.model';
 interface LoginResponse {
   user: Photographer;
   token: string;
+  is_first_login: boolean;
 }
 
 /**
@@ -100,10 +101,12 @@ export class AuthService {
    * 
    * @param token Token JWT reçu de l'API
    * @param user Données du photographe connecté
+   * @param isFirstLogin Indicateur de première connexion
    * @returns void
    */
-  saveToken(token: string, user: Photographer): void {
+  saveToken(token: string, user: Photographer, isFirstLogin: boolean = false): void {
     localStorage.setItem('api_token', token);
+    localStorage.setItem('is_first_login', isFirstLogin.toString());
     this.setUser(user);
     this.loginSubject.next();
   }
@@ -161,5 +164,54 @@ export class AuthService {
     localStorage.removeItem('api_token');
     localStorage.removeItem('user');
     localStorage.removeItem('user_role');
+    localStorage.removeItem('is_first_login');
   }
+
+  /**
+   * @brief Récupère le flag de première connexion
+   * 
+   * @returns boolean Vrai si c'est la première connexion
+   */
+  isFirstLogin(): boolean {
+    return localStorage.getItem('is_first_login') === 'true';
+  }
+
+  /**
+   * @brief Efface le flag de première connexion
+   * 
+   * @returns void
+   */
+  clearFirstLoginFlag(): void {
+    localStorage.removeItem('is_first_login');
+  }
+
+  /**
+   * @brief Envoie un email de réinitialisation de mot de passe
+   * 
+   * Envoie une requête à l'API pour initier le processus de réinitialisation 
+   * @param email Adresse email de l'utilisateur 
+   * @returns Observable<any> Réponse de l'API
+   */
+  sendPasswordResetEmail(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/password/forgot`, { email });
+  }
+
+  /**
+   * @brief Réinitialise le mot de passe avec un token
+   * 
+   * @param email Adresse email de l'utilisateur
+   * @param token Token de réinitialisation
+   * @param password Nouveau mot de passe
+   * @param password_confirmation Confirmation du nouveau mot de passe
+   * @returns Observable<any> Réponse de l'API
+   */
+  resetPassword(email: string, token: string, password: string, password_confirmation: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/password/reset`, {
+      email,
+      token,
+      password,
+      password_confirmation
+    });
+  }
+
 }

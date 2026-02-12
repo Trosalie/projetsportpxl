@@ -38,4 +38,4 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 EXPOSE 9000
 
 # Lancer le serveur Laravel et lancer php artisan schedule:work en arrière-plan
-CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=9000 & php artisan schedule:work"]
+CMD ["sh", "-c", "rm -rf bootstrap/cache/*.php && php artisan serve --host=0.0.0.0 --port=9000 & php artisan schedule:work"]

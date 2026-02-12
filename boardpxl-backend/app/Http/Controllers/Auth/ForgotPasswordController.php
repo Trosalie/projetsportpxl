@@ -6,21 +6,13 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use App\Models\Photographer;
+use App\Notifications\ResetPasswordNotification;
 
 class ForgotPasswordController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Password Reset Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller is responsible for handling password reset emails and
-    | includes a trait which assists in sending these notifications from
-    | your application to your users. Feel free to explore this trait.
-    |
-    */
-
     /**
      * Envoyer un lien de réinitialisation de mot de passe par email.
      *
@@ -34,17 +26,29 @@ class ForgotPasswordController extends Controller
             'email' => 'required|email',
         ]);
 
-        // Envoi du lien de réinitialisation
-        $status = Password::sendResetLink($validated);
-
-        // Si l'envoi échoue, retourner une erreur
-        if ($status === Password::RESET_LINK_SENT) {
-            return response()->json(['message' => 'Lien de réinitialisation envoyé.']);
+        // Vérifier que l'utilisateur existe
+        $photographer = Photographer::where('email', $validated['email'])->first();
+        
+        if (!$photographer) {
+            // Pour des raisons de sécurité, ne pas révéler si l'email existe
+            return response()->json(['message' => 'Si cet email existe, un lien de réinitialisation a été envoyé.']);
         }
 
-        // En cas d'erreur, retourner une erreur
-        return response()->json(['message' => 'Echec de l\'envoi du lien.'], 400);
-    }
+        // Générer un token unique
+        $token = Str::random(64);
+        
+        // Stocker le token dans la table password_resets
+        DB::table('password_resets')->updateOrInsert(
+            ['email' => $validated['email']],
+            [
+                'token' => \Hash::make($token),
+                'created_at' => now(),
+            ]
+        );
 
-    // SendsPasswordResetEmails trait removed because unavailable in current vendor
+        // Envoyer une notification avec le lien de réinitialisation
+        $photographer->notify(new ResetPasswordNotification($token));
+
+        return response()->json(['message' => 'Si cet email existe, un lien de réinitialisation a été envoyé.']);
+    }
 }

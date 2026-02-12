@@ -16,6 +16,11 @@ export interface InvoiceData {
 export class ConfirmModal {
   @Input() isVisible: boolean = false;
   @Input() invoiceData: InvoiceData | null = null;
+  @Input() titleText: string = 'Confirmer la facture';
+  @Input() checkboxLabel: string = 'Je confirme la création de cette facture';
+  @Input() confirmLabel: string = 'Confirmer';
+  @Input() cancelLabel: string = 'Annuler';
+  @Input() showAmount: boolean = true;
   @Output() confirm = new EventEmitter<void>();
   @Output() discard = new EventEmitter<void>();
 

@@ -20,6 +20,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
+use App\Http\Controllers\Auth\ChangePasswordController;
 
 use App\Http\Controllers\LogsController;
 use App\Http\Controllers\SettlementReportController;
@@ -32,12 +33,20 @@ use App\Http\Controllers\SettlementReportController;
 
 // Routes d'authentification publiques
 Route::post('/login', [LoginController::class, 'login'])->name('login'); // rate limiter appliqué dans le middleware
-Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+// Oubli de mot de passe
+Route::post('/password/forgot', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+// Reset de password
 Route::post('/password/reset', [ResetPasswordController::class, 'reset']);
 
 // Routes de vérification d'email
 Route::get('/email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
+
+// Photographes - CRUD
+Route::post('/photographer', [PhotographerController::class, 'createPhotographer']);
+Route::put('/photographer/{id}', [PhotographerController::class, 'updatePhotographer']);
+Route::delete('/photographer/{id}', [PhotographerController::class, 'deletePhotographer']);
+
 
 /*
 |--------------------------------------------------------------------------
@@ -112,6 +121,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Testé : MailControllerTest::test_test_mail
     // Confirmation de mot de passe
     Route::post('/password/confirm', [ConfirmPasswordController::class, 'confirm']);
+    // Changement de mot de passe pour utilisateur authentifié
+    Route::post('/change-password', [ChangePasswordController::class, 'change']);
 
     // Routes PennyLane (factures)
     Route::post('/creation-facture', [PennylaneController::class, 'createInvoice']);

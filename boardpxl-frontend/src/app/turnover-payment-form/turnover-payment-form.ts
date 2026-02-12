@@ -163,8 +163,8 @@ export class TurnoverPaymentForm implements OnDestroy {
       };
 
       this.modalData = {
-        title: subject,
-        amount: 0,
+        title: subject, 
+        amount: chiffreAffaire,
         discount: 0,
         items: [
           { label: 'Photographe', value: this.photographerInput },
@@ -230,9 +230,9 @@ export class TurnoverPaymentForm implements OnDestroy {
       issue_date: invoice.date,
       due_date: invoice.deadline,
       description: invoice.pdf_description,
-      turnover: chiffreAffaire,
-      raw_value: invoice.currency_amount_before_tax, // montant HT
-      montant: 0,
+      //turnover: chiffreAffaire,
+      raw_value: chiffreAffaire, // montant HT
+      //montant: 0,
       tax: invoice.tax,
       vat: vatValue,
       start_period: startDate,

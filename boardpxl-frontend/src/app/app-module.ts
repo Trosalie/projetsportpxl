@@ -37,6 +37,10 @@ import { GeneralGraph } from './general-graph/general-graph';
 import { Logs } from './logs/logs';
 import { AboutUs } from './about-us/about-us';
 import { ConfirmModal } from './confirm-modal/confirm-modal';
+import { NewPhotographerForm } from './new-photographer-form/new-photographer-form';
+import { EditPhotographerForm } from './edit-photographer-form/edit-photographer-form';
+import { FirstLoginModalComponent } from './first-login-modal/first-login-modal';
+import { ResetPasswordPageComponent } from './reset-password-page/reset-password-page';
 import { SettlementReportListComponent } from './settlement-report-list/settlement-report-list';
 import { SettlementReportFormComponent } from './settlement-report-form/settlement-report-form';
 import {Subscription} from 'rxjs';
@@ -71,6 +75,9 @@ registerLocaleData(localeFr);
     Logs,
     AboutUs,
     ConfirmModal,
+    NewPhotographerForm,
+    EditPhotographerForm,
+    FirstLoginModalComponent,
     SettlementReportListComponent,
     SettlementReportFormComponent,
     SubscriptionForm
@@ -80,8 +87,9 @@ registerLocaleData(localeFr);
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule,
-    CommonModule
+    CommonModule,
+    ResetPasswordPageComponent,
+    ReactiveFormsModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
