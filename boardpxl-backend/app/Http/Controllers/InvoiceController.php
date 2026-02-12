@@ -19,7 +19,7 @@ class InvoiceController extends Controller
     {
         $this->logService = $logService;
     }
-  
+
       /**
      * add to the db a turnover invoice with specific information
      *
@@ -165,7 +165,7 @@ class InvoiceController extends Controller
      *
      * @param int $photographer_id
      * @return JsonResponse
-     */    
+     */
     public function getInvoicesPaymentByPhotographer(Request $request, $photographer_id)
     {
         try {
@@ -179,7 +179,7 @@ class InvoiceController extends Controller
             $invoices = DB::table('invoice_payments')
                 ->where('photographer_id', $photographer_id)
                 ->get();
-            
+
             return response()->json($invoices);
         } catch (\Exception $e) {
             return response()->json([
@@ -208,7 +208,7 @@ class InvoiceController extends Controller
         $invoices = DB::table('invoice_credits')
             ->where('photographer_id', $photographer_id)
             ->get();
-        
+
         return response()->json($invoices);
         } catch (\Exception $e) {
             return response()->json([
@@ -219,26 +219,26 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Retourne factures d'un client
+     * Retourne factures d'un photographer
      */
-    public function getInvoicesByClient($idClient)
+    public function getInvoicesByPhotographer($idPhotographer)
     {
         try {
-            if (!is_numeric($idClient)) {
+            if (!is_numeric($idPhotographer)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid client id',
+                    'message' => 'Invalid photographer id',
                 ], 422);
             }
 
             $invoiceCredits = DB::table('invoice_credits')
-                ->where('photographer_id', $idClient)
+                ->where('photographer_id', $idPhotographer)
                 ->get();
-            
+
             $invoicePayments = DB::table('invoice_payments')
-                ->where('photographer_id', $idClient)
+                ->where('photographer_id', $idPhotographer)
                 ->get();
-            
+
             return response()->json(array_merge(
                 $invoiceCredits->toArray(),
                 $invoicePayments->toArray()
@@ -262,7 +262,7 @@ class InvoiceController extends Controller
     {
         try {
             $photographerIds = $request->input('photographer_ids', []);
-            
+
             if (!is_array($photographerIds) || empty($photographerIds)) {
                 return response()->json([
                     'success' => false,
@@ -274,12 +274,12 @@ class InvoiceController extends Controller
                 ->whereIn('photographer_id', $photographerIds)
                 ->get()
                 ->groupBy('photographer_id');
-            
+
             $invoicePayments = DB::table('invoice_payments')
                 ->whereIn('photographer_id', $photographerIds)
                 ->get()
                 ->groupBy('photographer_id');
-            
+
             $result = [];
             foreach ($photographerIds as $id) {
                 $result[$id] = [
@@ -287,7 +287,7 @@ class InvoiceController extends Controller
                     'payments' => $invoicePayments->get($id, collect())->values()->toArray()
                 ];
             }
-            
+
             return response()->json($result);
         } catch (\Exception $e) {
             return response()->json([
@@ -296,7 +296,7 @@ class InvoiceController extends Controller
             ], 500);
         }
     }
-  
+
     public function getFinancialInfoCreditsInvoice(){
         try {
             $invoices = DB::table('invoice_credits')
@@ -339,7 +339,7 @@ class InvoiceController extends Controller
         $invoice = DB::table('invoice_credits')
             ->where('id', $id)
             ->first();
-        
+
         if (! $invoice) {
             $invoice = DB::table('invoice_payments')
                 ->where('id', $id)
@@ -352,7 +352,7 @@ class InvoiceController extends Controller
 
         return response()->json($invoice);
     }
-  
+
     public function getFinancialInfoTurnoverInvoice(){
         try {
             $invoices = DB::table('invoice_payments')
