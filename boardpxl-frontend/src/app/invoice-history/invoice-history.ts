@@ -29,7 +29,7 @@ export class InvoiceHistory implements OnDestroy {
     });
   }
 
-  
+
   ngOnInit() {
     requestAnimationFrame(() => {
       this.adjustHeight();
@@ -59,12 +59,12 @@ export class InvoiceHistory implements OnDestroy {
             invoice.status = 'En retard';
             break;
         }
-        
+
         allInvoices.push(new InvoiceCredit(invoice.number, invoice.issue_date, invoice.due_date, invoice.amount, invoice.tax, invoice.vat, invoice.total_due, invoice.discount || 0, invoice.credits, invoice.status, invoice.link_pdf, invoice.pdf_invoice_subject));
       }
 
       // Process payment invoices
-      for (let invoice of paymentInvoices) {        
+      for (let invoice of paymentInvoices) {
         allInvoices.push(new InvoicePayment(invoice.number, invoice.issue_date, invoice.due_date, invoice.description, invoice.raw_value, invoice.tax, invoice.vat, invoice.start_period, invoice.end_period, invoice.link_pdf, invoice.pdf_invoice_subject));
       }
 
@@ -83,10 +83,10 @@ export class InvoiceHistory implements OnDestroy {
 
       // Filter by type
       if (filters.typeFilters.length > 0) {
-        const matchesType = 
+        const matchesType =
           (filters.typeFilters.includes('Achat de crédits') && isCredit) ||
           (filters.typeFilters.includes('Versement') && isPayment);
-        
+
         if (!matchesType) {
           return false;
         }
@@ -96,7 +96,7 @@ export class InvoiceHistory implements OnDestroy {
       if (filters.statusFilters.length > 0) {
         // For payments, status is always "Payée"
         const invoiceStatus = isPayment ? 'Payée' : invoice.status;
-        
+
         if (!filters.statusFilters.includes(invoiceStatus)) {
           return false;
         }

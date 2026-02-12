@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ClientService } from '../services/client-service.service';
 import { PhotographerService } from '../services/photographer-service';
 import { InvoiceService } from '../services/invoice-service';
 import { Chart, registerables } from 'chart.js';
@@ -46,7 +45,6 @@ export class ProfileInformation implements OnInit {
 
   constructor(
     private photographerService: PhotographerService,
-    private clientService: ClientService,
     private invoiceService: InvoiceService,
     private route: ActivatedRoute,
   ) {}
@@ -58,7 +56,7 @@ export class ProfileInformation implements OnInit {
       return;
     }
 
-    this.clientService.getPhotographer(id).subscribe({
+    this.photographerService.getPhotographer(id).subscribe({
       next: (data) => {
         if (data) {
           this.findPhotographer = true;
@@ -88,7 +86,7 @@ export class ProfileInformation implements OnInit {
 
     this.photographerService.getPhotographerIdsByName(this.name).subscribe({
       next: (ids) => {
-        const idNum = Number(ids?.client_id);
+        const idNum = Number(ids?.photographerId);
         if (!isNaN(idNum) && idNum !== 0) {
           forkJoin({
             payments: this.invoiceService

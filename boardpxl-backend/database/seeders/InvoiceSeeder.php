@@ -37,13 +37,13 @@ class InvoiceSeeder extends Seeder
     private function getInvoices(): array
     {
         $service = new PennylaneService();
-        $client = $service->getHttpClient();
-        $response = $client->get('customer_invoices?sort=-id');
+        $photographer = $service->getHttpPhotographer();
+        $response = $photographer->get('customer_invoices?sort=-id');
         $data = json_decode($response->getBody()->getContents(), true);
         $returned = $data["items"];
 
         while($data["has_more"]) {
-            $response = $client->get('customer_invoices?sort=-id&cursor=' . $data["next_cursor"]);
+            $response = $photographer->get('customer_invoices?sort=-id&cursor=' . $data["next_cursor"]);
             $data = json_decode($response->getBody()->getContents(), true);
             $returned = array_merge($returned, $data["items"]);
         }
@@ -74,7 +74,7 @@ if ($beforeTax > 0) {
     $vat = 0;
 }
 
-        
+
         if(str_contains(strtolower($product['label'] ?? ''), 'crédits')) {
             echo "- Facture de crédits détectée pour la facture n° " . $invoice['invoice_number'] . PHP_EOL;
             echo "  - Libellé produit brut : " . ($product['label'] ?? 'N/A') . PHP_EOL;

@@ -55,7 +55,7 @@ class PhotographerControllerTest extends TestCase
             $response = $this->controller->getPhotographer(999999);
             $status = $response->getStatusCode();
             $this->assertTrue(in_array($status, [404, 500]));
-            
+
             if ($status === 404) {
                 $data = $response->getData(true);
                 $this->assertArrayHasKey('message', $data);
@@ -149,10 +149,10 @@ class PhotographerControllerTest extends TestCase
             $response = $this->controller->getPhotographerIds('John Smith');
             $status = $response->getStatusCode();
             $this->assertEquals(200, $status);
-            
+
             $data = $response->getData(true);
             $this->assertArrayHasKey('id', $data);
-            $this->assertArrayHasKey('client_id', $data);
+            $this->assertArrayHasKey('photographer_id', $data);
             $this->assertArrayHasKey('pennylane_id', $data);
             $this->assertEquals(2, $data['id']);
             $this->assertEquals('pl_12345', $data['pennylane_id']);
@@ -170,7 +170,7 @@ class PhotographerControllerTest extends TestCase
             $response = $this->controller->getPhotographerIds('NonExistentPhotographer');
             $status = $response->getStatusCode();
             $this->assertEquals(404, $status);
-            
+
             $data = $response->getData(true);
             $this->assertArrayHasKey('error', $data);
             $this->assertEquals('Photographer not found', $data['error']);
@@ -206,7 +206,7 @@ class PhotographerControllerTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $data = $response->getData(true);
-        
+
         $this->assertArrayHasKey('success', $data);
         $this->assertArrayHasKey('message', $data);
         $this->assertFalse($data['success']);
@@ -231,15 +231,15 @@ class PhotographerControllerTest extends TestCase
             ]);
 
             $response = $this->controller->getPhotographer(5);
-            
+
             $this->assertEquals(200, $response->getStatusCode());
             $this->assertEquals('application/json', $response->headers->get('content-type'));
-            
+
             $data = $response->getData(true);
             // Verify response contains photographer data
             $this->assertNotNull($data);
             $this->assertIsObject($data) || $this->assertIsArray($data);
-            
+
             if (is_array($data) || is_object($data)) {
                 // If it's array or object, verify it has expected photographer fields
                 $photoArray = is_object($data) ? (array)$data : $data;
@@ -259,10 +259,10 @@ class PhotographerControllerTest extends TestCase
         try {
             // Test with empty string (falsy)
             $response = $this->controller->getPhotographerIds('');
-            
+
             $this->assertEquals(400, $response->getStatusCode());
             $data = $response->getData(true);
-            
+
             $this->assertIsArray($data) || $this->assertIsObject($data);
             $this->assertArrayHasKey('error', (array)$data);
             $this->assertEquals('Name parameter is required', ((array)$data)['error']);
@@ -279,7 +279,7 @@ class PhotographerControllerTest extends TestCase
     {
         try {
             $response = $this->controller->getPhotographerIds('');
-            
+
             $this->assertEquals(400, $response->getStatusCode());
             $data = (array)$response->getData(true);
             $this->assertArrayHasKey('error', $data);
@@ -290,8 +290,8 @@ class PhotographerControllerTest extends TestCase
     }
 
     /**
-     * Test getPhotographerIds success returns photographer with id, client_id, and pennylane_id
-     * Tests line 104: return response()->json(['id' => ..., 'client_id' => ..., "pennylane_id" => ...]);
+     * Test getPhotographerIds success returns photographer with id, photographer_id, and pennylane_id
+     * Tests line 104: return response()->json(['id' => ..., 'photographer_id' => ..., "pennylane_id" => ...]);
      */
     public function test_get_photographer_ids_success_returns_all_required_id_fields()
     {
@@ -307,18 +307,18 @@ class PhotographerControllerTest extends TestCase
             ]);
 
             $response = $this->controller->getPhotographerIds('Alice Photographer');
-            
+
             $this->assertEquals(200, $response->getStatusCode());
             $data = $response->getData(true);
-            
+
             // Verify all three required fields are present
             $this->assertArrayHasKey('id', $data);
-            $this->assertArrayHasKey('client_id', $data);
+            $this->assertArrayHasKey('photographer_id', $data);
             $this->assertArrayHasKey('pennylane_id', $data);
-            
+
             // Verify values match
             $this->assertEquals(10, $data['id']);
-            $this->assertEquals(10, $data['client_id']); // Should be same as id per controller logic
+            $this->assertEquals(10, $data['photographer_id']); // Should be same as id per controller logic
             $this->assertEquals('pxl_alice_12345', $data['pennylane_id']);
         } catch (\Throwable $e) {
             $this->assertTrue(true);
