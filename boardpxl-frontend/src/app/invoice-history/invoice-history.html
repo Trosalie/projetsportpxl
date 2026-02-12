@@ -11,8 +11,9 @@
         <div *ngIf="!isLoading && filteredInvoices.length === 0" class="no-invoices-message">
             <p>Ce photographe ne possède aucune facture</p>
         </div>
-        <div class="invoice-item" *ngFor="let invoice of filteredInvoices">
+        <div class="invoice-item" *ngFor="let invoice of renderedList">
             <app-invoice-card [invoice]="invoice"></app-invoice-card>
         </div>
     </div>
+    <app-pagination *ngIf="!isLoading && filteredInvoices.length > 0" [numberOfItems]="itemsToShow" [fullList]="filteredInvoices" [renderedList]="renderedList" (pageChange)="onPageChange($event)"></app-pagination>
 </div>

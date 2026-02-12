@@ -4,6 +4,8 @@
     padding-left: 13px;
     padding-right: 13px;
     padding-top: 1px;
+    display: flex;
+    flex-direction: column;
 
     @media (max-width: 768px) {
         height: auto;
@@ -93,6 +95,13 @@
 p {
     font-family: 'FuturaLT-Bold';
     font-size: 24px;
+}
+
+app-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 /* === RESPONSIVE === */

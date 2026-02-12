@@ -356,7 +356,7 @@ class InvoiceController extends Controller
     public function getFinancialInfoTurnoverInvoice(){
         try {
             $invoices = DB::table('invoice_payments')
-                ->select('id','issue_date', 'raw_value', 'commission')
+                ->select('id','issue_date', 'raw_value')
                 ->get();
             return response()->json($invoices);
         } catch (\Exception $e) {

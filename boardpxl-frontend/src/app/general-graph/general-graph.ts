@@ -78,18 +78,16 @@ export class GeneralGraph implements OnInit {
 
     totalRevenue = 0;
     totalCreditsVendus = 0;
-    totalCommission = 0;
 
     creditsParMois: { [month: string]: number } = {};
     caParMois: { [month: string]: number } = {};
-    commissionParMois: { [month: string]: number } = {};
 
     // Filtres
     protected openDropdown: string | null = null;
-    protected activeFilters: string[] = ['Crédits vendus', 'Commission'];
+    protected activeFilters: string[] = ['Crédits vendus'];
     protected dateFilters: Map<string, string> = new Map();
     
-    protected readonly dataTypeFilters = ['Crédits vendus', 'Chiffre d\'affaires', 'Commission'];
+    protected readonly dataTypeFilters = ['Crédits vendus', 'Chiffre d\'affaires'];
     protected readonly periodFilters = ['Après le', 'Avant le'];
 
     // Totaux additionnels
@@ -199,16 +197,9 @@ export class GeneralGraph implements OnInit {
         this.totalCreditsVendus = this.creditsFinancialInfo.reduce((sum, invoice) => sum + (parseInt(invoice.credits) || 0), 0);
         }
 
-        // Calcul de la commission totale
-        this.totalCommission = 0;
-        if (Array.isArray(this.turnoverFinancialInfo)) {
-        this.totalCommission = this.turnoverFinancialInfo.reduce((sum, invoice) => sum + (parseFloat(invoice.commission) || 0), 0);
-        }
-
-
         //this.computeMonthlyData();
         this.graphInfoCreditsInvoice = this.groupByMonth(this.creditsFinancialInfo, 'amount');
-        this.graphInfoTurnoverInvoice = this.groupByMonth(this.turnoverFinancialInfo, 'commission');
+        this.graphInfoTurnoverInvoice = this.groupByMonth(this.turnoverFinancialInfo, 'raw_value');
   
     }
 
@@ -219,10 +210,6 @@ export class GeneralGraph implements OnInit {
 
     getTotalCreditsSold(): number {
         return this.totalCreditsVendus;
-    }
-
-    getTotalCommission(): number {
-        return this.totalCommission;
     }
 
     getTotalCreditsAmount(): number {
@@ -459,7 +446,6 @@ export class GeneralGraph implements OnInit {
         const hasType = this.hasActiveDataTypeFilters();
         const showCredits = !hasType || this.isFilterActive('Crédits vendus');
         const showCA = !hasType || this.isFilterActive('Chiffre d\'affaires');
-        const showCommission = !hasType || this.isFilterActive('Commission');
 
         // 4) Construire les séries mensuelles
         const monthKey = (iso: string) => iso?.slice(0, 7);
@@ -470,16 +456,14 @@ export class GeneralGraph implements OnInit {
 
         const creditsMap = new Map<string, number>(); // amount
         const caMap = new Map<string, number>();       // raw_value
-        const commissionMap = new Map<string, number>(); // commission
 
         if (showCredits) {
             for (const inv of filteredCredits) addToMap(creditsMap, monthKey(inv?.issue_date), Math.round(parseFloat(inv?.amount) || 0));
         }
-        if (showCA || showCommission) {
+        if (showCA) {
             for (const inv of filteredTurnover) {
                 const mk = monthKey(inv?.issue_date);
-                if (showCA) addToMap(caMap, mk, Math.round(parseFloat(inv?.raw_value) || 0));
-                if (showCommission) addToMap(commissionMap, mk, Math.round(parseFloat(inv?.commission) || 0));
+                addToMap(caMap, mk, Math.round(parseFloat(inv?.raw_value) || 0));
             }
         }
 
@@ -487,7 +471,6 @@ export class GeneralGraph implements OnInit {
         const monthSet = new Set<string>();
         if (showCredits) creditsMap.forEach((_, k) => monthSet.add(k));
         if (showCA) caMap.forEach((_, k) => monthSet.add(k));
-        if (showCommission) commissionMap.forEach((_, k) => monthSet.add(k));
 
         const labels = Array.from(monthSet);
         labels.sort((a, b) => new Date(a + '-01').getTime() - new Date(b + '-01').getTime());
@@ -504,8 +487,7 @@ export class GeneralGraph implements OnInit {
 
         const datasets: any[] = [];
         if (showCredits) datasets.push(datasetFor(this.labelData1, '#3b82f6', 'rgba(59, 130, 246, 0.1)', creditsMap));
-        if (showCA) datasets.push(datasetFor("Chiffre d'Affaires (€)", '#f59e0b', 'rgba(245, 158, 11, 0.1)', caMap));
-        if (showCommission) datasets.push(datasetFor('Commission (€)', '#10b981', 'rgba(16, 185, 129, 0.1)', commissionMap));
+        if (showCA) datasets.push(datasetFor("Chiffre d'Affaires (€)", '#10b981', 'rgba(16, 185, 129, 0.1)', caMap));
 
         // 6) Mettre à jour/initialiser le graphique
         if (!this.lineChart) {

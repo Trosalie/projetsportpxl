@@ -164,7 +164,7 @@ export class TurnoverPaymentForm implements OnDestroy {
 
       this.modalData = {
         title: subject, 
-        amount: 0,
+        amount: chiffreAffaire,
         discount: 0,
         items: [
           { label: 'Photographe', value: this.photographerInput },
