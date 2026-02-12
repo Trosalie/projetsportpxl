@@ -122,10 +122,85 @@ export class GeneralGraph implements OnInit {
             this.lineChart = null;
         }
 
-        this.adaptTabOfDatas();
+        // Construire les datasets en fonction des filtres actifs par défaut
+        const hasType = this.hasActiveDataTypeFilters();
+        const showCredits = !hasType || this.isFilterActive('Crédits vendus');
+        const showCA = !hasType || this.isFilterActive('Chiffre d\'affaires');
+
+        // Construire les séries mensuelles
+        const monthKey = (iso: string) => iso?.slice(0, 7);
+        const addToMap = (map: Map<string, number>, key: string | undefined, val: number) => {
+            if (!key) return;
+            map.set(key, (map.get(key) || 0) + (isFinite(val) ? val : 0));
+        };
+
+        const creditsMap = new Map<string, number>();
+        const caMap = new Map<string, number>();
+
+        if (showCredits && Array.isArray(this.creditsFinancialInfo)) {
+            for (const inv of this.creditsFinancialInfo) {
+                addToMap(creditsMap, monthKey(inv?.issue_date), Math.round(parseFloat(inv?.amount) || 0));
+            }
+        }
+        if (showCA && Array.isArray(this.turnoverFinancialInfo)) {
+            for (const inv of this.turnoverFinancialInfo) {
+                addToMap(caMap, monthKey(inv?.issue_date), Math.round(parseFloat(inv?.raw_value) || 0));
+            }
+        }
+
+        // Construire les labels (union des mois utilisés)
+        const monthSet = new Set<string>();
+        if (showCredits) creditsMap.forEach((_, k) => monthSet.add(k));
+        if (showCA) caMap.forEach((_, k) => monthSet.add(k));
+
+        const labels = Array.from(monthSet);
+        labels.sort((a, b) => new Date(a + '-01').getTime() - new Date(b + '-01').getTime());
+
+        const datasetFor = (label: string, color: string, bg: string, map: Map<string, number>) => ({
+            label,
+            data: labels.map(m => map.get(m) || 0),
+            borderColor: color,
+            backgroundColor: bg,
+            tension: 0.4,
+            fill: true,
+            borderWidth: 2
+        });
+
+        const datasets: any[] = [];
+        if (showCredits) datasets.push(datasetFor(this.labelData1, '#3b82f6', 'rgba(59, 130, 246, 0.1)', creditsMap));
+        if (showCA) datasets.push(datasetFor("Chiffre d'Affaires (€)", '#10b981', 'rgba(16, 185, 129, 0.1)', caMap));
+
+        // Adapter l'échelle Y
+        const allVals = datasets.flatMap(d => d.data as number[]);
+        const maxVal = allVals.length ? Math.max(...allVals) : 0;
+        const yMax = maxVal > 0 ? Math.ceil(maxVal * 1.1) : 150;
+        
+        const chartConfig: ChartConfiguration = {
+            type: 'line',
+            data: { labels, datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top' as const
+                    },
+                    title: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: yMax
+                    }
+                }
+            }
+        };
 
         try {
-            this.lineChart = new Chart(this.lineChartCanvas.nativeElement, this.lineChartConfig);
+            this.lineChart = new Chart(this.lineChartCanvas.nativeElement, chartConfig);
         } catch (error) {
             console.error('Error initializing chart:', error);
         }
