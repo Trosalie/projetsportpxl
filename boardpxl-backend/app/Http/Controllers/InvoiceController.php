@@ -242,24 +242,24 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Retourne factures d'un client
+     * Retourne factures d'un photographer
      */
-    public function getInvoicesByClient($idClient)
+    public function getInvoicesByPhotographer($idPhotographer)
     {
         try {
-            if (!is_numeric($idClient)) {
+            if (!is_numeric($idPhotographer)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid client id',
+                    'message' => 'Invalid photographer id',
                 ], 422);
             }
 
             $invoiceCredits = DB::table('invoice_credits')
-                ->where('photographer_id', $idClient)
+                ->where('photographer_id', $idPhotographer)
                 ->get();
 
             $invoicePayments = DB::table('invoice_payments')
-                ->where('photographer_id', $idClient)
+                ->where('photographer_id', $idPhotographer)
                 ->get();
 
             $invoiceSubscription = DB::table('invoice_subscription')

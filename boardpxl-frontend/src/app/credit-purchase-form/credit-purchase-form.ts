@@ -17,13 +17,13 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class CreditPurchaseForm implements OnDestroy {
   today: string = new Date().toISOString().slice(0, 10);
-  clientId: any;
+  photographerId: any;
   pennylaneId: any;
-  clientName: string = '';
-  findClient: boolean = false;
+  photographerName: string = '';
+  findPhotographer: boolean = false;
   creationFacture: boolean = false;
-  clientsNames: string[] = [];
-  filteredClients: string[] = [];
+  photographersNames: string[] = [];
+  filteredPhotographers: string[] = [];
   photographerInput: string = '';
   notificationVisible: boolean = false;
   notificationMessage: string = "";
@@ -42,51 +42,51 @@ export class CreditPurchaseForm implements OnDestroy {
   @ViewChild(ConfirmModal) confirmModal!: ConfirmModal;
 
   ngOnInit() {
-    // Récupère le nom du client depuis les query params
+    // Récupère le nom du photographe depuis les query params
     this.route.queryParams.subscribe(params => {
-      this.clientName = params['clientName'] || '';
-      
-      // Cherche le client par nom/prénom
-      if (this.clientName) {
+      this.photographerName = params['photographerName'] || '';
+
+      // Cherche le photographe par nom/prénom
+      if (this.photographerName) {
         this.isLoading = true;
-        this.photographerService.getPhotographerIdsByName(this.clientName).subscribe({
+        this.photographerService.getPhotographerIdsByName(this.photographerName).subscribe({
           next: (data) => {
-            if (data && data.client_id) {
-              this.clientId = data.client_id;
+            if (data && data.photographerId) {
+              this.photographerId = data.photographerId;
               this.pennylaneId = data.pennylane_id;
-              this.findClient = true;
-              this.photographerInput = this.clientName;
+              this.findPhotographer = true;
+              this.photographerInput = this.photographerName;
             } else {
-              // Client non trouvé
-              this.findClient = false;
-              this.photographerInput = this.clientName;
+              // Photographe non trouvé
+              this.findPhotographer = false;
+              this.photographerInput = this.photographerName;
             }
             this.isLoading = false;
-            this.loadClients();
+            this.loadPhotographers();
           },
           error: (err) => {
-            console.error('Erreur fetch client ID :', err);
+            console.error('Erreur fetch photographer ID :', err);
             this.isLoading = false;
-            this.findClient = false;
+            this.findPhotographer = false;
             this.popup.showNotification("Le photographe n'a pas été trouvé !");
-            this.loadClients();
+            this.loadPhotographers();
           }
         });
       } else {
-        this.loadClients();
+        this.loadPhotographers();
       }
     });
   }
 
-  // Récupère tous les clients pour suggestions
-  loadClients() {
+  // Récupère tous les photographes pour suggestions
+  loadPhotographers() {
     this.photographerService.getPhotographers()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
       next: (res) => {
-        this.clientsNames = res.map((c: any) => c.name);
+        this.photographersNames = res.map((c: any) => c.name);
       },
-      error: (err) => console.error('Erreur fetch clients :', err)
+      error: (err) => console.error('Erreur fetch photographers :', err)
     });
   }
 
@@ -96,11 +96,11 @@ export class CreditPurchaseForm implements OnDestroy {
     this.photographerInput = value;
 
     // Vérifie si le photographe existe
-    this.findClient = this.clientsNames.includes(value);
+    this.findPhotographer = this.photographersNames.includes(value);
 
     // Filtrer les suggestions en fonction du texte saisi
     const normalizedQuery = value.trim().toLowerCase();
-    this.filteredClients = this.clientsNames.filter(name => this.matchesQuery(name, normalizedQuery));
+    this.filteredPhotographers = this.photographersNames.filter(name => this.matchesQuery(name, normalizedQuery));
   }
 
   private matchesQuery(name: string, normalizedQuery: string): boolean {
@@ -114,23 +114,23 @@ export class CreditPurchaseForm implements OnDestroy {
   selectPhotographer(name: string) {
     this.isLoading = true;
     this.photographerInput = name;
-    this.findClient = true;
-    this.filteredClients = [];
-    this.clientName = name;
-    this.photographerService.getPhotographerIdsByName(this.clientName)
+    this.findPhotographer = true;
+    this.filteredPhotographers = [];
+    this.photographerName = name;
+    this.photographerService.getPhotographerIdsByName(this.photographerName)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
       next: (data) => {
-        if (data && data.client_id) {
-          this.clientId = data.client_id;
+        if (data && data.photographerId) {
+          this.photographerId = data.photographerId;
           this.pennylaneId = data.pennylane_id;
         } else {
-          this.popup.showNotification('Client non trouvé !');
+          this.popup.showNotification('Photographe non trouvé !');
         }
         this.isLoading = false;
-      }, 
+      },
       error: (err) => {
-        console.error('Erreur fetch client ID après sélection :', err);
+        console.error('Erreur fetch photographer ID après sélection :', err);
         this.isLoading = false;
       }
     });
@@ -146,8 +146,8 @@ export class CreditPurchaseForm implements OnDestroy {
     due.setMonth(due.getMonth() + 1);
     const dueDate = due.toISOString().slice(0, 10);
     const discountValue = parseFloat(form['discount'].value);
-    
-    if (!subject || !dueDate || !form['priceHT'].value || !form['credits'].value || !(form['tva'] as HTMLSelectElement).value || !this.findClient) {
+
+    if (!subject || !dueDate || !form['priceHT'].value || !form['credits'].value || !(form['tva'] as HTMLSelectElement).value || !this.findPhotographer) {
       this.popup.showNotification("Merci de remplir tous les champs du formulaire.");
       return;
     }
@@ -193,7 +193,7 @@ export class CreditPurchaseForm implements OnDestroy {
       amountEuro: priceHT,
       issueDate: issueDate,
       dueDate: dueDate,
-      idClient: this.pennylaneId,
+      idPhotographer: this.pennylaneId,
       invoiceTitle: subject,
       discount: discount
     };
@@ -207,7 +207,7 @@ export class CreditPurchaseForm implements OnDestroy {
         this.creationFacture = false;
         this.pendingFormData = null;
         this.modalData = null;
-        this.insertCreditsInvoice( response, priceHT, credits, tva, discount, "À venir", this.today, dueDate, this.clientId);
+        this.insertCreditsInvoice( response, priceHT, credits, tva, discount, "À venir", this.today, dueDate, this.photographerId);
         setTimeout(() => {
           this.router.navigate(['/photographers']);
         }, 2000);
@@ -226,7 +226,7 @@ export class CreditPurchaseForm implements OnDestroy {
     this.showConfirmModal = false;
   }
 
-  insertCreditsInvoice( reponse: any, amount: number, credits: number, tva: string, discount: number, status: string, issueDate: string, dueDate: string, clientId: number) 
+  insertCreditsInvoice( reponse: any, amount: number, credits: number, tva: string, discount: number, status: string, issueDate: string, dueDate: string, photographerId: number)
   {
     const invoice = reponse.data;
     const vatValue = this.convertTvaCodeToPercent(tva);
@@ -244,7 +244,7 @@ export class CreditPurchaseForm implements OnDestroy {
       credits: credits,
       status: status,
       link_pdf: invoice.public_file_url,
-      photographer_id: clientId,
+      photographer_id: photographerId,
       pdf_invoice_subject: invoice.pdf_invoice_subject
     };
 
