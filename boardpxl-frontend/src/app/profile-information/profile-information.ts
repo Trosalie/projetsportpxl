@@ -4,7 +4,7 @@ import { App } from '../app';
 import { Popup } from '../popup/popup';
 import { type InvoiceData } from '../confirm-modal/confirm-modal';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { ClientService } from '../services/client-service.service';
+import { ActivatedRoute } from '@angular/router';
 import { PhotographerService } from '../services/photographer-service';
 import { InvoiceService } from '../services/invoice-service';
 import { AuthService } from '../services/auth-service';
@@ -73,7 +73,6 @@ export class ProfileInformation implements OnInit {
 
   constructor(
     private photographerService: PhotographerService,
-    private clientService: ClientService,
     private invoiceService: InvoiceService,
     private route: ActivatedRoute,
     private router: Router,
@@ -134,7 +133,7 @@ export class ProfileInformation implements OnInit {
 
     this.photographerService.getPhotographerIdsByName(this.name).subscribe({
       next: (ids) => {
-        const idNum = Number(ids?.client_id);
+        const idNum = Number(ids?.photographerId);
         if (!isNaN(idNum) && idNum !== 0) {
           forkJoin({
             payments: this.invoiceService

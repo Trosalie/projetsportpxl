@@ -280,7 +280,7 @@ class InvoiceTest extends TestCase
         $response->assertStatus(422)->assertJson(['success' => false, 'message' => 'Invalid photographer id']);
     }
 
-    public function test_get_invoices_by_client_success()
+    public function test_get_invoices_by_photographer_success()
     {
         // credits
         DB::shouldReceive('table')
@@ -316,7 +316,7 @@ class InvoiceTest extends TestCase
                 (object)['id' => 21, 'number' => 'P-21']
             ]));
 
-        $response = $this->getJson('/api/invoices-client/30');
+        $response = $this->getJson('/api/invoices-photographer/30');
 
         $response->assertStatus(200)->assertJson([
             ['id' => 11, 'number' => 'C-11'],
@@ -324,11 +324,11 @@ class InvoiceTest extends TestCase
         ]);
     }
 
-    public function test_get_invoices_by_client_invalid()
+    public function test_get_invoices_by_photographer_invalid()
     {
-        $response = $this->getJson('/api/invoices-client/xyz');
+        $response = $this->getJson('/api/invoices-photographer/xyz');
 
-        $response->assertStatus(422)->assertJson(['success' => false, 'message' => 'Invalid client id']);
+        $response->assertStatus(422)->assertJson(['success' => false, 'message' => 'Invalid photographer id']);
     }
 
     public function test_get_bulk_invoices_by_photographers_success()

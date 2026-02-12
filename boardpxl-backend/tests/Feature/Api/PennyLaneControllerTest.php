@@ -18,15 +18,15 @@ class PennyLaneControllerTest extends TestCase
         Mockery::close();
         parent::tearDown();
     }
-    // Ce test vérifie la création réussie d'une facture de crédits pour un client.
+    // Ce test vérifie la création réussie d'une facture de crédits pour un photographe.
     // Il simule un appel au service PennyLane qui retourne une facture créée avec succès.
     // La requête POST contient les paramètres nécessaires comme labelTVA, amountEuro, etc.
     // On s'attend à une réponse HTTP 200 avec un JSON indiquant le succès.
-    public function test_create_credits_invoice_client_success()
+    public function test_create_credits_invoice_photographer_success()
     {
         // Mock du service Pennylane
         $mock = Mockery::mock(PennylaneService::class);
-        $mock->shouldReceive('createCreditsInvoiceClient')
+        $mock->shouldReceive('createCreditsInvoicePhotographer')
             ->once()
             ->andReturn([
                 'id' => 999,
@@ -37,13 +37,13 @@ class PennyLaneControllerTest extends TestCase
         $this->app->instance(PennylaneService::class, $mock);
 
         // Appel HTTP de la route API
-        $response = $this->postJson('/api/create-credits-invoice-client', [
+        $response = $this->postJson('/api/create-credits-invoice-photographer', [
             'labelTVA'      => 'FR_200',
             'labelProduct'  => '40 000 crédits',
             'amountEuro'    => '100',
-            'issueDate'     => now()->toDateString(), 
-            'dueDate'       => now()->addDays(30)->toDateString(), 
-            'idClient'      => 208474147,
+            'issueDate'     => now()->toDateString(),
+            'dueDate'       => now()->addDays(30)->toDateString(),
+            'idPhotographer'=> 208474147,
             'invoiceTitle'  => 'Facture crédits'
         ]);
 
@@ -56,40 +56,40 @@ class PennyLaneControllerTest extends TestCase
     }
 
 
-    // Ce test vérifie la gestion d'une erreur lors de la création d'une facture de crédits pour un client invalide.
-    // Le service PennyLane lance une exception 'Client introuvable', et on s'attend à une réponse 500 avec un message d'erreur.
-    public function test_create_credits_invoice_client_invalid_client()
+    // Ce test vérifie la gestion d'une erreur lors de la création d'une facture de crédits pour un photographe invalide.
+    // Le service PennyLane lance une exception 'Photographe introuvable', et on s'attend à une réponse 500 avec un message d'erreur.
+    public function test_create_credits_invoice_photographer_invalid_photographer()
     {
         $mock = Mockery::mock(PennylaneService::class);
-        $mock->shouldReceive('createCreditsInvoiceClient')
+        $mock->shouldReceive('createCreditsInvoicePhotographer')
             ->once()
-            ->andThrow(new \Exception('Client introuvable'));
+            ->andThrow(new \Exception('Photographe introuvable'));
 
         $this->app->instance(PennylaneService::class, $mock);
 
-        $response = $this->postJson('/api/create-credits-invoice-client', [
+        $response = $this->postJson('/api/create-credits-invoice-photographer', [
             'labelTVA'      => 'FR_200',
             'labelProduct'  => '40 000 crédits',
             'amountEuro'    => '100',
-            'issueDate'     => now()->toDateString(), 
-            'dueDate'       => now()->addDays(30)->toDateString(), 
-            'idClient'      => 0,
+            'issueDate'     => now()->toDateString(),
+            'dueDate'       => now()->addDays(30)->toDateString(),
+            'idPhotographer'=> 0,
             'invoiceTitle'  => 'Facture crédits'
         ]);
 
         $response->assertStatus(500)
                 ->assertJson([
                     'success' => false,
-                    'message' => 'Erreur : Client introuvable'
+                    'message' => 'Erreur : Photographe introuvable'
                 ]);
     }
 
-    // Ce test vérifie la création réussie d'une facture de versement de CA pour un client.
+    // Ce test vérifie la création réussie d'une facture de versement de CA pour un photographe.
     // Il simule un appel réussi au service PennyLane et vérifie la réponse positive.
     public function test_create_turnover_payment_invoice_success()
     {
         $mock = Mockery::mock(PennylaneService::class);
-        $mock->shouldReceive('createTurnoverInvoiceClient')
+        $mock->shouldReceive('createTurnoverInvoicePhotographer')
             ->once()
             ->andReturn([
                 'id' => 1000,
@@ -98,12 +98,11 @@ class PennyLaneControllerTest extends TestCase
 
         $this->app->instance(PennylaneService::class, $mock);
 
-        $response = $this->postJson('/api/create-turnover-invoice-client', [
+        $response = $this->postJson('/api/create-turnover-invoice-photographer', [
             'labelTVA' => 'FR_200',
-            'amountEuro' => '500',
             'issueDate' => now()->toDateString(),
             'dueDate' => now()->addDays(30)->toDateString(),
-            'idClient' => 208474147,
+            'idPhotographer' => 208474147,
             'invoiceTitle' => 'Facture versement CA',
             'invoiceDescription' => 'Description de la facture'
         ]);
@@ -121,18 +120,18 @@ class PennyLaneControllerTest extends TestCase
     public function test_create_turnover_payment_invoice_error()
     {
         $mock = Mockery::mock(PennylaneService::class);
-        $mock->shouldReceive('createTurnoverInvoiceClient')
+        $mock->shouldReceive('createTurnoverInvoicePhotographer')
             ->once()
             ->andThrow(new \Exception('Erreur lors de la création'));
 
         $this->app->instance(PennylaneService::class, $mock);
 
-        $response = $this->postJson('/api/create-turnover-invoice-client', [
+        $response = $this->postJson('/api/create-turnover-invoice-photographer', [
             'labelTVA' => 'FR_200',
             'amountEuro' => '500',
             'issueDate' => now()->toDateString(),
             'dueDate' => now()->addDays(30)->toDateString(),
-            'idClient' => 208474147,
+            'idPhotographer' => 208474147,
             'invoiceTitle' => 'Facture versement CA',
             'invoiceDescription' => 'Description de la facture'
         ]);
@@ -167,90 +166,90 @@ class PennyLaneControllerTest extends TestCase
                 ]);
     }
 
-    // Ce test vérifie la récupération réussie de l'ID d'un client par son nom.
+    // Ce test vérifie la récupération réussie de l'ID d'un photographe par son nom.
     // Le service retourne un ID valide, et la réponse confirme le succès avec l'ID.
-    public function test_get_client_id_success()
+    public function test_get_photographer_id_success()
     {
         $mock = Mockery::mock(PennylaneService::class);
-        $mock->shouldReceive('getClientIdByName')
+        $mock->shouldReceive('getPhotographerIdByName')
             ->with('John Doe')
             ->once()
             ->andReturn(12345);
 
         $this->app->instance(PennylaneService::class, $mock);
 
-        $response = $this->postJson('/api/client-id', [
+        $response = $this->postJson('/api/photographer-id', [
             'name' => 'John Doe'
         ]);
 
         $response->assertStatus(200)
                 ->assertJson([
                     'success' => true,
-                    'client_id' => 12345
+                    'photographerId' => 12345
                 ]);
     }
 
-    // Ce test vérifie le cas où le client n'est pas trouvé lors de la récupération de l'ID par nom.
+    // Ce test vérifie le cas où le photographe n'est pas trouvé lors de la récupération de l'ID par nom.
     // Le service retourne null, et on s'attend à une réponse 404 avec un message d'erreur.
-    public function test_get_client_id_not_found()
+    public function test_get_photographer_id_not_found()
     {
         $mock = Mockery::mock(PennylaneService::class);
-        $mock->shouldReceive('getClientIdByName')
-            ->with('Unknown Client')
+        $mock->shouldReceive('getPhotographerIdByName')
+            ->with('Unknown Photographer')
             ->once()
             ->andReturn(null);
 
         $this->app->instance(PennylaneService::class, $mock);
 
-        $response = $this->postJson('/api/client-id', [
-            'name' => 'Unknown Client'
+        $response = $this->postJson('/api/photographer-id', [
+            'name' => 'Unknown Photographer'
         ]);
 
         $response->assertStatus(404)
                 ->assertJson([
                     'success' => false,
-                    'message' => 'Client non trouvé'
+                    'message' => 'Photographe non trouvé'
                 ]);
     }
 
-    // Ce test vérifie la récupération des factures d'un client spécifique via son ID.
-    // Le service retourne une liste de factures pour ce client, et on vérifie la réponse JSON.
-    public function test_get_invoices_by_client()
+    // Ce test vérifie la récupération des factures d'un photographe spécifique via son ID.
+    // Le service retourne une liste de factures pour ce photographe, et on vérifie la réponse JSON.
+    public function test_get_invoices_by_photographer()
     {
         // Mock database queries for invoice credits and payments
         DB::shouldReceive('table')
             ->with('invoice_credits')
             ->once()
             ->andReturnSelf();
-        
+
         DB::shouldReceive('where')
             ->with('photographer_id', 12345)
             ->once()
             ->andReturnSelf();
-        
+
         DB::shouldReceive('get')
             ->once()
             ->andReturn(collect([
                 ['id' => 1, 'invoice_number' => 'INV-001', 'photographer_id' => 12345],
             ]));
-        
+
         DB::shouldReceive('table')
             ->with('invoice_payments')
             ->once()
             ->andReturnSelf();
-        
+
         DB::shouldReceive('where')
             ->with('photographer_id', 12345)
             ->once()
             ->andReturnSelf();
-        
+
         DB::shouldReceive('get')
             ->once()
             ->andReturn(collect([
                 ['id' => 3, 'invoice_number' => 'INV-003', 'photographer_id' => 12345],
             ]));
 
-        $response = $this->getJson('/api/invoices-client/12345');
+        $response = $this->getJson('/api/invoices-photographer/12345');
 
         $response->assertStatus(200)
                 ->assertJsonCount(2);
@@ -301,28 +300,28 @@ class PennyLaneControllerTest extends TestCase
                 ]);
     }
 
-    // Ce test vérifie la récupération de la liste de tous les clients.
-    // Le service retourne une liste de clients, et la réponse inclut un statut de succès et la liste.
-    public function test_get_list_clients()
+    // Ce test vérifie la récupération de la liste de tous les photographes.
+    // Le service retourne une liste de photographes, et la réponse inclut un statut de succès et la liste.
+    public function test_get_list_photographers()
     {
         $mock = Mockery::mock(PennylaneService::class);
-        $mock->shouldReceive('getListClients')
+        $mock->shouldReceive('getListPhotographers')
             ->once()
             ->andReturn([
-                ['id' => 1, 'name' => 'Client 1'],
-                ['id' => 2, 'name' => 'Client 2']
+                ['id' => 1, 'name' => 'Photographer 1'],
+                ['id' => 2, 'name' => 'Photographer 2']
             ]);
 
         $this->app->instance(PennylaneService::class, $mock);
 
-        $response = $this->getJson('/api/list-clients');
+        $response = $this->getJson('/api/list-photographers');
 
         $response->assertStatus(200)
                 ->assertJson([
                     'success' => true,
-                    'clients' => [
-                        ['id' => 1, 'name' => 'Client 1'],
-                        ['id' => 2, 'name' => 'Client 2']
+                    'photographers' => [
+                        ['id' => 1, 'name' => 'Photographer 1'],
+                        ['id' => 2, 'name' => 'Photographer 2']
                     ]
                 ]);
     }

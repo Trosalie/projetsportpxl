@@ -10,10 +10,10 @@ import { InvoiceCredit } from '../models/invoice-credit.model';
 /**
  * @class InvoiceService
  * @brief Service de gestion des factures
- * 
+ *
  * Gère toutes les opérations liées aux factures : récupération,
  * création et insertion de factures de crédits et de versements.
- * 
+ *
  * @author SportPxl Team
  * @version 1.0.0
  * @date 2026-01-13
@@ -33,13 +33,13 @@ export class InvoiceService {
   }
 
   /**
-   * Get all invoices from a specific client
+   * Get all invoices from a specific photographer
    *
-   * @param string clientId
+   * @param string photographerId
    * @return Observable<Invoice[]>
    * */
-  getInvoicesByClient(clientId: string): Observable<Invoice[]> {
-    return this.http.get<Invoice[]>(`${environment.apiUrl}/invoices-client/${clientId}`, this.headersService.getAuthHeaders());
+  getInvoicesByPhotographer(photographerId: string): Observable<Invoice[]> {
+    return this.http.get<Invoice[]>(`${environment.apiUrl}/invoices-photographer/${photographerId}`, this.headersService.getAuthHeaders());
   }
 
   /**
@@ -79,7 +79,7 @@ export class InvoiceService {
    * @return Observable<any>
    * */
   createCreditsInvoice(body: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/create-credits-invoice-client`, body, this.headersService.getAuthHeaders());
+    return this.http.post(`${environment.apiUrl}/create-credits-invoice-photographer`, body, this.headersService.getAuthHeaders());
   }
 
   /**
@@ -89,7 +89,7 @@ export class InvoiceService {
    * @return Observable<any>
    * */
   createTurnoverPaymentInvoice(body: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/create-turnover-invoice-client`, body, this.headersService.getAuthHeaders());
+    return this.http.post(`${environment.apiUrl}/create-turnover-invoice-photographer`, body, this.headersService.getAuthHeaders());
   }
 
   /**
@@ -140,5 +140,5 @@ export class InvoiceService {
       responseType: 'blob'
     });
   }
-  
+
 }

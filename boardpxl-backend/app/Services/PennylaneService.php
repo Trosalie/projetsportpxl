@@ -10,11 +10,40 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Models\Photographer;
 
+/**
+ * @class PennylaneService
+ * @brief Service de gestion de l'API Pennylane
+ *
+ * Cette classe fournit une interface pour interagir avec l'API externe Pennylane.
+ * Elle gère la création de factures, la récupération des données clients et
+ * la synchronisation des factures entre Pennylane et la base de données locale.
+ *
+ * @author SportPxl Team
+ * @version 1.0.0
+ * @date 2026-01-13
+ */
 class PennylaneService
 {
+    /**
+     * HTTP client used to communicate with the Pennylane external API.
+     *
+     * @var Client
+     */
     protected $client;
+
+    /**
+     * API authentication token used for Pennylane requests.
+     *
+     * @var string|null
+     */
     protected $token;
 
+    /**
+     * Create a new PennylaneService instance and configure the HTTP client.
+     *
+     * The HTTP client is initialised with the base URI and authorization
+     * headers required to communicate with the Pennylane external API.
+     */
     public function __construct()
     {
         $this->token = config('services.pennylane.token');
@@ -29,11 +58,21 @@ class PennylaneService
         ]);
     }
 
+    /**
+     *
+     *
+     * @return Client
+     * */
     public function getHttpClient(): Client
     {
         return $this->client;
     }
 
+    /**
+     * Get all invoices from database (credits and payments)
+     *
+     * @return array
+     * */
     public function getInvoices()
     {
         $allInvoices = [];
@@ -68,6 +107,15 @@ class PennylaneService
         return $allInvoices;
     }
 
+    /**
+     * @brief Récupère une facture par son numéro
+     *
+     * Recherche une facture spécifique dans l'ensemble des factures Pennylane
+     * en utilisant son numéro de facture unique.
+     *
+     * @param string $invoiceNumber Numéro de la facture à rechercher
+     * @return array|null Données de la facture ou null si non trouvée
+     */
     public function getInvoiceByNumber(string $invoiceNumber): ?array
     {
         $allInvoices = $this->getInvoices();
@@ -81,33 +129,59 @@ class PennylaneService
         return null;
     }
 
-    public function getInvoicesByIdClient(int $idClient): array
+    /**
+     * Get all the invoices of a specific Photographer
+     *
+     * @param int $idPhotographer
+     * @return array
+     * */
+    public function getInvoicesByIdPhotographer(int $idPhotographer): array
     {
         $allInvoices = $this->getInvoices();
 
-        $clientInvoices = array_filter($allInvoices, function ($invoice) use ($idClient) {
-            return isset($invoice['customer']['id']) && $invoice['customer']['id'] == $idClient;
+        $photographerInvoices = array_filter($allInvoices, function ($invoice) use ($idPhotographer) {
+            return isset($invoice['customer']['id']) && $invoice['customer']['id'] == $idPhotographer;
         });
 
-        return array_values($clientInvoices);
+        return array_values($photographerInvoices);
     }
 
-    public function getClientIdByName(string $name): ?int
+    /**
+     * Get the id of a specific photographer name
+     *
+     * @param string $name
+     * @return int
+     * */
+    public function getPhotographerIdByName(string $name): ?int
     {
-        $clients = $this->getListClients();
+        $photographers = $this->getListPhotographers();
 
-        foreach ($clients as $client) {
-            $clientName = $client['name'] ?? '';
+        foreach ($photographers as $photographer) {
+            $photographerName = $photographer['name'] ?? '';
 
-            if (strcasecmp($clientName, $name) === 0) {
-                return $client['id'];
+            if (strcasecmp($photographerName, $name) === 0) {
+                return $photographer['id'];
             }
         }
 
         return null;
     }
 
-    public function createCreditsInvoiceClient(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $discount, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle)
+    /**
+     * add a credit invoice for a photographer
+     *
+     * @param string $labelTVA
+     * @param string $labelProduct
+     * @param string $description
+     * @param string $amountEuro
+     * @param string $discount
+     * @param string $issueDate
+     * @param string $dueDate
+     * @param int $idPhotographer
+     * @param string $invoiceTitle
+     * @return json
+     * */
+    public function createCreditsInvoicePhotographer(string $labelTVA, string $labelProduct, string $description, string $amountEuro, string $discount, string $issueDate, string $dueDate, int $idPhotographer, string $invoiceTitle)
     {
         $client = new \GuzzleHttp\Client();
 
@@ -136,7 +210,7 @@ class PennylaneService
                 ],
                 "date" => $issueDate,
                 "deadline" => $dueDate,
-                "customer_id" => $idClient,
+                "customer_id" => $idPhotographer,
                 "pdf_invoice_subject" => $invoiceTitle
             ],
             'headers' => [
@@ -148,7 +222,18 @@ class PennylaneService
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function createTurnoverInvoiceClient(string $labelTVA, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle, string $invoiceDescription)
+    /**
+     * add a payment invoice for a photographer
+     *
+     * @param string $labelTVA
+     * @param string $issueDate
+     * @param string $dueDate
+     * @param int $idClient
+     * @param string $invoiceTitle
+     * @param string $invoiceDescription
+     * @return json
+     * */
+    public function createTurnoverInvoicePhotographer(string $labelTVA, string $issueDate, string $dueDate, int $idPhotographer, string $invoiceTitle, string $invoiceDescription)
     {
         $client = new \GuzzleHttp\Client();
 
@@ -176,7 +261,7 @@ class PennylaneService
                 ],
                 "date" => $issueDate,
                 "deadline" => $dueDate,
-                "customer_id" => $idClient,
+                "customer_id" => $idPhotographer,
                 "pdf_invoice_subject" => $invoiceTitle,
                 "pdf_description" => $invoiceDescription,
             ],
@@ -189,6 +274,11 @@ class PennylaneService
         return json_decode($response->getBody()->getContents(), true);
     }
 
+    /**
+     * get all photographers
+     *
+     * @return array
+     * */
     public function getPhotographers()
     {
         $response = $this->client->get('customers?sort=-id');
@@ -197,6 +287,12 @@ class PennylaneService
         return $data['items'] ?? [];
     }
 
+    /**
+     * get ... from a specific invoice
+     *
+     * @param string $invoiceNumber
+     * @return array
+     * */
     public function getProductFromInvoice(string $invoiceNumber): ?array
     {
         $invoice = $this->getInvoiceByNumber($invoiceNumber);
@@ -230,15 +326,19 @@ class PennylaneService
                 }
             }
         } catch (\Throwable $e) {
-            // ignore or log the error as needed
         }
 
-        return null; // Produit non trouvé
+        return null;
     }
 
-    public function getListClients(): array
+    /**
+     * get the 100 first photographers
+     *
+     * @return array
+     * */
+    public function getListPhotographers(): array
     {
-        $allClients = [];
+        $allPhotographers = [];
         $cursor = null;
 
         do {
@@ -256,16 +356,22 @@ class PennylaneService
                 break;
             }
 
-            $allClients = array_merge($allClients, $data['items']);
+            $allPhotographers = array_merge($allPhotographers, $data['items']);
 
             $cursor = $data['next_cursor'] ?? null;
             $hasMore = $data['has_more'] ?? false;
 
         } while ($hasMore);
 
-        return $allClients;
+        return $allPhotographers;
     }
 
+    /**
+     * get the invoice with a specific id
+     *
+     * @param int $id
+     * @return array
+     * */
     public function getInvoiceById(int $id): ?array
     {
         $response = $this->client->get("customer_invoices/{$id}");
@@ -274,7 +380,7 @@ class PennylaneService
             return json_decode($response->getBody()->getContents(), true);
         }
 
-        return null; // Facture non trouvée
+        return null;
     }
 
     public function createClient(array $clientData): ?array
