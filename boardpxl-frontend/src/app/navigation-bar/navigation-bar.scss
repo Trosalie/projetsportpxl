@@ -41,6 +41,28 @@ nav {
         list-style: none;
         padding: 20px;
         margin: 0;
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain; /* stop scroll chaining to page */
+        scrollbar-color: #d0d0d0 transparent;
+        
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background: #d0d0d0;
+            border-radius: 3px;
+            
+            &:hover {
+                background: #b0b0b0;
+            }
+        }
     }
 
     li {
@@ -193,7 +215,7 @@ nav {
 
     .disconnect-container {
         margin-top: auto;
-        padding: 0 20px 10px 20px;
+        padding: 12px 20px 14px 20px;
         width: 100%;
     }
 

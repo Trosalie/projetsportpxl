@@ -89,10 +89,63 @@ export class PhotographerService {
   }
 
   /**
-   *
-   * @param id
+   * @brief Crée un nouveau photographe via l'API
+   * 
+   * Envoie une requête POST à l'API pour créer un nouveau photographe
+   * 
+   * @param payload Données du photographe à créer
+   * @returns Observable<any> Réponse de l'API
    */
-  getPhotographer(id: string|null): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/photographer/${id}`, this.headersService.getAuthHeaders());
+  createPhotographer(payload: any): Observable<any> {
+    return this.http.post(
+      `${environment.apiUrl}/photographer`,
+      payload,
+      this.headersService.getAuthHeaders()
+    );
+  }
+
+  /**
+   * @brief Récupère un photographe par son ID
+   *
+   * @param id Identifiant du photographe
+   * @returns Observable<any> Photographe
+   */
+  getPhotographer(id: number | string): Observable<any> {
+    return this.http.get(
+      `${environment.apiUrl}/photographer/${id}`,
+      this.headersService.getAuthHeaders()
+    );
+  }
+
+  /**
+   * @brief Met à jour un photographe via l'API
+   *
+   * Envoie une requête PUT à l'API pour mettre à jour un photographe existant
+   *
+   * @param id Identifiant du photographe
+   * @param payload Données à mettre à jour
+   * @returns Observable<any> Réponse de l'API
+   */
+  updatePhotographer(id: number, payload: any): Observable<any> {
+    return this.http.put(
+      `${environment.apiUrl}/photographer/${id}`,
+      payload,
+      this.headersService.getAuthHeaders()
+    );
+  }
+
+  /**
+   * @brief Supprime un photographe via l'API
+   *
+   * Envoie une requête DELETE à l'API pour supprimer un photographe existant
+   *
+   * @param id Identifiant du photographe
+   * @returns Observable<any> Réponse de l'API
+   */
+  deletePhotographer(id: number): Observable<any> {
+    return this.http.delete(
+      `${environment.apiUrl}/photographer/${id}`,
+      this.headersService.getAuthHeaders()
+    );
   }
 }

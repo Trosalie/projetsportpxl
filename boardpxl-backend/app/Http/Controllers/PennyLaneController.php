@@ -292,4 +292,68 @@ class PennyLaneController extends Controller
             'photographers' => $photographers
         ]);
     }
+
+    public function createClient(Request $request, PennylaneService $service)
+    {
+        // Déjà validé dans PhotographerController::createPhotographer()
+        // Ici on récupère simplement les données sous forme de tableau
+        $validated = $request->all();
+
+        try {
+            $client = $service->createClient($validated);
+
+            $this->logService->logAction($request, 'create_client', 'PHOTOGRAPHERS', [
+                'first_name' => $validated['first_name'] ?? null,
+                'last_name' => $validated['last_name'] ?? null,
+                'name' => $validated['name'] ?? null,
+                'email' => $validated['email'],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Client créé avec succès.',
+                'data' => $client
+            ]);
+
+        } catch (\Exception $e) {
+            $this->logService->logAction($request, 'create_client_failed', 'PHOTOGRAPHERS', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }      
+    }
+    
+    public function updateClient(Request $request, PennylaneService $service, $clientId)
+    {
+        $validated = $request->all();
+
+        try {
+            $client = $service->updateClient($clientId, $validated);
+
+            $this->logService->logAction($request, 'update_client', 'PHOTOGRAPHERS', [
+                'client_id' => $clientId,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Client mis à jour avec succès.',
+                'data' => $client
+            ]);
+
+        } catch (\Exception $e) {
+            $this->logService->logAction($request, 'update_client_failed', 'PHOTOGRAPHERS', [
+                'client_id' => $clientId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }      
+    }
 }

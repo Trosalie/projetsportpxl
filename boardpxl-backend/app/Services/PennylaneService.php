@@ -383,14 +383,45 @@ class PennylaneService
         return null;
     }
 
+    public function createClient(array $clientData): ?array
+    {
+        $clientType = $clientData['type'];
+        unset($clientData['type']);
+        $response = $this->client->post("{$clientType}_customers", [
+            'json' => $clientData,
+        ]);
+
+        if ($response->getStatusCode() === 201) {
+            return json_decode($response->getBody()->getContents(), true);
+        }
+
+        return null;
+    }
+
+    public function updateClient(int $clientId, array $clientData): ?array
+    {
+        $clientType = $clientData['type'];
+        unset($clientData['type']);
+
+        $response = $this->client->put("{$clientType}_customers/{$clientId}", [
+            'json' => $clientData,
+        ]);
+
+        if ($response->getStatusCode() === 200) {
+            return json_decode($response->getBody()->getContents(), true);
+        }
+
+        return null;
+    }
+
     /**
      * @brief Synchronise les factures entre Pennylane et la base de données locale
-     *
+     * 
      * Récupère toutes les factures depuis Pennylane et les synchronise avec
      * la base de données locale. Distingue automatiquement les factures de crédit
      * des factures de versement de CA et met à jour les entrées correspondantes.
      * Les erreurs de synchronisation sont logées sans interrompre le processus.
-     *
+     * 
      * @return void
      */
     public function syncInvoices(): void

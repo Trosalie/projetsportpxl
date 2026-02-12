@@ -112,9 +112,9 @@ class AuthTest extends TestCase
             'fix_fee' => 0,
         ]);
 
-        $this->postJson('/api/password/email', ['email' => $user->email])
+        $this->postJson('/api/password/forgot', ['email' => $user->email])
             ->assertStatus(200)
-            ->assertJson(['message' => 'Lien de réinitialisation envoyé.']);
+            ->assertJson(['message' => 'Si cet email existe, un lien de réinitialisation a été envoyé.']);
 
         // Create a real token for reset flow and call reset endpoint
         $token = Password::broker()->createToken($user);

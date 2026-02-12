@@ -107,6 +107,10 @@ export class NavigationBar implements OnDestroy {
         route: '/form/credits',
         icon: 'assets/images/form_icon.svg'
       }, {
+        label: 'Création d\'un photographe',
+        route: '/new/photographer',
+        icon: 'assets/images/new_photographer_icon.svg'
+      }, {
         label: 'Nouveau relevé d\'encaissement',
         route: '/settlement-report',
         icon: 'assets/images/form_icon.svg'
@@ -118,13 +122,15 @@ export class NavigationBar implements OnDestroy {
 
       // Si on est sur la page profil ou factures d'un photographe
       const invoiceMatch = currentUrl.match(/\/photographer\/(\d+)\/invoices/);
+      const editMatch = currentUrl.match(/\/photographer\/(\d+)\/edit/);
       const profileMatch = currentUrl.match(/\/photographer\/(\d+)/);
-      const photographerId = invoiceMatch?.[1] ?? profileMatch?.[1] ?? null;
+      const photographerId = invoiceMatch?.[1] ?? editMatch?.[1] ?? profileMatch?.[1] ?? null;
 
       if (photographerId) {
         const photographerName = new URLSearchParams(window.location.search).get('name') || 'Photographe';
         const profileRoute = `/photographer/${photographerId}`;
         const invoicesRoute = `/photographer/${photographerId}/invoices`;
+        const editRoute = `/photographer/${photographerId}/edit`;
         const queryParams = photographerName ? { name: photographerName } : undefined;
 
         this.pages.push({
@@ -142,6 +148,12 @@ export class NavigationBar implements OnDestroy {
               label: 'Historique des factures',
               route: invoicesRoute,
               icon: 'assets/images/histofacture_icon.svg',
+              queryParams
+            },
+            {
+              label: 'Modifier',
+              route: editRoute,
+              icon: 'assets/images/edit_photographer_icon.svg',
               queryParams
             }
           ]
