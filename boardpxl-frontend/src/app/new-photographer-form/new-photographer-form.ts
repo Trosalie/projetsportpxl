@@ -17,7 +17,7 @@ export class NewPhotographerForm {
 
   constructor(
     private photographerService: PhotographerService,
-    private router: Router
+    public router: Router
   ) {}
 
   onTypeChange(type: string) {
@@ -83,9 +83,12 @@ export class NewPhotographerForm {
       },
       error: (error) => {
         console.error('Error creating photographer:', error);
-        let errorMessage = 'Erreur lors de la création du photographe.';
+        console.error('Error details:', error.error.error);
+        let errorMessage = 'Erreur lors de la création du photographe.\n';
         
-        if (error.error && error.error.errors) {
+        if(error.error && error.error.error) {
+          errorMessage += ` Détails : ${error.error.error}`;
+        } else if (error.error && error.error.errors) {
           // Handle validation errors - display all fields with errors
           const errors = error.error.errors;
           const errorFields = Object.keys(errors);
@@ -103,6 +106,7 @@ export class NewPhotographerForm {
         }
         
         this.popup.showNotification(errorMessage);
+        console.log(this.popup);
         this.isSubmitting = false;
       }
     });

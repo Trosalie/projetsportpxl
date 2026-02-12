@@ -53,8 +53,13 @@ nav > div {
   cursor: pointer;
   transition: color 0.3s ease;
   user-select: none;
+  background-color: #E8EAF6;
+  border-radius: 10px;
+  padding: 10px;
 
   &:hover {
-    color: #F98524;
+    color: #FFF;
+    background-color: #F98524;
+
   }
 }

@@ -33,7 +33,7 @@ export class EditPhotographerForm implements OnInit {
   constructor(
     private photographerService: PhotographerService,
     private route: ActivatedRoute,
-    private router: Router
+    public router: Router
   ) {}
 
   ngOnInit() {

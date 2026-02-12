@@ -138,6 +138,30 @@
 		}
 	}
 
+	button[type="button"] {
+		min-width: 200px;
+		padding: 12px 32px;
+		background: #f98524;
+		color: #fff;
+		font-size: 1.1rem;
+		font-weight: 600;
+		border: none;
+		border-radius: 8px;
+		margin-right: 20px;
+		cursor: pointer;
+		box-shadow: 0 2px 8px rgba(249, 133, 36, 0.3);
+		transition: background 0.2s, transform 0.1s;
+
+		&:hover:not(:disabled) {
+			background: #e67619;
+			transform: translateY(-1px);
+		}
+
+		&:active:not(:disabled) {
+			transform: translateY(0);
+		}
+	}
+
 }
 
 @media (max-width: 768px) {
@@ -166,5 +190,16 @@
 			width: 100%;
 			font-size: 1rem;
 		}
+
+		.form-actions {
+		flex-direction: column;
+		align-items: stretch;
+
+		button[type="button"] {
+			width: 100%;
+			margin-right: 0;
+			margin-bottom: 12px;
+		} 
+	}
 	}
 }

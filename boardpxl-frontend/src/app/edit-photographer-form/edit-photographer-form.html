@@ -81,6 +81,7 @@
 	</div>
 
 	<div class="form-actions">
+		<button type="button" (click)="router.navigate(['/photographers'])">Annuler</button>
 		<button type="submit" [disabled]="isSubmitting">
 			{{ isSubmitting ? 'Mise à jour en cours...' : 'Mettre à jour le photographe' }}
 		</button>

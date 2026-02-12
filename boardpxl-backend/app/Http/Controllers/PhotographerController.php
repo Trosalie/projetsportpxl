@@ -240,7 +240,7 @@ class PhotographerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur de l\'API Pennylane',
-                'error' => $body,
+                'error' => json_decode($body, true)["error"] ?? $body,
             ], 400);
         } catch (\Throwable $e) {
             return response()->json([
