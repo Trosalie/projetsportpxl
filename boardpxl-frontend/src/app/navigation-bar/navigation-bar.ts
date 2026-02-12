@@ -108,6 +108,14 @@ export class NavigationBar implements OnDestroy {
         route: '/form/credits',
         icon: 'assets/images/form_icon.svg'
       }, {
+        label: 'Nouveau relevé d\'encaissement',
+        route: '/settlement-report',
+        icon: 'assets/images/form_icon.svg'
+      }, {
+        label: 'Liste des relevés',
+        route: '/settlement-reports',
+        icon: 'assets/images/liste_icon.svg'
+      }, {
         label: 'Formulaire d\'abonnement',
         route: '/form/subscription',
         icon: 'assets/images/form_icon.svg'

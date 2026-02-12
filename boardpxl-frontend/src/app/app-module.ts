@@ -13,7 +13,7 @@ import { InvoiceFilter } from './invoice-filter/invoice-filter';
 import { LoginPage } from './login-page/login-page';
 import { PhotographerRequest } from './photographer-request/photographer-request';
 import { MailRequestPage } from './mail-request-page/mail-request-page';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 import { LOCALE_ID } from '@angular/core';
@@ -37,6 +37,8 @@ import { GeneralGraph } from './general-graph/general-graph';
 import { Logs } from './logs/logs';
 import { AboutUs } from './about-us/about-us';
 import { ConfirmModal } from './confirm-modal/confirm-modal';
+import { SettlementReportListComponent } from './settlement-report-list/settlement-report-list';
+import { SettlementReportFormComponent } from './settlement-report-form/settlement-report-form';
 import {Subscription} from 'rxjs';
 registerLocaleData(localeFr);
 
@@ -69,6 +71,8 @@ registerLocaleData(localeFr);
     Logs,
     AboutUs,
     ConfirmModal,
+    SettlementReportListComponent,
+    SettlementReportFormComponent,
     SubscriptionForm
   ],
   imports: [
@@ -76,6 +80,7 @@ registerLocaleData(localeFr);
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     CommonModule
   ],
   providers: [
