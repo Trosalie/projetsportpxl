@@ -411,19 +411,19 @@ class InvoiceTest extends TestCase
 
         DB::shouldReceive('select')
             ->once()
-            ->with('id','issue_date', 'raw_value', 'commission')
+            ->with('id','issue_date', 'raw_value')
             ->andReturnSelf();
 
         DB::shouldReceive('get')
             ->once()
             ->andReturn(collect([
-                ['id'=>2,'issue_date'=>now()->toDateString(),'raw_value'=>50,'commission'=>5]
+                ['id'=>2,'issue_date'=>now()->toDateString(),'raw_value'=>50]
             ]));
 
         $response = $this->getJson('/api/invoice-turnover-financial-info');
 
         $response->assertStatus(200)->assertJson([
-            ['id'=>2,'issue_date'=>now()->toDateString(),'raw_value'=>50,'commission'=>5]
+            ['id'=>2,'issue_date'=>now()->toDateString(),'raw_value'=>50]
         ]);
     }
 }

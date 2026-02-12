@@ -16,7 +16,7 @@
       
       <div class="amount-section">
         <span class="label">Montant total :</span>
-        <span class="amount" *ngIf="invoiceData.discount > 0"><del><i>{{ invoiceData.amount | currency }}</i></del> {{ invoiceData.amount - (invoiceData.amount * (invoiceData.discount/100) ) | currency }}</span>
+        <span class="amount" *ngIf="invoiceData.discount > 0"><del><i>{{ invoiceData.amount | currency }} €</i></del> {{ invoiceData.amount - (invoiceData.amount * (invoiceData.discount/100) ) | currency }} €</span>
         <span class="amount" *ngIf="invoiceData.discount <= 0">{{ invoiceData.amount | currency }}</span>
       </div>
       
