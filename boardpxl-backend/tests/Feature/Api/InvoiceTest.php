@@ -302,33 +302,11 @@ class InvoiceTest extends TestCase
             ->with('invoice_credits')
             ->andReturnSelf();
 
-        DB::shouldReceive('where')
-            ->once()
-            ->with('photographer_id', 30)
-            ->andReturnSelf();
-
-        DB::shouldReceive('get')
-            ->once()
-            ->andReturn(collect([
-                    (object)['id' => 11, 'number' => 'C-11']
-                ]));
-
         // payments
         DB::shouldReceive('table')
             ->once()
             ->with('invoice_payments')
             ->andReturnSelf();
-
-        DB::shouldReceive('where')
-            ->once()
-            ->with('photographer_id', 30)
-            ->andReturnSelf();
-
-        DB::shouldReceive('get')
-            ->once()
-            ->andReturn(collect([
-                (object)['id' => 21, 'number' => 'P-21']
-            ]));
 
         // subscription
         DB::shouldReceive('table')
@@ -337,15 +315,17 @@ class InvoiceTest extends TestCase
             ->andReturnSelf();
 
         DB::shouldReceive('where')
-            ->once()
             ->with('photographer_id', 30)
+            ->times(3)
             ->andReturnSelf();
 
         DB::shouldReceive('get')
-            ->once()
-            ->andReturn(collect([
-                (object)['id' => 31, 'number' => 'S-31']
-            ]));
+            ->times(3)
+            ->andReturn(
+                collect([(object)['id' => 11, 'number' => 'C-11']]),
+                collect([(object)['id' => 21, 'number' => 'P-21']]),
+                collect([(object)['id' => 31, 'number' => 'S-31']])
+            );
 
         $response = $this->getJson('/api/invoices-photographer/30');
 
