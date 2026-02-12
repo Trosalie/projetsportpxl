@@ -12,7 +12,6 @@ export class Popup {
 
   // Afficher la notification quelques secondes
   showNotification(message: string) {
-    console.log("Afficher notification:", message);
     this.notificationMessage = message;
     this.notificationVisible = true;
     setTimeout(() => {

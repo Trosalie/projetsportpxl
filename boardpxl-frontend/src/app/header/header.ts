@@ -1,5 +1,5 @@
 import { Router, NavigationEnd } from '@angular/router';
-import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnDestroy } from '@angular/core';
 import { AuthService } from '../services/auth-service';
 import { RoleService } from '../services/role.service';
 import { Subject } from 'rxjs';
@@ -12,6 +12,7 @@ import { filter, takeUntil } from 'rxjs/operators';
   styleUrl: './header.scss',
 })
 export class Header implements OnDestroy {
+  @Input() isNavOpen: boolean = false;
   userName: string = '';
   homeRoute: string = '/';
   private destroy$ = new Subject<void>();

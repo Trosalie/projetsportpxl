@@ -17,8 +17,8 @@ class PhotographerSeeder extends Seeder
     private const CHEMIN_FICHIER_CSV = 'seeders/Photographes.csv';
 
     private const CHAMPS_OBLIGATOIRES = ['aws sub', 'email', 'name'];
-    
-    private Client $client;
+
+    private Client $photographer;
     private array $data = [];
 
     /**
@@ -29,13 +29,13 @@ class PhotographerSeeder extends Seeder
     public function run(): void
     {
         $service = new PennylaneService();
-        $this->client = $service->getHttpClient();
-        $response = $this->client->get('customers?sort=-id');
+        $this->photographer = $service->getHttpPhotographer();
+        $response = $this->photographer->get('customers?sort=-id');
         $data = json_decode($response->getBody()->getContents(), true);
         $this->data = $data["items"] ?? [];
 
         while($data["has_more"] ?? false) {
-            $response = $this->client->get('customers?sort=-id&cursor=' . $data["next_cursor"]);
+            $response = $this->photographer->get('customers?sort=-id&cursor=' . $data["next_cursor"]);
             $data = json_decode($response->getBody()->getContents(), true);
             $this->data = array_merge($this->data, $data["items"] ?? []);
             usleep(500000); // Faire 2 appels par seconde pour éviter de saturer l'API Pennylane
@@ -148,8 +148,8 @@ class PhotographerSeeder extends Seeder
     }
 
     /**
-     * Récupérer ou créer un client Pennylane à partir de l'email
-     * 
+     * Récupérer ou créer un photographe Pennylane à partir de l'email
+     *
      * @param array $donnees
      * @return int|null
      */
@@ -237,9 +237,9 @@ class PhotographerSeeder extends Seeder
                 $json['name'] = $donnees['name'] ?? '';
             }
 
-            $response = $this->client->post($endpoint, ['json' => $json]);
+            $response = $this->photographer->post($endpoint, ['json' => $json]);
             $created = json_decode($response->getBody()->getContents(), true);
-  
+
         }
         return $created['id'] ?? $photographer['id'] ?? null;
     }
@@ -294,7 +294,7 @@ class PhotographerSeeder extends Seeder
             if (isset($awsSubsVus[$photographe['aws_sub']])) {
                 continue;
             }
-            
+
             $photographe['pennylane_id'] = $this->getOrCreatePennylaneIdFromEmail(
             [
                 'email' => $photographe['email'],

@@ -48,3 +48,10 @@ Photographes.csv
 
 # Environment files
 boardpxl-frontend/src/environments
+
+# Deployment files (contains sensitive credentials)
+.env.production
+deploy.sh
+deploy.ps1
+# Documentation
+docs

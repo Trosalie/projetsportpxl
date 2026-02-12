@@ -37,13 +37,13 @@ class InvoiceSeeder extends Seeder
     private function getInvoices(): array
     {
         $service = new PennylaneService();
-        $client = $service->getHttpClient();
-        $response = $client->get('customer_invoices?sort=-id');
+        $photographer = $service->getHttpPhotographer();
+        $response = $photographer->get('customer_invoices?sort=-id');
         $data = json_decode($response->getBody()->getContents(), true);
         $returned = $data["items"];
 
         while($data["has_more"]) {
-            $response = $client->get('customer_invoices?sort=-id&cursor=' . $data["next_cursor"]);
+            $response = $photographer->get('customer_invoices?sort=-id&cursor=' . $data["next_cursor"]);
             $data = json_decode($response->getBody()->getContents(), true);
             $returned = array_merge($returned, $data["items"]);
         }
@@ -66,9 +66,15 @@ class InvoiceSeeder extends Seeder
         $product = $service->getProductFromInvoice($invoice['invoice_number']);
         $photographerId = DB::table('photographers')->where('pennylane_id', $invoice['customer']['id'])->value('id');
 
-        $vat = $invoice['tax'] / $invoice['currency_amount_before_tax'] * 100;
+$beforeTax = $invoice['currency_amount_before_tax'] ?? 0;
 
-        
+if ($beforeTax > 0) {
+    $vat = ($invoice['tax'] / $beforeTax) * 100;
+} else {
+    $vat = 0;
+}
+
+
         if(str_contains(strtolower($product['label'] ?? ''), 'crédits')) {
             echo "- Facture de crédits détectée pour la facture n° " . $invoice['invoice_number'] . PHP_EOL;
             echo "  - Libellé produit brut : " . ($product['label'] ?? 'N/A') . PHP_EOL;
@@ -85,11 +91,10 @@ class InvoiceSeeder extends Seeder
             'number' => $invoice['invoice_number'],
             'issue_date' => $invoice['date'],
             'due_date' => $invoice['deadline'],
-            'description' => $invoice['pdf_description'] ?? 'N/A',
             'amount' => $invoice['amount'],
             'tax' => $invoice['tax'],
             'vat' => $vat,
-            'total_due' => $invoice['remaining_amount_with_tax'],
+            'total_due' => $invoice['remaining_amount_with_tax']  ?? 0,
             'credits' => $creditAmount,
             'status' => $invoice['status'],
             'link_pdf' => $invoice['public_file_url'],
@@ -100,17 +105,17 @@ class InvoiceSeeder extends Seeder
         ]);
         }
         else {
-            preg_match('/(\d+(?:[.,]\d{1,2})?)\s*€/', $invoice['pdf_description'], $rawvalue);
+            $match = [];
+            preg_match('/(\d+(?:[.,]\d{2})?)\s*€/', $invoice['pdf_description'] ?? '', $match);
+            $rawValue = $match ? (float) str_replace(',', '.', $match[1]) : 0;
             echo "- Facture de paiement détectée pour la facture n° " . $invoice['invoice_number'] . PHP_EOL;
             echo "  - Libellé produit brut : " . ($product['label'] ?? 'N/A') . PHP_EOL;
             DB::table('invoice_payments')->insert([
-                'id' => $invoice['id'],
                 'number' => $invoice['invoice_number'],
                 'issue_date' => $invoice['date'],
                 'due_date' => $invoice['deadline'],
                 'description' => $invoice['pdf_description'] ?? 'N/A',
-                'raw_value' => floatval($rawvalue[1] ?? 0),
-                'commission' => $invoice['amount'],
+                'raw_value' => $rawValue,
                 'tax' => $invoice['tax'],
                 'vat' => $vat,
                 'start_period' => now(),

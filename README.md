@@ -1,82 +1,259 @@
-## BoardPxl
-BoardPxl est une application web interne conçue pour centraliser, structurer et simplifier la gestion des flux financiers liés à l’activité des photographes utilisant la plateforme SportPXL.
-BoardPxl est le nom donné au tableau de bord financier de SportPXL.
+<a id="readme-top"></a>
 
-## Contexte
-SportPXL est une plateforme permettant aux photographes et aux organisateurs d’évènements sportifs de :
-Stocker leurs photos en ligne
-Les proposer à la vente
-Identifier automatiquement les sportifs sur les clichés (reconnaissance faciale, numéro de dossard ou identification du véhicule : voiture, moto, vélo, bateau, etc.)
-La publication d’une photo nécessite des crédits : Chaque publication consomme un crédit.
-Les crédits peuvent être rechargés via :
-Un abonnement Stripe
-Un achat direct de crédits, géré manuellement par les administrateurs via ForestAdmin
-À la fin de chaque mois, ou sur demande d’un photographe, un versement de chiffre d’affaires est effectué par SportPXL vers le photographe concerné.
-Ces différentes opérations (abonnements, achats de crédits, versements) génèrent chacune des factures, prises en charge par l’outil de gestion comptable Pennylane.
+<!-- PROJECT SHIELDS -->
+[![Contributors][contributors-shield]][contributors-url]
+[![Issues][issues-shield]][issues-url]
+[![Pull Requests][pr-shield]][pr-url]
+
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/Trosalie/projetsportpxl">
+    <img src="https://www.app.sportpxl.com/static/media/logo-white.0384baa8e9b61cb89ab649fee1da120f.svg" alt="Logo Sportpxl" height="80">
+  </a>
+  <h3 align="center">BoardPxl</h3>
+
+  <p align="center">
+    Tableau de bord financier pour SportPXL
+    <br />
+    <a href="https://trosalie.github.io/projetsportpxl/"><strong>Explorer la documentation »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/Trosalie/projetsportpxl/issues">Reporter un Bug</a>
+    ·
+    <a href="https://github.com/Trosalie/projetsportpxl/issues">Proposer une Fonctionnalité</a>
+  </p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table des matières</summary>
+  <ol>
+    <li>
+      <a href="#à-propos-du-projet">À propos du projet</a>
+      <ul>
+        <li><a href="#construit-avec">Technologies principales</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#pour-commencer">Pour commencer</a>
+      <ul>
+        <li><a href="#prérequis">Prérequis</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#utilisation">Utilisation</a></li>
+    <!-- <li><a href="#roadmap">Roadmap</a></li> -->
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
+
+<!-- ABOUT THE PROJECT -->
+## À propos du projet
+
+BoardPxl est une application web conçue pour centraliser la gestion des flux financiers de la plateforme SportPXL. Elle permet aux photographes et administrateurs de suivre leurs transactions, gérer leurs crédits et consulter leur historique financier de manière claire et efficace.
+
+**Fonctionnalités principales :**
+* Gestion centralisée des factures et transactions
+* Suivi des crédits photographes
+* Intégration avec Stripe, Pennylane et ForestAdmin
+* Tableau de bord intuitif pour photographes et administrateurs
+
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
+
+### Technologies principales
+
+Les technologies principales utilisées pour développer BoardPxl :
+
+* [![Angular][Angular.io]][Angular-url]
+* [![Laravel][Laravel.com]][Laravel-url]
+* [![TypeScript][TypeScript]][TypeScript-url]
+* [![Docker][Docker]][Docker-url]
+* [![MySQL][MySQL]][MySQL-url]
+
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
+
+<!-- GETTING STARTED -->
+## Pour commencer
+
+Pour obtenir une copie locale et la faire fonctionner, suivez ces étapes simples.
+
+### Prérequis
+
+Assurez-vous d'avoir les outils suivants installés sur votre machine :
+
+* Docker et Docker Compose
+  ```sh
+  # Vérifier l'installation de Docker
+  docker --version
+  docker-compose --version
+  ```
+* Node.js 18+
+  ```sh
+  node --version
+  npm --version
+  ```
+* PHP 7.4+ et Composer
+  ```sh
+  php --version
+  composer --version
+  ```
+
+### Installation
+
+1. Cloner le repository
+   ```sh
+   git clone https://github.com/Trosalie/projetsportpxl.git
+   cd projetsportpxl
+   ```
+
+2. Démarrer les services avec Docker
+   ```sh
+   docker-compose up -d
+   ```
+
+3. Configurer le Backend (Laravel)
+   ```sh
+   cd boardpxl-backend
+   cp .env.example .env
+   composer install
+   php artisan key:generate
+   php artisan migrate
+   php artisan db:seed
+   ```
+
+4. Configurer le Frontend (Angular)
+   ```sh
+   cd ../boardpxl-frontend
+   npm install
+   ```
+
+5. Configurer les variables d'environnement
+   
+   **Backend** - Modifier `.env` :
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=db
+   DB_DATABASE=boardpxl
+   
+   STRIPE_KEY=your_stripe_key
+   STRIPE_SECRET=your_stripe_secret
+   PENNYLANE_API_KEY=your_pennylane_key
+   ```
+
+6. Lancer l'application
+   ```sh
+   # Le frontend sera accessible sur http://localhost:4200
+   ```
+
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
+
+<!-- USAGE -->
+## Utilisation
+
+BoardPxl propose deux espaces utilisateur distincts :
+
+### Espace Photographe
+- Consulter l'historique des factures
+- Visualiser le solde de crédits
+- Demander un versement de chiffre d'affaires
+
+### Espace Administrateur
+- Gérer les utilisateurs de la plateforme
+- Générer des factures (crédits, versements)
+- Consulter les flux financiers globaux
+- Accéder à l'historique complet des transactions
+
+**Commandes utiles :**
+
+```sh
+# Démarrer/Arrêter les services
+docker-compose up -d
+docker-compose down
+
+# Voir les logs
+docker-compose logs -f
+
+# Tests Backend
+cd boardpxl-backend
+php artisan test
+```
+
+### Tests & rapport de couverture (backend)
+
+Les tests backend (Laravel) s'exécutent depuis le dossier `boardpxl-backend`.
+
+Exécuter tous les tests :
+
+```sh
+cd boardpxl-backend
+php artisan test
+```
+
+Générer un résumé de couverture (console) :
+
+```sh
+php artisan test --coverage
+```
+
+Générer un rapport HTML de couverture (dossier `coverage`) :
+
+```sh
+# en local (via PHPUnit)
+vendor/bin/phpunit --coverage-html coverage
+
+# ou via Artisan (si configuré) :
+php artisan test --coverage-html coverage
+```
+
+Le rapport HTML est écrit dans `boardpxl-backend/coverage/index.html` — ouvrez-le dans votre navigateur pour une vue complète.
+
+Exécuter les tests depuis le conteneur Docker (si vous utilisez Docker Compose) :
+
+```sh
+docker compose exec backend php artisan test
+```
+
+Conseils :
+- Utilisez `php artisan test --filter ClassName::methodName` pour lancer un test spécifique.
+- Si la génération du rapport HTML échoue, utilisez `vendor/bin/phpunit --coverage-html coverage`.
 
 
-## Problématique
-La multiplication des outils (Stripe, ForestAdmin, Pennylane) et des types de facturation rend le suivi financier complexe :
-Les photographes ne disposent pas d’une vision claire et centralisée de leurs factures et revenus
-Les administrateurs doivent gérer manuellement certaines factures, sans outil de suivi global
-Aucun tableau de bord unique ne permet de visualiser l’ensemble des flux financiers
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-## Objectif du projet
-L’objectif de BoardPxl est de proposer une application web de type tableau de bord permettant de centraliser, visualiser et suivre l’ensemble des flux financiers de SportPXL.
-L’application vise à améliorer :
--La lisibilité des informations financières
--Le suivi des factures
--L’expérience utilisateur des photographes et des administrateurs
+<!-- ROADMAP
+## Roadmap
 
-## Fonctionnalités principale
-Administrateurs:
-Visualisation de la liste des utilisateurs
-Consultation des flux financiers globaux
-Génération des factures d’ajout de crédits
-Génération des factures de versement de chiffre d’affaires
-Consultation de l’historique des factures par photographe
+/!\ WORK IN PROGRESS /!\
 
-Photographes:
-Consultation de l’historique des factures
-Visualisation du solde de crédits
-Demande de versement de chiffre d’affaires
+Consultez les [issues ouvertes](https://github.com/Trosalie/projetsportpxl/issues) pour la liste complète des fonctionnalités proposées et problèmes connus. -->
 
+<!-- <p align="right">(<a href="#readme-top">retour en haut</a>)</p> -->
 
-## Rôles utilisateurs
-BoardPxl repose sur deux rôles distincts :
-Administrateur SportPXL : gestion des utilisateurs, des factures et des flux financiers
-Photographe : consultation de ses données financières et demandes de versement
+<!-- CONTACT -->
+## Contact
 
-## Flux financiers gérés
-BoardPxl permet de suivre et centraliser :
-Les abonnements Stripe
-Les achats directs de crédits
-Les versements de chiffre d’affaires
-Les factures associées à chaque opération
+Mail : projetsportpxl@gmail.com
 
-## Périmètre et limites
-BoardPxl ne gère pas :
-Les paiements directs
-La vente de photos
-Le stockage ou la gestion des images
-L’application se concentre exclusivement sur le suivi et la visualisation des données financières.
+Lien du projet: [https://github.com/Trosalie/projetsportpxl](https://github.com/Trosalie/projetsportpxl)
 
-## Architecture & technologies
-Frontend : Application web (React, Next.js ou équivalent)
-Backend : API applicative (Node.js, NestJS, Laravel ou équivalent)
-Base de données : PostgreSQL / MySQL / MongoDB
-Outils externes : Stripe, Pennylane, ForestAdmin
+<p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
-## Hiérarchisation du projet
-Le projet est organisé autour de :
-Une séparation claire entre logique métier et interface utilisateur
-Une gestion centralisée des données financières
-Une distinction des fonctionnalités selon les rôles utilisateurs
-Cette structuration vise à garantir la lisibilité, la maintenabilité et l’évolutivité de l’application.
+<!-- MARKDOWN LINKS & IMAGES -->
+[contributors-shield]: https://img.shields.io/github/contributors/Trosalie/projetsportpxl.svg?style=for-the-badge
+[contributors-url]: https://github.com/Trosalie/projetsportpxl/graphs/contributors
+[issues-shield]: https://img.shields.io/github/issues/Trosalie/projetsportpxl.svg?style=for-the-badge
+[issues-url]: https://github.com/Trosalie/projetsportpxl/issues
+[pr-shield]: https://img.shields.io/github/issues-pr/Trosalie/projetsportpxl.svg?style=for-the-badge
+[pr-url]: https://github.com/Trosalie/projetsportpxl/pulls
 
-## Conclusion
-BoardPxl s’inscrit comme un outil interne stratégique pour SportPXL, permettant de fiabiliser et simplifier la gestion financière tout en offrant une meilleure transparence aux photographes.
-Le projet répond à un besoin concret de centralisation et de clarté des données financières dans un environnement multi-outils.
-
-
-
+[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
+[Angular-url]: https://angular.io/
+[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
+[Laravel-url]: https://laravel.com
+[TypeScript]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+[TypeScript-url]: https://www.typescriptlang.org/
+[Docker]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
+[Docker-url]: https://www.docker.com/
+[MySQL]: https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white
+[MySQL-url]: https://www.mysql.com/

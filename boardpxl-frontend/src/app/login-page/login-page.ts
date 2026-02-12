@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../services/auth-service';
 import { Router } from '@angular/router';
 import { RoleService } from '../services/role.service';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
+import { LoginRateLimitService } from '../services/login-rate-limit.service';
 
 @Component({
   selector: 'app-login-page',
@@ -11,21 +12,79 @@ import { environment } from '../../environments/environment.development';
   styleUrl: './login-page.scss',
 })
 
-export class LoginPage
+export class LoginPage implements OnInit, OnDestroy
 {
   email = "";
   password = "";
   isLoading = false;
+  isBlocked = false;
+  errorMessage = "";
+  remainingTime = "";
+  private countdownInterval: any;
 
-  constructor(private auth: AuthService, private router: Router, private role: RoleService) { }
+  constructor(
+    private auth: AuthService, 
+    private router: Router, 
+    private role: RoleService,
+    private rateLimitService: LoginRateLimitService
+  ) { }
+
+  ngOnInit(): void {
+    this.checkBlockStatus();
+  }
+
+  ngOnDestroy(): void {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+  }
+
+  checkBlockStatus(): void {
+    this.isBlocked = this.rateLimitService.isBlocked();
+    if (this.isBlocked) {
+      this.startCountdown();
+    }
+  }
+
+  startCountdown(): void {
+    this.updateRemainingTime();
+    this.countdownInterval = setInterval(() => {
+      if (this.rateLimitService.getRemainingBlockTime() <= 0) {
+        this.isBlocked = false;
+        this.remainingTime = "";
+        this.errorMessage = "";
+        clearInterval(this.countdownInterval);
+      } else {
+        this.updateRemainingTime();
+      }
+    }, 1000);
+  }
+
+  updateRemainingTime(): void {
+    this.remainingTime = this.rateLimitService.getFormattedRemainingTime();
+    const data = this.rateLimitService.getStoredData();
+    this.errorMessage = `Trop de tentatives échouées (${data.attempts}). Réessayez dans ${this.remainingTime}.`;
+  }
 
   onSubmit()
   {
+    // Vérifier si l'utilisateur est bloqué
+    if (this.rateLimitService.isBlocked()) {
+      this.isBlocked = true;
+      this.updateRemainingTime();
+      return;
+    }
+
     this.isLoading = true;
+    this.errorMessage = "";
+    
     this.auth.login(this.email, this.password).subscribe(
     {
       next: (response) =>
       {
+        // Connexion réussie, effacer le blocage
+        this.rateLimitService.clearBlock();
+        
         this.auth.saveToken(response.token, response.user);
         
         if (environment.adminEmail.includes(response.user.email))
@@ -44,8 +103,35 @@ export class LoginPage
       error: (err) =>
       {
         console.error('Erreur de login', err);
-        alert("Email ou mot de passe incorrect");
         this.isLoading = false;
+
+        // Gérer les erreurs de rate limiting (status 429)
+        if (err.status === 429 && err.error) {
+          this.isBlocked = true;
+          this.rateLimitService.setBlock(
+            err.error.blocked_until,
+            err.error.attempts,
+            err.error.block_duration
+          );
+          this.startCountdown();
+        } 
+        // Gérer les erreurs d'authentification normales (status 401)
+        else if (err.status === 401 && err.error) {
+          const attempts = err.error.attempts || 0;
+          const remainingAttempts = err.error.remaining_attempts || 0;
+          
+          this.rateLimitService.updateAttempts(attempts);
+          
+          if (remainingAttempts > 0) {
+            this.errorMessage = `Email ou mot de passe incorrect. ${remainingAttempts} tentative(s) restante(s) avant blocage.`;
+          } else {
+            this.errorMessage = "Email ou mot de passe incorrect.";
+          }
+        } 
+        // Autres erreurs
+        else {
+          this.errorMessage = "Une erreur est survenue. Veuillez réessayer.";
+        }
       }
     });
   }

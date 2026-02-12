@@ -6,10 +6,21 @@ div {
     margin-left: 13px;
     margin-right: 13px;
     height: 40px;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        height: auto;
+        gap: 10px;
+    }
 }
 
 main {
     margin: 13px;
+
+    @media (max-width: 768px) {
+        margin: 13px 0;
+        height: auto;
+    }
 }
 
 .credit-count{
@@ -23,6 +34,24 @@ main {
     justify-content: space-between;
     gap: 0;
     padding: 0 7.5px;
+
+    @media (max-width: 768px) {
+        width: calc(100% - 26px);
+        height: 50px;
+        flex-direction: row;
+        padding: 0 15px;
+        margin-left: 13px;
+        margin-right: 13px;
+        margin-top: 10px;
+
+        div{
+            align-items: center;
+        }
+
+        img{
+            height: 30px;
+        }
+    }
 
     div{
         display: flex;
@@ -44,6 +73,15 @@ main {
     margin: 0;
     height: -webkit-fill-available;
     width: 50%;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    
+    @media (max-width: 768px) {
+        width: 100%;
+        height: 50px;
+    }
+
     button {
         font-size: large;
         width: 50%;

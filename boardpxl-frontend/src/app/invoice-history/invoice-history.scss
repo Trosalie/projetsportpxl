@@ -4,6 +4,11 @@
     padding-left: 13px;
     padding-right: 13px;
     padding-top: 1px;
+
+    @media (max-width: 768px) {
+        height: auto;
+        max-height: none;
+    }
 }
 
 .header {
@@ -16,6 +21,31 @@
     overflow-y: auto;
     margin-bottom: 13px;
     position: relative;
+    
+    @media (max-width: 768px) {
+        overflow-y: visible;
+        max-height: none !important;
+        height: auto !important;
+        min-height: 300px;
+    }
+}
+
+.no-invoices-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    color: #999;
+    font-size: 18px;
+    min-height: 200px;
+
+    p {
+        margin: 0;
+        color: #999;
+        font-size: 18px;
+        font-family: 'FuturaLT-Bold';
+    }
 }
 
 .loading-overlay {
@@ -63,4 +93,48 @@
 p {
     font-family: 'FuturaLT-Bold';
     font-size: 24px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 8px;
+        padding-right: 8px;
+        margin-left: 13px;
+        margin-right: 13px;
+        height: auto !important;
+        max-height: none !important;
+    }
+
+    .header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        p {
+            font-size: 16px;
+            margin: 0;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .header p {
+        font-size: 18px;
+    }
+
+    .loading-overlay {
+        .spinner {
+            width: 40px !important;
+            height: 40px !important;
+            min-width: 40px !important;
+            min-height: 40px !important;
+            max-width: 40px !important;
+            max-height: 40px !important;
+        }
+
+        p {
+            font-size: 16px !important;
+        }
+    }
 }
