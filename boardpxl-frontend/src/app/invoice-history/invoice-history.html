@@ -15,5 +15,5 @@
             <app-invoice-card [invoice]="invoice"></app-invoice-card>
         </div>
     </div>
-    <app-pagination *ngIf="!isLoading && filteredInvoices.length > 0" [numberOfItems]="itemsToShow" [fullList]="filteredInvoices" [renderedList]="renderedList" (pageChange)="onPageChange($event)"></app-pagination>
+    <app-pagination [numberOfItems]="itemsToShow" [fullList]="filterActive ? bufferedList : invoices" [renderedList]="renderedList" (pageChange)="onPageChange($event)"></app-pagination>
 </div>
