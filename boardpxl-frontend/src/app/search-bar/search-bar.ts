@@ -8,7 +8,7 @@ import { Input, Output, EventEmitter } from '@angular/core';
   styleUrl: './search-bar.scss',
 })
 export class SearchBar {
-  @Input() placeholder: string = 'Rechercher un photographe...';
+  @Input() placeholder: string = this.translate.instant('SEARCH_BAR.PLACEHOLDER');
   @Output() filter = new EventEmitter<string>();
 
   query = '';

@@ -230,5 +230,8 @@
     "IMG_CLOSE_ICON_ALT": "Clear",
     "CALENDAR": "Période",
     "BTN_APPLY": "Appliquer"
+  },
+  "SEARCH_BAR": {
+    "PLACEHOLDER": "Rechercher un photographe..."
   }
 }
