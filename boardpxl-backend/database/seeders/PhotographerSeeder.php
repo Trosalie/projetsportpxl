@@ -29,7 +29,7 @@ class PhotographerSeeder extends Seeder
     public function run(): void
     {
         $service = new PennylaneService();
-        $this->photographer = $service->getHttpPhotographer();
+        $this->photographer = $service->getHttpClient();
         $response = $this->photographer->get('customers?sort=-id');
         $data = json_decode($response->getBody()->getContents(), true);
         $this->data = $data["items"] ?? [];

@@ -37,7 +37,7 @@ class InvoiceSeeder extends Seeder
     private function getInvoices(): array
     {
         $service = new PennylaneService();
-        $photographer = $service->getHttpPhotographer();
+        $photographer = $service->getHttpClient();
         $response = $photographer->get('customer_invoices?sort=-id');
         $data = json_decode($response->getBody()->getContents(), true);
         $returned = $data["items"];

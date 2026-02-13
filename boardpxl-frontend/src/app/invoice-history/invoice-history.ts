@@ -17,9 +17,11 @@ import { takeUntil } from 'rxjs/operators';
 export class InvoiceHistory implements OnDestroy {
   protected invoices: any[] = [];
   protected filteredInvoices: any[] = [];
+  protected bufferedList: any[] = [];
   protected renderedList: any[] = [];
   protected isLoading: boolean = true;
   protected itemsToShow: number = 10;
+  protected filterActive: boolean = false;
   @Input() user!: string;
   private destroy$ = new Subject<void>();
 
@@ -31,13 +33,6 @@ export class InvoiceHistory implements OnDestroy {
 
 
   ngOnInit() {
-    requestAnimationFrame(() => {
-      this.adjustHeight();
-    });
-
-    // Écouter les changements de taille d'écran
-    window.addEventListener('resize', this.adjustHeight.bind(this));
-
     forkJoin([
       this.invoiceService.getInvoicesCreditByPhotographer(Number(this.user)),
       this.invoiceService.getInvoicesPaymentByPhotographer(Number(this.user))
@@ -71,6 +66,7 @@ export class InvoiceHistory implements OnDestroy {
       this.invoices = allInvoices;
       this.filteredInvoices = this.invoices;
       this.renderedList = this.filteredInvoices.slice(0, this.itemsToShow);
+      this.filterActive = false;
       this.isLoading = false;
     });
   }
@@ -121,6 +117,20 @@ export class InvoiceHistory implements OnDestroy {
 
       return true;
     });
+    
+    // Determine if filter is active
+    const hasActiveFilters = filters.typeFilters.length > 0 || 
+                            filters.statusFilters.length > 0 || 
+                            (filters.periodFilters.startDate && filters.periodFilters.endDate);
+    
+    if (hasActiveFilters) {
+      this.bufferedList = this.filteredInvoices;
+      this.filterActive = true;
+    } else {
+      this.bufferedList = [];
+      this.filterActive = false;
+    }
+    
     this.renderedList = this.filteredInvoices.slice(0, this.itemsToShow);
   }
 
@@ -128,25 +138,7 @@ export class InvoiceHistory implements OnDestroy {
     this.renderedList = newList;
   }
 
-  private adjustHeight() {
-    const el = document.querySelector('.invoice-list') as HTMLElement | null;
-    if (!el) return;
-
-    if (window.innerWidth > 768) {
-      // Desktop: hauteur calculée
-      const rect = el.getBoundingClientRect();
-      const y = rect.top + window.scrollY;
-      el.style.height = `calc(100vh - ${y}px - 10px)`;
-      el.style.maxHeight = 'none';
-    } else {
-      // Mobile: hauteur auto avec max-height
-      el.style.height = 'auto';
-      el.style.maxHeight = '60vh';
-    }
-  }
-
   ngOnDestroy(): void {
-    window.removeEventListener('resize', this.adjustHeight.bind(this));
     this.destroy$.next();
     this.destroy$.complete();
   }
