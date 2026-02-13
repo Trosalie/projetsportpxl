@@ -7,7 +7,7 @@
         <div class="mails-list">
             <div class="loading-overlay" *ngIf="isLoading">
                 <div class="spinner"></div>
-                <p>{{ 'MAILS_LOG.LOADING_MAIL' | translate }}</p>
+                <p>{{ 'MAILS_LOG.LOADING_MAILS' | translate }}</p>
             </div>
             <div class="mail-item" *ngFor="let mail of filteredMails">
                 <div class="card" (click)="toggleMailBody(mail.id)" [class.expanded]="isExpanded(mail.id)">

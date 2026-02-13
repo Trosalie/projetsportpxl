@@ -8,12 +8,12 @@
            [queryParams]="{name: photographer.name}">
             <p>{{ 'PHOTOGRAPHER_CARD.INFO_NAME' | translate }}{{ photographer.name }}</p>
         </a>
-        <p *ngIf="photographer.email">Email : {{ photographer.email }}</p>
-        <p *ngIf="!photographer.email">Pas d'email</p>
+        <p *ngIf="photographer.email">{{ 'PHOTOGRAPHER_CARD.INFO_MAIL' | translate }}{{ photographer.email }}</p>
+        <p *ngIf="!photographer.email">{{ 'PHOTOGRAPHER_CARD.NO_MAIL' | translate }}</p>
     </div>
 
     <div class="revenue-section">
-        <p>Chiffre d'affaires</p>
+        <p>{{ 'PHOTOGRAPHER_CARD.INFO_TURNOVER' | translate }}</p>
         <div class="value-button-pair chiffre-affaires">
             <p class="tag" *ngIf="!isLoadingPayments">{{ getChiffreAffaires() | currency:'EUR'}}</p>
             <div class="tag loading-tag" *ngIf="isLoadingPayments">
@@ -24,7 +24,7 @@
     </div>
 
     <div class="credits-section">
-        <p>Nombre de crédits</p>
+        <p>{{ 'PHOTOGRAPHER_CARD.INFO_CREDITS' | translate }}</p>
         <div class="value-button-pair credits">
             <p class="tag">{{ getTotalCredits() }} cr</p>
             <button routerLink="/form/credits" [queryParams]="{ clientName: photographer.name }"><span class="material-symbols-outlined">note_add</span></button>
@@ -32,17 +32,17 @@
     </div>
 
     <div class="status-section">
-        <p class="status">Statut des factures</p>
+        <p class="status">{{ 'PHOTOGRAPHER_CARD.INFO_STATUS_INVOICES' | translate }}</p>
         <div class="statuts">
-            <p>Payées</p>
+            <p>{{ 'PHOTOGRAPHER_CARD.INFO_PAYED_INVOICES' | translate }}</p>
             <p class="payees status-count" *ngIf="!isLoadingCredits">{{ getPaidInvoicesCount() }}</p>
             <div class="status-count loading-status-count" *ngIf="isLoadingCredits"><div class="mini-spinner"></div></div>
 
-            <p>Non payées</p>
+            <p>{{ 'PHOTOGRAPHER_CARD.INFO_NOT_PAYED_INVOICES' | translate }}</p>
             <p class="non-payees status-count" *ngIf="!isLoadingCredits">{{ getUnpaidInvoicesCount() }}</p>
             <div class="status-count loading-status-count" *ngIf="isLoadingCredits"><div class="mini-spinner"></div></div>
 
-            <p>En retard</p>
+            <p>{{ 'PHOTOGRAPHER_CARD.INFO_LATE_INVOICES' | translate }}</p>
             <p class="en-retard status-count" *ngIf="!isLoadingCredits">{{ getLateInvoicesCount() }}</p>
             <div class="status-count loading-status-count" *ngIf="isLoadingCredits"><div class="mini-spinner"></div></div>
         </div>

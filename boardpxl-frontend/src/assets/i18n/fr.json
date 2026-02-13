@@ -146,7 +146,7 @@
   "MAILS_LOG": {
     "TITLE": "HISTORIQUE DES EMAILS",
     "SEARCH_BAR_PLACEHOLDER": "Rechercher un email...",
-    "LOADING_MAIL": "Chargement des emails...",
+    "LOADING_MAILS": "Chargement des emails...",
     "NO_MAILS": "Aucun email trouvé"
   },
   "NAVIGATION_BAR": {
@@ -171,6 +171,13 @@
   },
   "PHOTOGRAPHER_CARD": {
     "INFO_NAME": "Photographer : ",
-    "": ""
+    "INFO_MAIL": "Email : ",
+    "NO_MAIL": "Pas d'email",
+    "INFO_TURNOVER": "Chiffre d'affaires",
+    "INFO_CREDITS": "Nombre de crédits",
+    "INFO_STATUS_INVOICES": "Statut des factures",
+    "INFO_PAYED_INVOICES": "Payées",
+    "INFO_NOT_PAYED_INVOICES": "Non payées",
+    "INFO_LATE_INVOICES": "En retard"
   }
 }
