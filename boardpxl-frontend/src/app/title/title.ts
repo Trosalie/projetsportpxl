@@ -8,6 +8,6 @@ import { Input } from '@angular/core';
   styleUrls: ['./title.scss'],
 })
 export class Title {
-  @Input() title?: string = 'Titre';
+  @Input() title?: string = this.translate.instant('TITLE.TITLE');
   @Input() icon?: string = 'assets/logo-tableau-de-bord.png';
 }

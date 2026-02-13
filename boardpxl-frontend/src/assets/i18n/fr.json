@@ -233,5 +233,8 @@
   },
   "SEARCH_BAR": {
     "PLACEHOLDER": "Rechercher un photographe..."
+  },
+  "TITLE": {
+    "TITLE": "Titre"
   }
 }
