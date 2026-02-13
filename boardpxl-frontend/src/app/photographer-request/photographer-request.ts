@@ -31,7 +31,7 @@ export class PhotographerRequest {
       el.style.height = `calc(100vh - ${y}px - 120px)`;
 
       const user = this.authService.getUser();
-      this.userName = user ? user.name : '[Prénom Nom]';
+      this.userName = user ? user.name :  this.translate.instant('PHOTOGRAPHER_REQUEST.PLACEHOLDER_FULLNAME');
 
       this.updateMessage();
     });
@@ -61,7 +61,7 @@ export class PhotographerRequest {
   }
 
   updateMessage() {
-    let amountText = '[insérer le montant]';
+    let amountText = this.translate.instant('PHOTOGRAPHER_REQUEST.AMOUNT_PLACEHOLDER');
     if (this.amount && this.amount !== '') {
       const amountValue = Number(this.amount);
       if (this.requestType === 'crédits') {
@@ -72,21 +72,21 @@ export class PhotographerRequest {
     }
 
     if (this.requestType === 'versement') {
-      this.requestMessage = `Bonjour,
-
-Je vous contacte pour vous demander de bien vouloir procéder au versement de mon chiffre d'affaires, qui s'élève à ${amountText} €.
-Merci d'avance pour le traitement de ma demande.
-
-Cordialement,
-${this.userName}`;
+      this.requestMessage = this.translate.instant(
+        'PHOTOGRAPHER_REQUEST.WITHDRAWAL_MESSAGE',
+        {
+          amount: amountText,
+          name: this.userName
+        }
+      );
     } else if (this.requestType === 'crédits') {
-      this.requestMessage = `Bonjour,
-
-Je vous contacte afin de solliciter l'envoi d'un devis pour ${amountText} crédits.
-Merci de bien vouloir me transmettre le devis détaillé ainsi que les conditions et les délais.
-
-Cordialement,
-${this.userName}`;
+      this.requestMessage = this.translate.instant(
+        'PHOTOGRAPHER_REQUEST.CREDIT_MESSAGE',
+        {
+          amount: amountText,
+          name: this.userName
+        }
+      );
     }
   }
 
@@ -102,13 +102,18 @@ ${this.userName}`;
     const body = this.requestMessage;
 
     // Validation du montant
-    const isValidAmount = this.requestType === 'crédits' 
+    const isValidAmount = this.requestType === 'crédits'
       ? (!this.amount || this.amount === '' || Number(this.amount) <= 0 || !Number.isInteger(Number(this.amount)))
       : (!this.amount || this.amount === '' || Number(this.amount) <= 0);
-    
+
     if (isValidAmount) {
-      const messageType = this.requestType === 'crédits' ? 'un nombre entier de crédits' : 'un montant du chiffre d\'affaires';
-      this.popup.showNotification(`Veuillez indiquer ${messageType} avant de soumettre la demande.`);
+      const messageType = this.requestType === 'crédits' ? this.translate.instant('PHOTOGRAPHER_REQUEST.TYPE_CREDITS')
+        : this.translate.instant('PHOTOGRAPHER_REQUEST.TYPE_TURNOVER');
+      this.popup.showNotification(
+        this.translate.instant('PHOTOGRAPHER_REQUEST.MISSING_AMOUNT', {
+          type: messageType
+        })
+      );
       return;
     }
 
@@ -130,7 +135,7 @@ ${this.userName}`;
       ta.focus();
       ta.style.border = '1px solid #e74c3c';
       if (errorMessage) {
-        errorMessage.innerHTML = 'Veuillez remplir le champ avant de soumettre la demande.';
+        errorMessage.innerHTML = this.translate.instant('PHOTOGRAPHER_REQUEST.ERROR_MISSING_INPUT');
         errorMessage.style.opacity = '1';
 
         // animation
@@ -170,11 +175,11 @@ ${this.userName}`;
     let subject = `[BoardPXL]`;
     let type = '';
     if (this.requestType === 'versement') {
-      subject += ' Demande de versement de chiffre d\'affaires';
-      type = 'versement';
+      subject += this.translate.instant('PHOTOGRAPHER_REQUEST.TURNOVER_SUBJECT');
+      type = this.translate.instant('PHOTOGRAPHER_REQUEST.TURNOVER_TYPE');
     } else if (this.requestType === 'crédits') {
-      subject += ' Demande d\'ajout de crédits';
-      type = 'crédits';
+      subject += this.translate.instant('PHOTOGRAPHER_REQUEST.CREDIT_SUBJECT');
+      type = this.translate.instant('PHOTOGRAPHER_REQUEST.CREDIT_TYPE');
     }
 
     this.isSending = true;
@@ -182,13 +187,13 @@ ${this.userName}`;
       next: (response) => {
         this.isSending = false;
         this.redirection = true;
-        this.popup.showNotification('Votre demande à bien été envoyée !');
+        this.popup.showNotification(this.translate.instant('PHOTOGRAPHER_REQUEST.SUCCEEDED_REQUEST'));
         setTimeout(() => {
           window.location.assign('');
         }, 3000);
       },
       error: (error) => {
-        this.popup.showNotification('Erreur lors de l\'envoi du mail. Veuillez réessayer plus tard.');
+        this.popup.showNotification(this.translate.instant('PHOTOGRAPHER_REQUEST.ERROR_TRY_LATER'));
         console.error('Erreur lors de l\'envoi du mail:', error);
         console.error('Détails de l\'erreur:', error.error);
         this.isSending = false;

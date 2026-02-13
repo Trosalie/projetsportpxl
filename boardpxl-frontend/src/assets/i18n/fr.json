@@ -185,5 +185,27 @@
     "INFO_CREDITS": "Crédits restants :",
     "REQUEST_PAYOUT": "Demander un versement",
     "REQUEST_CREDITS": "Demander des crédits"
+  },
+  "PHOTOGRAPHER_REQUEST": {
+    "LOADING_SEND": "Envoi en cours...",
+    "AMOUNT_TURNOVER": "Montant du chiffre d'affaires",
+    "AMOUNT_CREDITS": "Nombre de crédits souhaités",
+    "MESSAGE_TURNOVER": "Veuillez indiquer les détails de votre demande de versement.",
+    "MESSAGE_CREDITS": "Veuillez indiquer le nombre de crédits souhaités et les raisons de cette demande.",
+    "BTN_SEND": "Envoyer",
+    "AMOUNT_PLACEHOLDER": "[insérer le montant]",
+    "PLACEHOLDER_FULLNAME": "[Prénom Nom]",
+    "WITHDRAWAL_MESSAGE": "Bonjour,\n\nJe vous contacte pour vous demander de bien vouloir procéder au versement de mon chiffre d'affaires, qui s'élève à {{amount}} €.\nMerci d'avance pour le traitement de ma demande.\n\nCordialement,\n{{name}}",
+    "CREDIT_MESSAGE": "Bonjour,\n\nJe vous contacte afin de solliciter l'envoi d'un devis pour {{amount}} crédits.\nMerci de bien vouloir me transmettre le devis détaillé ainsi que les conditions et les délais.\n\nCordialement,\n{{name}}",
+    "TYPE_CREDITS": "un nombre entier de crédits",
+    "TYPE_TURNOVER": "un montant du chiffre d'affaires",
+    "MISSING_AMOUNT": "Veuillez indiquer {{type}} avant de soumettre la demande.",
+    "ERROR_MISSING_INPUT": "Veuillez remplir le champ avant de soumettre la demande.",
+    "TURNOVER_SUBJECT": " Demande de versement de chiffre d'affaires",
+    "TURNOVER_TYPE": "versement",
+    "CREDIT_SUBJECT": " Demande d'ajout de crédits",
+    "CREDIT_TYPE": "crédits",
+    "SUCCEEDED_REQUEST": "Votre demande à bien été envoyée !",
+    "ERROR_TRY_LATER": "Erreur lors de l'envoi du mail. Veuillez réessayer plus tard."
   }
 }

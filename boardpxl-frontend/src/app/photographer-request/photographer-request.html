@@ -2,17 +2,23 @@
 <div class="form">
     <div class="loading-overlay" *ngIf="isSending">
         <div class="spinner"></div>
-        <p>Envoi en cours...</p>
+        <p>{{ 'PHOTOGRAPHER_REQUEST.LOADING_SEND' | translate }}</p>
     </div>
     <div class="amount-field">
-        <label for="amount">{{ requestType === 'versement' ? 'Montant du chiffre d\'affaires' : 'Nombre de crédits souhaités' }}</label>
-        <input 
-            type="number" 
-            id="amount" 
-            name="amount" 
-            [(ngModel)]="amount" 
-            (ngModelChange)="onAmountChange()" 
-            [placeholder]="requestType === 'versement' ? 'Ex: 1500' : 'Ex: 100'" 
+        <label for="amount">
+          {{
+            requestType === 'versement'
+              ? ('PHOTOGRAPHER_REQUEST.AMOUNT_TURNOVER' | translate)
+              : ('PHOTOGRAPHER_REQUEST.AMOUNT_CREDITS' | translate)
+          }}
+        </label>
+        <input
+            type="number"
+            id="amount"
+            name="amount"
+            [(ngModel)]="amount"
+            (ngModelChange)="onAmountChange()"
+            [placeholder]="requestType === 'versement' ? 'Ex: 1500' : 'Ex: 100'"
             [disabled]="isSending"
             min="0"
             [step]="requestType === 'crédits' ? '1' : '0.01'"
@@ -20,7 +26,11 @@
     </div>
     <div>
         <p class="error-message"></p>
-        <textarea id="message" name="message" placeholder="{{ requestType === 'versement' ? 'Veuillez indiquer les détails de votre demande de versement.' : 'Veuillez indiquer le nombre de crédits souhaités et les raisons de cette demande.' }}" required [disabled]="isSending" readonly>{{ requestMessage }}</textarea>
+        <textarea id="message" name="message" [placeholder]="
+            requestType === 'versement'
+              ? ('PHOTOGRAPHER_REQUEST.MESSAGE_TURNOVER' | translate)
+              : ('PHOTOGRAPHER_REQUEST.MESSAGE_CREDITS' | translate)
+          " required [disabled]="isSending" readonly>{{ requestMessage }}</textarea>
     </div>
-    <button type="button" (click)="submitRequest()" [disabled]="isSending || redirection">Envoyer</button>
+    <button type="button" (click)="submitRequest()" [disabled]="isSending || redirection">{{ 'PHOTOGRAPHER_REQUEST.BTN_SEND' | translate }}</button>
 </div>
