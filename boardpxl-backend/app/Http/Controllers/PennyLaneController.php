@@ -20,7 +20,7 @@ class PennyLaneController extends Controller
     /**
      * Création d'une facture d'achat de crédit Pennylane
      */
-    public function createCreditsInvoiceClient(Request $request, PennylaneService $service)
+    public function createCreditsInvoicePhotographer(Request $request, PennylaneService $service)
     {
         try {
             $validated = $request->validate([
@@ -30,25 +30,28 @@ class PennyLaneController extends Controller
                 'amountEuro' => 'required|string',
                 'issueDate' => 'required|string',
                 'dueDate' => 'required|string',
-                'idClient' => 'required|integer',
+                'idPhotographer' => 'required|integer',
                 'invoiceTitle' => 'required|string',
+                'discount' => 'nullable|numeric|min:0|max:1',
             ]);
 
             $description = $validated['description'] ?? "";
+            $discount = isset($validated['discount']) ? strval(floatval($validated['discount']) * 100) : "0";
 
-            $facture = $service->createCreditsInvoiceClient(
+            $facture = $service->createCreditsInvoicePhotographer(
                 $validated['labelTVA'],
                 $validated['labelProduct'],
                 $description,
                 $validated['amountEuro'],
+                $discount,
                 $validated['issueDate'],
                 $validated['dueDate'],
-                (int) $validated['idClient'],
+                (int) $validated['idPhotographer'],
                 $validated['invoiceTitle']
             );
 
-            $this->logService->logAction($request, 'create_credits_invoice_client', 'INVOICE_CREDITS', [
-                'id_client' => (int) $validated['idClient'],
+            $this->logService->logAction($request, 'create_credits_invoice_photographer', 'INVOICE_CREDITS', [
+                'id_photographer' => (int) $validated['idPhotographer'],
                 'invoice_title' => $validated['invoiceTitle'],
                 'amount_euro' => $validated['amountEuro'],
             ]);
@@ -60,7 +63,7 @@ class PennyLaneController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            $this->logService->logAction($request, 'create_credits_invoice_client_failed', 'INVOICE_CREDITS', [
+            $this->logService->logAction($request, 'create_credits_invoice_photographer_failed', 'INVOICE_CREDITS', [
                 'error' => $e->getMessage(),
             ]);
 
@@ -81,22 +84,22 @@ class PennyLaneController extends Controller
                 'labelTVA' => 'required|string',
                 'issueDate' => 'required|string',
                 'dueDate' => 'required|string',
-                'idClient' => 'required|integer',
+                'idPhotographer' => 'required|integer',
                 'invoiceTitle' => 'required|string',
                 'invoiceDescription' => 'nullable|string',
             ]);
 
-            $facture = $service->createTurnoverInvoiceClient(
+            $facture = $service->createTurnoverInvoicePhotographer(
                 $validated['labelTVA'],
                 $validated['issueDate'],
                 $validated['dueDate'],
-                (int) $validated['idClient'],
+                (int) $validated['idPhotographer'],
                 $validated['invoiceTitle'],
                 $validated['invoiceDescription'] ?? ''
             );
 
             $this->logService->logAction($request, 'create_turnover_payment_invoice', 'INVOICE_PAYMENTS', [
-                'id_client' => (int) $validated['idClient'],
+                'idPhotographer' => (int) $validated['idPhotographer'],
                 'invoice_title' => $validated['invoiceTitle'],
                 'invoice_description' => $validated['invoiceDescription'] ?? '',
             ]);
@@ -120,35 +123,35 @@ class PennyLaneController extends Controller
     }
 
     /**
-     * Récupère ID client via name
+     * Récupère ID photographe via name
      */
-    public function getClientId(Request $request, PennylaneService $service)
+    public function getPhotographerId(Request $request, PennylaneService $service)
     {
         $validated = $request->validate([
             'name' => 'required|string',
         ]);
 
-        $clientId = $service->getClientIdByName($validated['name']);
+        $photographerId = $service->getPhotographerIdByName($validated['name']);
 
-        if ($clientId) {
-            $this->logService->logAction($request, 'lookup_client_id', 'PHOTOGRAPHERS', [
+        if ($photographerId) {
+            $this->logService->logAction($request, 'lookup_photographer_id', 'PHOTOGRAPHERS', [
                 'name' => $validated['name'],
-                'client_id' => $clientId,
+                'photographerId' => $photographerId,
             ]);
 
             return response()->json([
                 'success' => true,
-                'client_id' => $clientId
+                'photographerId' => $photographerId
             ]);
         }
 
-        $this->logService->logAction($request, 'lookup_client_id_not_found', 'PHOTOGRAPHERS', [
+        $this->logService->logAction($request, 'lookup_photographer_id_not_found', 'PHOTOGRAPHERS', [
             'name' => $validated['name'],
         ]);
 
         return response()->json([
             'success' => false,
-            'message' => 'Client non trouvé'
+            'message' => 'Photographe non trouvé'
         ], 404);
     }
 
@@ -163,11 +166,11 @@ class PennyLaneController extends Controller
     }
 
     /**
-     * Retourne factures d’un client
+     * Retourne factures d’un photographe
      */
-    public function getInvoicesByClient($idClient, PennylaneService $service)
+    public function getInvoicesByPhotographer($idPhotographer, PennylaneService $service)
     {
-        $invoices = $service->getInvoicesByIdClient($idClient);
+        $invoices = $service->getInvoicesByIdPhotographer($idPhotographer);
 
         return response()->json($invoices);
     }
@@ -274,19 +277,83 @@ class PennyLaneController extends Controller
           ]);
     }
     /**
-     * Récupère la liste des clients
+     * Récupère la liste des photographes
      */
-    public function getListClients(PennylaneService $service)
+    public function getListPhotographers(PennylaneService $service)
     {
-        $clients = $service->getListClients();
+        $photographers = $service->getListPhotographers();
 
-        $this->logService->logAction(request(), 'list_clients', 'PHOTOGRAPHERS', [
-            'count' => is_countable($clients) ? count($clients) : null,
+        $this->logService->logAction(request(), 'list_photographers', 'PHOTOGRAPHERS', [
+            'count' => is_countable($photographers) ? count($photographers) : null,
         ]);
 
         return response()->json([
             'success' => true,
-            'clients' => $clients
+            'photographers' => $photographers
         ]);
+    }
+
+    public function createClient(Request $request, PennylaneService $service)
+    {
+        // Déjà validé dans PhotographerController::createPhotographer()
+        // Ici on récupère simplement les données sous forme de tableau
+        $validated = $request->all();
+
+        try {
+            $client = $service->createClient($validated);
+
+            $this->logService->logAction($request, 'create_client', 'PHOTOGRAPHERS', [
+                'first_name' => $validated['first_name'] ?? null,
+                'last_name' => $validated['last_name'] ?? null,
+                'name' => $validated['name'] ?? null,
+                'email' => $validated['email'],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Client créé avec succès.',
+                'data' => $client
+            ]);
+
+        } catch (\Exception $e) {
+            $this->logService->logAction($request, 'create_client_failed', 'PHOTOGRAPHERS', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }      
+    }
+    
+    public function updateClient(Request $request, PennylaneService $service, $clientId)
+    {
+        $validated = $request->all();
+
+        try {
+            $client = $service->updateClient($clientId, $validated);
+
+            $this->logService->logAction($request, 'update_client', 'PHOTOGRAPHERS', [
+                'client_id' => $clientId,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Client mis à jour avec succès.',
+                'data' => $client
+            ]);
+
+        } catch (\Exception $e) {
+            $this->logService->logAction($request, 'update_client_failed', 'PHOTOGRAPHERS', [
+                'client_id' => $clientId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }      
     }
 }

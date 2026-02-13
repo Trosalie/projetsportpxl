@@ -11,8 +11,8 @@
     <label for="photographer">Photographe :</label>
     <input type="text" id="photographer" name="photographer" required [value]="photographerInput" (input)="onPhotographerChange($event.target.value)" [disabled]="isLoading"/>
     <div *ngIf="isLoading" class="loading-indicator">Chargement du photographe...</div>
-    <ul *ngIf="filteredClients.length > 0" class="suggestions">
-      <li *ngFor="let name of filteredClients" (click)="selectPhotographer(name)">
+    <ul *ngIf="filteredPhotographers.length > 0" class="suggestions">
+      <li *ngFor="let name of filteredPhotographers" (click)="selectPhotographer(name)">
         {{ name }}
       </li>
     </ul>
@@ -50,6 +50,10 @@
       <option value="FR_196">FR_196</option>
       <option value="FR_200">FR_200</option>
     </select>
+  </div>
+  <div class="form-group">
+    <label for="discount">Réduction (%) :</label>
+    <input type="number" id="discount" name="discount" min="0" max="100" step="1" value="0" required>
   </div>
   <div class="form-group">
     <label for="date">Date :</label>

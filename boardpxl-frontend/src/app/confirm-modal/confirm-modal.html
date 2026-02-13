@@ -1,7 +1,7 @@
 <div class="modal-overlay" *ngIf="isVisible" (click)="onDiscard()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>Confirmer la facture</h2>
+      <h2>{{ titleText }}</h2>
     </div>
     
     <div class="modal-body" *ngIf="invoiceData">
@@ -14,21 +14,22 @@
         </div>
       </div>
       
-      <div class="amount-section">
+      <div class="amount-section" *ngIf="showAmount">
         <span class="label">Montant total :</span>
-        <span class="amount"><strong>{{ invoiceData.amount | currency }}</strong></span>
+        <span class="amount" *ngIf="invoiceData.discount > 0"><del><i>{{ invoiceData.amount | currency }} €</i></del> {{ invoiceData.amount - (invoiceData.amount * (invoiceData.discount/100) ) | currency }} €</span>
+        <span class="amount" *ngIf="invoiceData.discount <= 0">{{ invoiceData.amount | currency }}</span>
       </div>
       
       <div class="checkbox-section">
         <input type="checkbox" id="confirm-check" [(ngModel)]="isChecked" />
-        <label for="confirm-check">Je confirme la création de cette facture</label>
+        <label for="confirm-check">{{ checkboxLabel }}</label>
       </div>
     </div>
     
     <div class="modal-footer">
-      <button class="btn-discard" (click)="onDiscard()">Annuler</button>
+      <button class="btn-discard" (click)="onDiscard()">{{ cancelLabel }}</button>
       <button class="btn-confirm" (click)="onConfirm()" [disabled]="!isChecked">
-        Confirmer
+        {{ confirmLabel }}
       </button>
     </div>
   </div>

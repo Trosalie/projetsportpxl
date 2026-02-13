@@ -48,18 +48,28 @@ class LoginController extends Controller
         if (Auth::guard('web')->attempt($credentials)) {
         $photographer = Auth::guard('web')->user();
 
+        // Vérifier si c'est la première connexion
+        $isFirstLogin = is_null($photographer->first_login_at);
+        
+        if ($isFirstLogin) {
+            $photographer->first_login_at = now();
+            $photographer->save();
+        }
+
         // Créer un token API pour l'authentification
         $token = $photographer->createToken('API Token')->plainTextToken;
 
         $this->logService->logAction($request, 'login', 'USERS', [
             'user_id' => $photographer->id,
             'email' => $photographer->email,
+            'is_first_login' => $isFirstLogin,
         ]);
 
         return response()->json([
             'message' => 'Login successful',
             'user' => $photographer,
-            'token' => $token
+            'token' => $token,
+            'is_first_login' => $isFirstLogin
         ], 200);
 
     }
@@ -79,8 +89,10 @@ class LoginController extends Controller
         
         Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
 
         $this->logService->logAction($request, 'logout', 'USERS', [
             'user_id' => $userId,

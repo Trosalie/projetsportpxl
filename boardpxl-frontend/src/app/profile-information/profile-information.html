@@ -1,6 +1,82 @@
 <section class="profile">
   <app-title [title]="name" [icon]="''"></app-title>
+  <app-popup #popup></app-popup>
+  <app-confirm-modal
+    [isVisible]="showDeleteModal"
+    [invoiceData]="deleteModalData"
+    [titleText]="'Confirmer la suppression'"
+    [checkboxLabel]="'Je confirme la suppression de ce photographe'"
+    [confirmLabel]="'Supprimer'"
+    [cancelLabel]="'Annuler'"
+    [showAmount]="false"
+    (confirm)="onConfirmDelete()"
+    (discard)="onCancelDelete()">
+  </app-confirm-modal>
 
+  <!-- Modal Changement de mot de passe -->
+  <div class="password-modal-overlay" *ngIf="showPasswordModal" (click)="closePasswordModal()">
+    <div class="password-modal" (click)="$event.stopPropagation()">
+      <div class="password-modal_header">
+        <h3>Modifier le mot de passe</h3>
+        <button class="close-btn" type="button" (click)="closePasswordModal()" aria-label="Fermer la modale">×</button>
+      </div>
+      
+      <div class="password-modal_content">
+        <p *ngIf="passwordModalError" class="error-message">{{ passwordModalError }}</p>
+        <p *ngIf="passwordModalSuccess" class="success-message">{{ passwordModalSuccess }}</p>
+
+        <form *ngIf="!passwordModalSuccess" (ngSubmit)="changePassword()">
+          <div class="form-group">
+            <label for="current-password">Mot de passe actuel</label>
+            <input 
+              type="password"
+              id="current-password"
+              [(ngModel)]="passwordModalData.currentPassword"
+              name="currentPassword"
+              required
+              [disabled]="passwordModalLoading"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="new-password">Nouveau mot de passe</label>
+            <input 
+              type="password"
+              id="new-password"
+              [(ngModel)]="passwordModalData.newPassword"
+              name="newPassword"
+              required
+              [disabled]="passwordModalLoading"
+            />
+            <small>Minimum 8 caractères</small>
+          </div>
+
+          <div class="form-group">
+            <label for="confirm-password">Confirmer le mot de passe</label>
+            <input 
+              type="password"
+              id="confirm-password"
+              [(ngModel)]="passwordModalData.confirmPassword"
+              name="confirmPassword"
+              required
+              [disabled]="passwordModalLoading"
+            />
+          </div>
+
+          <div class="password-modal_actions">
+            <button type="button" class="btn-cancel" (click)="closePasswordModal()" [disabled]="passwordModalLoading">
+              Annuler
+            </button>
+            <button type="submit" class="btn-confirm" [disabled]="passwordModalLoading">
+              <span *ngIf="!passwordModalLoading">Modifier</span>
+              <span *ngIf="passwordModalLoading" class="spinner-small"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
   <div class="loading-overlay" *ngIf="isLoading">
     <div class="spinner"></div>
     <p>Chargement du profil...</p>
@@ -8,7 +84,19 @@
 
   <div class="profile_layout" *ngIf="!isLoading">
     <section class="card info-card">
-      <h2 class="card_title">Informations générales</h2>
+      <div class="card_header">
+        <h2 class="card_title">Informations générales</h2>
+        <div class="card_actions">
+          <button class="btn-modify" *ngIf="role == 'admin'" type="button" [routerLink]="['/photographer', id, 'edit']" [queryParams]="{name: name}" [disabled]="!id">
+            Modifier
+          </button>
+          <button type="button" *ngIf="role == 'admin'" class="btn-delete-icon" (click)="openDeleteModal()" [disabled]="!id || isDeleting" aria-label="Supprimer le photographe">
+                        <img src="/assets/images/delete_icon.svg" alt="" aria-hidden="true" class="trash-icon">
+            <span class="sr-only">Supprimer le photographe</span>
+          </button>
+          <button class="btn-modify" *ngIf="role == 'photographer'" type="button" (click)="openPasswordModal()">Modifier le mot de passe</button>
+        </div>
+      </div>
       <div class="info-card_content">
         <div class="identity">
           <div class="identity_name">{{ family_name || name }} {{ given_name }}</div>

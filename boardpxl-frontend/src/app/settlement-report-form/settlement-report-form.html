@@ -1,0 +1,66 @@
+<app-title [title]="'RELEVÉ D\'ENCAISSEMENT'"></app-title>
+<app-popup #popup></app-popup>
+<form class="credit-purchase-form" [formGroup]="settlementForm" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label for="photographer">Photographe :</label>
+    <input
+      type="text"
+      id="photographer"
+      formControlName="photographer"
+      [value]="photographerInput"
+      (input)="onPhotographerChange($event.target.value)"
+    />
+    <div *ngIf="isLoading" class="loading-indicator">Chargement des photographes...</div>
+     <div *ngIf="settlementForm.get('photographer')?.hasError('required') && settlementForm.get('photographer')?.touched" class="error-message">
+       Un photographe doit être sélectionné
+     </div>
+     <ul *ngIf="filteredClients.length > 0" class="suggestions">
+      <li *ngFor="let name of filteredClients" (click)="selectPhotographer(name)">
+        {{ name }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="form-group">
+    <label for="totalSalesAmount">Montant total des ventes :</label>
+    <input type="number" id="totalSalesAmount" formControlName="totalSalesAmount" min="0" step="0.01" />
+    <div *ngIf="isLoadingTurnover" class="loading-indicator">Chargement du montant des ventes...</div>
+  </div>
+
+  <div class="form-group">
+    <label for="commission">Commission SportPxl :</label>
+    <input type="number" id="commission" formControlName="commission" min="0" step="0.01" />
+   <div *ngIf="settlementForm.get('commission')?.hasError('commissionTooHigh') && settlementForm.get('commission')?.touched" class="error-message">
+     La commission ne peut pas dépasser le montant total des ventes
+   </div>
+ </div>
+
+  <div class="form-group">
+    <label for="advancePayments">Acomptes versés :</label>
+    <input type="number" id="advancePayments" formControlName="advancePayments" min="0" step="0.01" />
+  </div>
+
+  <div class="date-row">
+    <div class="form-group">
+      <label for="periodStartDate">Début :</label>
+      <input type="date" id="periodStartDate" formControlName="periodStartDate" />
+    </div>
+
+    <div class="form-group">
+      <label for="periodEndDate">Fin :</label>
+      <input type="date" id="periodEndDate" formControlName="periodEndDate" />
+       <div *ngIf="settlementForm.get('periodEndDate')?.hasError('futureDate') && settlementForm.get('periodEndDate')?.touched" class="error-message">
+         La date de fin ne peut pas être dans le futur
+       </div>
+       <div *ngIf="settlementForm.get('periodEndDate')?.hasError('endBeforeStart') && settlementForm.get('periodEndDate')?.touched" class="error-message">
+         La date de fin ne peut pas être avant la date de début
+       </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="settlementForm.invalid" [ngClass]="{ 'no-animation': settlementForm.invalid }">
+      Valider
+    </button>
+  </div>
+</form>
