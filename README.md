@@ -179,6 +179,46 @@ cd boardpxl-backend
 php artisan test
 ```
 
+### Tests & rapport de couverture (backend)
+
+Les tests backend (Laravel) s'exécutent depuis le dossier `boardpxl-backend`.
+
+Exécuter tous les tests :
+
+```sh
+cd boardpxl-backend
+php artisan test
+```
+
+Générer un résumé de couverture (console) :
+
+```sh
+php artisan test --coverage
+```
+
+Générer un rapport HTML de couverture (dossier `coverage`) :
+
+```sh
+# en local (via PHPUnit)
+vendor/bin/phpunit --coverage-html coverage
+
+# ou via Artisan (si configuré) :
+php artisan test --coverage-html coverage
+```
+
+Le rapport HTML est écrit dans `boardpxl-backend/coverage/index.html` — ouvrez-le dans votre navigateur pour une vue complète.
+
+Exécuter les tests depuis le conteneur Docker (si vous utilisez Docker Compose) :
+
+```sh
+docker compose exec backend php artisan test
+```
+
+Conseils :
+- Utilisez `php artisan test --filter ClassName::methodName` pour lancer un test spécifique.
+- Si la génération du rapport HTML échoue, utilisez `vendor/bin/phpunit --coverage-html coverage`.
+
+
 <p align="right">(<a href="#readme-top">retour en haut</a>)</p>
 
 <!-- ROADMAP

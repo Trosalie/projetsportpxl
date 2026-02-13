@@ -32,6 +32,7 @@ class InvoiceCredit extends Model
         'tax',
         'vat',
         'total_due',
+        'discount',
         'credits',
         'status',
         'link_pdf',
@@ -56,6 +57,7 @@ class InvoiceCredit extends Model
         'tax' => 'decimal:2',
         'vat' => 'decimal:2',
         'total_due' => 'decimal:2',
+        'discount' => 'decimal:2',
         'credits' => 'integer',
     ];
 

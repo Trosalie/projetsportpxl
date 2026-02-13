@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-bookworm
+FROM php:8.4-fpm-bookworm
 
 # Install required system dependencies
 RUN apt-get update && apt-get install -y \
@@ -15,6 +15,9 @@ RUN apt-get update && apt-get install -y \
 # Installer les extensions PHP requises par Laravel 11
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install gd pdo_mysql pdo_pgsql mbstring zip exif pcntl bcmath opcache
+
+# Installer PCOV pour la couverture de code
+RUN pecl install pcov && docker-php-ext-enable pcov
 
 # Installer Composer depuis l'image officielle
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -35,4 +38,4 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 EXPOSE 9000
 
 # Lancer le serveur Laravel et lancer php artisan schedule:work en arrière-plan
-CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=9000 & php artisan schedule:work"]
+CMD ["sh", "-c", "rm -rf bootstrap/cache/*.php && php artisan serve --host=0.0.0.0 --port=9000 & php artisan schedule:work"]

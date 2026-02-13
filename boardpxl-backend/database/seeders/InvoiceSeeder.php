@@ -37,13 +37,13 @@ class InvoiceSeeder extends Seeder
     private function getInvoices(): array
     {
         $service = new PennylaneService();
-        $client = $service->getHttpClient();
-        $response = $client->get('customer_invoices?sort=-id');
+        $photographer = $service->getHttpPhotographer();
+        $response = $photographer->get('customer_invoices?sort=-id');
         $data = json_decode($response->getBody()->getContents(), true);
         $returned = $data["items"];
 
         while($data["has_more"]) {
-            $response = $client->get('customer_invoices?sort=-id&cursor=' . $data["next_cursor"]);
+            $response = $photographer->get('customer_invoices?sort=-id&cursor=' . $data["next_cursor"]);
             $data = json_decode($response->getBody()->getContents(), true);
             $returned = array_merge($returned, $data["items"]);
         }
@@ -66,15 +66,15 @@ class InvoiceSeeder extends Seeder
         $product = $service->getProductFromInvoice($invoice['invoice_number']);
         $photographerId = DB::table('photographers')->where('pennylane_id', $invoice['customer']['id'])->value('id');
 
-$beforeTax = $invoice['currency_amount_before_tax'] ?? 0;
+        $beforeTax = $invoice['currency_amount_before_tax'] ?? 0;
 
-if ($beforeTax > 0) {
-    $vat = ($invoice['tax'] / $beforeTax) * 100;
-} else {
-    $vat = 0;
-}
+        if ($beforeTax > 0) {
+            $vat = ($invoice['tax'] / $beforeTax) * 100;
+        } else {
+            $vat = 0;
+        }
 
-        
+
         if(str_contains(strtolower($product['label'] ?? ''), 'crédits')) {
             echo "- Facture de crédits détectée pour la facture n° " . $invoice['invoice_number'] . PHP_EOL;
             echo "  - Libellé produit brut : " . ($product['label'] ?? 'N/A') . PHP_EOL;
@@ -94,7 +94,7 @@ if ($beforeTax > 0) {
             'amount' => $invoice['amount'],
             'tax' => $invoice['tax'],
             'vat' => $vat,
-            'total_due' => $invoice['remaining_amount_with_tax'],
+            'total_due' => $invoice['remaining_amount_with_tax'] ?? 0,
             'credits' => $creditAmount,
             'status' => $invoice['status'],
             'link_pdf' => $invoice['public_file_url'],

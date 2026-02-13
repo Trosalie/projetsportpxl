@@ -14,11 +14,18 @@ import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
 import { GeneralGraph } from './general-graph/general-graph';
 import { Logs } from './logs/logs';
-import { AboutUs } from './about-us/about-us'
+import { AboutUs } from './about-us/about-us';
+import { NewPhotographerForm } from './new-photographer-form/new-photographer-form';
+import { EditPhotographerForm } from './edit-photographer-form/edit-photographer-form';
+import { ResetPasswordPageComponent } from './reset-password-page/reset-password-page';
+import { SettlementReportFormComponent } from './settlement-report-form/settlement-report-form';
+import { SettlementReportListComponent } from './settlement-report-list/settlement-report-list';
 
 const routes: Routes = [
   { path: 'login', component: LoginPage, canActivate: [loginGuard] },
+  { path: 'reset-password', component: ResetPasswordPageComponent },
   { path: '', component: PhotographerDashboard, pathMatch: 'full', canActivate: [photographerGuard] },
+  { path: 'my-profile', component: ProfileInformation, canActivate: [photographerGuard] },
   { path: 'photographers', component: PhotographersList, canActivate: [adminGuard] },
   { path: 'photographer/:id/invoices', component: AdminPhotographerInvoiceList, canActivate: [adminGuard] },
   { path: 'request/payout', component: MailRequestPage, canActivate: [photographerGuard] },
@@ -26,11 +33,14 @@ const routes: Routes = [
   { path: 'mails', component: MailsLog, canActivate: [photographerGuard]},
   { path: 'form/credits', component: CreditPurchaseForm, canActivate: [adminGuard]},
   { path: 'form/payout', component: TurnoverPaymentForm, canActivate: [adminGuard]},
-  { path: 'photographer/:id', component: ProfileInformation, canMatch: [adminGuard]},
+  { path: 'photographer/:id', component: ProfileInformation, canActivate: [adminGuard]},
+  { path: 'photographer/:id/edit', component: EditPhotographerForm, canActivate: [adminGuard]},
+  { path: 'settlement-report', component: SettlementReportFormComponent, canActivate: [adminGuard]},
+  { path: 'settlement-reports', component: SettlementReportListComponent, canActivate: [adminGuard]},
   { path: 'general-graph', component: GeneralGraph, canActivate: [adminGuard]},
   { path: 'logs', component: Logs, canActivate: [adminGuard]},
-  { path: 'photographer/:id', component: ProfileInformation, canActivate: [adminGuard]},
   { path: 'about-us', component: AboutUs, canActivate: [photographerGuard]},
+  { path: 'new/photographer', component: NewPhotographerForm, canActivate: [adminGuard]},
   { path: '**', redirectTo: 'login' },
 ];
 

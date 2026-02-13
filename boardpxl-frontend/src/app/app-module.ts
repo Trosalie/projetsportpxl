@@ -13,7 +13,7 @@ import { InvoiceFilter } from './invoice-filter/invoice-filter';
 import { LoginPage } from './login-page/login-page';
 import { PhotographerRequest } from './photographer-request/photographer-request';
 import { MailRequestPage } from './mail-request-page/mail-request-page';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 import { LOCALE_ID } from '@angular/core';
@@ -37,6 +37,12 @@ import { GeneralGraph } from './general-graph/general-graph';
 import { Logs } from './logs/logs';
 import { AboutUs } from './about-us/about-us';
 import { ConfirmModal } from './confirm-modal/confirm-modal';
+import { NewPhotographerForm } from './new-photographer-form/new-photographer-form';
+import { EditPhotographerForm } from './edit-photographer-form/edit-photographer-form';
+import { FirstLoginModalComponent } from './first-login-modal/first-login-modal';
+import { ResetPasswordPageComponent } from './reset-password-page/reset-password-page';
+import { SettlementReportListComponent } from './settlement-report-list/settlement-report-list';
+import { SettlementReportFormComponent } from './settlement-report-form/settlement-report-form';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -67,14 +73,21 @@ registerLocaleData(localeFr);
     GeneralGraph,
     Logs,
     AboutUs,
-    ConfirmModal
+    ConfirmModal,
+    NewPhotographerForm,
+    EditPhotographerForm,
+    FirstLoginModalComponent,
+    SettlementReportListComponent,
+    SettlementReportFormComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    CommonModule
+    CommonModule,
+    ResetPasswordPageComponent,
+    ReactiveFormsModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

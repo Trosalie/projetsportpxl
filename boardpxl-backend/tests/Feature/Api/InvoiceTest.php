@@ -8,9 +8,10 @@ use Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 use Mockery;
 
-class InvoiceAndPhotographerControllerTest extends TestCase
+class InvoiceTest extends TestCase
 {
     use WithoutMiddleware;
+
     protected function tearDown(): void
     {
         Mockery::close();
@@ -244,4 +245,186 @@ class InvoiceAndPhotographerControllerTest extends TestCase
                 ]);
     }
 
+    public function test_get_invoices_credit_by_photographer_success()
+    {
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_credits')
+            ->andReturnSelf();
+
+        DB::shouldReceive('where')
+            ->once()
+            ->with('photographer_id', 20)
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                ['id' => 7, 'number' => 'CR-1'],
+                ['id' => 8, 'number' => 'CR-2'],
+            ]));
+
+        $response = $this->getJson('/api/invoices-credit/20');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                ['id' => 7, 'number' => 'CR-1'],
+                ['id' => 8, 'number' => 'CR-2'],
+            ]);
+    }
+
+    public function test_get_invoices_credit_by_photographer_invalid()
+    {
+        $response = $this->getJson('/api/invoices-credit/abc');
+
+        $response->assertStatus(422)->assertJson(['success' => false, 'message' => 'Invalid photographer id']);
+    }
+
+    public function test_get_invoices_by_photographer_success()
+    {
+        // credits
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_credits')
+            ->andReturnSelf();
+
+        DB::shouldReceive('where')
+            ->once()
+            ->with('photographer_id', 30)
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                (object)['id' => 11, 'number' => 'C-11']
+            ]));
+
+        // payments
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_payments')
+            ->andReturnSelf();
+
+        DB::shouldReceive('where')
+            ->once()
+            ->with('photographer_id', 30)
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                (object)['id' => 21, 'number' => 'P-21']
+            ]));
+
+        $response = $this->getJson('/api/invoices-photographer/30');
+
+        $response->assertStatus(200)->assertJson([
+            ['id' => 11, 'number' => 'C-11'],
+            ['id' => 21, 'number' => 'P-21'],
+        ]);
+    }
+
+    public function test_get_invoices_by_photographer_invalid()
+    {
+        $response = $this->getJson('/api/invoices-photographer/xyz');
+
+        $response->assertStatus(422)->assertJson(['success' => false, 'message' => 'Invalid photographer id']);
+    }
+
+    public function test_get_bulk_invoices_by_photographers_success()
+    {
+        $payload = ['photographer_ids' => [1,2]];
+
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_credits')
+            ->andReturnSelf();
+
+        DB::shouldReceive('whereIn')
+            ->once()
+            ->with('photographer_id', $payload['photographer_ids'])
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                (object)['photographer_id' => 1, 'id' => 101],
+                (object)['photographer_id' => 2, 'id' => 102],
+            ]));
+
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_payments')
+            ->andReturnSelf();
+
+        DB::shouldReceive('whereIn')
+            ->once()
+            ->with('photographer_id', $payload['photographer_ids'])
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                (object)['photographer_id' => 1, 'id' => 201],
+                (object)['photographer_id' => 2, 'id' => 202],
+            ]));
+
+        $response = $this->postJson('/api/invoices-bulk', $payload);
+
+        $response->assertStatus(200)->assertJsonStructure([
+            '1' => ['credits','payments'],
+            '2' => ['credits','payments']
+        ]);
+    }
+
+    public function test_get_financial_info_credits_invoice()
+    {
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_credits')
+            ->andReturnSelf();
+
+        DB::shouldReceive('select')
+            ->once()
+            ->with('id','issue_date', 'amount', 'credits')
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                ['id'=>1,'issue_date'=>now()->toDateString(),'amount'=>10,'credits'=>100]
+            ]));
+
+        $response = $this->getJson('/api/invoice-credits-financial-info');
+
+        $response->assertStatus(200)->assertJson([
+            ['id'=>1,'issue_date'=>now()->toDateString(),'amount'=>10,'credits'=>100]
+        ]);
+    }
+
+    public function test_get_financial_info_turnover_invoice()
+    {
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_payments')
+            ->andReturnSelf();
+
+        DB::shouldReceive('select')
+            ->once()
+            ->with('id','issue_date', 'raw_value')
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                ['id'=>2,'issue_date'=>now()->toDateString(),'raw_value'=>50]
+            ]));
+
+        $response = $this->getJson('/api/invoice-turnover-financial-info');
+
+        $response->assertStatus(200)->assertJson([
+            ['id'=>2,'issue_date'=>now()->toDateString(),'raw_value'=>50]
+        ]);
+    }
 }
+

@@ -1,11 +1,20 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ClientService } from '../services/client-service.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { InvoicePayment } from '../models/invoice-payment.model';
+import { App } from '../app';
+import { Popup } from '../popup/popup';
+import { type InvoiceData } from '../confirm-modal/confirm-modal';
 import { PhotographerService } from '../services/photographer-service';
 import { InvoiceService } from '../services/invoice-service';
+import { AuthService } from '../services/auth-service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { Chart, registerables } from 'chart.js';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
+import { RoleService } from '../services/role.service';
 
 Chart.register(...registerables);
 
@@ -13,13 +22,17 @@ Chart.register(...registerables);
   selector: 'app-profile-information',
   standalone: false,
   templateUrl: './profile-information.html',
-  styleUrl: './profile-information.scss',
+  styleUrls: ['./profile-information.scss'],
 })
+
 export class ProfileInformation implements OnInit {
   @ViewChild('lineChartCanvas') lineChartCanvas!: ElementRef<HTMLCanvasElement>;
 
   protected isLoading: boolean = true;
   protected findPhotographer: boolean = false;
+  protected role: string | null = null;
+
+  @ViewChild('popup') popup!: Popup;
 
   protected name: string = '';
   protected family_name: string = '';
@@ -29,6 +42,21 @@ export class ProfileInformation implements OnInit {
   protected locality: string = '';
   protected postal_code: string = '';
   protected country: string = '';
+  protected numberSell: number = 0;
+  protected isDeleting: boolean = false;
+  protected showDeleteModal: boolean = false;
+  protected showPasswordModal: boolean = false;
+  protected passwordModalData = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  };
+  protected passwordModalLoading: boolean = false;
+  protected passwordModalError: string = '';
+  protected passwordModalSuccess: string = '';
+  protected deleteModalData: InvoiceData | null = null;
+  protected deleteTargetId: number | null = null;
+  protected id: string | null = null;
   protected remainingCredits: number = 0;
 
   protected turnover: number = 0;
@@ -49,9 +77,12 @@ export class ProfileInformation implements OnInit {
 
   constructor(
     private photographerService: PhotographerService,
-    private clientService: ClientService,
     private invoiceService: InvoiceService,
     private route: ActivatedRoute,
+    private router: Router,
+    private authService: AuthService,
+    private http: HttpClient,
+    private roleService: RoleService,
   ) {}
 
   @HostListener('document:click', ['$event'])
@@ -64,12 +95,26 @@ export class ProfileInformation implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
+    const role = this.roleService.getRole();
+    this.role = role;
+    
+    // Si aucun ID n'est fourni, charger l'utilisateur authentifié (route /my-profile)
     if (!id) {
-      this.isLoading = false;
+      const user = this.authService.getUser();
+      if (user && user.id) {
+        this.loadPhotographerProfile(user.id.toString());
+      } else {
+        this.isLoading = false;
+      }
       return;
     }
 
-    this.clientService.getPhotographer(id).subscribe({
+    // Sinon, charger le photographe avec l'ID fourni
+    this.loadPhotographerProfile(id);
+  }
+
+  private loadPhotographerProfile(id: string) {
+    this.photographerService.getPhotographer(id).subscribe({
       next: (data) => {
         if (data) {
           this.findPhotographer = true;
@@ -83,6 +128,7 @@ export class ProfileInformation implements OnInit {
           this.country = data.country || '';
           this.remainingCredits = (data.total_limit || 0) - (data.nb_imported_photos || 0);
           this.loadFinancialData();
+          this.id = id;
         } else {
           this.isLoading = false;
         }
@@ -99,7 +145,7 @@ export class ProfileInformation implements OnInit {
 
     this.photographerService.getPhotographerIdsByName(this.name).subscribe({
       next: (ids) => {
-        const idNum = Number(ids?.client_id);
+        const idNum = Number(ids?.photographerId);
         if (!isNaN(idNum) && idNum !== 0) {
           forkJoin({
             payments: this.invoiceService
@@ -310,4 +356,157 @@ export class ProfileInformation implements OnInit {
     this.updateChart();
     this.openDropdown = null;
   }
+
+  openDeleteModal() {
+    if (this.isDeleting) {
+      return;
+    }
+
+    const rawId = this.id;
+    const id = rawId ? Number(rawId) : NaN;
+
+    if (!rawId || Number.isNaN(id)) {
+      this.popup.showNotification('Aucun photographe à supprimer.');
+      return;
+    }
+
+    const photographerName = (this.family_name || this.name)
+      ? `${this.family_name || this.name} ${this.given_name || ''}`.trim()
+      : 'Photographe';
+
+    this.deleteModalData = {
+      title: photographerName,
+      amount: 0,
+      discount: 0,
+      items: [
+        { label: 'Email', value: this.email || '-' },
+        { label: 'ID', value: id }
+      ]
+    };
+
+    this.deleteTargetId = id;
+    this.showDeleteModal = true;
+  }
+
+  onCancelDelete() {
+    this.showDeleteModal = false;
+    this.deleteTargetId = null;
+  }
+
+  onConfirmDelete() {
+    if (this.isDeleting || this.deleteTargetId === null) {
+      return;
+    }
+
+    const id = this.deleteTargetId;
+    this.isDeleting = true;
+    this.showDeleteModal = false;
+
+    this.photographerService.deletePhotographer(id).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          this.popup.showNotification('Photographe supprimé avec succès !');
+          setTimeout(() => {
+            this.router.navigate(['/photographers']);
+          }, 1000);
+        } else {
+          this.popup.showNotification(response.message || 'Erreur lors de la suppression du photographe.');
+          this.isDeleting = false;
+        }
+      },
+      error: (error) => {
+        console.error('Error deleting photographer:', error);
+        let errorMessage = 'Erreur lors de la suppression du photographe.';
+
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        } else if (error.status === 404) {
+          errorMessage = 'Photographe introuvable.';
+        }
+
+        this.popup.showNotification(errorMessage);
+        this.isDeleting = false;
+      }
+    });
+  }
+
+  openPasswordModal() {
+    this.showPasswordModal = true;
+    this.passwordModalData = {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    };
+    this.passwordModalError = '';
+    this.passwordModalSuccess = '';
+  }
+
+  closePasswordModal() {
+    this.showPasswordModal = false;
+  }
+
+  changePassword() {
+    this.passwordModalError = '';
+    this.passwordModalSuccess = '';
+
+    // Validation
+    if (!this.passwordModalData.currentPassword || !this.passwordModalData.newPassword || !this.passwordModalData.confirmPassword) {
+      this.passwordModalError = 'Veuillez remplir tous les champs.';
+      return;
+    }
+
+    if (this.passwordModalData.newPassword.length < 8) {
+      this.passwordModalError = 'Le nouveau mot de passe doit contenir au moins 8 caractères.';
+      return;
+    }
+
+    if (this.passwordModalData.newPassword !== this.passwordModalData.confirmPassword) {
+      this.passwordModalError = 'Les mots de passe ne correspondent pas.';
+      return;
+    }
+
+    if (this.passwordModalData.currentPassword === this.passwordModalData.newPassword) {
+      this.passwordModalError = 'Le nouveau mot de passe doit être différent de l\'ancien.';
+      return;
+    }
+
+    this.passwordModalLoading = true;
+
+    const payload = {
+      current_password: this.passwordModalData.currentPassword,
+      password: this.passwordModalData.newPassword,
+      password_confirmation: this.passwordModalData.confirmPassword,
+    };
+
+    const token = this.authService.getToken();
+    this.http.post(
+      `${environment.apiUrl}/change-password`,
+      payload,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      }
+    ).subscribe({
+      next: () => {
+        this.passwordModalSuccess = 'Mot de passe changé avec succès !';
+        this.passwordModalLoading = false;
+        setTimeout(() => {
+          this.closePasswordModal();
+        }, 1500);
+      },
+      error: (err) => {
+        this.passwordModalLoading = false;
+        if (err.status === 422) {
+          this.passwordModalError = 'Le mot de passe actuel est incorrect.';
+        } else if (err.error?.message) {
+          this.passwordModalError = err.error.message;
+        } else {
+          this.passwordModalError = 'Une erreur est survenue. Veuillez réessayer.';
+        }
+      }
+    });
+  }
 }
+
