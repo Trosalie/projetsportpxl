@@ -33,7 +33,7 @@ export class Header implements OnDestroy {
   }
 
   isLoginPage(): boolean {
-    return this.router.url === '/login';
+    return this.router.url === '/login' || this.router.url.startsWith('/reset-password');
   }
   @Output() navBarToggled = new EventEmitter<void>();
 
