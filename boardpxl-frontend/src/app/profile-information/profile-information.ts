@@ -1,9 +1,9 @@
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { App } from '../app';
 import { Popup } from '../popup/popup';
 import { type InvoiceData } from '../confirm-modal/confirm-modal';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { PhotographerService } from '../services/photographer-service';
 import { InvoiceService } from '../services/invoice-service';
 import { AuthService } from '../services/auth-service';
@@ -65,10 +65,13 @@ export class ProfileInformation implements OnInit {
   lineChart: Chart | null = null;
 
   protected openDropdown: string | null = null;
-  protected activeFilters: string[] = ["Chiffre d'affaire", 'Crédits facturés'];
+  protected activeFilters: string[] = ["Chiffre d'affaires"];
   protected dateFilters: Map<string, string> = new Map();
-  protected readonly dataTypeFilters = ["Chiffre d'affaire", 'Crédits facturés'];
+  protected appliedFilters: string[] = ["Chiffre d'affaires"];
+  protected appliedDateFilters: Map<string, string> = new Map();
+  protected readonly dataTypeFilters = ["Chiffre d'affaires", 'Crédits facturés'];
   protected readonly periodFilters = ['Après le', 'Avant le'];
+  protected dateError: string = '';
 
   constructor(
     private photographerService: PhotographerService,
@@ -79,6 +82,14 @@ export class ProfileInformation implements OnInit {
     private http: HttpClient,
     private roleService: RoleService,
   ) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.filter-dropdown-container')) {
+      this.openDropdown = null;
+    }
+  }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -198,13 +209,13 @@ export class ProfileInformation implements OnInit {
         labels: allLabels,
         datasets: [
           {
-            label: "Chiffre d'affaire (€)",
+            label: "Chiffre d'affaires (€)",
             data: allLabels.map((m) => groupedCA[m] || 0),
             borderColor: '#F98524',
             backgroundColor: 'rgba(249, 133, 36, 0.1)',
             fill: true,
             tension: 0.4,
-            hidden: !this.isFilterActive("Chiffre d'affaire"),
+            hidden: !this.isAppliedFilterActive("Chiffre d'affaires"),
           },
           {
             label: 'Crédits facturés (€)',
@@ -213,7 +224,7 @@ export class ProfileInformation implements OnInit {
             backgroundColor: 'rgba(71, 147, 220, 0.1)',
             fill: true,
             tension: 0.4,
-            hidden: !this.isFilterActive('Crédits facturés'),
+            hidden: !this.isAppliedFilterActive('Crédits facturés'),
           },
         ],
       },
@@ -221,14 +232,26 @@ export class ProfileInformation implements OnInit {
         responsive: true,
         maintainAspectRatio: false,
         scales: { y: { beginAtZero: true } },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              boxWidth: 12,
+              padding: 8,
+              font: {
+                size: window.innerWidth < 640 ? 10 : 12,
+              },
+            },
+          },
+        },
       },
     });
   }
 
   private filterByDate(data: any[]) {
     if (!Array.isArray(data)) return [];
-    const after = this.dateFilters.get('Après le');
-    const before = this.dateFilters.get('Avant le');
+    const after = this.appliedDateFilters.get('Après le');
+    const before = this.appliedDateFilters.get('Avant le');
 
     return data.filter((i) => {
       const dateStr = i.issue_date; // Correspond à ta colonne image
@@ -259,17 +282,56 @@ export class ProfileInformation implements OnInit {
   }
   toggleFilter(val: string) {
     const i = this.activeFilters.indexOf(val);
-    i > -1 ? this.activeFilters.splice(i, 1) : this.activeFilters.push(val);
-    this.updateChart();
+    if (i > -1) {
+      this.activeFilters.splice(i, 1);
+      if (this.periodFilters.includes(val)) {
+        this.dateFilters.delete(val);
+      }
+    } else {
+      this.activeFilters.push(val);
+    }
   }
   isFilterActive = (val: string) => this.activeFilters.includes(val);
+  isAppliedFilterActive = (val: string) => this.appliedFilters.includes(val);
   hasActiveDataTypeFilters = () => this.activeFilters.some((f) => this.dataTypeFilters.includes(f));
   hasActivePeriodFilters = () => this.activeFilters.some((f) => this.periodFilters.includes(f));
   addDateFilter(v: string) {
     if (!this.activeFilters.includes(v)) this.activeFilters.push(v);
   }
   updateDateFilter(v: string, event: any) {
-    this.dateFilters.set(v, event.target.value);
+    const value = event.target.value;
+    this.dateFilters.set(v, value);
+    this.validateDates();
+  }
+  private validateDates() {
+    this.dateError = '';
+    const today = new Date().toISOString().split('T')[0];
+    const afterDate = this.dateFilters.get('Après le');
+    const beforeDate = this.dateFilters.get('Avant le');
+
+    if (afterDate && afterDate > today) {
+      this.dateError = 'La date "Après le" ne peut pas être dans le futur';
+      return;
+    }
+    if (beforeDate && beforeDate > today) {
+      this.dateError = 'La date "Avant le" ne peut pas être dans le futur';
+      return;
+    }
+    if (afterDate && beforeDate && afterDate > beforeDate) {
+      this.dateError = 'La date "Après le" doit être antérieure à "Avant le"';
+      return;
+    }
+  }
+  getMaxDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+  getMinDateForBefore(): string {
+    return this.dateFilters.get('Après le') || '';
+  }
+  getMaxDateForAfter(): string {
+    const beforeDate = this.dateFilters.get('Avant le');
+    const today = new Date().toISOString().split('T')[0];
+    return beforeDate && beforeDate < today ? beforeDate : today;
   }
   getDateValue = (v: string) => this.dateFilters.get(v) || '';
   clearCategoryFilters(cat: string, event: Event) {
@@ -277,10 +339,18 @@ export class ProfileInformation implements OnInit {
     const targets = cat === 'dataType' ? this.dataTypeFilters : this.periodFilters;
     this.activeFilters = this.activeFilters.filter((f) => !targets.includes(f));
     if (cat === 'period') this.dateFilters.clear();
-    this.updateChart();
   }
-  canApplyFilters = () => this.activeFilters.length > 0;
+  canApplyFilters = () => this.hasActiveDataTypeFilters() || this.hasActivePeriodFilters();
   applyFilters() {
+    if (!this.canApplyFilters()) {
+      alert('Veuillez cocher au moins un filtre avant d\'appliquer.');
+      return;
+    }
+    if (this.dateError) {
+      return;
+    }
+    this.appliedFilters = [...this.activeFilters];
+    this.appliedDateFilters = new Map(this.dateFilters);
     this.updateChart();
     this.openDropdown = null;
   }
