@@ -1,15 +1,15 @@
-<app-title [title]="'TABLEAU DE BORD'"></app-title>
+<app-title [title]="('PHOTOGRAPHER_DASHBOARD.TITLE' | translate)"></app-title>
 <div>
     <div class="credit-count">
         <div>
-            <p>Crédits restants :</p>
+            <p>{{ 'PHOTOGRAPHER_DASHBOARD.INFO_CREDITS' | translate }}</p>
             <p class="remainingCredits">{{ remainingCredits }}</p>
         </div>
         <img src="assets/images/credits_icon.png" alt="logo credits">
     </div>
     <div class="action-buttons">
-        <button class="payout" routerLink="/request/payout">Demander un versement</button>
-        <button class="credits-request" routerLink="/request/credits">Demander des crédits</button>
+        <button class="payout" routerLink="/request/payout">{{ 'PHOTOGRAPHER_DASHBOARD.REQUEST_PAYOUT' | translate }}</button>
+        <button class="credits-request" routerLink="/request/credits">{{ 'PHOTOGRAPHER_DASHBOARD.REQUEST_CREDITS' | translate }}</button>
     </div>
 </div>
 <main>

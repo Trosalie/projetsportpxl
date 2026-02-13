@@ -179,5 +179,11 @@
     "INFO_PAYED_INVOICES": "Payées",
     "INFO_NOT_PAYED_INVOICES": "Non payées",
     "INFO_LATE_INVOICES": "En retard"
+  },
+  "PHOTOGRAPHER_DASHBOARD": {
+    "TITLE": "TABLEAU DE BORD",
+    "INFO_CREDITS": "Crédits restants :",
+    "REQUEST_PAYOUT": "Demander un versement",
+    "REQUEST_CREDITS": "Demander des crédits"
   }
 }
