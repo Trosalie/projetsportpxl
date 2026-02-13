@@ -93,6 +93,8 @@
 app-pagination {
     display: flex;
     justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 /* === RESPONSIVE === */
@@ -137,4 +139,11 @@ app-pagination {
             font-size: 16px !important;
         }
     }
+}
+
+app-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
