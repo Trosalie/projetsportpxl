@@ -236,5 +236,27 @@
   },
   "TITLE": {
     "TITLE": "Titre"
+  },
+  "TURNOVER_PAYMENT_FORM": {
+    "TITLE": "VERSEMENT DE CHIFFRE D'AFFAIRES",
+    "LABEL_PHOTOGRAPHER": "Photographe :",
+    "LOADING_PHOTOGRAPHER": "Chargement du photographe...",
+    "LABEL_TURNOVER": "Chiffre d'affaires sur la période :",
+    "LABEL_SUBJECT": "Sujet de la facture :",
+    "LABEL_TVA": "TVA :",
+    "LABEL_START_DATE": "Début :",
+    "LABEL_END_DATE": "Fin :",
+    "BTN_SUBMIT": "Valider",
+    "NO_PHOTOGRAPHER": "Le photographe n'a pas été trouvé !",
+    "MISSING_INPUT": "Merci de remplir tous les champs du formulaire.",
+    "TURNOVER_PAYMENT_FORM": "Photographe",
+    "LABEL_ITEM_TURNOVER": "Chiffre d'affaires",
+    "LABEL_ITEM_PERIOD": "Période",
+    "LABEL_ITEM_VAT": "TVA",
+    "CURRENCY_EURO": "{{amount}} €",
+    "PERIOD_RANGE": "Du {{start}} au {{end}}",
+    "WITHDRAWAL_DESCRIPTION": "Versement du chiffre d'affaires de {{amount}} € pour la période du {{start}} au {{end}}.",
+    "INVOICE_CREATED": "Facture créée avec succès !",
+    "ERROR_CREATED": "Erreur lors de la création de la facture."
   }
 }

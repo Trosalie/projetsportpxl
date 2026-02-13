@@ -31,7 +31,7 @@ export class TurnoverPaymentForm implements OnDestroy {
     modalData: InvoiceData | null = null;
     pendingFormData: any = null;
     private destroy$ = new Subject<void>();
-  
+
     constructor(private invoiceService: InvoiceService, private photographerService: PhotographerService, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
       this.authService.logout$.pipe(takeUntil(this.destroy$)).subscribe(() => {
         this.destroy$.next();
@@ -39,12 +39,12 @@ export class TurnoverPaymentForm implements OnDestroy {
     }
     @ViewChild('popup') popup!: Popup;
     @ViewChild(ConfirmModal) confirmModal!: ConfirmModal;
-  
+
     ngOnInit() {
       // Récupère le nom du client depuis les query params
       this.route.queryParams.subscribe(params => {
         this.clientName = params['clientName'] || '';
-        
+
         // Cherche le client par nom/prénom
         if (this.clientName) {
           this.isLoading = true;
@@ -67,7 +67,7 @@ export class TurnoverPaymentForm implements OnDestroy {
               console.error('Erreur fetch client ID :', err);
               this.isLoading = false;
               this.findClient = false;
-              this.popup.showNotification("Le photographe n'a pas été trouvé !");
+              this.popup.showNotification(this.translate.instant('TURNOVER_PAYMENT_FORM.NO_PHOTOGRAPHER'));
               this.loadClients();
             }
           });
@@ -76,7 +76,7 @@ export class TurnoverPaymentForm implements OnDestroy {
         }
       });
     }
-  
+
     // Récupère tous les clients pour suggestions
     loadClients() {
       this.photographerService.getPhotographers()
@@ -88,15 +88,15 @@ export class TurnoverPaymentForm implements OnDestroy {
         error: (err) => console.error('Erreur fetch clients :', err)
       });
     }
-  
-  
+
+
     // Actualise les suggestions de photographes en fonction de la saisie
     onPhotographerChange(value: string) {
       this.photographerInput = value;
-  
+
       // Vérifie si le photographe existe
       this.findClient = this.clientsNames.includes(value);
-  
+
       // Filtrer les suggestions en fonction du texte saisi
       const normalizedQuery = value.trim().toLowerCase();
       this.filteredClients = this.clientsNames.filter(name => this.matchesQuery(name, normalizedQuery));
@@ -108,7 +108,7 @@ export class TurnoverPaymentForm implements OnDestroy {
       const normalizedName = name.toLowerCase();
       return normalizedName.startsWith(normalizedQuery) || normalizedName.includes(` ${normalizedQuery}`);
     }
-  
+
     // Sélectionne un photographe dans la liste des suggestions
     selectPhotographer(name: string) {
       this.isLoading = true;
@@ -124,17 +124,17 @@ export class TurnoverPaymentForm implements OnDestroy {
             this.clientId = data.client_id;
             this.pennylaneId = data.pennylane_id;
           } else {
-            this.popup.showNotification('Client non trouvé !');
+            this.popup.showNotification(this.translate.instant('TURNOVER_PAYMENT_FORM.NO_PHOTOGRAPHER'));
           }
           this.isLoading = false;
-        }, 
+        },
         error: (err) => {
           console.error('Erreur fetch client ID après sélection :', err);
           this.isLoading = false;
         }
       });
     }
-  
+
     onSubmit(event: Event) {
       event.preventDefault();
       const form = event.target as HTMLFormElement;
@@ -148,7 +148,7 @@ export class TurnoverPaymentForm implements OnDestroy {
       due.setMonth(due.getMonth() + 1);
       const dueDate = due.toISOString().slice(0, 10);
       if (!subject || !startDate || !endDate || !chiffreAffaire || !TVA || !this.findClient) {
-        this.popup.showNotification("Merci de remplir tous les champs du formulaire.");
+        this.popup.showNotification(this.translate.instant('TURNOVER_PAYMENT_FORM.MISSING_INPUT'));
         return;
       }
 
@@ -163,13 +163,30 @@ export class TurnoverPaymentForm implements OnDestroy {
       };
 
       this.modalData = {
-        title: subject, 
+        title: subject,
         amount: 0,
         items: [
-          { label: 'Photographe', value: this.photographerInput },
-          { label: 'Chiffre d\'affaire', value: `${chiffreAffaire}€` },
-          { label: 'Période', value: `${startDate} au ${endDate}` },
-          { label: 'TVA', value: TVA }
+          {
+            label: this.translate.instant('TURNOVER_PAYMENT_FORM.TURNOVER_PAYMENT_FORM'),
+            value: this.photographerInput
+          },
+          {
+            label: this.translate.instant('TURNOVER_PAYMENT_FORM.LABEL_ITEM_TURNOVER'),
+            value: this.translate.instant('TURNOVER_PAYMENT_FORM.CURRENCY_EURO', {
+              amount: chiffreAffaire
+            })
+          },
+          {
+            label: this.translate.instant('TURNOVER_PAYMENT_FORM.LABEL_ITEM_PERIOD'),
+            value: this.translate.instant('TURNOVER_PAYMENT_FORM.PERIOD_RANGE', {
+              start: startDate,
+              end: endDate
+            })
+          },
+          {
+            label: this.translate.instant('TURNOVER_PAYMENT_FORM.LABEL_ITEM_VAT'),
+            value: TVA
+          }
         ]
       };
 
@@ -186,7 +203,14 @@ export class TurnoverPaymentForm implements OnDestroy {
       dueDate: dueDate,
       idClient: this.pennylaneId,
       invoiceTitle: subject,
-      invoiceDescription: `Versement du chiffre d'affaires de ${chiffreAffaire}€ pour la période du ${startDate} au ${endDate}.`
+      invoiceDescription: this.translate.instant(
+        'TURNOVER_PAYMENT_FORM.WITHDRAWAL_DESCRIPTION',
+        {
+          amount: chiffreAffaire,
+          start: startDate,
+          end: endDate
+        }
+      )
     }
     this.creationFacture = true;
     this.showConfirmModal = false;
@@ -194,7 +218,7 @@ export class TurnoverPaymentForm implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
       next: (response) => {
-        this.popup.showNotification('Facture créée avec succès !');
+        this.popup.showNotification(this.translate.instant('TURNOVER_PAYMENT_FORM.INVOICE_CREATED'));
         this.creationFacture = false;
         this.pendingFormData = null;
         this.modalData = null;
@@ -204,7 +228,7 @@ export class TurnoverPaymentForm implements OnDestroy {
         }, 2000);
       },
       error: () => {
-        this.popup.showNotification("Erreur lors de la création de la facture."),
+        this.popup.showNotification(this.translate.instant('TURNOVER_PAYMENT_FORM.ERROR_CREATED')),
         this.creationFacture = false;
         this.showConfirmModal = true;
       }
@@ -216,7 +240,7 @@ export class TurnoverPaymentForm implements OnDestroy {
     this.modalData = null;
     this.showConfirmModal = false;
   }
-  
+
 
   insertTurnoverInvoice(reponse: any, startDate: string, endDate: string, chiffreAffaire: number, tva: string, issueDate: string, dueDate: string, clientId: number) {
 
@@ -247,9 +271,9 @@ export class TurnoverPaymentForm implements OnDestroy {
       next: () => {},
       error: err => console.error("Erreur lors de l'insertion :", err)
     });
-  
+
   }
-  
+
 
   private convertTvaCodeToPercent(tva: string): number {
     const value = tva.replace("FR_", "");

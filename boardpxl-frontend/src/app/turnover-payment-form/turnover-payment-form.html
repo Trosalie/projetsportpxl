@@ -1,16 +1,16 @@
-<app-title [title]="'VERSEMENT DE CHIFFRE D\'AFFAIRES'"></app-title>
+<app-title [title]="('TURNOVER_PAYMENT_FORM.TITLE' | translate)"></app-title>
 <app-popup #popup></app-popup>
-<app-confirm-modal 
-  [isVisible]="showConfirmModal" 
+<app-confirm-modal
+  [isVisible]="showConfirmModal"
   [invoiceData]="modalData"
   (confirm)="onConfirmInvoice()"
   (discard)="onCancelInvoice()">
 </app-confirm-modal>
 <form class="credit-purchase-form" (submit)="onSubmit($event)">
   <div class="form-group">
-    <label for="photographer">Photographe :</label>
+    <label for="photographer">{{ 'TURNOVER_PAYMENT_FORM.LABEL_PHOTOGRAPHER' | translate }}</label>
     <input type="text" id="photographer" name="photographer" required [value]="photographerInput" (input)="onPhotographerChange($event.target.value)" [disabled]="isLoading"/>
-    <div *ngIf="isLoading" class="loading-indicator">Chargement du photographe...</div>
+    <div *ngIf="isLoading" class="loading-indicator">{{ 'TURNOVER_PAYMENT_FORM.LOADING_PHOTOGRAPHER' | translate }}</div>
     <ul *ngIf="filteredClients.length > 0" class="suggestions">
       <li *ngFor="let name of filteredClients" (click)="selectPhotographer(name)">
         {{ name }}
@@ -18,15 +18,15 @@
     </ul>
   </div>
   <div class="form-group">
-     <label for="CA">Chiffre d'affaires sur la période :</label>
+     <label for="CA">{{ 'TURNOVER_PAYMENT_FORM.LABEL_TURNOVER' | translate }}</label>
     <input type="text" id="CA" name="CA" maxlength="7" required/>
   </div>
   <div class="form-group">
-     <label for="Subject">Sujet de la facture :</label>
+     <label for="Subject">{{ 'TURNOVER_PAYMENT_FORM.LABEL_SUBJECT' | translate }}</label>
     <input type="text" id="Subject" name="Subject" required/>
   </div>
   <div class="form-group">
-    <label for="tva">TVA :</label>
+    <label for="tva">{{ 'TURNOVER_PAYMENT_FORM.LABEL_TVA' | translate }}</label>
     <select id="tva" name="tva" required>
       <option value="FR_1_05">FR_1_05</option>
       <option value="FR_1_75">FR_1_75</option>
@@ -49,18 +49,18 @@
   </div>
   <div class="date-row">
     <div class="form-group">
-      <label for="startDate">Début :</label>
+      <label for="startDate">{{ 'TURNOVER_PAYMENT_FORM.LABEL_START_DATE' | translate }}</label>
       <input type="date" id="startDate" name="startDate" required>
     </div>
 
     <div class="form-group">
-      <label for="endDate">Fin :</label>
+      <label for="endDate">{{ 'TURNOVER_PAYMENT_FORM.LABEL_END_DATE' | translate }}</label>
       <input type="date" id="endDate" name="endDate" required [value]="today">
     </div>
   </div>
   <div class="form-actions">
     <button  type="submit" [disabled]="creationFacture" [ngClass]="{'no-animation': creationFacture}">
-      Valider
+      {{ 'TURNOVER_PAYMENT_FORM.BTN_SUBMIT' | translate }}
     </button>
   </div>
 </form>
