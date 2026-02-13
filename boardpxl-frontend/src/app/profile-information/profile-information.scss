@@ -197,8 +197,8 @@
   flex-direction: row;
   gap: 8px;
   margin-top: 12px;
-  margin-bottom: 15px;
-  align-items: flex-end;
+  margin-bottom: 0;
+  align-items: center;
   flex-wrap: wrap;
 }
 
@@ -234,10 +234,11 @@
   }
 }
 
-.filter-section-sidebar > div:last-of-type {
+.filter-actions {
   display: flex;
   gap: 8px;
-  align-items: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 // Filtres Section (old - keep for compatibility)

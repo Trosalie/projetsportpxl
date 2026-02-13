@@ -39,9 +39,11 @@ export class ProfileInformation implements OnInit {
   lineChart: Chart | null = null;
 
   protected openDropdown: string | null = null;
-  protected activeFilters: string[] = ["Chiffre d'affaire", 'Crédits facturés'];
+  protected activeFilters: string[] = ["Chiffre d'affaires"];
   protected dateFilters: Map<string, string> = new Map();
-  protected readonly dataTypeFilters = ["Chiffre d'affaire", 'Crédits facturés'];
+  protected appliedFilters: string[] = ["Chiffre d'affaires"];
+  protected appliedDateFilters: Map<string, string> = new Map();
+  protected readonly dataTypeFilters = ["Chiffre d'affaires", 'Crédits facturés'];
   protected readonly periodFilters = ['Après le', 'Avant le'];
   protected dateError: string = '';
 
@@ -163,13 +165,13 @@ export class ProfileInformation implements OnInit {
         labels: allLabels,
         datasets: [
           {
-            label: "Chiffre d'affaire (€)",
+            label: "Chiffre d'affaires (€)",
             data: allLabels.map((m) => groupedCA[m] || 0),
             borderColor: '#F98524',
             backgroundColor: 'rgba(249, 133, 36, 0.1)',
             fill: true,
             tension: 0.4,
-            hidden: !this.isFilterActive("Chiffre d'affaire"),
+            hidden: !this.isAppliedFilterActive("Chiffre d'affaires"),
           },
           {
             label: 'Crédits facturés (€)',
@@ -178,7 +180,7 @@ export class ProfileInformation implements OnInit {
             backgroundColor: 'rgba(71, 147, 220, 0.1)',
             fill: true,
             tension: 0.4,
-            hidden: !this.isFilterActive('Crédits facturés'),
+            hidden: !this.isAppliedFilterActive('Crédits facturés'),
           },
         ],
       },
@@ -204,8 +206,8 @@ export class ProfileInformation implements OnInit {
 
   private filterByDate(data: any[]) {
     if (!Array.isArray(data)) return [];
-    const after = this.dateFilters.get('Après le');
-    const before = this.dateFilters.get('Avant le');
+    const after = this.appliedDateFilters.get('Après le');
+    const before = this.appliedDateFilters.get('Avant le');
 
     return data.filter((i) => {
       const dateStr = i.issue_date; // Correspond à ta colonne image
@@ -236,10 +238,17 @@ export class ProfileInformation implements OnInit {
   }
   toggleFilter(val: string) {
     const i = this.activeFilters.indexOf(val);
-    i > -1 ? this.activeFilters.splice(i, 1) : this.activeFilters.push(val);
-    this.updateChart();
+    if (i > -1) {
+      this.activeFilters.splice(i, 1);
+      if (this.periodFilters.includes(val)) {
+        this.dateFilters.delete(val);
+      }
+    } else {
+      this.activeFilters.push(val);
+    }
   }
   isFilterActive = (val: string) => this.activeFilters.includes(val);
+  isAppliedFilterActive = (val: string) => this.appliedFilters.includes(val);
   hasActiveDataTypeFilters = () => this.activeFilters.some((f) => this.dataTypeFilters.includes(f));
   hasActivePeriodFilters = () => this.activeFilters.some((f) => this.periodFilters.includes(f));
   addDateFilter(v: string) {
@@ -249,9 +258,6 @@ export class ProfileInformation implements OnInit {
     const value = event.target.value;
     this.dateFilters.set(v, value);
     this.validateDates();
-    if (!this.dateError) {
-      this.updateChart();
-    }
   }
   private validateDates() {
     this.dateError = '';
@@ -289,10 +295,18 @@ export class ProfileInformation implements OnInit {
     const targets = cat === 'dataType' ? this.dataTypeFilters : this.periodFilters;
     this.activeFilters = this.activeFilters.filter((f) => !targets.includes(f));
     if (cat === 'period') this.dateFilters.clear();
-    this.updateChart();
   }
-  canApplyFilters = () => this.activeFilters.length > 0;
+  canApplyFilters = () => this.hasActiveDataTypeFilters() || this.hasActivePeriodFilters();
   applyFilters() {
+    if (!this.canApplyFilters()) {
+      alert('Veuillez cocher au moins un filtre avant d\'appliquer.');
+      return;
+    }
+    if (this.dateError) {
+      return;
+    }
+    this.appliedFilters = [...this.activeFilters];
+    this.appliedDateFilters = new Map(this.dateFilters);
     this.updateChart();
     this.openDropdown = null;
   }
