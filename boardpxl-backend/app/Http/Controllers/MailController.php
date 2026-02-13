@@ -58,17 +58,24 @@ class MailController extends Controller
             'type' => 'nullable|string|max:100',
         ]);
 
+        $type = strtolower($validated['type'] ?? '');
+        $forcePhotographerFrom = in_array($type, ['versement', 'crédits', 'credits'], true);
+        $toAddress = $forcePhotographerFrom
+            ? (config('mail.from.address') ?: $validated['to'])
+            : $validated['to'];
+
         try {
             $mailService->sendEmail(
-                $validated['to'],
+                $toAddress,
                 $validated['from'],
                 $validated['subject'],
-                $validated['body']
+                $validated['body'],
+                $forcePhotographerFrom
             );
 
             MailLogs::create([
                 'sender_id' => auth()->id() ?? 1, 
-                'recipient' => $validated['to'],
+                'recipient' => $toAddress,
                 'subject' => $validated['subject'],
                 'body' => $validated['body'],
                 'status' => 'sent',
@@ -76,7 +83,7 @@ class MailController extends Controller
             ]);
 
             $this->logService->logAction($request, 'send_email', 'MAIL_LOGS', [
-                'to' => $validated['to'],
+                'to' => $toAddress,
                 'subject' => $validated['subject'],
             ]);
 
@@ -88,7 +95,7 @@ class MailController extends Controller
         } catch (\Exception $e) {
             MailLogs::create([
                 'sender_id' => auth()->id() ?? 1, 
-                'recipient' => $validated['to'],
+                'recipient' => $toAddress,
                 'subject' => $validated['subject'],
                 'body' => $validated['body'],
                 'status' => 'failed',
@@ -96,7 +103,7 @@ class MailController extends Controller
             ]);
 
             $this->logService->logAction($request, 'send_email_failed', 'MAIL_LOGS', [
-                'to' => $validated['to'],
+                'to' => $toAddress,
                 'subject' => $validated['subject'],
                 'error' => $e->getMessage(),
             ]);
@@ -118,16 +125,18 @@ class MailController extends Controller
      */
     public function testMail()
     {
-        Mail::raw('Test Mailpit depuis Docker', function ($message) {
-            $message->to('test@example.com')
-                    ->subject('Hello from Mailpit');
-        });
+        try {
+            Mail::raw('Test Mailpit depuis Docker', function ($message) {
+                $message->to('test@example.com')
+                        ->subject('Hello from Mailpit');
+            });
 
-        if (Mail::failures()) {
-            return response()->json(['message' => 'Échec de l\'envoi du mail.'], 500);
+            return response()->json(['message' => 'Mail envoyé (si tout va bien) !']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Échec de l\'envoi du mail: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json(['message' => 'Mail envoyé (si tout va bien) !']);
     }
 
         /**
@@ -273,10 +282,6 @@ class MailController extends Controller
                         ->subject($subject)
                         ->html($htmlBody);
             });
-
-            if (Mail::failures()) {
-                throw new \Exception('Échec de l\'envoi du mail de bienvenue.');
-            }
         } catch (\Exception $e) {
             // Log the error or handle it as needed
             Log::error('Failed to send welcome email: ' . $e->getMessage());
