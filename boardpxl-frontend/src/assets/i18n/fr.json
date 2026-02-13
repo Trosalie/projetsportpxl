@@ -207,5 +207,8 @@
     "CREDIT_TYPE": "crédits",
     "SUCCEEDED_REQUEST": "Votre demande à bien été envoyée !",
     "ERROR_TRY_LATER": "Erreur lors de l'envoi du mail. Veuillez réessayer plus tard."
+  },
+  "PHOTOGRAPHER_LIST": {
+    "TITLE": "LISTE DES PHOTOGRAPHES"
   }
 }
