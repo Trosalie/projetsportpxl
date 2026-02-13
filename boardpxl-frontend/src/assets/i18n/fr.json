@@ -184,7 +184,8 @@
     "TITLE": "TABLEAU DE BORD",
     "INFO_CREDITS": "Crédits restants :",
     "REQUEST_PAYOUT": "Demander un versement",
-    "REQUEST_CREDITS": "Demander des crédits"
+    "REQUEST_CREDITS": "Demander des crédits",
+    "IMG_CREDITS_ICON_ALT": "logo credits"
   },
   "PHOTOGRAPHER_REQUEST": {
     "LOADING_SEND": "Envoi en cours...",
@@ -210,5 +211,24 @@
   },
   "PHOTOGRAPHER_LIST": {
     "TITLE": "LISTE DES PHOTOGRAPHES"
+  },
+  "PROFILE_INFORMATION": {
+    "LOADING_PROFIL": "Chargement du profil...",
+    "TITLE": "Informations générales",
+    "LABEL_NAME": "Nom",
+    "LABEL_FIRST_NAME": "Prénom",
+    "LABEL_MAIL": "email",
+    "LABEL_ADDRESS": "Adresse",
+    "LABEL_CITY": "Ville",
+    "LABEL_POSTAL_CODE": "Code postal",
+    "LABEL_COUNTRY": "Pays",
+    "LABEL_TURNOVER": "Chiffre d'affaire",
+    "LABEL_CREDITS": "Crédits restants",
+    "LABEL_FILTER": "Filtres",
+    "BTN_DATA_TYPE": "Type de données",
+    "IMG_CATEGORY_ICON_ALT": "Type",
+    "IMG_CLOSE_ICON_ALT": "Clear",
+    "CALENDAR": "Période",
+    "BTN_APPLY": "Appliquer"
   }
 }

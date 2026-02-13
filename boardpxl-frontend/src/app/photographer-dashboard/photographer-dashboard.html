@@ -5,7 +5,7 @@
             <p>{{ 'PHOTOGRAPHER_DASHBOARD.INFO_CREDITS' | translate }}</p>
             <p class="remainingCredits">{{ remainingCredits }}</p>
         </div>
-        <img src="assets/images/credits_icon.png" alt="logo credits">
+        <img src="assets/images/credits_icon.png" [alt]="('PHOTOGRAPHER_DASHBOARD.IMG_CREDITS_ICON_ALT' | translate)">
     </div>
     <div class="action-buttons">
         <button class="payout" routerLink="/request/payout">{{ 'PHOTOGRAPHER_DASHBOARD.REQUEST_PAYOUT' | translate }}</button>
