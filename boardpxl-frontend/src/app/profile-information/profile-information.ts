@@ -1,6 +1,4 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ClientService } from '../services/client-service.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { App } from '../app';
