@@ -1,0 +1,189 @@
+{
+  "ABOUT_US": {
+    "TITLE": "Who are we?",
+    "ABOUT_SPORTPXL": "Sportpxl is a combination of technical profiles, competitive athletes and image enthusiasts.",
+    "OUR_GOAL": "Our goal: provide a tailored service to all sports photographers and grow this activity we love so much.",
+    "IMG_EXAMPLE": "Professional athlete in action",
+    "ABOUT_GILLEN": "For nearly 10 years, Guillaume and Gillen, the founders of Sportpxl, have experienced sport from both sides: as athletes and as contributors to its digital transformation.",
+    "SPORTPXL_BIRTH": {
+      "SPORTPXL_BIRTH_1": "It was therefore naturally in ",
+      "SPORTPXL_BIRTH_STRONG": "response to real field issues ",
+      "SPORTPXL_BIRTH_2": "that Sportpxl was born. Sportpxl was designed and developed to meet the needs of many stakeholders in amateur and professional sports."
+    },
+    "AROUND_SPORTPXL": "By staying close to the different stakeholders in sports events, both professionally and personally, Sportpxl stands at the heart of this rapidly growing ecosystem.",
+    "THOMAS_HELP": {
+      "THOMAS_HELP": "With the support of Thomas and several business angels from the digital and innovation sectors, the team has one mission: ",
+      "THOMAS_HELP_STRONG": "help sport enhance its image."
+    },
+    "VALUE": {
+      "VALUE_1": "The values ",
+      "VALUE_SPAN": "that guide us ",
+      "VALUE_2": "every day"
+    },
+    "ECO_TITLE": "Eco-responsibility",
+    "ECO_TEXT": "We reduce our environmental impact through sustainable practices: optimized cloud storage and limited travel.",
+    "INNOVATION_TITLE": "Collective innovation",
+    "INNOVATION_TEXT": "We believe in collaboration and shared innovation to design high-performance technological solutions.",
+    "REVOLUTION_TITLE": "Smooth revolution",
+    "REVOLUTION_TEXT": "Supporting amateur and professional photographers without disrupting their habits is at the core of our approach.",
+    "DEVELOPMENT_TITLE": "Sports development",
+    "DEVELOPMENT_TEXT": "By providing new monetization and engagement opportunities, we actively support the promotion and accessibility of sport.",
+    "SUPPORT": "They support us",
+    "PARTNER_1": "Partner logo 1",
+    "PARTNER_2": "Partner logo 2",
+    "PARTNER_3": "Partner logo 3",
+    "PARTNER_4": "Partner logo 4",
+    "PARTNER_5": "Partner logo 5",
+    "PARTNER_6": "Partner logo 6",
+    "PARTNER_7": "Partner logo 7",
+    "PARTNER_8": "Partner logo 8"
+  },
+  "ADMIN_PHOTOGRAPHER_INVOICE_LIST": {
+    "TITLE_WITH_NAME": "INVOICES OF {{name}}",
+    "TITLE_DEFAULT": "PHOTOGRAPHER INVOICES",
+    "LOADING": "Loading..."
+  },
+  "CONFIRM_MODAL": {
+    "HEADER": "Confirm invoice",
+    "AMOUNT": "Total amount:",
+    "CONFIRM_CHECK": "I confirm the creation of this invoice",
+    "BTN_DISCARD": "Cancel",
+    "BTN_CONFIRM": "Confirm"
+  },
+  "CREDIT_PURCHASE_FORM": {
+    "TITLE": "CREDIT PURCHASE",
+    "LABEL_PHOTOGRAPHER": "Photographer:",
+    "LOADING_PHOTOGRAPHER": "Loading photographer...",
+    "LABEL_SUBJECT": "Invoice subject:",
+    "LABEL_CREDITS": "Credits added:",
+    "LABEL_PRICE_HT": "Price excl. VAT (€):",
+    "LABEL_TVA": "VAT:",
+    "LABEL_DATE": "Date:",
+    "BTN_SUBMIT": "Submit",
+    "PHOTOGRAPHER_NOT_FOUND": "Photographer not found!",
+    "FORM_NOT_FINISHED": "Please fill in all form fields.",
+    "PRODUCT_CREDITS": "{{count}} credits",
+    "SUCCEED": "Invoice successfully created!",
+    "ERROR_CREATE": "Error while creating the invoice"
+  },
+  "GENERAL_GRAPH": {
+    "TITLE": "GENERAL GRAPH",
+    "MOBILE_ONLY_TITLE": "Page not available on mobile",
+    "MOBILE_ONLY_TEXT": "This page is only accessible from a desktop device for a better chart visualization experience.",
+    "LOADING": "Loading data...",
+    "FILTER_LABEL": "Filters",
+    "IMG_FILTER_ICON_ALT": "Type",
+    "DATA_TYPE": "Data type",
+    "IMG_CLOSE_ICON_ALT": "Clear",
+    "CALENDAR": "Period",
+    "APPLY": "Apply",
+    "LABEL_TOTAL_TURNOVER": "Total Turnover",
+    "LABEL_CREDIT_SOLD": "Credits sold (€)",
+    "LABEL_TOTAL_COMMISSION": "Total Commission",
+    "LABEL_GRAPH_CREDIT": "Credit Sales (€)",
+    "LABEL_GRAPH_TURNOVER": "Turnover (€)",
+    "ALERT_UPDATE_DATE_FILTER": "The \"After\" date must be earlier than the \"Before\" date.",
+    "ALERT_APPLY_FILTERS": "Please select at least one filter before applying."
+  },
+  "HEADER": {
+    "IMG_LOGO_ALT": "App logo"
+  },
+  "INVOICE_CARD": {
+    "SENT": "Issued ",
+    "CREDIT_PURCHASED": "Credit purchase",
+    "TURNOVER_PAYMENT": "Turnover payment",
+    "STATUS_PAYED": "Paid",
+    "DUE": "Due "
+  },
+  "INVOICE_FILTER": {
+    "FILTER_LABEL": "Filters",
+    "IMG_PRICE_TAG_ICON_ALT": "Status",
+    "IMG_CLOSE_ICON_ALT": "Clear",
+    "IMG_CATEGORY_ICON_ALT": "Type",
+    "IMG_CALENDAR_ICON_ALT": "Period",
+    "ALERT_UPDATE_DATE_FILTER": "The \"After\" date must be earlier than the \"Before\" date."
+  },
+  "INVOICE_HISTORY": {
+    "HEADER": "Invoice history",
+    "LOADING_INVOICES": "Loading invoices...",
+    "NO_INVOICES": "This photographer has no invoices"
+  },
+  "LOGIN_PAGE": {
+    "IMG_LOGO_SPORTPXL_ALT": "sportpxl_logo",
+    "IMG_LOGIN_ICON_ALT": "login icon",
+    "TITLE": "Login",
+    "LABEL_EMAIL": "Email",
+    "LABEL_PASSWORD": "Password",
+    "FORGOT": "Forgot password?",
+    "BTN_BLOCKED": "BLOCKED",
+    "BTN_LOGIN": "LOG IN",
+    "TOO_MANY_ATTEMPTS": "Too many failed attempts ({{attempts}}). Try again in {{time}}.",
+    "INCORRECT_EMAIL_OR_PASSWORD_WITH_ATTEMPTS": "Incorrect email or password. {{remainingAttempts}} attempt(s) remaining before lockout.",
+    "INCORRECT_EMAIL_OR_PASSWORD": "Incorrect email or password.",
+    "OTHER_ERROR": "An error occurred. Please try again."
+  },
+  "MAIL_REQUEST_PAGE": {
+    "TITLE_TURNOVER": "TURNOVER PAYMENT REQUEST",
+    "TITLE_CREDIT": "CREDIT REQUEST"
+  },
+  "NAVIGATION_BAR": {
+    "IMG_LOGO_ALT": "App logo",
+    "IMG_LOGOUT_ICON_ALT": "Logout",
+    "BTN_DISCONNECT": "Log out",
+    "LEGAL_LINKS_LEGAL": "Legal notice",
+    "LEGAL_LINKS_TERMS_CONDITION": "Terms and conditions",
+    "LEGAL_LINKS_PRIVACY_POLICY": "Privacy policy",
+    "ROUTE_DASHBOARD": "Dashboard",
+    "ROUTE_MAILS": "Email history",
+    "ROUTE_PHOTOGRAPHERS": "Photographer list",
+    "ROUTE_GENERAL_GRAPH": "General graph",
+    "ROUTE_LOGS": "Logs",
+    "ROUTE_FORM_PAYOUT": "Payout form",
+    "ROUTE_FORM_CREDITS": "Credit request form",
+    "ROUTE_PROFILE": "Profile",
+    "ROUTE_INVOICES": "Invoice history"
+  },
+  "PHOTOGRAPHER_REQUEST": {
+    "LOADING_SEND": "Sending...",
+    "AMOUNT_TURNOVER": "Turnover amount",
+    "AMOUNT_CREDITS": "Number of requested credits",
+    "MESSAGE_TURNOVER": "Please provide the details of your payout request.",
+    "MESSAGE_CREDITS": "Please specify the number of requested credits and the reasons for this request.",
+    "BTN_SEND": "Send",
+    "AMOUNT_PLACEHOLDER": "[enter amount]",
+    "PLACEHOLDER_FULLNAME": "[First name Last name]",
+    "WITHDRAWAL_MESSAGE": "Hello,\n\nI am contacting you to request the payment of my turnover amounting to {{amount}} €.\nThank you in advance for processing my request.\n\nBest regards,\n{{name}}",
+    "CREDIT_MESSAGE": "Hello,\n\nI am contacting you to request a quote for {{amount}} credits.\nPlease send me the detailed quote along with the terms and deadlines.\n\nBest regards,\n{{name}}",
+    "TYPE_CREDITS": "a whole number of credits",
+    "TYPE_TURNOVER": "a turnover amount",
+    "MISSING_AMOUNT": "Please provide {{type}} before submitting the request.",
+    "ERROR_MISSING_INPUT": "Please fill in the field before submitting the request.",
+    "TURNOVER_SUBJECT": "Turnover payment request",
+    "TURNOVER_TYPE": "payment",
+    "CREDIT_SUBJECT": "Credit request",
+    "CREDIT_TYPE": "credits",
+    "SUCCEEDED_REQUEST": "Your request has been successfully sent!",
+    "ERROR_TRY_LATER": "Error while sending the email. Please try again later."
+  },
+  "TURNOVER_PAYMENT_FORM": {
+    "TITLE": "TURNOVER PAYMENT",
+    "LABEL_PHOTOGRAPHER": "Photographer:",
+    "LOADING_PHOTOGRAPHER": "Loading photographer...",
+    "LABEL_TURNOVER": "Turnover for the period:",
+    "LABEL_SUBJECT": "Invoice subject:",
+    "LABEL_TVA": "VAT:",
+    "LABEL_START_DATE": "Start:",
+    "LABEL_END_DATE": "End:",
+    "BTN_SUBMIT": "Submit",
+    "NO_PHOTOGRAPHER": "Photographer not found!",
+    "MISSING_INPUT": "Please fill in all form fields.",
+    "LABEL_ITEM_TURNOVER": "Turnover",
+    "LABEL_ITEM_PERIOD": "Period",
+    "LABEL_ITEM_VAT": "VAT",
+    "CURRENCY_EURO": "{{amount}} €",
+    "PERIOD_RANGE": "From {{start}} to {{end}}",
+    "WITHDRAWAL_DESCRIPTION": "Payment of turnover amounting to {{amount}} € for the period from {{start}} to {{end}}.",
+    "INVOICE_CREATED": "Invoice successfully created!",
+    "ERROR_CREATED": "Error while creating the invoice."
+  }
+}
