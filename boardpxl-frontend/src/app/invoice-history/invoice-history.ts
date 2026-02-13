@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { InvoiceCredit } from '../models/invoice-credit.model';
+import { InvoiceSubscription } from '../models/invoice-subscription.model';
 import { InvoiceService } from '../services/invoice-service';
 import { FilterOptions } from '../invoice-filter/invoice-filter';
 import { AuthService } from '../services/auth-service';
@@ -35,10 +36,11 @@ export class InvoiceHistory implements OnDestroy {
   ngOnInit() {
     forkJoin([
       this.invoiceService.getInvoicesCreditByPhotographer(Number(this.user)),
-      this.invoiceService.getInvoicesPaymentByPhotographer(Number(this.user))
+      this.invoiceService.getInvoicesPaymentByPhotographer(Number(this.user)),
+      this.invoiceService.getInvoicesSubscriptionByPhotographer(Number(this.user))
     ])
     .pipe(takeUntil(this.destroy$))
-    .subscribe(([creditInvoices, paymentInvoices]: [any[], any[]]) => {
+    .subscribe(([creditInvoices, paymentInvoices, subscriptionInvoices]: [any[], any[], any[]]) => {
       const allInvoices: any[] = [];
 
       // Process credit invoices
@@ -60,7 +62,23 @@ export class InvoiceHistory implements OnDestroy {
 
       // Process payment invoices
       for (let invoice of paymentInvoices) {
-        allInvoices.push(new InvoicePayment(invoice.number, invoice.issue_date, invoice.due_date, invoice.description, invoice.raw_value, invoice.tax, invoice.vat, invoice.start_period, invoice.end_period, invoice.link_pdf, invoice.pdf_invoice_subject));
+        allInvoices.push(new InvoicePayment(invoice.number, invoice.issue_date, invoice.due_date, invoice.description, invoice.raw_value, invoice.commission, invoice.tax, invoice.vat, invoice.start_period, invoice.end_period, invoice.link_pdf, invoice.pdf_invoice_subject));
+      }
+
+      for (let invoice of subscriptionInvoices) {
+        switch (invoice.status.toLowerCase()) {
+          case 'paid':
+            invoice.status = 'Payée';
+            break;
+          case 'upcoming':
+            invoice.status = 'Non payée';
+            break;
+          case 'late':
+            invoice.status = 'En retard';
+            break;
+        }
+
+        allInvoices.push(new InvoiceSubscription(invoice.number, invoice.issueDate, invoice.dueDate, invoice.description, invoice.raw_value, invoice.tax, invoice.vat, invoice.reduction, invoice.total_due, invoice.start_period, invoice.end_period, invoice.link_pdf, invoice.pdf_invoice_subject, invoice.status));
       }
 
       this.invoices = allInvoices;
@@ -76,12 +94,14 @@ export class InvoiceHistory implements OnDestroy {
     this.filteredInvoices = this.invoices.filter(invoice => {
       const isCredit = invoice instanceof InvoiceCredit;
       const isPayment = invoice instanceof InvoicePayment;
+      const isSubscription = invoice instanceof InvoiceSubscription;
 
       // Filter by type
       if (filters.typeFilters.length > 0) {
         const matchesType =
           (filters.typeFilters.includes('Achat de crédits') && isCredit) ||
-          (filters.typeFilters.includes('Versement') && isPayment);
+          (filters.typeFilters.includes('Versement') && isPayment) ||
+          (filters.typeFilters.includes('Abonnement') && isSubscription);
 
         if (!matchesType) {
           return false;

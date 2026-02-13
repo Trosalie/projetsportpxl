@@ -73,12 +73,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Création d'une facture de versement de CA
     Route::post('/create-turnover-invoice-photographer', [PennylaneController::class, 'createTurnoverPaymentInvoice']);
 
+    Route::post('/create-subscription-invoice-client', [PennylaneController::class, 'createSubscriptionInvoiceClient']);
+
     // Insertion d'une facture de versement de CA
     Route::post('/insert-turnover-invoice', [InvoiceController::class, 'insertTurnoverInvoice']);
 
     // Insertion d'une facture de crédits
     Route::post('/insert-credits-invoice', [InvoiceController::class, 'insertCreditsInvoice']);
 
+    Route::post('/insert-subscription-invoice', [InvoiceController::class, 'insertSubscriptionInvoice']);
 
     // Récupérer la liste des photographes
     // Testé : PennyLaneControllerTest::test_get_list_photogrpahers
@@ -106,6 +109,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Récupérer les factures de versement d’un photographe
     Route::get('/invoices-payment/{photographer_id}', [InvoiceController::class, 'getInvoicesPaymentByPhotographer']);
+
+    Route::get('/invoices-subscription/{photographer_id}', [InvoiceController::class, 'getInvoicesSubscriptionByPhotographer']);
 
 
     // Envoi de mail
@@ -153,5 +158,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/settlement-report/calculate-turnover', [SettlementReportController::class, 'calculateTurnoverSinceDate']);
     Route::post('/settlement-report/create', [SettlementReportController::class, 'createSettlementReport']);
     Route::get('/settlement-report/all', [SettlementReportController::class, 'getAllSettlementReports']);
+
+    Route::get('/invoice-subscription-financial-info', [InvoiceController::class, 'getFinancialInfoSubscriptionInvoice']);
 
 });

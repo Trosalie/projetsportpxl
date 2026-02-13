@@ -3,9 +3,10 @@ import { InvoicePayment } from '../models/invoice-payment.model';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Invoice } from '../models/invoice.model';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.development';
 import { HttpHeadersService } from './http-headers.service';
 import { InvoiceCredit } from '../models/invoice-credit.model';
+import { InvoiceSubscription } from '../models/invoice-subscription.model';
 
 /**
  * @class InvoiceService
@@ -62,6 +63,10 @@ export class InvoiceService {
     return this.http.get<InvoicePayment[]>(`${environment.apiUrl}/invoices-payment/${photographerId}`, this.headersService.getAuthHeaders());
   }
 
+  getInvoicesSubscriptionByPhotographer(photographerId: number): Observable<InvoiceSubscription[]> {
+    return this.http.get<InvoiceSubscription[]>(`${environment.apiUrl}/invoices-subscription/${photographerId}`, this.headersService.getAuthHeaders());
+  }
+
   /**
    * Call the api to get all credit invoices from a specific photographer
    *
@@ -92,6 +97,10 @@ export class InvoiceService {
     return this.http.post(`${environment.apiUrl}/create-turnover-invoice-photographer`, body, this.headersService.getAuthHeaders());
   }
 
+  createSubscriptionInvoice(body: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/create-subscription-invoice-client`, body, this.headersService.getAuthHeaders());
+  }
+
   /**
    * Call the api to insert a new payment invoice for a photographer
    *
@@ -100,6 +109,16 @@ export class InvoiceService {
    * */
   insertTurnoverInvoice(body: any): Observable<any> {
     return this.http.post(`${environment.apiUrl}/insert-turnover-invoice`, body, this.headersService.getAuthHeaders());
+  }
+
+  /**
+   * Call the api to insert a new subcripton invoice for a photographer
+   *
+   * @param any body
+   * @return Observable<any>
+   * */
+  insertSubscriptionInvoice(body: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/insert-subscription-invoice`, body, this.headersService.getAuthHeaders());
   }
 
   /**

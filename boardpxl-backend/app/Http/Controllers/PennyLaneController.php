@@ -123,6 +123,56 @@ class PennyLaneController extends Controller
     }
 
     /**
+     * Création d'une facture d'abonnement
+     */
+    public function createSubscriptionInvoiceClient(Request $request, PennylaneService $service)
+    {
+        try {
+            $validated = $request->validate([
+                'labelTVA' => 'required|string',
+                'amountEuro' => 'required|string',
+                'issueDate' => 'required|string',
+                'dueDate' => 'required|string',
+                'idClient' => 'required|integer',
+                'invoiceTitle' => 'required|string',
+                'invoiceDescription' => 'string',
+            ]);
+
+            $facture = $service->createSubscriptionInvoiceClient(
+                $validated['labelTVA'],
+                $validated['amountEuro'],
+                $validated['issueDate'],
+                $validated['dueDate'],
+                (int) $validated['idClient'],
+                $validated['invoiceTitle'],
+                $validated['invoiceDescription']
+            );
+
+            $this->logService->logAction($request, 'create_turnover_payment_invoice', 'INVOICE_PAYMENTS', [
+                'id_client' => (int) $validated['idClient'],
+                'invoice_title' => $validated['invoiceTitle'],
+                'amount_euro' => $validated['amountEuro'],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Facture créée avec succès.',
+                'data' => $facture
+            ]);
+
+        } catch (\Exception $e) {
+            $this->logService->logAction($request, 'create_turnover_payment_invoice_failed', 'INVOICE_PAYMENTS', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur : ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Récupère ID photographe via name
      */
     public function getPhotographerId(Request $request, PennylaneService $service)
