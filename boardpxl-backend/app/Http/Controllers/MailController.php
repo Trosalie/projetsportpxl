@@ -131,6 +131,8 @@ class MailController extends Controller
                         ->subject('Hello from Mailpit');
             });
 
+            Mail::failures();
+
             return response()->json(['message' => 'Mail envoyé (si tout va bien) !']);
         } catch (\Exception $e) {
             return response()->json([
