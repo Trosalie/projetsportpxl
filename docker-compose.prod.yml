@@ -1,0 +1,110 @@
+version: "3.8"
+
+services:
+  # Nginx Reverse Proxy - Entry point for all traffic
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - app-network
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+
+  # Laravel Backend (PHP-FPM)
+  backend:
+    build:
+      context: ./boardpxl-backend
+      dockerfile: Dockerfile.prod
+    container_name: backend
+    expose:
+      - "9000"
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: sportpxl
+      DB_USERNAME: laravel
+      DB_PASSWORD: ${DB_PASSWORD:-laravel_secure_password}
+    volumes:
+      - backend-storage:/var/www/html/storage
+      - backend-cache:/var/www/html/bootstrap/cache
+    networks:
+      - app-network
+    depends_on:
+      - mysql
+    restart: unless-stopped
+
+  # Angular Frontend (Static Files with Nginx)
+  frontend:
+    build:
+      context: ./boardpxl-frontend
+      dockerfile: Dockerfile.prod
+    container_name: frontend
+    expose:
+      - "80"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: sportpxl
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_secure_password}
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: ${DB_PASSWORD:-laravel_secure_password}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+    command: --default-authentication-plugin=mysql_native_password
+
+  # PHPMyAdmin (Optional - comment out for production)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - "127.0.0.1:8080:80"  # Only accessible from localhost
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: laravel
+      PMA_PASSWORD: ${DB_PASSWORD:-laravel_secure_password}
+    networks:
+      - app-network
+
+  # Mailpit (Optional - for email testing)
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    ports:
+      - "127.0.0.1:8025:8025"  # Only accessible from localhost
+      - "1025:1025"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  backend-storage:
+  backend-cache:

@@ -437,7 +437,54 @@ class PennylaneService
 
                     $product = $this->getProductFromInvoice($invoice['invoice_number']);
                     if (!$product) {
-                        Log::warning('Could not get product for invoice: ' . $invoice['invoice_number']);
+                        $updated = false;
+
+                        $vat = isset($invoice['tax'], $invoice['currency_amount_before_tax']) && $invoice['currency_amount_before_tax'] != 0
+                            ? $invoice['tax'] / $invoice['currency_amount_before_tax'] * 100
+                            : 0;
+
+                        $commonUpdates = [
+                            'number' => $invoice['invoice_number'] ?? null,
+                            'issue_date' => $invoice['date'] ?? null,
+                            'due_date' => $invoice['deadline'] ?? null,
+                            'description' => $invoice['pdf_description'] ?? "N/A",
+                            'tax' => $invoice['tax'] ?? null,
+                            'vat' => $vat ?? null,
+                            'link_pdf' => $invoice['public_file_url'] ?? null,
+                            'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null,
+                        ];
+
+                        $credit = InvoiceCredit::find($invoice['id']);
+                        if ($credit) {
+                            $credit->fill(array_merge($commonUpdates, [
+                                'amount' => $invoice['amount'] ?? null,
+                                'total_due' => $invoice['remaining_amount_with_tax'] ?? null,
+                                'discount' => $invoice['discount']['value'] ?? 0,
+                                'status' => $invoice['status'] ?? null,
+                            ]));
+                            $credit->save();
+                            $updated = true;
+                        }
+
+                        $payment = InvoicePayment::find($invoice['id']);
+                        if ($payment) {
+                            $match = [];
+                            preg_match('/(\d+(?:[.,]\d{2})?)\s*€/', $invoice['pdf_description'] ?? '', $match);
+                            $rawValue = $match ? (float) str_replace(',', '.', $match[1]) : 0;
+
+                            $payment->fill(array_merge($commonUpdates, [
+                                'raw_value' => $rawValue ?? null,
+                                'start_period' => $payment->start_period,
+                                'end_period' => $payment->end_period,
+                            ]));
+                            $payment->save();
+                            $updated = true;
+                        }
+
+                        if (!$updated) {
+                            Log::warning('Could not get product for invoice: ' . ($invoice['invoice_number'] ?? 'unknown'));
+                        }
+
                         continue;
                     }
 

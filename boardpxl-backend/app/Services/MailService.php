@@ -31,12 +31,25 @@ class MailService
      * @param string $body Corps du message en texte brut
      * @return void
      */
-    public function sendEmail($to, $from, $subject, $body){
-        Mail::raw($body, function ($message) use ($to, $from, $subject) {
-            $message->to($to)
-                    ->from('noreply@boardpxl.com', 'BoardPXL')
-                    ->replyTo($from)
-                    ->subject($subject);
+    public function sendEmail($to, $from, $subject, $body, $forceFrom = false)
+    {
+        Mail::raw($body, function ($message) use ($to, $from, $subject, $forceFrom) {
+            $fromAddress = config('mail.from.address', 'noreply@boardpxl.com');
+            $fromName = config('mail.from.name', 'BoardPXL');
+
+            $message->to($to);
+
+            if ($forceFrom && !empty($from)) {
+                $message->from($from, $fromName);
+            } else {
+                $message->from($fromAddress, $fromName);
+            }
+
+            if (!empty($from)) {
+                $message->replyTo($from);
+            }
+
+            $message->subject($subject);
         });
     }
 }

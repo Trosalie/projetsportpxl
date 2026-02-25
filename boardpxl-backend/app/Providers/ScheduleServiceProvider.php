@@ -25,7 +25,8 @@ class ScheduleServiceProvider extends ServiceProvider
 
             $schedule->command('sync:invoices')
                 ->everyTenMinutes()
-                ->withoutOverlapping();
+                ->withoutOverlapping()
+                ->appendOutputTo(storage_path('logs/scheduler.log'));
         });
     }
 }

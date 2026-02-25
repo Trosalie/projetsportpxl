@@ -204,16 +204,19 @@ class PennyLaneController extends Controller
             'body' => 'required|string|max:10000',
         ]);
 
+        $toAddress = config('mail.from.address') ?: $validated['to'];
+
         try {
             $mailService->sendEmail(
-                $validated['to'],
+                $toAddress,
                 $validated['from'],
                 $validated['subject'],
-                $validated['body']
+                $validated['body'],
+                true
             );
 
             $this->logService->logAction($request, 'send_email', 'MAIL_LOGS', [
-                'to' => $validated['to'],
+                'to' => $toAddress,
                 'subject' => $validated['subject'],
             ]);
 
@@ -224,7 +227,7 @@ class PennyLaneController extends Controller
 
         } catch (\Exception $e) {
             $this->logService->logAction($request, 'send_email_failed', 'MAIL_LOGS', [
-                'to' => $validated['to'],
+                'to' => $toAddress,
                 'subject' => $validated['subject'],
                 'error' => $e->getMessage(),
             ]);

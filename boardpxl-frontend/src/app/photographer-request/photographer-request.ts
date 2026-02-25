@@ -2,6 +2,7 @@ import { Component, Input, ViewChild } from '@angular/core';
 import { MailService } from '../services/mail-service';
 import { AuthService } from '../services/auth-service';
 import { Popup } from '../popup/popup';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-photographer-request',
@@ -165,7 +166,7 @@ ${this.userName}`;
       }
     }
 
-    let to = 'boardpxl@placeholder.com'; // remplacer par l'email de SportPXL
+    let to = environment.adminEmail?.[0] || 'boardpxl@placeholder.com';
     let from = this.authService.getUser()?.email || ''; // remplacer par l'email du photographe connecté
     let subject = `[BoardPXL]`;
     let type = '';
