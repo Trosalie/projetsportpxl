@@ -105,27 +105,55 @@ class InvoiceSeeder extends Seeder
         ]);
         }
         else {
-            $match = [];
-            preg_match('/(\d+(?:[.,]\d{2})?)\s*€/', $invoice['pdf_description'] ?? '', $match);
-            $rawValue = $match ? (float) str_replace(',', '.', $match[1]) : 0;
-            echo "- Facture de paiement détectée pour la facture n° " . $invoice['invoice_number'] . PHP_EOL;
-            echo "  - Libellé produit brut : " . ($product['label'] ?? 'N/A') . PHP_EOL;
-            DB::table('invoice_payments')->insert([
-                'number' => $invoice['invoice_number'],
-                'issue_date' => $invoice['date'],
-                'due_date' => $invoice['deadline'],
-                'description' => $invoice['pdf_description'] ?? 'N/A',
-                'raw_value' => $rawValue,
-                'tax' => $invoice['tax'],
-                'vat' => $vat,
-                'start_period' => now(),
-                'end_period' => now(),
-                'link_pdf' => $invoice['public_file_url'],
-                'photographer_id' => $photographerId,
-                'pdf_invoice_subject' => $invoice['pdf_invoice_subject'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            if (str_contains(strtolower($product['label'] ?? ''), 'affaires'))
+            {
+                $match = [];
+                preg_match('/(\d+(?:[.,]\d{2})?)\s*€/', $invoice['pdf_description'] ?? '', $match);
+                $rawValue = $match ? (float) str_replace(',', '.', $match[1]) : 0;
+                echo "- Facture de paiement détectée pour la facture n° " . $invoice['invoice_number'] . PHP_EOL;
+                echo "  - Libellé produit brut : " . ($product['label'] ?? 'N/A') . PHP_EOL;
+                DB::table('invoice_payments')->insert([
+                    'number' => $invoice['invoice_number'],
+                    'issue_date' => $invoice['date'],
+                    'due_date' => $invoice['deadline'],
+                    'description' => $invoice['pdf_description'] ?? 'N/A',
+                    'raw_value' => $rawValue,
+                    'tax' => $invoice['tax'],
+                    'vat' => $vat,
+                    'start_period' => now(),
+                    'end_period' => now(),
+                    'link_pdf' => $invoice['public_file_url'],
+                    'photographer_id' => $photographerId,
+                    'pdf_invoice_subject' => $invoice['pdf_invoice_subject'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+            else
+            {
+                $match = [];
+                preg_match('/(\d+(?:[.,]\d{2})?)\s*€/', $invoice['pdf_description'] ?? '', $match);
+                $rawValue = $match ? (float) str_replace(',', '.', $match[1]) : 0;
+                echo "- Facture d'abonnement détectée pour la facture n° " . $invoice['invoice_number'] . PHP_EOL;
+                echo "  - Libellé produit brut : " . ($product['label'] ?? 'N/A') . PHP_EOL;
+                DB::table('invoice_subscription')->insert([
+                    'number' => $invoice['invoice_number'],
+                    'issue_date' => $invoice['date'],
+                    'due_date' => $invoice['deadline'],
+                    'description' => $invoice['pdf_description'] ?? 'N/A',
+                    'amount' => $invoice['amount'],
+                    'tax' => $invoice['tax'],
+                    'vat' => $vat,
+                    'start_period' => now(),
+                    'end_period' => now(),
+                    'link_pdf' => $invoice['public_file_url'],
+                    'photographer_id' => $photographerId,
+                    'pdf_invoice_subject' => $invoice['pdf_invoice_subject'],
+                    'status' => $invoice['status'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
     }
 }

@@ -31,7 +31,7 @@ import { Popup } from './popup/popup';
 import { TurnoverPaymentForm } from './turnover-payment-form/turnover-payment-form';
 import { MailsLog } from './mails-log/mails-log';
 import { AdminPhotographerInvoiceList } from './admin-photographer-invoice-list/admin-photographer-invoice-list';
-
+import { SubscriptionForm } from './subscription-form/subscription-form';
 
 import { GeneralGraph } from './general-graph/general-graph';
 import { Logs } from './logs/logs';
@@ -43,6 +43,7 @@ import { FirstLoginModalComponent } from './first-login-modal/first-login-modal'
 import { ResetPasswordPageComponent } from './reset-password-page/reset-password-page';
 import { SettlementReportListComponent } from './settlement-report-list/settlement-report-list';
 import { SettlementReportFormComponent } from './settlement-report-form/settlement-report-form';
+import {Subscription} from 'rxjs';
 registerLocaleData(localeFr);
 
 @NgModule({
@@ -78,7 +79,8 @@ registerLocaleData(localeFr);
     EditPhotographerForm,
     FirstLoginModalComponent,
     SettlementReportListComponent,
-    SettlementReportFormComponent
+    SettlementReportFormComponent,
+    SubscriptionForm
   ],
   imports: [
     BrowserModule,

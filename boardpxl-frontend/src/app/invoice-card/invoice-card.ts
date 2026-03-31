@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { InvoicePayment } from '../models/invoice-payment.model';
 import { InvoiceCredit } from '../models/invoice-credit.model';
+import { InvoiceSubscription } from '../models/invoice-subscription.model';
 import { InvoiceService } from '../services/invoice-service';
 
 @Component({
@@ -10,9 +11,10 @@ import { InvoiceService } from '../services/invoice-service';
   styleUrls: ['./invoice-card.scss'],
 })
 export class InvoiceCard {
-  @Input() invoice!: InvoicePayment | InvoiceCredit;
+  @Input() invoice!: InvoicePayment | InvoiceCredit | InvoiceSubscription;
   protected invoicePayment!: InvoicePayment;
   protected invoiceCredit!: InvoiceCredit;
+  protected invoiceSubscription!: InvoiceSubscription;
   protected invoiceType!: string;
 
   constructor(private invoiceService: InvoiceService) {}
@@ -31,8 +33,8 @@ export class InvoiceCard {
       this.invoiceCredit = this.invoice;
       this.invoiceType = 'Credit';
     } else {
-      // Unknown invoice type — treat as empty
-      this.invoiceType = '';
+      this.invoiceSubscription = this.invoice;
+      this.invoiceType = 'Subscription';
     }
   }
 

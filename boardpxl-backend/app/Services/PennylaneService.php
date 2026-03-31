@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Controllers\InvoiceController;
+use App\Models\InvoiceSubscription;
 use GuzzleHttp\Client;
 use App\Models\InvoiceCredit;
 use App\Models\InvoicePayment;
@@ -274,11 +275,48 @@ class PennylaneService
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    /**
-     * get all photographers
-     *
-     * @return array
-     * */
+    public function createSubscriptionInvoiceClient(string $labelTVA, string $amountEuro, string $issueDate, string $dueDate, int $idClient, string $invoiceTitle, string $invoiceDescription)
+    {
+        $client = new \GuzzleHttp\Client();
+
+        $response = $client->request('POST', 'https://app.pennylane.com/api/external/v2/customer_invoices', [
+            'json' => [
+                "currency" => "EUR",
+                "language" => "fr_FR",
+                "discount" => [
+                    "type" => "absolute",
+                    "value" => "0"
+                ],
+                "draft" => false,
+                "invoice_lines" => [
+                    [
+                        "discount" => [
+                            "type" => "absolute",
+                            "value" => "0"
+                        ],
+                        "vat_rate" => $labelTVA,
+                        "label" => "Achat d'abonnement",
+                        "description" => "Achat d'abonnement",
+                        "quantity" => 1,
+                        "raw_currency_unit_price" => $amountEuro,
+                        "unit" => "piece"
+                    ]
+                ],
+                "date" => $issueDate,
+                "deadline" => $dueDate,
+                "customer_id" => $idClient,
+                "pdf_invoice_subject" => $invoiceTitle,
+                "pdf_description" => $invoiceDescription,
+            ],
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . config('services.pennylane.token'),
+            ],
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
     public function getPhotographers()
     {
         $response = $this->client->get('customers?sort=-id');
@@ -494,49 +532,104 @@ class PennylaneService
                         );
                     }
                     else {
-                        $match = [];
-                        preg_match('/(\\d+(?:[.,]\\d{2})?)\\s*€/', $invoice['pdf_description'] ?? '', $match);
-                        $rawValue = $match ? (float) str_replace(',', '.', $match[1]) : 0;
+                        $isTurnover = str_contains(strtolower($product['label'] ?? ''), 'affaires');
 
-                        $invoicePrev = InvoicePayment::find($invoice['id']);
+                        if($isTurnover){
+                            $match = [];
+                            preg_match('/(\\d+(?:[.,]\\d{2})?)\\s*€/', $invoice['pdf_description'] ?? '', $match);
+                            $rawValue = $match ? (float) str_replace(',', '.', $match[1]) : 0;
 
-                        $photographerId = null;
-                        if ($invoicePrev) {
-                            $photographerId = $invoicePrev->photographer_id;
-                        } elseif (isset($invoice['customer']['id'])) {
-                            $photographer = Photographer::where('pennylane_id', $invoice['customer']['id'])->first();
-                            if ($photographer) {
-                                $photographerId = $photographer->id;
+                            $invoicePrev = InvoicePayment::find($invoice['id']);
+
+                            $photographerId = null;
+                            if ($invoicePrev) {
+                                $photographerId = $invoicePrev->photographer_id;
+                            } elseif (isset($invoice['customer']['id'])) {
+                                $photographer = Photographer::where('pennylane_id', $invoice['customer']['id'])->first();
+                                if ($photographer) {
+                                    $photographerId = $photographer->id;
+                                }
                             }
+
+                            if (!$photographerId) {
+                                Log::warning('Photographer not found for invoice: ' . $invoice['invoice_number']);
+                                continue;
+                            }
+
+                            $startPeriod = $invoicePrev ? $invoicePrev->start_period : now()->startOfMonth();
+                            $endPeriod = $invoicePrev ? $invoicePrev->end_period : now()->endOfMonth();
+
+                            InvoicePayment::updateOrCreate(
+                                [
+                                    'id' => $invoice['id'],
+                                ],
+                                [
+                                    'number' => $invoice['invoice_number'] ?? null,
+                                    'issue_date' => $invoice['date'] ?? null,
+                                    'due_date' => $invoice['deadline'] ?? null,
+                                    'description' => $invoice['pdf_description'] ?? "N/A",
+                                    'raw_value' => $rawValue ?? null,
+                                    'commission' => $invoice['amount'] ?? null,
+                                    'tax' => $invoice['tax'] ?? null,
+                                    'vat' => $vat ?? null,
+                                    'start_period' => $startPeriod,
+                                    'end_period' => $endPeriod,
+                                    'link_pdf' => $invoice['public_file_url'] ?? null,
+                                    'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null,
+                                    'photographer_id' => $photographerId,
+                                ]
+                            );
                         }
+                        else {
+                            $match = [];
+                            preg_match('/(\d+(?:[.,]\d{2})?)\s*€/', $invoice['pdf_description'] ?? '', $match);
+                            $amount = $match ? (float) str_replace(',', '.', $match[1]) : 0;
 
-                        if (!$photographerId) {
-                            Log::warning('Photographer not found for invoice: ' . $invoice['invoice_number']);
-                            continue;
+                            $invoicePrev = InvoicePayment::find($invoice['id']);
+
+                            // Determine photographer_id
+                            $photographerId = null;
+                            if ($invoicePrev) {
+                                $photographerId = $invoicePrev->photographer_id;
+                            } elseif (isset($invoice['customer']['id'])) {
+                                $photographer = Photographer::where('pennylane_id', $invoice['customer']['id'])->first();
+                                if ($photographer) {
+                                    $photographerId = $photographer->id;
+                                }
+                            }
+
+                            if (!$photographerId) {
+                                Log::warning('Photographer not found for invoice: ' . $invoice['invoice_number']);
+                                continue;
+                            }
+
+                            // Get period dates
+                            $startPeriod = $invoicePrev ? $invoicePrev->start_period : now()->startOfMonth();
+                            $endPeriod = $invoicePrev ? $invoicePrev->end_period : now()->endOfMonth();
+
+                            InvoiceSubscription::updateOrCreate(
+                                [
+                                    'id' => $invoice['id'],
+                                ],
+                                [
+                                    'number' => $invoice['invoice_number'] ?? null,
+                                    'issue_date' => $invoice['date'] ?? null,
+                                    'due_date' => $invoice['deadline'] ?? null,
+                                    'description' => $invoice['pdf_description'] ?? "N/A",
+                                    'amount' => $amount,
+                                    'tax' => $invoice['tax'] ?? null,
+                                    'vat' => $vat ?? null,
+                                    'reduction' => null, //find solution for reduction
+                                    'total_due' => $amount + $invoice['tax'],
+                                    'start_period' => $startPeriod,
+                                    'end_period' => $endPeriod,
+                                    'link_pdf' => $invoice['public_file_url'] ?? null,
+                                    'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null,
+                                    'photographer_id' => $photographerId,
+                                    'status' => $invoice['status'] ?? null,
+                                ]
+                            );
                         }
-
-                        $startPeriod = $invoicePrev ? $invoicePrev->start_period : now()->startOfMonth();
-                        $endPeriod = $invoicePrev ? $invoicePrev->end_period : now()->endOfMonth();
-
-                        InvoicePayment::updateOrCreate(
-                            [
-                                'id' => $invoice['id'],
-                            ],
-                            [
-                                'number' => $invoice['invoice_number'] ?? null,
-                                'issue_date' => $invoice['date'] ?? null,
-                                'due_date' => $invoice['deadline'] ?? null,
-                                'description' => $invoice['pdf_description'] ?? "N/A",
-                                'raw_value' => $rawValue ?? null,
-                                'tax' => $invoice['tax'] ?? null,
-                                'vat' => $vat ?? null,
-                                'start_period' => $startPeriod,
-                                'end_period' => $endPeriod,
-                                'link_pdf' => $invoice['public_file_url'] ?? null,
-                                'pdf_invoice_subject' => $invoice['pdf_invoice_subject'] ?? null,
-                                'photographer_id' => $photographerId,
-                            ]
-                        );
                     }
                 } catch (\Throwable $e) {
                     Log::error('Failed to sync invoice: ' . ($invoice['id'] ?? 'unknown'), [

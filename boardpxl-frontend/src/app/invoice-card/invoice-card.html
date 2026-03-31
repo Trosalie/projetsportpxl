@@ -20,10 +20,21 @@
             </div>
         </div>
     </div>
+    <div class="middle" *ngIf="invoiceType === 'Subscription'">
+      <div>
+        <p style="font-size: larger;">Achat d'abonnement</p>
+      </div>
+      <div class="values">
+        <p class="amount">{{ invoiceSubscription.amount | currency }}</p>
+        <p class="amount">{{ invoiceSubscription.start_period }}</p>
+        <p class="amount">{{ invoiceSubscription.end_period }}</p>
+      </div>
+    </div>
     <div>
         <div class="actions">
             <p class="payée status" *ngIf="invoiceType === 'Payment'">Payée</p>
             <p *ngIf="invoiceType === 'Credit'" class="{{ (invoiceCredit.status | lowercase).split(' ').join('-') }} status">{{ invoiceCredit.status }}</p>
+            <p *ngIf="invoiceType === 'Subscription'" class="{{ (invoiceSubscription.status | lowercase).split(' ').join('-') }} status">{{ invoiceSubscription.status }}</p>
             <button class="open" (click)="openInvoice(invoice.link_pdf)">
                 <span class="material-symbols-outlined">open_in_new</span>
             </button>

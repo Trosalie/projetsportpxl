@@ -3,6 +3,8 @@
 namespace Tests\Feature\Api;
 
 use App\Http\Controllers\InvoiceController;
+use App\Models\InvoiceCredit;
+use App\Models\InvoicePayment;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 use Illuminate\Support\Facades\DB;
@@ -203,6 +205,18 @@ class InvoiceTest extends TestCase
             ->once()
             ->andReturn(null);
 
+        // Mock pour invoice_subscription - pas trouvé non plus
+        DB::shouldReceive('table')
+            ->with('invoice_subscription')
+            ->andReturnSelf();
+
+        DB::shouldReceive('where')
+            ->with('id', Mockery::any())
+            ->andReturnSelf();
+
+        DB::shouldReceive('first')
+            ->andReturn(null);
+
         $response = $this->getJson('/api/invoices/999');
 
         $response->assertStatus(404)
@@ -288,39 +302,37 @@ class InvoiceTest extends TestCase
             ->with('invoice_credits')
             ->andReturnSelf();
 
-        DB::shouldReceive('where')
-            ->once()
-            ->with('photographer_id', 30)
-            ->andReturnSelf();
-
-        DB::shouldReceive('get')
-            ->once()
-            ->andReturn(collect([
-                (object)['id' => 11, 'number' => 'C-11']
-            ]));
-
         // payments
         DB::shouldReceive('table')
             ->once()
             ->with('invoice_payments')
             ->andReturnSelf();
 
-        DB::shouldReceive('where')
+        // subscription
+        DB::shouldReceive('table')
             ->once()
+            ->with('invoice_subscription')
+            ->andReturnSelf();
+
+        DB::shouldReceive('where')
             ->with('photographer_id', 30)
+            ->times(3)
             ->andReturnSelf();
 
         DB::shouldReceive('get')
-            ->once()
-            ->andReturn(collect([
-                (object)['id' => 21, 'number' => 'P-21']
-            ]));
+            ->times(3)
+            ->andReturn(
+                collect([(object)['id' => 11, 'number' => 'C-11']]),
+                collect([(object)['id' => 21, 'number' => 'P-21']]),
+                collect([(object)['id' => 31, 'number' => 'S-31']])
+            );
 
         $response = $this->getJson('/api/invoices-photographer/30');
 
         $response->assertStatus(200)->assertJson([
             ['id' => 11, 'number' => 'C-11'],
             ['id' => 21, 'number' => 'P-21'],
+            ['id' => 31, 'number' => 'S-31'],
         ]);
     }
 
@@ -369,11 +381,28 @@ class InvoiceTest extends TestCase
                 (object)['photographer_id' => 2, 'id' => 202],
             ]));
 
+        DB::shouldReceive('table')
+            ->once()
+            ->with('invoice_subscription')
+            ->andReturnSelf();
+
+        DB::shouldReceive('whereIn')
+            ->once()
+            ->with('photographer_id', $payload['photographer_ids'])
+            ->andReturnSelf();
+
+        DB::shouldReceive('get')
+            ->once()
+            ->andReturn(collect([
+                (object)['photographer_id' => 1, 'id' => 301],
+                (object)['photographer_id' => 2, 'id' => 302],
+            ]));
+
         $response = $this->postJson('/api/invoices-bulk', $payload);
 
         $response->assertStatus(200)->assertJsonStructure([
-            '1' => ['credits','payments'],
-            '2' => ['credits','payments']
+            '1' => ['credits','payments', 'subscription'],
+            '2' => ['credits','payments', 'subscription']
         ]);
     }
 
